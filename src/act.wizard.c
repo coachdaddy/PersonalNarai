@@ -67,12 +67,6 @@ void log(char *str);
 char history[20][MAX_STRING_LENGTH];
 int his_start=0,his_end=0; 
 
-#ifndef BADDOMS
-#define BADDOMS 16
-extern int baddoms;
-extern char baddomain[BADDOMS][32];
-#endif
-
 void do_emote(struct char_data *ch, char *argument, int cmd)
 {
   int i;
@@ -1017,6 +1011,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 }
 
 /* Give pointers to the five abilities */
+// FIXME: db.c t
 void roll_abilities(struct char_data *ch)
 {
   int i, j, k, temp;
@@ -1028,7 +1023,7 @@ void roll_abilities(struct char_data *ch)
   for(i=0; i<5; i++) {
 
     for(j=0; j<4; j++)
-      rools[j] = number(1,6);
+      rools[j] = number(1,7);
     
     temp = MIN( 18, rools[0]+rools[1]+rools[2]+rools[3] );
 
@@ -1069,7 +1064,7 @@ void roll_abilities(struct char_data *ch)
       ch->abilities.intel = table[4];
       if (ch->abilities.str == 18)
         ch->abilities.str_add = number(0,100);
-    } break;
+	} break;
   }
   ch->tmpabilities = ch->abilities;
 }
@@ -1419,6 +1414,12 @@ void do_wall(struct char_data *ch, char *argument, int cmd)
   send_to_all(buf);
   send_to_char("Ok.\n\r",ch);
 }
+
+#ifndef BADDOMS
+#define BADDOMS 16
+extern int baddoms;
+extern char baddomain[BADDOMS][32];
+#endif
 
 void do_set(struct char_data *ch, char *argument, int cmd)
 {

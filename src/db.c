@@ -1262,6 +1262,7 @@ struct char_data *read_mobile(int nr, int type)
 		else {
 			mob->skills[i].learned = 0;
 		}
+		// FiXME : level 60 balancing
 		mob->skills[i].skilled = (level>40)?level:0;
 		mob->skills[i].recognise = 0;
 	}	

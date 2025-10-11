@@ -1565,16 +1565,7 @@ int remortal( struct char_data *ch , int cmd ,char *arg)
   
   /* not say */
   if(cmd != 17) return 0;
-  
-  /* furfuri modify ... under if .. && >>> || */
-  /*
-    if(ch->points.exp<500000000 || ch->player.level!=40) {
-    */
-  if(GET_LEVEL(ch) != 40) {
-    send_to_char("You are not enough to remortal.!!!\n\r",ch);
-    return 0;
-  }
-  
+ 
   /*
     defined in structs.h
     #define REMORTAL_MAGIC_USER     1
@@ -1585,14 +1576,27 @@ int remortal( struct char_data *ch , int cmd ,char *arg)
   all_done = (ch->player.remortal == (1 + 2 + 4 + 8));
   
   if(all_done){
-    if(ch->points.exp<500000000){
-      send_to_char("You are not enough to remortal.!!!\n\r",ch);
+    if(ch->points.exp<1000000000){
+      send_to_char("You need more experience to remortal.!!!\n\r",ch);
       return 0;
     }
   }
-  
+
+	int rcnt = 0;
+
+    if(ch->player.remortal & REMORTAL_MAGIC_USER)
+      rcnt++;
+    if(ch->player.remortal & REMORTAL_CLERIC)
+      rcnt++;
+    if(ch->player.remortal & REMORTAL_THIEF)
+      rcnt++;
+    if(ch->player.remortal & REMORTAL_WARRIOR)
+      rcnt++;
+
   half_chop(arg,buf1,buf2);
   class=buf1[0];
+
+
   switch(class) {
   case '?':
     /* show remortal */
@@ -1608,36 +1612,120 @@ int remortal( struct char_data *ch , int cmd ,char *arg)
 
   case 'W':
   case 'w': class=4;
-    if(ch->abilities.str==18) {
-      if(ch->abilities.str_add<100) {
-	ch->abilities.str_add+=10;
-	ch->abilities.str_add = MIN(ch->abilities.str_add,100);
-      } else { break; } 
-    } else { ch->abilities.str++; }
-    ch->player.remortal |= REMORTAL_WARRIOR;
+	if( (ch->player.level == 40 && rcnt == 1) ) {
+    	if(ch->abilities.str==18) {
+			if(ch->abilities.str_add<100) { 
+					ch->abilities.str_add+=10; 
+					ch->abilities.str_add = MIN(ch->abilities.str_add,100); 
+			} else { break; } 
+		} else { ch->abilities.str++; } 
+		ch->player.remortal |= REMORTAL_WARRIOR;
+	}
+	if( (ch->player.level == 50 && rcnt == 2) ) {
+    	if(ch->abilities.str==18) {
+			if(ch->abilities.str_add<100) { 
+					ch->abilities.str_add+=10; 
+					ch->abilities.str_add = MIN(ch->abilities.str_add,100); 
+			} else { break; } 
+		} else { ch->abilities.str++; } 
+		ch->player.remortal |= REMORTAL_WARRIOR;
+	}
+	if( (ch->player.level == 60 && rcnt == 3) ) {
+    	if(ch->abilities.str==18) {
+			if(ch->abilities.str_add<100) { 
+					ch->abilities.str_add+=10; 
+					ch->abilities.str_add = MIN(ch->abilities.str_add,100); 
+			} else { break; } 
+		} else { ch->abilities.str++; } 
+		ch->player.remortal |= REMORTAL_WARRIOR;
+	}
+	if( (ch->player.level == 60 && rcnt == 4) ) {
+    	if(ch->abilities.str==18) {
+			if(ch->abilities.str_add<100) { 
+					ch->abilities.str_add+=10; 
+					ch->abilities.str_add = MIN(ch->abilities.str_add,100); 
+			} else { break; } 
+		} else { ch->abilities.str++; } 
+		ch->player.remortal |= REMORTAL_WARRIOR;
+	}
     break;
 
   case 'C':
   case 'c': class=2;
-    if(ch->abilities.wis<18)ch->abilities.wis++;
-    ch->player.remortal |= REMORTAL_CLERIC;
+	if( (ch->player.level == 40 && rcnt == 1) ) {
+    	if(ch->abilities.wis<18)ch->abilities.wis++;
+	    ch->player.remortal |= REMORTAL_CLERIC;
+	}
+	if( (ch->player.level == 50 && rcnt == 2) ) {
+    	if(ch->abilities.wis<18)ch->abilities.wis++;
+	    ch->player.remortal |= REMORTAL_CLERIC;
+	}
+	if( (ch->player.level == 60 && rcnt == 3) ) {
+    	if(ch->abilities.wis<18)ch->abilities.wis++;
+	    ch->player.remortal |= REMORTAL_CLERIC;
+	}
+	if( (ch->player.level == 60 && rcnt == 4) ) {
+    	if(ch->abilities.wis<18)ch->abilities.wis++;
+	    ch->player.remortal |= REMORTAL_CLERIC;
+	}
     break;
 
   case 'M':
   case 'm': class=1;
-    if(ch->abilities.intel<18)ch->abilities.intel++;
-    ch->player.remortal |= REMORTAL_MAGIC_USER;
+	if( (ch->player.level == 40 && rcnt == 1) ) {
+    	if(ch->abilities.intel<18)ch->abilities.intel++;
+	    ch->player.remortal |= REMORTAL_MAGIC_USER;
+	}
+	if( (ch->player.level == 50 && rcnt == 2) ) {
+    	if(ch->abilities.intel<18)ch->abilities.intel++;
+	    ch->player.remortal |= REMORTAL_MAGIC_USER;
+	}
+	if( (ch->player.level == 60 && rcnt == 3) ) {
+    	if(ch->abilities.intel<18)ch->abilities.intel++;
+	    ch->player.remortal |= REMORTAL_MAGIC_USER;
+	}
+	if( (ch->player.level == 60 && rcnt == 4) ) {
+    	if(ch->abilities.intel<18)ch->abilities.intel++;
+	    ch->player.remortal |= REMORTAL_MAGIC_USER;
+	}
     break;
 
   case 'T':
   case 't': class=3;
-    if(ch->abilities.dex<18)ch->abilities.dex++;
-    ch->player.remortal |= REMORTAL_THIEF;
+	if( (ch->player.level == 40 && rcnt == 1) ) {
+    	if(ch->abilities.dex<18)ch->abilities.dex++;
+	    ch->player.remortal |= REMORTAL_THIEF;
+	}
+	if( (ch->player.level == 50 && rcnt == 2) ) {
+    	if(ch->abilities.dex<18)ch->abilities.dex++;
+	    ch->player.remortal |= REMORTAL_THIEF;
+	}
+	if( (ch->player.level == 60 && rcnt == 3) ) {
+    	if(ch->abilities.dex<18)ch->abilities.dex++;
+	    ch->player.remortal |= REMORTAL_THIEF;
+	}
+	if( (ch->player.level == 60 && rcnt == 4) ) {
+    	if(ch->abilities.dex<18)ch->abilities.dex++;
+	    ch->player.remortal |= REMORTAL_THIEF;
+	}
     break;
 
   default: 
     return TRUE; 
   }
+
+  if( (rcnt == 1) && ch->player.level == 40) {
+    send_to_char("Your First Rebirth.!!!\n\r",ch);
+  }
+
+  if( (rcnt == 2) && ch->player.level == 50) {
+    send_to_char("Your Second Rebirth.!!!\n\r",ch);
+  }
+
+  if( (rcnt == 3) && ch->player.level == 60) {
+    send_to_char("Your Last Rebirth.!!!\n\r",ch);
+  }
+
   sprintf(buf,"%s님이 %s로 직업을 바꾸셨습니다.",GET_NAME(ch),
 	  classes[class-1]);
   send_to_all(buf);
@@ -1645,6 +1733,7 @@ int remortal( struct char_data *ch , int cmd ,char *arg)
   GET_CLASS(ch) = class;
   
   /* initialize other data */
+
   if(!all_done){
     GET_EXP(ch) = 0;
     GET_LEVEL(ch) = 0;
@@ -1653,10 +1742,10 @@ int remortal( struct char_data *ch , int cmd ,char *arg)
     GET_MANA(ch) = GET_PLAYER_MAX_MANA(ch) = 0;
     GET_MOVE(ch) = GET_PLAYER_MAX_MOVE(ch) = 0;
     
-    GET_AC(ch) += 40;
-    GET_HITROLL(ch) -= 40;
-    GET_DAMROLL(ch) -= 40;
-    
+    GET_AC(ch) += 35;
+    GET_HITROLL(ch) -= 35;
+    GET_DAMROLL(ch) -= 35;
+
     /* init-quest */
     ch->quest.type = 0;
     ch->quest.data = 0;
@@ -1664,8 +1753,8 @@ int remortal( struct char_data *ch , int cmd ,char *arg)
     
     do_start(ch);
   }
-  else {
-    GET_EXP(ch) -= 500000000;
+  else { // All remortal
+    GET_EXP(ch) -= 1000000000;
   }
   
   return TRUE;

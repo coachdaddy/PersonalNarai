@@ -1523,7 +1523,8 @@ void assign_command_pointers ( void )
   COMMANDO(171, POSITION_RESTING, do_action, 0, 0, 0, 0);
   COMMANDO(172, POSITION_SITTING, do_use, 1, 1, 1, 1);
   COMMANDO(173, POSITION_DEAD, do_where, 1, 1, 1, 1);
-  COMMANDO(174, POSITION_DEAD, do_levels, 0, 0, 0, 0);
+//  COMMANDO(174, POSITION_DEAD, do_levels, 0, 0, 0, 0);
+  COMMANDO(174, POSITION_RESTING, do_levels, 0, 0, 0, 0);
   COMMANDO(175, POSITION_DEAD, do_reroll, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
   COMMANDO(176, POSITION_SITTING, do_action, 0, 0, 0, 0);
   COMMANDO(177, POSITION_SLEEPING, do_emote, 1, 1, 1, 1);

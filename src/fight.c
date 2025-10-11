@@ -1427,7 +1427,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
   int miss;
   int limit_nodice, limit_sizedice;
   // char buffer[MAX_STRING_LENGTH];
-
+  
   extern int thaco[4][IMO+4];
   extern byte backstab_mult[];
   extern struct str_app_type str_app[];
@@ -1576,19 +1576,38 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
       if(number(0, 49 + ((ch->specials.damnodice * ch->specials.damsizedice)<<4)) == 37){
 	/* Check for all remortaled by dsshin 	*/
 	/* Limit is changed by epochal		  	*/
-	/*
-	  limit_nodice = 21;
-	  limit_sizedice = 31;
-	  */
-	limit_nodice = 15;
-	limit_sizedice = 15;
-	if((ch->player.level >= (IMO -1)) && (ch->player.remortal >= 15))
+
+	limit_nodice = 13;
+	limit_sizedice = 21;
+
+	int rcnt = 0;
+    if(ch->player.remortal & REMORTAL_MAGIC_USER)
+      rcnt++;
+    if(ch->player.remortal & REMORTAL_CLERIC)
+      rcnt++;
+    if(ch->player.remortal & REMORTAL_THIEF)
+      rcnt++;
+    if(ch->player.remortal & REMORTAL_WARRIOR)
+      rcnt++;
+
+	if(rcnt == 2) 
 	  {
-	    /*limit_nodice = 40;
-	      limit_sizedice = 40;*/
+	    limit_nodice = 21;
+	    limit_sizedice = 41;
+	  } 
+
+	if(rcnt == 3) 
+	  {
+	    limit_nodice = 41;
+	    limit_sizedice = 61;
+	  } 
+
+	if(rcnt == 4) 
+	  {
 	    limit_nodice = 1000;
 	    limit_sizedice = 1000;
 	  } 
+
 	/*  to here */				
 	if(number(0,2) == 1){
 	  if(ch->specials.damnodice < limit_nodice){

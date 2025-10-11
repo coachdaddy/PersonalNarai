@@ -21,7 +21,6 @@
   titles[(int)GET_CLASS(ch) - 1][(int) GET_LEVEL(ch)].title_m :  \
   titles[(int)GET_CLASS(ch) - 1][(int) GET_LEVEL(ch)].title_f)
 
-
 extern struct char_data *character_list;
 extern struct obj_data *object_list;
 extern struct title_type titles[4][IMO+4];
@@ -46,8 +45,6 @@ void close_socket(struct descriptor_data *d);
 void obj_from_obj(struct obj_data *o);
 void obj_to_obj(struct obj_data *o, struct obj_data *to);
 void obj_to_room(struct obj_data *o, int room);
-
-
 
 /* When age < 15 return the value p0 */
 /* When age in 15..29 calculate the line between p1 & p2 */
@@ -403,6 +400,7 @@ void set_title(struct char_data *ch)
   
   strcpy(GET_TITLE(ch), READ_TITLE(ch));
 }
+
 void gain_exp(struct char_data *ch, int gain)
 {
   if (IS_NPC(ch) || ((GET_LEVEL(ch)<IMO) && (GET_LEVEL(ch) > 0))) {
@@ -568,12 +566,47 @@ void point_update( void )
     gain_condition(i,THIRST,-1);
     
     /* auto level up by Perhaps */
+
+	byte check_remortal = 0;	
+	check_remortal = GET_REMORTAL(i);
+	int rcnt = 0;
+    if(check_remortal & REMORTAL_MAGIC_USER) rcnt++;
+    if(check_remortal & REMORTAL_CLERIC) rcnt++;
+    if(check_remortal & REMORTAL_THIEF) rcnt++;
+    if(check_remortal & REMORTAL_WARRIOR) rcnt++;
+
+	int flag = 1;
     if((titles[GET_CLASS(i)-1][(int) GET_LEVEL(i)+1].exp+1000)<GET_EXP(i)&&!IS_NPC(i)
-       &&(GET_LEVEL(i)<40) && (GET_QUEST_SOLVED(i)>=level_quest[(int) GET_LEVEL(i)])){
+       && (GET_LEVEL(i)<40) && (GET_QUEST_SOLVED(i)>=level_quest[(int) GET_LEVEL(i)])
+	   && (flag == 1))
+	{
       GET_LEVEL(i)++;
       advance_level(i, 1);
       sprintf(buf,"\n\r %s LEVEL UP !! ---==Congratulations==--- \n",i->player.name);
       send_to_all(buf);
+	  flag = 0;
+    }
+
+     if((titles[GET_CLASS(i)-1][(int) GET_LEVEL(i)+1].exp+1000)<GET_EXP(i)&&!IS_NPC(i)
+       && (GET_LEVEL(i) >= 40 && GET_LEVEL(i)<IMO) 
+	   && (GET_QUEST_SOLVED(i)>=level_quest[(int) GET_LEVEL(i)]))
+	{
+		if( rcnt >= 2 && GET_LEVEL(i) < 50 && flag ==1) { 
+				GET_LEVEL(i)++; 
+				advance_level(i, 1); 
+				sprintf(buf,"\n\r %s MAKE LEVEL !! ---==Congratulations==--- \n",i->player.name); 
+				send_to_all(buf); 
+				flag = 0;
+		}
+
+		if( rcnt >= 3 && GET_LEVEL(i) < 60 && flag ==1) { 
+				GET_LEVEL(i)++; 
+				advance_level(i, 1); 
+				sprintf(buf,"\n\r %s Rank UP !! ---==Congratulations==--- \n",i->player.name); 
+				send_to_all(buf); 
+				flag = 0;
+		}
+
     }
     
     /* auto level down by Perhaps */

@@ -40,12 +40,6 @@ extern char *spells[];
 
 extern char *guild_names[];
 
-#ifndef BADDOMS
-#define BADDOMS 16
-extern int baddoms;
-extern char baddomain[BADDOMS][32];
-#endif
-
 /* extern functions */
 
 struct time_info_data age(struct char_data *ch);
@@ -791,8 +785,13 @@ void do_exits(struct char_data *ch, char *argument, int cmd)
         else if (IS_DARK(EXIT(ch, door)->to_room) && !OMNI(ch))
           sprintf(buf + strlen(buf), "%s - Too dark to tell\n\r", exits[door]);
         else
+		   sprintf(buf + strlen(buf), "%-5s - [%5d] %s\r\n",
+		       exits[door], world[EXIT(ch, door)->to_room].number,
+		       world[EXIT(ch, door)->to_room].name);
+		/*
           sprintf(buf + strlen(buf), "%s - %s\n\r", exits[door],
             world[EXIT(ch, door)->to_room].name);
+			*/
     }
   }
 
@@ -1622,12 +1621,12 @@ void do_where(struct char_data *ch, char *argument, int cmd)
              (d->character->in_room != NOWHERE))
          if(CAN_SEE(ch,d->character) && 
 	    world[d->character->in_room].zone == world[ch->in_room].zone) {
-	   sprintf(buf, "%-20s - %s\n\r",
+	   sprintf(buf, "%-20s - %s [%d] \n\r",
 		   d->character->player.name,
-		   world[d->character->in_room].name);
-		   /*
+		   world[d->character->in_room].name,
 		   world[d->character->in_room].number);
-		   */
+		   // world[d->character->in_room].name); 
+		   // world[d->character->in_room].number);
 	   if(d->character&&(!IS_AFFECTED(d->character,AFF_SHADOW_FIGURE)||
 			     d->character == ch)&&
 	      (!IS_AFFECTED(d->character,AFF_HIDE)||d->character == ch))
@@ -1713,6 +1712,8 @@ void do_where(struct char_data *ch, char *argument, int cmd)
   if (!*buf)
     send_to_char("Couldn't find any such thing.\n\r", ch);
 }
+
+
 void do_levels(struct char_data *ch, char *argument, int cmd)
 {
   int i;
@@ -1725,7 +1726,7 @@ void do_levels(struct char_data *ch, char *argument, int cmd)
   }
   *buf = '\0';
   for (i = 1; i < IMO; i++) {
-    sprintf(buf + strlen(buf), "%2d: %9d to %9d: ",i,
+    sprintf(buf + strlen(buf), "%2d: %9ld to %9ld: ",i,
       titles[GET_CLASS(ch) - 1][i].exp,
       titles[GET_CLASS(ch) - 1][i + 1].exp);
     switch(GET_SEX(ch)) {
@@ -1740,7 +1741,6 @@ void do_levels(struct char_data *ch, char *argument, int cmd)
   }
   send_to_char(buf, ch);
 }
-
 
 
 void do_consider(struct char_data *ch, char *argument, int cmd)
@@ -1829,6 +1829,12 @@ void do_police(struct char_data *ch, char *argument, int cmd)
     }
   }
 }
+
+#ifndef BADDOMS
+#define BADDOMS 16
+extern int baddoms;
+extern char baddomain[BADDOMS][32];
+#endif
 
 void do_wizlock(struct char_data *ch, char *argument, int cmd)
 {

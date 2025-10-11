@@ -1,6 +1,7 @@
 /* 
-	Quest Management module(source file)
+	Bounty Management module(source file)
 		made by atre@paradise.kaist.ac.kr at 1995/11/09
+		modiefied by epoche 2025/8/08
 */
 
 #include <stdio.h>
@@ -13,8 +14,8 @@
 #include "utils.h"
 #include "db.h"
 
-#define MaxQuest		10000
-#define QUEST_FILE		"mob.quest"
+#define MaxBadge		10000
+#define BOUNTY_FILE		"mob.bounty"
 
 int number(int from, int to);
 void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch);
@@ -31,18 +32,21 @@ struct {
   int virtual;
   int level;
   char *name;
-} QM[MaxQuest];
-int topQM;
+} BM[MaxBadge];
 
-int level_quest[IMO+4] = {
+int topBM;
+
+int level_bounty[45] = {
   0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,						/* 10 */
-  2, 3, 4, 5, 6, 7, 8, 9, 10, 11,	  				/* 20 */
-  13, 15, 17, 19, 21, 23, 25, 27, 29, 31,  			/* 30 */
-  33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 			/* 40 */
-  53, 55, 57, 59, 61, 64, 67, 70, 73, 76, 			/* 50 */
-  79, 82, 85, 88, 91, 95, 99, 103, 107, 111, 115,	/* 60 */
-  120, 130, 140
+  0, 0, 0, 0, 0,
+  0, 0, 0, 0, 0,	/* 10 */
+  2, 3, 4, 5, 6,
+  8, 10, 12, 14, 16,  /* 20 */
+  18, 20, 22, 24, 26,
+  29, 32, 35, 38, 41,  /* 30 */
+  44, 47, 50, 53, 56,
+  59, 62, 65, 70, 75, /* 40 */
+  101, 110, 120, 150
 };
 
 extern struct index_data *mob_index;
@@ -110,7 +114,7 @@ char *find_zone(int number)
   return NULL;
 }
 
-int get_quest(struct char_data *ch)
+int get_bounty(struct char_data *ch)
 {
   static int width[8] = {
     0,			/* 0 */		/* 10 level */
@@ -121,15 +125,15 @@ int get_quest(struct char_data *ch)
     263,		/* 50 */	/* 30 level */
     304,		/* 60 */	/* 32 level */
   };
-#define END_QUEST_MOBILE 538
+#define END_BOUNTY_MOB 538
   
   int low, high;
   int t;
   int num;
   
-  if(GET_LEVEL(ch) == 60){
+  if(GET_LEVEL(ch) == 40){
     low = 284;
-    high = END_QUEST_MOBILE;
+    high = END_BOUNTY_MOB;
   }
   else if(ch->quest.solved >= 60){
     low = 267;		/* 34 level mobile */
@@ -139,7 +143,7 @@ int get_quest(struct char_data *ch)
     t = ch->quest.solved / 10;
     low = width[t];
     high = width[t + 1];
-  }
+ }
   
   do {
     num = number(low, high);

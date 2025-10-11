@@ -124,6 +124,8 @@ int hit_limit(struct char_data *ch);
 
 #define GET_LEVEL(ch)   ((ch)->player.level)
 
+#define GET_REMORTAL(ch)   ((ch)->player.remortal)
+
 #define GET_CLASS(ch)   ((ch)->player.class)
 
 #define GET_AGE(ch)     (age(ch).year)
@@ -271,16 +273,9 @@ int hit_limit(struct char_data *ch);
 void print_increased_skilled(struct char_data *ch, int sk_no);
 
 /* max skilled = 100 */
-/* 
-#define INCREASE_SKILLED(ch,victim, sk_no) 								\
-			if(!number(0,99+(GET_SKILLED(ch,sk_no)<<1))){			\
-				if(GET_SKILLED(ch,sk_no)<100){						\
-				   GET_SKILLED(ch,sk_no)=GET_SKILLED(ch,sk_no)+1;	\
-				   print_increased_skilled(ch,sk_no);				\
-				}													\
-			}
-*/
+
 /* jhpark, skilled increase시 같은 길드멤버가 아닌지 확인 */
+
 #define INCREASE_SKILLED(ch, victim, sk_no)	\
 	if((IS_NPC(victim) || ch == victim) || (ch->player.guild != victim->player.guild)) {	\
 		if(!number(0,99+(GET_SKILLED(ch,sk_no)<<1))){    \
@@ -291,18 +286,6 @@ void print_increased_skilled(struct char_data *ch, int sk_no);
 		}	\
 	}
 
-
-/* more easily increased */	
-/*
-#define INCREASE_SKILLED2(ch, sk_no) 								\
-			if(!number(0,29+(GET_SKILLED(ch,sk_no)))){			\
-				if(GET_SKILLED(ch,sk_no)<100){						\
-				   GET_SKILLED(ch,sk_no)=GET_SKILLED(ch,sk_no)+1;	\
-				   print_increased_skilled(ch,sk_no);				\
-				}													\
-			}
-*/
-
 #define INCREASE_SKILLED2(ch, victim, sk_no)	\
         if((IS_NPC(victim) || ch == victim) || (ch->player.guild != victim->player.guild)) {    \
 		if(!number(0,29+(GET_SKILLED(ch,sk_no)))){       \
@@ -312,18 +295,6 @@ void print_increased_skilled(struct char_data *ch, int sk_no);
 			}	\
 		}	\
 	}
-
-		  
-/* more hard increased */
-/*
-#define INCREASE_SKILLED1(ch, sk_no) 								\
-			if(!number(0,250+(GET_SKILLED(ch,sk_no)<<2))){			\
-				if(GET_SKILLED(ch,sk_no)<100){						\
-				   GET_SKILLED(ch,sk_no)=GET_SKILLED(ch,sk_no)+1;	\
-				   print_increased_skilled(ch,sk_no);				\
-				}													\
-			}
-*/
 
 #define INCREASE_SKILLED1(ch, victim, sk_no) \
         if((IS_NPC(victim) || ch == victim) || (ch->player.guild != victim->player.guild)) {    \

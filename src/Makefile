@@ -11,8 +11,8 @@ INSTDIR = ../bin
 VPATH   = .:$(INCDIR):$(UTLSRC):
 
 # CC      = clang
-CC      = gcc
-#CC      = cc
+# CC      = gcc
+CC      = cc
 
 # MAKE    = gmake
 MAKE    = make
@@ -49,8 +49,9 @@ SRCS    = \
 	spec_procs2.c spec_procs3.c spell_parser.c spells1.c spells2.c \
 	spells3.c utility.c version.c weather.c daerimsa.c gbisland.c
 
-UTILS       = change_level change_pass chstashform unchstashform check_pass \
-              check_player list_player mob_create mob_edit zone_item \
+UTILS       = change_exp change_quest change_level change_pass change_class \
+				chstashform unchstashform check_pass \
+              init_remortal check_player list_player mob_create mob_edit zone_item \
               zone_list zone_print mob_balance check_god fix_noname
 
 # SCRIPTS     = everun backup RESTART RUNME shutmud

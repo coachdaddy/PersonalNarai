@@ -118,16 +118,7 @@ int guild(struct char_data *ch, int cmd, char *arg)
   if (!*arg) {
     send_to_char_han("You can practice any of these skills:\n\r",
       "당신은 다음과 같은 기술을 익힐 수 있습니다:\n\r", ch);
-	  /* Perhaps modified 
-    for(i=0; *spells[i] != '\n'; i++){
-      if(*spells[i] &&
-          (spell_info[i+1].min_level[cla] <= lev)) {
-        send_to_char(spells[i], ch);
-        send_to_char(how_good(ch->skills[i+1].learned, ch->skills[i+1].skilled), ch);
-        send_to_char("\n\r", ch);
-      }
-    }
-	*/
+
     for(i=0; *spells[i] != '\n'; i++){
       if(*spells[i] &&
           (spell_info[i+1].min_level[cla] <= lev)) {

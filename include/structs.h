@@ -11,7 +11,7 @@ typedef unsigned short byte;
 
 typedef long long LONGLONG;
 
-#define IMO		41
+#define IMO		61
 
 /*
 #define PULSE_MOBILE    41
@@ -24,7 +24,8 @@ typedef long long LONGLONG;
 #define WAIT_SEC       4
 #define WAIT_ROUND     4
 
-#define MAX_STRING_LENGTH   2000
+//#define MAX_STRING_LENGTH   2000
+#define MAX_STRING_LENGTH   4096
 #define MAX_OUTPUT_LENGTH    512
 #define MAX_INPUT_LENGTH     200
 #define MAX_MESSAGES          61
@@ -511,12 +512,12 @@ struct char_ability_data {
 
 /* Used in CHAR_FILE_U *DO*NOT*CHANGE* */
 struct char_point_data {
-  int mana;
-  int max_mana;     /* Not useable may be erased upon player file renewal */
-  int hit;
-  int max_hit;      /* Max hit for NPC                         */
-  int move;
-  int max_move;     /* Max move for NPC                        */
+  long int mana;
+  long int max_mana;     /* Not useable may be erased upon player file renewal */
+  long int hit;
+  long int max_hit;      /* Max hit for NPC                         */
+  long int move;
+  long int max_move;     /* Max move for NPC                        */
   int armor;        /* Internal -100..100, external -10..10 AC */
   LONGLONG gold;            /* Money carried                           */
   LONGLONG exp;             /* The experience of the player            */
