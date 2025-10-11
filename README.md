@@ -1,5 +1,7 @@
+[//]: # "$Id$"
+
 # PersonalNarai
-#  $Id$
+
 
 Narai Mud Personal edition
 
