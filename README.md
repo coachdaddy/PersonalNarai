@@ -1,4 +1,6 @@
 # PersonalNarai
+#  $Id$
+
 Narai Mud Personal edition
 
 Original source
