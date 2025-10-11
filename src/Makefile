@@ -1,6 +1,6 @@
 #
 # Makefile for Narai MUD
-#
+# $Id$
 # For GNU make only. For BSD make, use Makefile-bsdmake.
 
 PROG    = mud-narai
