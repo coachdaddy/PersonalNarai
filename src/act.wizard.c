@@ -67,6 +67,12 @@ void log(char *str);
 char history[20][MAX_STRING_LENGTH];
 int his_start=0,his_end=0; 
 
+#ifndef BADDOMS
+#define BADDOMS 16
+extern int baddoms;
+extern char baddomain[BADDOMS][32];
+#endif
+
 void do_emote(struct char_data *ch, char *argument, int cmd)
 {
   int i;

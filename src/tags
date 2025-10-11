@@ -1,0 +1,2090 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/mint/works/2019/src/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+ACT_AGGRESSIVE	../include/structs.h	/^#define ACT_AGGRESSIVE /;"	d
+ACT_CLERIC	../include/structs.h	/^#define ACT_CLERIC /;"	d
+ACT_DRAGON	../include/structs.h	/^#define ACT_DRAGON /;"	d
+ACT_FIGHTER	../include/structs.h	/^#define ACT_FIGHTER /;"	d
+ACT_FINISH_BLOW	../include/structs.h	/^#define ACT_FINISH_BLOW /;"	d
+ACT_GIANT	../include/structs.h	/^#define ACT_GIANT /;"	d
+ACT_GUARD	../include/structs.h	/^#define ACT_GUARD /;"	d
+ACT_HELPER	../include/structs.h	/^#define ACT_HELPER /;"	d
+ACT_ISNPC	../include/structs.h	/^#define ACT_ISNPC /;"	d
+ACT_MAGE	../include/structs.h	/^#define ACT_MAGE /;"	d
+ACT_NICE_THIEF	../include/structs.h	/^#define ACT_NICE_THIEF /;"	d
+ACT_ORC	../include/structs.h	/^#define ACT_ORC /;"	d
+ACT_PALADIN	../include/structs.h	/^#define ACT_PALADIN /;"	d
+ACT_RESCUER	../include/structs.h	/^#define ACT_RESCUER /;"	d
+ACT_SCAVENGER	../include/structs.h	/^#define ACT_SCAVENGER /;"	d
+ACT_SENTINEL	../include/structs.h	/^#define ACT_SENTINEL /;"	d
+ACT_SHOOTER	../include/structs.h	/^#define ACT_SHOOTER /;"	d
+ACT_SPEC	../include/structs.h	/^#define ACT_SPEC /;"	d
+ACT_SPELL_BLOCKER	../include/structs.h	/^#define ACT_SPELL_BLOCKER /;"	d
+ACT_SPITTER	../include/structs.h	/^#define ACT_SPITTER /;"	d
+ACT_STAY_ZONE	../include/structs.h	/^#define ACT_STAY_ZONE /;"	d
+ACT_SUPERGUARD	../include/structs.h	/^#define ACT_SUPERGUARD /;"	d
+ACT_THIEF	../include/structs.h	/^#define ACT_THIEF /;"	d
+ACT_WIMPY	../include/structs.h	/^#define ACT_WIMPY /;"	d
+AFF_ARREST	../include/structs.h	/^#define AFF_ARREST /;"	d
+AFF_BLIND	../include/structs.h	/^#define AFF_BLIND /;"	d
+AFF_CHARM	../include/structs.h	/^#define AFF_CHARM /;"	d
+AFF_CURSE	../include/structs.h	/^#define AFF_CURSE /;"	d
+AFF_DEAF	../include/structs.h	/^#define AFF_DEAF	/;"	d
+AFF_DEATH	../include/structs.h	/^#define AFF_DEATH	/;"	d
+AFF_DETECT_EVIL	../include/structs.h	/^#define AFF_DETECT_EVIL /;"	d
+AFF_DETECT_INVISIBLE	../include/structs.h	/^#define AFF_DETECT_INVISIBLE /;"	d
+AFF_DUMB	../include/structs.h	/^#define AFF_DUMB	/;"	d
+AFF_FOLLOW	../include/structs.h	/^#define AFF_FOLLOW /;"	d
+AFF_GROUP	../include/structs.h	/^#define AFF_GROUP /;"	d
+AFF_HASTE	../include/structs.h	/^#define AFF_HASTE	/;"	d
+AFF_HIDE	../include/structs.h	/^#define AFF_HIDE /;"	d
+AFF_HOLY_SHIELD	../include/structs.h	/^#define AFF_HOLY_SHIELD	/;"	d
+AFF_IMPROVED_HASTE	../include/structs.h	/^#define AFF_IMPROVED_HASTE /;"	d
+AFF_INFRAVISION	../include/structs.h	/^#define AFF_INFRAVISION /;"	d
+AFF_INVISIBLE	../include/structs.h	/^#define AFF_INVISIBLE /;"	d
+AFF_LOVE	../include/structs.h	/^#define AFF_LOVE /;"	d
+AFF_MIRROR_IMAGE	../include/structs.h	/^#define AFF_MIRROR_IMAGE /;"	d
+AFF_POISON	../include/structs.h	/^#define AFF_POISON /;"	d
+AFF_PROTECT_EVIL	../include/structs.h	/^#define AFF_PROTECT_EVIL /;"	d
+AFF_REFLECT_DAMAGE	../include/structs.h	/^#define AFF_REFLECT_DAMAGE	/;"	d
+AFF_RERAISE	../include/structs.h	/^#define AFF_RERAISE /;"	d
+AFF_SANCTUARY	../include/structs.h	/^#define AFF_SANCTUARY /;"	d
+AFF_SENSE_LIFE	../include/structs.h	/^#define AFF_SENSE_LIFE /;"	d
+AFF_SHADOW_FIGURE	../include/structs.h	/^#define AFF_SHADOW_FIGURE /;"	d
+AFF_SLEEP	../include/structs.h	/^#define AFF_SLEEP /;"	d
+AFF_SNEAK	../include/structs.h	/^#define AFF_SNEAK /;"	d
+AFF_SPELL_BLOCK	../include/structs.h	/^#define AFF_SPELL_BLOCK /;"	d
+ALL_WORLD_FILE	db.c	/^#define ALL_WORLD_FILE /;"	d	file:
+ALL_ZONE_FILE	db.c	/^#define ALL_ZONE_FILE /;"	d	file:
+ANA	../include/utils.h	/^#define ANA(/;"	d
+AND	interpreter.c	/^#define AND /;"	d	file:
+APPLY_AC	../include/structs.h	/^#define APPLY_AC /;"	d
+APPLY_AGE	../include/structs.h	/^#define APPLY_AGE /;"	d
+APPLY_ARMOR	../include/structs.h	/^#define APPLY_ARMOR /;"	d
+APPLY_CHAR_HEIGHT	../include/structs.h	/^#define APPLY_CHAR_HEIGHT /;"	d
+APPLY_CHAR_WEIGHT	../include/structs.h	/^#define APPLY_CHAR_WEIGHT /;"	d
+APPLY_CLASS	../include/structs.h	/^#define APPLY_CLASS /;"	d
+APPLY_CON	../include/structs.h	/^#define APPLY_CON /;"	d
+APPLY_DAMROLL	../include/structs.h	/^#define APPLY_DAMROLL /;"	d
+APPLY_DEX	../include/structs.h	/^#define APPLY_DEX /;"	d
+APPLY_EXP	../include/structs.h	/^#define APPLY_EXP /;"	d
+APPLY_GOLD	../include/structs.h	/^#define APPLY_GOLD /;"	d
+APPLY_HIT	../include/structs.h	/^#define APPLY_HIT /;"	d
+APPLY_HITROLL	../include/structs.h	/^#define APPLY_HITROLL /;"	d
+APPLY_INT	../include/structs.h	/^#define APPLY_INT /;"	d
+APPLY_INVISIBLE	../include/structs.h	/^#define APPLY_INVISIBLE /;"	d
+APPLY_LEVEL	../include/structs.h	/^#define APPLY_LEVEL /;"	d
+APPLY_MANA	../include/structs.h	/^#define APPLY_MANA /;"	d
+APPLY_MOVE	../include/structs.h	/^#define APPLY_MOVE /;"	d
+APPLY_NONE	../include/structs.h	/^#define APPLY_NONE /;"	d
+APPLY_REGENERATION	../include/structs.h	/^#define APPLY_REGENERATION /;"	d
+APPLY_SAVING_BREATH	../include/structs.h	/^#define APPLY_SAVING_BREATH /;"	d
+APPLY_SAVING_HIT_SKILL	../include/structs.h	/^#define APPLY_SAVING_HIT_SKILL /;"	d
+APPLY_SAVING_PARA	../include/structs.h	/^#define APPLY_SAVING_PARA /;"	d
+APPLY_SAVING_PETRI	../include/structs.h	/^#define APPLY_SAVING_PETRI /;"	d
+APPLY_SAVING_SPELL	../include/structs.h	/^#define APPLY_SAVING_SPELL /;"	d
+APPLY_SEX	../include/structs.h	/^#define APPLY_SEX /;"	d
+APPLY_STR	../include/structs.h	/^#define APPLY_STR /;"	d
+APPLY_WIS	../include/structs.h	/^#define APPLY_WIS /;"	d
+ASSASSIN	../include/guild_list.h	/^#define ASSASSIN /;"	d
+ASSASSIN_SKILL_EVIL_STRIKE	../include/guild_list.h	/^#define ASSASSIN_SKILL_EVIL_STRIKE /;"	d
+ASSASSIN_SKILL_IMPROVED_REFLECT_DAMAGE	../include/guild_list.h	/^#define ASSASSIN_SKILL_IMPROVED_REFLECT_DAMAGE /;"	d
+ASSASSIN_SKILL_SHADOW_FIGURE	../include/guild_list.h	/^#define ASSASSIN_SKILL_SHADOW_FIGURE	/;"	d
+ASSASSIN_SKILL_SOLACE	../include/guild_list.h	/^#define ASSASSIN_SKILL_SOLACE	/;"	d
+AWAKE	../include/utils.h	/^#define AWAKE(/;"	d
+A_DAY	comm.c	/^#define A_DAY	/;"	d	file:
+ArmorFactor	../include/mob_bal.h	/^double ArmorFactor = .0045;$/;"	v	typeref:typename:double
+BADDOMS	../include/comm2.h	/^#define BADDOMS /;"	d
+BADDOMS	act.informative.c	/^#define BADDOMS /;"	d	file:
+BADDOMS	act.wizard.c	/^#define BADDOMS /;"	d	file:
+BOARD_DIR	board.c	/^#define BOARD_DIR /;"	d	file:
+BaseExp	../include/mob_bal.h	/^int BaseExp     = 80;$/;"	v	typeref:typename:int
+BaseHit	../include/mob_bal.h	/^int BaseHit     = 14;$/;"	v	typeref:typename:int
+CAN_CARRY_N	../include/utils.h	/^#define CAN_CARRY_N(/;"	d
+CAN_CARRY_OBJ	../include/utils.h	/^#define CAN_CARRY_OBJ(/;"	d
+CAN_CARRY_W	../include/utils.h	/^#define CAN_CARRY_W(/;"	d
+CAN_GET_OBJ	../include/utils.h	/^#define CAN_GET_OBJ(/;"	d
+CAN_GO	../include/utils.h	/^#define CAN_GO(/;"	d
+CAN_SEE	../include/utils.h	/^#define CAN_SEE(/;"	d
+CAN_SEE_OBJ	../include/utils.h	/^#define CAN_SEE_OBJ(/;"	d
+CAN_WEAR	../include/utils.h	/^#define CAN_WEAR(/;"	d
+CAP	../include/utils.h	/^#define CAP(/;"	d
+CARPIE	spec_assign.c	/^#define CARPIE /;"	d	file:
+CARRY_WEIGHT_BASE	../include/utils.h	/^#define CARRY_WEIGHT_BASE	/;"	d
+CHAOTIC	../include/structs.h	/^#define CHAOTIC /;"	d
+CHATLOG	../include/db.h	/^#define CHATLOG /;"	d
+CLASS_ANIMAL	../include/structs.h	/^#define CLASS_ANIMAL /;"	d
+CLASS_CLERIC	../include/structs.h	/^#define CLASS_CLERIC /;"	d
+CLASS_DEMON	../include/structs.h	/^#define CLASS_DEMON	/;"	d
+CLASS_DRAGON	../include/structs.h	/^#define CLASS_DRAGON /;"	d
+CLASS_GIANT	../include/structs.h	/^#define CLASS_GIANT /;"	d
+CLASS_HUMANOID	../include/structs.h	/^#define CLASS_HUMANOID /;"	d
+CLASS_INSECT	../include/structs.h	/^#define CLASS_INSECT	/;"	d
+CLASS_MAGIC_USER	../include/structs.h	/^#define CLASS_MAGIC_USER /;"	d
+CLASS_OTHER	../include/structs.h	/^#define CLASS_OTHER /;"	d
+CLASS_THIEF	../include/structs.h	/^#define CLASS_THIEF /;"	d
+CLASS_UNDEAD	../include/structs.h	/^#define CLASS_UNDEAD /;"	d
+CLASS_WARRIOR	../include/structs.h	/^#define CLASS_WARRIOR /;"	d
+COMM2_H	../include/comm2.h	/^#define COMM2_H$/;"	d
+COMMANDO	interpreter.c	/^#define COMMANDO(/;"	d	file:
+CONT_CLOSEABLE	../include/structs.h	/^#define CONT_CLOSEABLE /;"	d
+CONT_CLOSED	../include/structs.h	/^#define CONT_CLOSED /;"	d
+CONT_LOCKED	../include/structs.h	/^#define CONT_LOCKED /;"	d
+CONT_PICKPROOF	../include/structs.h	/^#define CONT_PICKPROOF /;"	d
+CON_DELCNF	../include/structs.h	/^#define CON_DELCNF	/;"	d
+CON_DELCNF2	../include/structs.h	/^#define CON_DELCNF2	/;"	d
+CON_EXDSCR	../include/structs.h	/^#define CON_EXDSCR /;"	d
+CON_IMOTD	../include/structs.h	/^#define CON_IMOTD /;"	d
+CON_LDEAD	../include/structs.h	/^#define CON_LDEAD /;"	d
+CON_NME	../include/structs.h	/^#define CON_NME /;"	d
+CON_NMECNF	../include/structs.h	/^#define CON_NMECNF /;"	d
+CON_PLYNG	../include/structs.h	/^#define CON_PLYNG /;"	d
+CON_PWDCNF	../include/structs.h	/^#define CON_PWDCNF /;"	d
+CON_PWDGET	../include/structs.h	/^#define CON_PWDGET /;"	d
+CON_PWDNCNF	../include/structs.h	/^#define CON_PWDNCNF /;"	d
+CON_PWDNEW	../include/structs.h	/^#define CON_PWDNEW /;"	d
+CON_PWDNEW1	../include/structs.h	/^#define CON_PWDNEW1 /;"	d
+CON_PWDNRM	../include/structs.h	/^#define CON_PWDNRM /;"	d
+CON_QCLASS	../include/structs.h	/^#define CON_QCLASS /;"	d
+CON_QSEX	../include/structs.h	/^#define CON_QSEX /;"	d
+CON_QSTATE	../include/structs.h	/^#define CON_QSTATE	/;"	d
+CON_RMOTD	../include/structs.h	/^#define CON_RMOTD /;"	d
+CON_SET	../include/structs.h	/^#define CON_SET	/;"	d
+CON_SLCT	../include/structs.h	/^#define CON_SLCT /;"	d
+COST	guild_command.c	/^#define COST	/;"	d	file:
+CREATE	../include/utils.h	/^#define CREATE(/;"	d
+CREDITS_FILE	../include/db.h	/^#define CREDITS_FILE /;"	d
+DAERIMSA_PAPER	daerimsa.c	/^#define DAERIMSA_PAPER	/;"	d	file:
+DAERIMSA_PEN	daerimsa.c	/^#define DAERIMSA_PEN	/;"	d	file:
+DAERIMSA_SCROLL	daerimsa.c	/^#define DAERIMSA_SCROLL	/;"	d	file:
+DARK	../include/structs.h	/^#define DARK /;"	d
+DARK_ROOM_IN_DAERIMSA	daerimsa.c	/^#define DARK_ROOM_IN_DAERIMSA	/;"	d	file:
+DFLT_DIR	comm.c	/^#define DFLT_DIR /;"	d	file:
+DFLT_PORT	comm.c	/^#define DFLT_PORT /;"	d	file:
+DOWN	../include/structs.h	/^#define DOWN /;"	d
+DRUNK	../include/structs.h	/^#define DRUNK /;"	d
+DamrollFactor	../include/mob_bal.h	/^double DamrollFactor = .0015;$/;"	v	typeref:typename:double
+EAST	../include/structs.h	/^#define EAST /;"	d
+END_QUEST_MOBILE	quest.c	/^#define END_QUEST_MOBILE /;"	d	file:
+EVERYZONE	../include/structs.h	/^#define EVERYZONE /;"	d
+EXIT	../include/utils.h	/^#define EXIT(/;"	d
+EX_CLOSED	../include/structs.h	/^#define EX_CLOSED /;"	d
+EX_ISDOOR	../include/structs.h	/^#define EX_ISDOOR /;"	d
+EX_LOCKED	../include/structs.h	/^#define EX_LOCKED /;"	d
+EX_NOPHASE	../include/structs.h	/^#define EX_NOPHASE /;"	d
+EX_PICKPROOF	../include/structs.h	/^#define EX_PICKPROOF /;"	d
+EX_RSCLOSED	../include/structs.h	/^#define EX_RSCLOSED /;"	d
+EX_RSLOCKED	../include/structs.h	/^#define EX_RSLOCKED /;"	d
+FALSE	../include/utils.h	/^#define FALSE /;"	d
+FIND_CHAR_ROOM	../include/handler.h	/^#define FIND_CHAR_ROOM /;"	d
+FIND_CHAR_WORLD	../include/handler.h	/^#define FIND_CHAR_WORLD /;"	d
+FIND_OBJ_EQUIP	../include/handler.h	/^#define FIND_OBJ_EQUIP /;"	d
+FIND_OBJ_INV	../include/handler.h	/^#define FIND_OBJ_INV /;"	d
+FIND_OBJ_ROOM	../include/handler.h	/^#define FIND_OBJ_ROOM /;"	d
+FIND_OBJ_WORLD	../include/handler.h	/^#define FIND_OBJ_WORLD /;"	d
+FOURTH_JANGRO	daerimsa.c	/^#define FOURTH_JANGRO	/;"	d	file:
+FOURTH_JANGRO	db.c	/^#define FOURTH_JANGRO	/;"	d	file:
+FOURTH_JANGRO	spec_assign.c	/^#define FOURTH_JANGRO	/;"	d	file:
+FOURTH_JANGRO_STEP	daerimsa.c	/^#define FOURTH_JANGRO_STEP	/;"	d	file:
+FUDGE	spec_procs.c	/^#define FUDGE /;"	d	file:
+FUDGE	spec_procs2.c	/^#define FUDGE /;"	d	file:
+FULL	../include/structs.h	/^#define FULL /;"	d
+GBISLAND_BOTTLE	gbisland.c	/^#define GBISLAND_BOTTLE	/;"	d	file:
+GBISLAND_MAGIC_BARRIER_OUT	gbisland.c	/^#define GBISLAND_MAGIC_BARRIER_OUT	/;"	d	file:
+GBISLAND_MAGIC_PAPER	gbisland.c	/^#define GBISLAND_MAGIC_PAPER	/;"	d	file:
+GBISLAND_MAGIC_PAPER1	gbisland.c	/^#define GBISLAND_MAGIC_PAPER1	/;"	d	file:
+GBISLAND_MAGIC_PAPER2	gbisland.c	/^#define GBISLAND_MAGIC_PAPER2	/;"	d	file:
+GBISLAND_MIRROR_SAINT	gbisland.c	/^#define GBISLAND_MIRROR_SAINT	/;"	d	file:
+GBISLAND_SEASHORE	gbisland.c	/^#define GBISLAND_SEASHORE	/;"	d	file:
+GBISLAND_SEED_EVIL_POWER	gbisland.c	/^#define GBISLAND_SEED_EVIL_POWER	/;"	d	file:
+GET_AC	../include/utils.h	/^#define GET_AC(/;"	d
+GET_ADD	../include/utils.h	/^#define GET_ADD(/;"	d
+GET_AGE	../include/utils.h	/^#define GET_AGE(/;"	d
+GET_ALIGNMENT	../include/utils.h	/^#define GET_ALIGNMENT(/;"	d
+GET_CLASS	../include/utils.h	/^#define GET_CLASS(/;"	d
+GET_CON	../include/utils.h	/^#define GET_CON(/;"	d
+GET_COND	../include/utils.h	/^#define GET_COND(/;"	d
+GET_DAMROLL	../include/utils.h	/^#define GET_DAMROLL(/;"	d
+GET_DEX	../include/utils.h	/^#define GET_DEX(/;"	d
+GET_EXP	../include/utils.h	/^#define GET_EXP(/;"	d
+GET_GOLD	../include/utils.h	/^#define GET_GOLD(/;"	d
+GET_GUILD	../include/guild_list.h	/^#define GET_GUILD(/;"	d
+GET_GUILD_NAME	../include/guild_list.h	/^#define GET_GUILD_NAME(/;"	d
+GET_GUILD_SKILL	../include/guild_list.h	/^#define GET_GUILD_SKILL(/;"	d
+GET_GUILD_SKILLS	../include/guild_list.h	/^#define GET_GUILD_SKILLS(/;"	d
+GET_HEIGHT	../include/utils.h	/^#define GET_HEIGHT(/;"	d
+GET_HIT	../include/utils.h	/^#define GET_HIT(/;"	d
+GET_HITROLL	../include/utils.h	/^#define GET_HITROLL(/;"	d
+GET_INT	../include/utils.h	/^#define GET_INT(/;"	d
+GET_ITEM_TYPE	../include/utils.h	/^#define GET_ITEM_TYPE(/;"	d
+GET_LEARNED	../include/utils.h	/^#define GET_LEARNED(/;"	d
+GET_LEVEL	../include/utils.h	/^#define GET_LEVEL(/;"	d
+GET_MANA	../include/utils.h	/^#define GET_MANA(/;"	d
+GET_MAX_HIT	../include/utils.h	/^#define GET_MAX_HIT(/;"	d
+GET_MAX_MANA	../include/utils.h	/^#define GET_MAX_MANA(/;"	d
+GET_MAX_MOVE	../include/utils.h	/^#define GET_MAX_MOVE(/;"	d
+GET_MOVE	../include/utils.h	/^#define GET_MOVE(/;"	d
+GET_NAME	../include/utils.h	/^#define GET_NAME(/;"	d
+GET_OBJ_WEIGHT	../include/utils.h	/^#define GET_OBJ_WEIGHT(/;"	d
+GET_PK	../include/guild_list.h	/^#define GET_PK(/;"	d
+GET_PLAYER_MAX_HIT	../include/utils.h	/^#define GET_PLAYER_MAX_HIT(/;"	d
+GET_PLAYER_MAX_MANA	../include/utils.h	/^#define GET_PLAYER_MAX_MANA(/;"	d
+GET_PLAYER_MAX_MOVE	../include/utils.h	/^#define GET_PLAYER_MAX_MOVE(/;"	d
+GET_POS	../include/utils.h	/^#define GET_POS(/;"	d
+GET_QUEST_DATA	../include/utils.h	/^#define GET_QUEST_DATA(/;"	d
+GET_QUEST_SOLVED	../include/utils.h	/^#define GET_QUEST_SOLVED(/;"	d
+GET_QUEST_TYPE	../include/utils.h	/^#define GET_QUEST_TYPE(/;"	d
+GET_REGENERATION	../include/utils.h	/^#define GET_REGENERATION(/;"	d
+GET_REQ	../include/utils.h	/^#define GET_REQ(/;"	d
+GET_SEX	../include/utils.h	/^#define GET_SEX(/;"	d
+GET_SHOP_ROOM	../include/newshop.h	/^#define GET_SHOP_ROOM(/;"	d
+GET_SHOP_STORAGE	../include/newshop.h	/^#define GET_SHOP_STORAGE(/;"	d
+GET_SKILLED	../include/utils.h	/^#define GET_SKILLED(/;"	d
+GET_STR	../include/utils.h	/^#define GET_STR(/;"	d
+GET_TITLE	../include/utils.h	/^#define GET_TITLE(/;"	d
+GET_WEIGHT	../include/utils.h	/^#define GET_WEIGHT(/;"	d
+GET_WIS	../include/utils.h	/^#define GET_WIS(/;"	d
+GOLDEN_RIM	daerimsa.c	/^#define GOLDEN_RIM	/;"	d	file:
+GREETINGS	../include/db.h	/^#define GREETINGS /;"	d
+HELP_KWRD_FILE	../include/db.h	/^#define HELP_KWRD_FILE /;"	d
+HELP_PAGE_FILE	../include/db.h	/^#define HELP_PAGE_FILE /;"	d
+HMHR	../include/utils.h	/^#define HMHR(/;"	d
+HOLD	../include/structs.h	/^#define HOLD /;"	d
+HSHR	../include/utils.h	/^#define HSHR(/;"	d
+HSSH	../include/utils.h	/^#define HSSH(/;"	d
+HitrollFactor	../include/mob_bal.h	/^double HitrollFactor = .0007;$/;"	v	typeref:typename:double
+IF_STR	../include/utils.h	/^#define IF_STR(/;"	d
+IMO	../include/structs.h	/^#define IMO	/;"	d
+IMOTD_FILE	../include/db.h	/^#define IMOTD_FILE	/;"	d
+INCREASE_SKILLED	../include/utils.h	/^#define INCREASE_SKILLED(/;"	d
+INCREASE_SKILLED1	../include/utils.h	/^#define INCREASE_SKILLED1(/;"	d
+INCREASE_SKILLED2	../include/utils.h	/^#define INCREASE_SKILLED2(/;"	d
+INDOORS	../include/structs.h	/^#define INDOORS /;"	d
+ISASPELL	spell_parser.c	/^#define ISASPELL /;"	d	file:
+ISDIGIT	../include/utils.h	/^#define ISDIGIT(/;"	d
+ISLETTER	interpreter.c	/^#define ISLETTER(/;"	d	file:
+ISNEWL	../include/utils.h	/^#define ISNEWL(/;"	d
+IS_AFFECTED	../include/utils.h	/^#define IS_AFFECTED(/;"	d
+IS_CARRYING_N	../include/utils.h	/^#define IS_CARRYING_N(/;"	d
+IS_CARRYING_W	../include/utils.h	/^#define IS_CARRYING_W(/;"	d
+IS_DARK	../include/utils.h	/^#define IS_DARK(/;"	d
+IS_EVIL	../include/utils.h	/^#define IS_EVIL(/;"	d
+IS_GOOD	../include/utils.h	/^#define IS_GOOD(/;"	d
+IS_LIGHT	../include/utils.h	/^#define IS_LIGHT(/;"	d
+IS_MOB	../include/utils.h	/^#define IS_MOB(/;"	d
+IS_NEUTRAL	../include/utils.h	/^#define IS_NEUTRAL(/;"	d
+IS_NPC	../include/utils.h	/^#define IS_NPC(/;"	d
+IS_OBJ_STAT	../include/utils.h	/^#define IS_OBJ_STAT(/;"	d
+IS_SET	../include/utils.h	/^#define IS_SET(/;"	d
+ITEM_ANTI_ASSASSIN	../include/structs.h	/^#define ITEM_ANTI_ASSASSIN	/;"	d
+ITEM_ANTI_CLERIC	../include/structs.h	/^#define ITEM_ANTI_CLERIC /;"	d
+ITEM_ANTI_EVIL	../include/structs.h	/^#define ITEM_ANTI_EVIL /;"	d
+ITEM_ANTI_GOOD	../include/structs.h	/^#define ITEM_ANTI_GOOD /;"	d
+ITEM_ANTI_MAGE	../include/structs.h	/^#define ITEM_ANTI_MAGE /;"	d
+ITEM_ANTI_NEUTRAL	../include/structs.h	/^#define ITEM_ANTI_NEUTRAL /;"	d
+ITEM_ANTI_OUTLAW	../include/structs.h	/^#define ITEM_ANTI_OUTLAW	/;"	d
+ITEM_ANTI_POLICE	../include/structs.h	/^#define ITEM_ANTI_POLICE	/;"	d
+ITEM_ANTI_THIEF	../include/structs.h	/^#define ITEM_ANTI_THIEF /;"	d
+ITEM_ANTI_WARRIOR	../include/structs.h	/^#define ITEM_ANTI_WARRIOR /;"	d
+ITEM_ARMOR	../include/structs.h	/^#define ITEM_ARMOR /;"	d
+ITEM_BLESS	../include/structs.h	/^#define ITEM_BLESS /;"	d
+ITEM_BOAT	../include/structs.h	/^#define ITEM_BOAT /;"	d
+ITEM_CIGA	../include/structs.h	/^#define ITEM_CIGA	/;"	d
+ITEM_CONTAINER	../include/structs.h	/^#define ITEM_CONTAINER /;"	d
+ITEM_DARK	../include/structs.h	/^#define ITEM_DARK /;"	d
+ITEM_DRINKCON	../include/structs.h	/^#define ITEM_DRINKCON /;"	d
+ITEM_DRUG	../include/structs.h	/^#define ITEM_DRUG /;"	d
+ITEM_EVIL	../include/structs.h	/^#define ITEM_EVIL /;"	d
+ITEM_FIREWEAPON	../include/structs.h	/^#define ITEM_FIREWEAPON /;"	d
+ITEM_FOOD	../include/structs.h	/^#define ITEM_FOOD /;"	d
+ITEM_GLOW	../include/structs.h	/^#define ITEM_GLOW /;"	d
+ITEM_HOLD	../include/structs.h	/^#define ITEM_HOLD /;"	d
+ITEM_HUM	../include/structs.h	/^#define ITEM_HUM /;"	d
+ITEM_INVISIBLE	../include/structs.h	/^#define ITEM_INVISIBLE /;"	d
+ITEM_KEY	../include/structs.h	/^#define ITEM_KEY /;"	d
+ITEM_LIGHT	../include/structs.h	/^#define ITEM_LIGHT /;"	d
+ITEM_LOCK	../include/structs.h	/^#define ITEM_LOCK /;"	d
+ITEM_MAGIC	../include/structs.h	/^#define ITEM_MAGIC /;"	d
+ITEM_MISSILE	../include/structs.h	/^#define ITEM_MISSILE /;"	d
+ITEM_MONEY	../include/structs.h	/^#define ITEM_MONEY /;"	d
+ITEM_NOCOPY	../include/structs.h	/^#define ITEM_NOCOPY	/;"	d
+ITEM_NODROP	../include/structs.h	/^#define ITEM_NODROP /;"	d
+ITEM_NOLOAD	../include/structs.h	/^#define ITEM_NOLOAD /;"	d
+ITEM_NORENT	../include/structs.h	/^#define ITEM_NORENT	/;"	d
+ITEM_NOTE	../include/structs.h	/^#define ITEM_NOTE /;"	d
+ITEM_OTHER	../include/structs.h	/^#define ITEM_OTHER /;"	d
+ITEM_PEN	../include/structs.h	/^#define ITEM_PEN /;"	d
+ITEM_POTION	../include/structs.h	/^#define ITEM_POTION /;"	d
+ITEM_SCROLL	../include/structs.h	/^#define ITEM_SCROLL /;"	d
+ITEM_STAFF	../include/structs.h	/^#define ITEM_STAFF /;"	d
+ITEM_TAKE	../include/structs.h	/^#define ITEM_TAKE /;"	d
+ITEM_THROW	../include/structs.h	/^#define ITEM_THROW /;"	d
+ITEM_TRAP	../include/structs.h	/^#define ITEM_TRAP /;"	d
+ITEM_TRASH	../include/structs.h	/^#define ITEM_TRASH /;"	d
+ITEM_TREASURE	../include/structs.h	/^#define ITEM_TREASURE /;"	d
+ITEM_WAND	../include/structs.h	/^#define ITEM_WAND /;"	d
+ITEM_WEAPON	../include/structs.h	/^#define ITEM_WEAPON /;"	d
+ITEM_WEAR_ABOUT	../include/structs.h	/^#define ITEM_WEAR_ABOUT /;"	d
+ITEM_WEAR_ABOUTLEGS	../include/structs.h	/^#define ITEM_WEAR_ABOUTLEGS /;"	d
+ITEM_WEAR_ARMS	../include/structs.h	/^#define ITEM_WEAR_ARMS /;"	d
+ITEM_WEAR_BACK	../include/structs.h	/^#define ITEM_WEAR_BACK	/;"	d
+ITEM_WEAR_BODY	../include/structs.h	/^#define ITEM_WEAR_BODY /;"	d
+ITEM_WEAR_FEET	../include/structs.h	/^#define ITEM_WEAR_FEET /;"	d
+ITEM_WEAR_FINGER	../include/structs.h	/^#define ITEM_WEAR_FINGER /;"	d
+ITEM_WEAR_HANDS	../include/structs.h	/^#define ITEM_WEAR_HANDS /;"	d
+ITEM_WEAR_HEAD	../include/structs.h	/^#define ITEM_WEAR_HEAD /;"	d
+ITEM_WEAR_KNEE	../include/structs.h	/^#define ITEM_WEAR_KNEE /;"	d
+ITEM_WEAR_LEGS	../include/structs.h	/^#define ITEM_WEAR_LEGS /;"	d
+ITEM_WEAR_NECK	../include/structs.h	/^#define ITEM_WEAR_NECK /;"	d
+ITEM_WEAR_SHIELD	../include/structs.h	/^#define ITEM_WEAR_SHIELD /;"	d
+ITEM_WEAR_WAISTE	../include/structs.h	/^#define ITEM_WEAR_WAISTE /;"	d
+ITEM_WEAR_WRIST	../include/structs.h	/^#define ITEM_WEAR_WRIST /;"	d
+ITEM_WIELD	../include/structs.h	/^#define ITEM_WIELD /;"	d
+ITEM_WORN	../include/structs.h	/^#define ITEM_WORN /;"	d
+JAIL	../include/structs.h	/^#define JAIL	/;"	d
+JALE_ROOM	guild_skills.c	/^#define JALE_ROOM	/;"	d	file:
+KJHRENT	db.c	/^#define KJHRENT /;"	d	file:
+KNIFE_RENT	db.c	/^#define KNIFE_RENT /;"	d	file:
+LANESSA	spec_assign.c	/^#define LANESSA /;"	d	file:
+LAWFUL	../include/structs.h	/^#define LAWFUL /;"	d
+LIMIT_LOAD	guild_command.c	/^#define LIMIT_LOAD /;"	d	file:
+LIQ_ALE	../include/structs.h	/^#define LIQ_ALE /;"	d
+LIQ_BEER	../include/structs.h	/^#define LIQ_BEER /;"	d
+LIQ_BLOOD	../include/structs.h	/^#define LIQ_BLOOD /;"	d
+LIQ_COFFE	../include/structs.h	/^#define LIQ_COFFE /;"	d
+LIQ_CONDITIOIN	../include/structs.h	/^#define LIQ_CONDITIOIN /;"	d
+LIQ_DARKALE	../include/structs.h	/^#define LIQ_DARKALE /;"	d
+LIQ_FIREBRT	../include/structs.h	/^#define LIQ_FIREBRT /;"	d
+LIQ_GOLDEN_NECTAR	../include/structs.h	/^#define LIQ_GOLDEN_NECTAR /;"	d
+LIQ_LEMONADE	../include/structs.h	/^#define LIQ_LEMONADE /;"	d
+LIQ_LOCALSPC	../include/structs.h	/^#define LIQ_LOCALSPC /;"	d
+LIQ_MAKOLI	../include/structs.h	/^#define LIQ_MAKOLI	/;"	d
+LIQ_MILK	../include/structs.h	/^#define LIQ_MILK /;"	d
+LIQ_NECTAR	../include/structs.h	/^#define LIQ_NECTAR /;"	d
+LIQ_SALTWATER	../include/structs.h	/^#define LIQ_SALTWATER /;"	d
+LIQ_SLIME	../include/structs.h	/^#define LIQ_SLIME /;"	d
+LIQ_SUNDEW	../include/structs.h	/^#define LIQ_SUNDEW /;"	d
+LIQ_TEA	../include/structs.h	/^#define LIQ_TEA /;"	d
+LIQ_WATER	../include/structs.h	/^#define LIQ_WATER /;"	d
+LIQ_WHISKY	../include/structs.h	/^#define LIQ_WHISKY /;"	d
+LIQ_WINE	../include/structs.h	/^#define LIQ_WINE /;"	d
+LONGLONG	../include/structs.h	/^typedef long long LONGLONG;$/;"	t	typeref:typename:long long
+LOWER	../include/utils.h	/^#define LOWER(/;"	d
+MAX	utility.c	/^int MAX(int a, int b)$/;"	f	typeref:typename:int
+MAXFDALLOWED	comm.c	/^#define MAXFDALLOWED /;"	d	file:
+MAXOCLOCK	comm.c	/^#define MAXOCLOCK /;"	d	file:
+MAXSPELL	../include/spells.h	/^#define MAXSPELL /;"	d
+MAX_AFFECT	../include/structs.h	/^#define MAX_AFFECT	/;"	d
+MAX_CMD_LIST	interpreter.c	/^#define MAX_CMD_LIST /;"	d	file:
+MAX_GUILD_LIST	../include/guild_list.h	/^#define MAX_GUILD_LIST	/;"	d
+MAX_GUILD_SKILLS	../include/structs.h	/^#define MAX_GUILD_SKILLS /;"	d
+MAX_HOSTNAME	comm.c	/^#define MAX_HOSTNAME /;"	d	file:
+MAX_INPUT_LENGTH	../include/structs.h	/^#define MAX_INPUT_LENGTH /;"	d
+MAX_ITEMS	../include/structs.h	/^#define MAX_ITEMS /;"	d
+MAX_LAST_INPUT_COUNT	../include/structs.h	/^#define MAX_LAST_INPUT_COUNT /;"	d
+MAX_MAILS	mail.c	/^#define MAX_MAILS /;"	d	file:
+MAX_MESSAGES	../include/structs.h	/^#define MAX_MESSAGES /;"	d
+MAX_MSGS	board.c	/^#define MAX_MSGS /;"	d	file:
+MAX_MSGS	modify.c	/^#define MAX_MSGS /;"	d	file:
+MAX_NAME_LENGTH	comm.c	/^#define MAX_NAME_LENGTH /;"	d	file:
+MAX_NOTE_LENGTH	act.comm.c	/^#define MAX_NOTE_LENGTH /;"	d	file:
+MAX_NOTE_LENGTH	board.c	/^#define MAX_NOTE_LENGTH /;"	d	file:
+MAX_NPC_CORPSE_TIME	fight.c	/^#define MAX_NPC_CORPSE_TIME /;"	d	file:
+MAX_OBJ_AFFECT	../include/structs.h	/^#define MAX_OBJ_AFFECT /;"	d
+MAX_OUTPUT_LENGTH	../include/structs.h	/^#define MAX_OUTPUT_LENGTH /;"	d
+MAX_PC_CORPSE_TIME	fight.c	/^#define MAX_PC_CORPSE_TIME /;"	d	file:
+MAX_PROD	shop.c	/^#define MAX_PROD /;"	d	file:
+MAX_RENT_ITEM	db.c	/^#define MAX_RENT_ITEM /;"	d	file:
+MAX_SKILLS	../include/structs.h	/^#define MAX_SKILLS /;"	d
+MAX_SPL_LIST	../include/spells.h	/^#define MAX_SPL_LIST /;"	d
+MAX_STRING_LENGTH	../include/structs.h	/^#define MAX_STRING_LENGTH /;"	d
+MAX_TRADE	shop.c	/^#define MAX_TRADE /;"	d	file:
+MAX_TYPES	../include/spells.h	/^#define MAX_TYPES /;"	d
+MAX_WEAR	../include/structs.h	/^#define MAX_WEAR /;"	d
+MBOARD_DIR	mail.c	/^#define MBOARD_DIR /;"	d	file:
+MENU	../include/db.h	/^#define MENU /;"	d
+MESS_ATTACKER	../include/structs.h	/^#define MESS_ATTACKER /;"	d
+MESS_FILE	../include/db.h	/^#define MESS_FILE /;"	d
+MESS_ROOM	../include/structs.h	/^#define MESS_ROOM /;"	d
+MESS_VICTIM	../include/structs.h	/^#define MESS_VICTIM /;"	d
+MID_HELPER	../include/utils.h	/^#define MID_HELPER	/;"	d
+MIN	utility.c	/^int MIN(int a, int b)$/;"	f	typeref:typename:int
+MINUTES	comm.c	/^#define MINUTES(/;"	d	file:
+MOB_FILE	../include/db.h	/^#define MOB_FILE /;"	d
+MODE_AC_MAX	../include/mob_magic.h	/^#define	MODE_AC_MAX	/;"	d
+MODE_AC_MIN	../include/mob_magic.h	/^#define	MODE_AC_MIN	/;"	d
+MODE_DR_MAX	../include/mob_magic.h	/^#define MODE_DR_MAX	/;"	d
+MODE_DR_MIN	../include/mob_magic.h	/^#define MODE_DR_MIN	/;"	d
+MODE_HIGH_LEVEL	../include/mob_magic.h	/^#define MODE_HIGH_LEVEL	/;"	d
+MODE_HIT_MAX	../include/mob_magic.h	/^#define	MODE_HIT_MAX	/;"	d
+MODE_HIT_MIN	../include/mob_magic.h	/^#define	MODE_HIT_MIN	/;"	d
+MODE_HR_MAX	../include/mob_magic.h	/^#define MODE_HR_MAX	/;"	d
+MODE_HR_MIN	../include/mob_magic.h	/^#define MODE_HR_MIN	/;"	d
+MODE_LEVEL_MAX	../include/mob_magic.h	/^#define MODE_LEVEL_MAX	/;"	d
+MODE_LEVEL_MIN	../include/mob_magic.h	/^#define MODE_LEVEL_MIN	/;"	d
+MODE_LOW_LEVEL	../include/mob_magic.h	/^#define MODE_LOW_LEVEL	/;"	d
+MODE_MANA_MAX	../include/mob_magic.h	/^#define	MODE_MANA_MAX	/;"	d
+MODE_MANA_MIN	../include/mob_magic.h	/^#define	MODE_MANA_MIN	/;"	d
+MODE_MID_LEVEL	../include/mob_magic.h	/^#define MODE_MID_LEVEL	/;"	d
+MODE_MOVE_MAX	../include/mob_magic.h	/^#define	MODE_MOVE_MAX	/;"	d
+MODE_MOVE_MIN	../include/mob_magic.h	/^#define	MODE_MOVE_MIN	/;"	d
+MODE_RANDOM	../include/mob_magic.h	/^#define MODE_RANDOM	/;"	d
+MOTD_FILE	../include/db.h	/^#define MOTD_FILE /;"	d
+MaxArmor	../include/mob_bal.h	/^#define MaxArmor /;"	d
+MaxQuest	quest.c	/^#define MaxQuest	/;"	d	file:
+NEUTRAL	../include/structs.h	/^#define NEUTRAL /;"	d
+NEWS_FILE	../include/db.h	/^#define NEWS_FILE /;"	d
+NEW_ZONE_SYSTEM	db.c	/^#define NEW_ZONE_SYSTEM$/;"	d	file:
+NORELOCATE	../include/structs.h	/^#define NORELOCATE /;"	d
+NORTH	../include/structs.h	/^#define NORTH /;"	d
+NOSUMMON	../include/structs.h	/^#define NOSUMMON /;"	d
+NOT	interpreter.c	/^#define NOT /;"	d	file:
+NOWHERE	../include/structs.h	/^#define NOWHERE /;"	d
+NO_MAGIC	../include/structs.h	/^#define NO_MAGIC /;"	d
+NO_MOB	../include/structs.h	/^#define NO_MOB /;"	d
+NUL	../include/utils.h	/^#define NUL /;"	d
+NUMBER_OF_MAX_MOB	mob_magic.c	/^#define NUMBER_OF_MAX_MOB	/;"	d	file:
+NUMBER_OF_MAX_VICTIM	mob_magic.c	/^#define NUMBER_OF_MAX_VICTIM	/;"	d	file:
+OBJN	../include/utils.h	/^#define OBJN(/;"	d
+OBJS	../include/utils.h	/^#define OBJS(/;"	d
+OBJ_FILE	../include/db.h	/^#define OBJ_FILE /;"	d
+OBJ_NOTIMER	../include/structs.h	/^#define OBJ_NOTIMER /;"	d
+OFF_LIMITS	../include/structs.h	/^#define OFF_LIMITS /;"	d
+OMNI	../include/utils.h	/^#define OMNI(/;"	d
+OPT_USEC	comm.c	/^#define OPT_USEC /;"	d	file:
+OR	interpreter.c	/^#define OR /;"	d	file:
+OUTLAW	../include/guild_list.h	/^#define OUTLAW /;"	d
+OUTLAW_SKILL_ANGRYYELL	../include/guild_list.h	/^#define OUTLAW_SKILL_ANGRYYELL	/;"	d
+OUTLAW_SKILL_ASSAULT	../include/guild_list.h	/^#define OUTLAW_SKILL_ASSAULT /;"	d
+OUTLAW_SKILL_CHARGE	../include/guild_list.h	/^#define OUTLAW_SKILL_CHARGE	/;"	d
+OUTLAW_SKILL_INJECT	../include/guild_list.h	/^#define OUTLAW_SKILL_INJECT	/;"	d
+OUTLAW_SKILL_SMOKE	../include/guild_list.h	/^#define OUTLAW_SKILL_SMOKE	/;"	d
+OUTSIDE	../include/utils.h	/^#define OUTSIDE(/;"	d
+PERS	../include/utils.h	/^#define PERS(/;"	d
+PLAN_FILE	../include/db.h	/^#define PLAN_FILE /;"	d
+PLAYER_FILE	../include/db.h	/^#define PLAYER_FILE /;"	d
+PLR_AGGR	../include/structs.h	/^#define PLR_AGGR /;"	d
+PLR_BANISHED	../include/structs.h	/^#define PLR_BANISHED /;"	d
+PLR_BRIEF	../include/structs.h	/^#define PLR_BRIEF /;"	d
+PLR_COMPACT	../include/structs.h	/^#define PLR_COMPACT /;"	d
+PLR_CRIMINAL	../include/structs.h	/^#define PLR_CRIMINAL /;"	d
+PLR_DONTSET	../include/structs.h	/^#define PLR_DONTSET /;"	d
+PLR_DUMB_BY_WIZ	../include/structs.h	/^#define PLR_DUMB_BY_WIZ /;"	d
+PLR_EARMUFFS	../include/structs.h	/^#define PLR_EARMUFFS /;"	d
+PLR_KOREAN	../include/structs.h	/^#define PLR_KOREAN /;"	d
+PLR_NOCHAT	../include/structs.h	/^#define PLR_NOCHAT /;"	d
+PLR_NOCHAT_BY_WIZ	../include/structs.h	/^#define PLR_NOCHAT_BY_WIZ /;"	d
+PLR_NOSHOUT	../include/structs.h	/^#define PLR_NOSHOUT /;"	d
+PLR_NOTELL	../include/structs.h	/^#define PLR_NOTELL /;"	d
+PLR_SOLO	../include/structs.h	/^#define PLR_SOLO	/;"	d
+PLR_WIMPY	../include/structs.h	/^#define PLR_WIMPY /;"	d
+PLR_WIZINVIS	../include/structs.h	/^#define PLR_WIZINVIS /;"	d
+PLR_XYZZY	../include/structs.h	/^#define PLR_XYZZY /;"	d
+POLICE	../include/guild_list.h	/^#define POLICE	/;"	d
+POLICE_SKILL_ARREST	../include/guild_list.h	/^#define POLICE_SKILL_ARREST	/;"	d
+POLICE_SKILL_POWER_BASH	../include/guild_list.h	/^#define POLICE_SKILL_POWER_BASH	/;"	d
+POLICE_SKILL_SIMULTANEOUS	../include/guild_list.h	/^#define POLICE_SKILL_SIMULTANEOUS	/;"	d
+POLICE_SKILL_WHISTLE	../include/guild_list.h	/^#define POLICE_SKILL_WHISTLE	/;"	d
+POSITION_DEAD	../include/structs.h	/^#define POSITION_DEAD /;"	d
+POSITION_FIGHTING	../include/structs.h	/^#define POSITION_FIGHTING /;"	d
+POSITION_FLYING	../include/structs.h	/^#define POSITION_FLYING /;"	d
+POSITION_INCAP	../include/structs.h	/^#define POSITION_INCAP /;"	d
+POSITION_LEVITATED	../include/structs.h	/^#define POSITION_LEVITATED /;"	d
+POSITION_MORTALLYW	../include/structs.h	/^#define POSITION_MORTALLYW /;"	d
+POSITION_RESTING	../include/structs.h	/^#define POSITION_RESTING /;"	d
+POSITION_SITTING	../include/structs.h	/^#define POSITION_SITTING /;"	d
+POSITION_SLEEPING	../include/structs.h	/^#define POSITION_SLEEPING /;"	d
+POSITION_STANDING	../include/structs.h	/^#define POSITION_STANDING /;"	d
+POSITION_STUNNED	../include/structs.h	/^#define POSITION_STUNNED /;"	d
+POSITION_SWIMMING	../include/structs.h	/^#define POSITION_SWIMMING /;"	d
+PRIVATE	../include/structs.h	/^#define PRIVATE /;"	d
+PULSE_MOBILE	../include/structs.h	/^#define PULSE_MOBILE /;"	d
+PULSE_MOBILE2	../include/structs.h	/^#define PULSE_MOBILE2 /;"	d
+PULSE_VIOLENCE	../include/structs.h	/^#define PULSE_VIOLENCE /;"	d
+PULSE_ZONE	../include/structs.h	/^#define PULSE_ZONE /;"	d
+QM	quest.c	/^} QM[MaxQuest];$/;"	v	typeref:struct:__anon1684ae680108[]
+QUEST_FILE	quest.c	/^#define QUEST_FILE	/;"	d	file:
+Quest_bombard	spec_procs2.c	/^int Quest_bombard(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+READ_TITLE	limit.c	/^#define READ_TITLE(/;"	d	file:
+REAL	../include/db.h	/^#define REAL /;"	d
+REAL	magic2.c	/^#define REAL /;"	d	file:
+REBOOT_TIME	../include/utils.h	/^#define REBOOT_TIME	/;"	d
+REBOOT_WHEN	../include/utils.h	/^#define REBOOT_WHEN	/;"	d
+RECREATE	../include/utils.h	/^#define RECREATE(/;"	d
+REMORTAL_CLERIC	../include/structs.h	/^#define REMORTAL_CLERIC	/;"	d
+REMORTAL_MAGIC_USER	../include/structs.h	/^#define REMORTAL_MAGIC_USER	/;"	d
+REMORTAL_THIEF	../include/structs.h	/^#define REMORTAL_THIEF	/;"	d
+REMORTAL_WARRIOR	../include/structs.h	/^#define REMORTAL_WARRIOR	/;"	d
+REMOVE_BIT	../include/utils.h	/^#define REMOVE_BIT(/;"	d
+RENT	../include/structs.h	/^#define RENT /;"	d
+RESCUER_VICTIM	spec_procs2.c	/^#define RESCUER_VICTIM	/;"	d	file:
+RESTROOM	../include/structs.h	/^#define RESTROOM	/;"	d
+RETURN_TO_QUIT	../include/utils.h	/^#define RETURN_TO_QUIT$/;"	d
+ROOM_GUILD_ASSASSIN	../include/guild_list.h	/^#define ROOM_GUILD_ASSASSIN	/;"	d
+ROOM_GUILD_ASSASSIN_LOCKER	../include/guild_list.h	/^#define ROOM_GUILD_ASSASSIN_LOCKER	/;"	d
+ROOM_GUILD_ASSASSIN_PRACTICE	../include/guild_list.h	/^#define ROOM_GUILD_ASSASSIN_PRACTICE /;"	d
+ROOM_GUILD_OUTLAW	../include/guild_list.h	/^#define ROOM_GUILD_OUTLAW	/;"	d
+ROOM_GUILD_OUTLAW_LOCKER	../include/guild_list.h	/^#define ROOM_GUILD_OUTLAW_LOCKER	/;"	d
+ROOM_GUILD_OUTLAW_PRACTICE	../include/guild_list.h	/^#define ROOM_GUILD_OUTLAW_PRACTICE	/;"	d
+ROOM_GUILD_POLICE	../include/guild_list.h	/^#define ROOM_GUILD_POLICE	/;"	d
+ROOM_GUILD_POLICE_LOCKER	../include/guild_list.h	/^#define ROOM_GUILD_POLICE_LOCKER	/;"	d
+ROOM_GUILD_POLICE_PRACTICE	../include/guild_list.h	/^#define ROOM_GUILD_POLICE_PRACTICE /;"	d
+SAINT_MIRROR	spec_assign.c	/^#define SAINT_MIRROR /;"	d	file:
+SAINT_WATER	daerimsa.c	/^#define SAINT_WATER	/;"	d	file:
+SANA	../include/utils.h	/^#define SANA(/;"	d
+SAVING_BAD	spell_parser.c	/^#define SAVING_BAD /;"	d	file:
+SAVING_BREATH	../include/spells.h	/^#define SAVING_BREATH /;"	d
+SAVING_GOOD	spell_parser.c	/^#define SAVING_GOOD /;"	d	file:
+SAVING_HIT_SKILL	../include/spells.h	/^#define SAVING_HIT_SKILL /;"	d
+SAVING_MEDIUM	spell_parser.c	/^#define SAVING_MEDIUM /;"	d	file:
+SAVING_PARA	../include/spells.h	/^#define SAVING_PARA /;"	d
+SAVING_PETRI	../include/spells.h	/^#define SAVING_PETRI /;"	d
+SAVING_POOR	spell_parser.c	/^#define SAVING_POOR /;"	d	file:
+SAVING_RESERVED	spell_parser.c	/^#define SAVING_RESERVED /;"	d	file:
+SAVING_SPELL	../include/spells.h	/^#define SAVING_SPELL /;"	d
+SAVING_VERY_GOOD	spell_parser.c	/^#define SAVING_VERY_GOOD /;"	d	file:
+SECS_PER_MUD_DAY	../include/structs.h	/^#define SECS_PER_MUD_DAY /;"	d
+SECS_PER_MUD_HOUR	../include/structs.h	/^#define SECS_PER_MUD_HOUR /;"	d
+SECS_PER_MUD_MONTH	../include/structs.h	/^#define SECS_PER_MUD_MONTH /;"	d
+SECS_PER_MUD_YEAR	../include/structs.h	/^#define SECS_PER_MUD_YEAR /;"	d
+SECS_PER_REAL_DAY	../include/structs.h	/^#define SECS_PER_REAL_DAY /;"	d
+SECS_PER_REAL_HOUR	../include/structs.h	/^#define SECS_PER_REAL_HOUR /;"	d
+SECS_PER_REAL_MIN	../include/structs.h	/^#define SECS_PER_REAL_MIN /;"	d
+SECS_PER_REAL_YEAR	../include/structs.h	/^#define SECS_PER_REAL_YEAR /;"	d
+SECT_CITY	../include/structs.h	/^#define SECT_CITY /;"	d
+SECT_FIELD	../include/structs.h	/^#define SECT_FIELD /;"	d
+SECT_FOREST	../include/structs.h	/^#define SECT_FOREST /;"	d
+SECT_HILLS	../include/structs.h	/^#define SECT_HILLS /;"	d
+SECT_INSIDE	../include/structs.h	/^#define SECT_INSIDE /;"	d
+SECT_MOUNTAIN	../include/structs.h	/^#define SECT_MOUNTAIN /;"	d
+SECT_SKY	../include/structs.h	/^#define SECT_SKY /;"	d
+SECT_WATER_NOSWIM	../include/structs.h	/^#define SECT_WATER_NOSWIM /;"	d
+SECT_WATER_SWIM	../include/structs.h	/^#define SECT_WATER_SWIM /;"	d
+SEND_TO_Q	../include/comm.h	/^#define SEND_TO_Q(/;"	d
+SET_BIT	../include/utils.h	/^#define SET_BIT(/;"	d
+SEX_FEMALE	../include/structs.h	/^#define SEX_FEMALE /;"	d
+SEX_MALE	../include/structs.h	/^#define SEX_MALE /;"	d
+SEX_NEUTRAL	../include/structs.h	/^#define SEX_NEUTRAL /;"	d
+SHOP_FILE	shop.c	/^#define SHOP_FILE /;"	d	file:
+SKILL_ARREST	../include/spells.h	/^#define SKILL_ARREST	/;"	d
+SKILL_BACKSTAB	../include/spells.h	/^#define SKILL_BACKSTAB /;"	d
+SKILL_BASH	../include/spells.h	/^#define SKILL_BASH /;"	d
+SKILL_DISARM	../include/spells.h	/^#define SKILL_DISARM	/;"	d
+SKILL_DOUBLE	../include/spells.h	/^#define SKILL_DOUBLE /;"	d
+SKILL_EXTRA_DAMAGING	../include/spells.h	/^#define SKILL_EXTRA_DAMAGING /;"	d
+SKILL_FLASH	../include/spells.h	/^#define SKILL_FLASH	/;"	d
+SKILL_HIDE	../include/spells.h	/^#define SKILL_HIDE /;"	d
+SKILL_KICK	../include/spells.h	/^#define SKILL_KICK /;"	d
+SKILL_LIGHT_MOVE	../include/spells.h	/^#define SKILL_LIGHT_MOVE /;"	d
+SKILL_MULTI_KICK	../include/spells.h	/^#define SKILL_MULTI_KICK /;"	d
+SKILL_OCTA	../include/spells.h	/^#define SKILL_OCTA	/;"	d
+SKILL_PARRY	../include/spells.h	/^#define SKILL_PARRY /;"	d
+SKILL_PICK_LOCK	../include/spells.h	/^#define SKILL_PICK_LOCK /;"	d
+SKILL_PUNCH	../include/spells.h	/^#define SKILL_PUNCH	/;"	d
+SKILL_QUADRUPLE	../include/spells.h	/^#define SKILL_QUADRUPLE /;"	d
+SKILL_RESCUE	../include/spells.h	/^#define SKILL_RESCUE /;"	d
+SKILL_SHOURYUKEN	../include/spells.h	/^#define SKILL_SHOURYUKEN	/;"	d
+SKILL_SNEAK	../include/spells.h	/^#define SKILL_SNEAK /;"	d
+SKILL_SPIN_BIRD_KICK	../include/spells.h	/^#define SKILL_SPIN_BIRD_KICK	/;"	d
+SKILL_STEAL	../include/spells.h	/^#define SKILL_STEAL /;"	d
+SKILL_TEMPTATION	../include/spells.h	/^#define SKILL_TEMPTATION	/;"	d
+SKILL_THROW_OBJECT	../include/spells.h	/^#define SKILL_THROW_OBJECT	/;"	d
+SKILL_TORNADO	../include/spells.h	/^#define SKILL_TORNADO /;"	d
+SKY_CLOUDLESS	../include/structs.h	/^#define SKY_CLOUDLESS /;"	d
+SKY_CLOUDY	../include/structs.h	/^#define SKY_CLOUDY /;"	d
+SKY_LIGHTNING	../include/structs.h	/^#define SKY_LIGHTNING /;"	d
+SKY_RAINING	../include/structs.h	/^#define SKY_RAINING /;"	d
+SOCMESS_FILE	../include/db.h	/^#define SOCMESS_FILE /;"	d
+SON_OGONG	daerimsa.c	/^#define SON_OGONG	/;"	d	file:
+SON_OGONG	db.c	/^#define SON_OGONG	/;"	d	file:
+SON_OGONG	spec_assign.c	/^#define SON_OGONG	/;"	d	file:
+SON_OGONG_BONG	daerimsa.c	/^#define SON_OGONG_BONG	/;"	d	file:
+SON_OGONG_MIRROR	daerimsa.c	/^#define SON_OGONG_MIRROR	/;"	d	file:
+SON_OGONG_MIRROR	mobact.c	/^#define SON_OGONG_MIRROR	/;"	d	file:
+SON_OGONG_STEP	daerimsa.c	/^#define SON_OGONG_STEP	/;"	d	file:
+SOUTH	../include/structs.h	/^#define SOUTH /;"	d
+SPELLO	spell_parser.c	/^void SPELLO( int nr, byte beat, byte pos, int l0, int l1, int l2, int l3,$/;"	f	typeref:typename:void
+SPELL_ACID_BREATH	../include/spells.h	/^#define SPELL_ACID_BREATH /;"	d
+SPELL_ALL_HEAL	../include/spells.h	/^#define SPELL_ALL_HEAL /;"	d
+SPELL_ARMOR	../include/spells.h	/^#define SPELL_ARMOR /;"	d
+SPELL_BLESS	../include/spells.h	/^#define SPELL_BLESS /;"	d
+SPELL_BLINDNESS	../include/spells.h	/^#define SPELL_BLINDNESS /;"	d
+SPELL_BURNING_HANDS	../include/spells.h	/^#define SPELL_BURNING_HANDS /;"	d
+SPELL_CALL_LIGHTNING	../include/spells.h	/^#define SPELL_CALL_LIGHTNING /;"	d
+SPELL_CAUSE_CRITIC	../include/spells.h	/^#define SPELL_CAUSE_CRITIC /;"	d
+SPELL_CAUSE_LIGHT	../include/spells.h	/^#define SPELL_CAUSE_LIGHT /;"	d
+SPELL_CHARM_PERSON	../include/spells.h	/^#define SPELL_CHARM_PERSON /;"	d
+SPELL_CHILL_TOUCH	../include/spells.h	/^#define SPELL_CHILL_TOUCH /;"	d
+SPELL_CLONE	../include/spells.h	/^#define SPELL_CLONE /;"	d
+SPELL_COLOUR_SPRAY	../include/spells.h	/^#define SPELL_COLOUR_SPRAY /;"	d
+SPELL_CORN_OF_ICE	../include/spells.h	/^#define SPELL_CORN_OF_ICE /;"	d
+SPELL_CREATE_FOOD	../include/spells.h	/^#define SPELL_CREATE_FOOD /;"	d
+SPELL_CREATE_GOLDEN_NECTAR	../include/spells.h	/^#define SPELL_CREATE_GOLDEN_NECTAR /;"	d
+SPELL_CREATE_NECTAR	../include/spells.h	/^#define SPELL_CREATE_NECTAR /;"	d
+SPELL_CREATE_WATER	../include/spells.h	/^#define SPELL_CREATE_WATER /;"	d
+SPELL_CRUSH_ARMOR	../include/spells.h	/^#define SPELL_CRUSH_ARMOR /;"	d
+SPELL_CURE_BLIND	../include/spells.h	/^#define SPELL_CURE_BLIND /;"	d
+SPELL_CURE_CRITIC	../include/spells.h	/^#define SPELL_CURE_CRITIC /;"	d
+SPELL_CURE_LIGHT	../include/spells.h	/^#define SPELL_CURE_LIGHT /;"	d
+SPELL_CURSE	../include/spells.h	/^#define SPELL_CURSE /;"	d
+SPELL_DAMAGE_UP	../include/spells.h	/^#define SPELL_DAMAGE_UP /;"	d
+SPELL_DEATH	../include/spells.h	/^#define SPELL_DEATH	/;"	d
+SPELL_DETECT_EVIL	../include/spells.h	/^#define SPELL_DETECT_EVIL /;"	d
+SPELL_DETECT_INVISIBLE	../include/spells.h	/^#define SPELL_DETECT_INVISIBLE /;"	d
+SPELL_DISINTEGRATE	../include/spells.h	/^#define SPELL_DISINTEGRATE /;"	d
+SPELL_DISPEL_EVIL	../include/spells.h	/^#define SPELL_DISPEL_EVIL /;"	d
+SPELL_DUMB	../include/spells.h	/^#define SPELL_DUMB	/;"	d
+SPELL_EARTHQUAKE	../include/spells.h	/^#define SPELL_EARTHQUAKE /;"	d
+SPELL_ENCHANT_ARMOR	../include/spells.h	/^#define SPELL_ENCHANT_ARMOR /;"	d
+SPELL_ENCHANT_PERSON	../include/spells.h	/^#define SPELL_ENCHANT_PERSON	/;"	d
+SPELL_ENCHANT_WEAPON	../include/spells.h	/^#define SPELL_ENCHANT_WEAPON /;"	d
+SPELL_ENERGY_DRAIN	../include/spells.h	/^#define SPELL_ENERGY_DRAIN /;"	d
+SPELL_ENERGY_FLOW	../include/spells.h	/^#define SPELL_ENERGY_FLOW /;"	d
+SPELL_ENTIRE_HEAL	../include/spells.h	/^#define SPELL_ENTIRE_HEAL	/;"	d
+SPELL_FAR_LOOK	../include/spells.h	/^#define SPELL_FAR_LOOK /;"	d
+SPELL_FIREBALL	../include/spells.h	/^#define SPELL_FIREBALL /;"	d
+SPELL_FIRE_BREATH	../include/spells.h	/^#define SPELL_FIRE_BREATH /;"	d
+SPELL_FIRE_STORM	../include/spells.h	/^#define SPELL_FIRE_STORM /;"	d
+SPELL_FROST_BREATH	../include/spells.h	/^#define SPELL_FROST_BREATH /;"	d
+SPELL_FULL_FIRE	../include/spells.h	/^#define SPELL_FULL_FIRE /;"	d
+SPELL_FULL_HEAL	../include/spells.h	/^#define SPELL_FULL_HEAL	/;"	d
+SPELL_GAS_BREATH	../include/spells.h	/^#define SPELL_GAS_BREATH /;"	d
+SPELL_HAND_OF_GOD	../include/spells.h	/^#define SPELL_HAND_OF_GOD /;"	d
+SPELL_HARM	../include/spells.h	/^#define SPELL_HARM /;"	d
+SPELL_HASTE	../include/spells.h	/^#define SPELL_HASTE /;"	d
+SPELL_HEAL	../include/spells.h	/^#define SPELL_HEAL /;"	d
+SPELL_HOLY_SHIELD	../include/spells.h	/^#define SPELL_HOLY_SHIELD	/;"	d
+SPELL_IDENTIFY	../include/spells.h	/^#define SPELL_IDENTIFY /;"	d
+SPELL_IMPROVED_HASTE	../include/spells.h	/^#define SPELL_IMPROVED_HASTE /;"	d
+SPELL_INFRAVISION	../include/spells.h	/^#define SPELL_INFRAVISION /;"	d
+SPELL_INVISIBLE	../include/spells.h	/^#define SPELL_INVISIBLE /;"	d
+SPELL_KISS_OF_PROCESS	../include/spells.h	/^#define SPELL_KISS_OF_PROCESS /;"	d
+SPELL_LEARN_MAX	limit.c	/^#define SPELL_LEARN_MAX	/;"	d	file:
+SPELL_LIGHTNING_BOLT	../include/spells.h	/^#define SPELL_LIGHTNING_BOLT /;"	d
+SPELL_LIGHTNING_BREATH	../include/spells.h	/^#define SPELL_LIGHTNING_BREATH /;"	d
+SPELL_LOCATE_OBJECT	../include/spells.h	/^#define SPELL_LOCATE_OBJECT /;"	d
+SPELL_LOVE	../include/spells.h	/^#define SPELL_LOVE /;"	d
+SPELL_MAGIC_MISSILE	../include/spells.h	/^#define SPELL_MAGIC_MISSILE /;"	d
+SPELL_MANA_BOOST	../include/spells.h	/^#define SPELL_MANA_BOOST /;"	d
+SPELL_MANA_TRANSFER	../include/spells.h	/^#define SPELL_MANA_TRANSFER	/;"	d
+SPELL_MIRROR_IMAGE	../include/spells.h	/^#define SPELL_MIRROR_IMAGE /;"	d
+SPELL_PHASE	../include/spells.h	/^#define SPELL_PHASE /;"	d
+SPELL_POISON	../include/spells.h	/^#define SPELL_POISON /;"	d
+SPELL_PRAY_FOR_ARMOR	../include/spells.h	/^#define SPELL_PRAY_FOR_ARMOR /;"	d
+SPELL_PREACH	../include/spells.h	/^#define SPELL_PREACH /;"	d
+SPELL_PROTECT_FROM_EVIL	../include/spells.h	/^#define SPELL_PROTECT_FROM_EVIL /;"	d
+SPELL_REANIMATE	../include/spells.h	/^#define SPELL_REANIMATE /;"	d
+SPELL_RECHARGER	../include/spells.h	/^#define SPELL_RECHARGER /;"	d
+SPELL_REFLECT_DAMAGE	../include/spells.h	/^#define SPELL_REFLECT_DAMAGE	/;"	d
+SPELL_RELOCATE	../include/spells.h	/^#define SPELL_RELOCATE /;"	d
+SPELL_REMOVE_CURSE	../include/spells.h	/^#define SPELL_REMOVE_CURSE /;"	d
+SPELL_REMOVE_POISON	../include/spells.h	/^#define SPELL_REMOVE_POISON /;"	d
+SPELL_RERAISE	../include/spells.h	/^#define SPELL_RERAISE	/;"	d
+SPELL_RESERVED_DBC	../include/spells.h	/^#define SPELL_RESERVED_DBC /;"	d
+SPELL_RESTORE_MOVE	../include/spells.h	/^#define SPELL_RESTORE_MOVE	/;"	d
+SPELL_SANCTUARY	../include/spells.h	/^#define SPELL_SANCTUARY /;"	d
+SPELL_SANCTUARY_CLOUD	../include/spells.h	/^#define SPELL_SANCTUARY_CLOUD	/;"	d
+SPELL_SELF_HEAL	../include/spells.h	/^#define SPELL_SELF_HEAL	/;"	d
+SPELL_SENSE_LIFE	../include/spells.h	/^#define SPELL_SENSE_LIFE /;"	d
+SPELL_SHADOW_FIGURE	../include/spells.h	/^#define SPELL_SHADOW_FIGURE	/;"	d
+SPELL_SHOCKING_GRASP	../include/spells.h	/^#define SPELL_SHOCKING_GRASP /;"	d
+SPELL_SLEEP	../include/spells.h	/^#define SPELL_SLEEP /;"	d
+SPELL_SPELL_BLOCK	../include/spells.h	/^#define SPELL_SPELL_BLOCK /;"	d
+SPELL_STRENGTH	../include/spells.h	/^#define SPELL_STRENGTH /;"	d
+SPELL_SUMMON	../include/spells.h	/^#define SPELL_SUMMON /;"	d
+SPELL_SUNBURST	../include/spells.h	/^#define SPELL_SUNBURST /;"	d
+SPELL_TELEPORT	../include/spells.h	/^#define SPELL_TELEPORT /;"	d
+SPELL_THROW	../include/spells.h	/^#define SPELL_THROW /;"	d
+SPELL_THUNDERBOLT	../include/spells.h	/^#define SPELL_THUNDERBOLT	/;"	d
+SPELL_TRICK	../include/spells.h	/^#define SPELL_TRICK /;"	d
+SPELL_TYPE_POTION	../include/spells.h	/^#define SPELL_TYPE_POTION /;"	d
+SPELL_TYPE_SCROLL	../include/spells.h	/^#define SPELL_TYPE_SCROLL /;"	d
+SPELL_TYPE_SPELL	../include/spells.h	/^#define SPELL_TYPE_SPELL /;"	d
+SPELL_TYPE_STAFF	../include/spells.h	/^#define SPELL_TYPE_STAFF /;"	d
+SPELL_TYPE_WAND	../include/spells.h	/^#define SPELL_TYPE_WAND /;"	d
+SPELL_VENTRILOQUATE	../include/spells.h	/^#define SPELL_VENTRILOQUATE /;"	d
+SPELL_VITALIZE	../include/spells.h	/^#define SPELL_VITALIZE /;"	d
+SPELL_WORD_OF_RECALL	../include/spells.h	/^#define SPELL_WORD_OF_RECALL /;"	d
+STASH	../include/db.h	/^#define STASH /;"	d
+STATE	interpreter.c	/^#define STATE(/;"	d	file:
+STORY	../include/db.h	/^#define STORY /;"	d
+STRENGTH_APPLY_INDEX	../include/utils.h	/^#define STRENGTH_APPLY_INDEX(/;"	d
+SUN_DARK	../include/structs.h	/^#define SUN_DARK /;"	d
+SUN_LIGHT	../include/structs.h	/^#define SUN_LIGHT /;"	d
+SUN_RISE	../include/structs.h	/^#define SUN_RISE /;"	d
+SUN_SET	../include/structs.h	/^#define SUN_SET /;"	d
+SWITCH	../include/utils.h	/^#define SWITCH(/;"	d
+SYPARKRENT	db.c	/^#define SYPARKRENT /;"	d	file:
+TAR_CHAR_ROOM	../include/spells.h	/^#define TAR_CHAR_ROOM /;"	d
+TAR_CHAR_WORLD	../include/spells.h	/^#define TAR_CHAR_WORLD /;"	d
+TAR_CHAR_ZONE	../include/spells.h	/^#define TAR_CHAR_ZONE /;"	d
+TAR_FIGHT_SELF	../include/spells.h	/^#define TAR_FIGHT_SELF /;"	d
+TAR_FIGHT_VICT	../include/spells.h	/^#define TAR_FIGHT_VICT /;"	d
+TAR_IGNORE	../include/spells.h	/^#define TAR_IGNORE /;"	d
+TAR_OBJ_EQUIP	../include/spells.h	/^#define TAR_OBJ_EQUIP /;"	d
+TAR_OBJ_INV	../include/spells.h	/^#define TAR_OBJ_INV /;"	d
+TAR_OBJ_ROOM	../include/spells.h	/^#define TAR_OBJ_ROOM /;"	d
+TAR_OBJ_WORLD	../include/spells.h	/^#define TAR_OBJ_WORLD /;"	d
+TAR_SELF_NONO	../include/spells.h	/^#define TAR_SELF_NONO /;"	d
+TAR_SELF_ONLY	../include/spells.h	/^#define TAR_SELF_ONLY /;"	d
+TELOPTS	interpreter.c	/^#define	TELOPTS$/;"	d	file:
+THIRST	../include/structs.h	/^#define THIRST /;"	d
+TIME_FILE	../include/db.h	/^#define TIME_FILE /;"	d
+TIME_ZONE	../include/utils.h	/^#define TIME_ZONE	/;"	d
+TOWER_IN_DAERIMSA	daerimsa.c	/^#define TOWER_IN_DAERIMSA	/;"	d	file:
+TO_CHAR	../include/comm.h	/^#define TO_CHAR /;"	d
+TO_KAIST	guild_command.c	/^#define TO_KAIST /;"	d	file:
+TO_NOTVICT	../include/comm.h	/^#define TO_NOTVICT /;"	d
+TO_PROCESS	guild_command.c	/^#define TO_PROCESS /;"	d	file:
+TO_ROOM	../include/comm.h	/^#define TO_ROOM /;"	d
+TO_VICT	../include/comm.h	/^#define TO_VICT /;"	d
+TP_ERROR	modify.c	/^#define TP_ERROR /;"	d	file:
+TP_MOB	modify.c	/^#define TP_MOB /;"	d	file:
+TP_OBJ	modify.c	/^#define TP_OBJ /;"	d	file:
+TRUE	../include/utils.h	/^#define TRUE /;"	d
+TUNNEL	../include/structs.h	/^#define TUNNEL /;"	d
+TYPE_BITE	../include/spells.h	/^#define TYPE_BITE /;"	d
+TYPE_BLUDGEON	../include/spells.h	/^#define TYPE_BLUDGEON /;"	d
+TYPE_CRUSH	../include/spells.h	/^#define TYPE_CRUSH /;"	d
+TYPE_HIT	../include/spells.h	/^#define TYPE_HIT /;"	d
+TYPE_PIERCE	../include/spells.h	/^#define TYPE_PIERCE /;"	d
+TYPE_SHOOT	../include/spells.h	/^#define TYPE_SHOOT /;"	d
+TYPE_SLASH	../include/spells.h	/^#define TYPE_SLASH /;"	d
+TYPE_STING	../include/spells.h	/^#define TYPE_STING /;"	d
+TYPE_SUFFERING	../include/spells.h	/^#define TYPE_SUFFERING /;"	d
+TYPE_UNDEFINED	../include/spells.h	/^#define TYPE_UNDEFINED /;"	d
+TYPE_WHIP	../include/spells.h	/^#define TYPE_WHIP /;"	d
+UP	../include/structs.h	/^#define UP /;"	d
+UPPER	../include/utils.h	/^#define UPPER(/;"	d
+VICT_IS_SAME_ROOM	mob_magic.c	/^#define VICT_IS_SAME_ROOM(/;"	d	file:
+VIC_ALL	../include/mob_magic.h	/^#define	VIC_ALL	/;"	d
+VIC_FIGHTING	../include/mob_magic.h	/^#define	VIC_FIGHTING	/;"	d
+VIC_WATCHING	../include/mob_magic.h	/^#define VIC_WATCHING	/;"	d
+VIRTUAL	../include/db.h	/^#define VIRTUAL /;"	d
+VIRTUAL	magic2.c	/^#define VIRTUAL /;"	d	file:
+WAIT_ROUND	../include/structs.h	/^#define WAIT_ROUND /;"	d
+WAIT_SEC	../include/structs.h	/^#define WAIT_SEC /;"	d
+WAIT_STATE	../include/utils.h	/^#define WAIT_STATE(/;"	d
+WEAP	../include/utils.h	/^#define WEAP(/;"	d
+WEAPON_ANTI_EVIL_WEAPON	../include/magic_weapon.h	/^#define WEAPON_ANTI_EVIL_WEAPON /;"	d
+WEAPON_ANTI_GOOD_WEAPON	../include/magic_weapon.h	/^#define WEAPON_ANTI_GOOD_WEAPON /;"	d
+WEAPON_ANY_MAGIC	../include/magic_weapon.h	/^#define	WEAPON_ANY_MAGIC /;"	d
+WEAPON_ASSASSIN	../include/magic_weapon.h	/^#define WEAPON_ASSASSIN /;"	d
+WEAPON_BEHEAD	../include/magic_weapon.h	/^#define	WEAPON_BEHEAD /;"	d
+WEAPON_BOMBARD	../include/magic_weapon.h	/^#define WEAPON_BOMBARD /;"	d
+WEAPON_CALL_LIGHTNING	../include/magic_weapon.h	/^#define	WEAPON_CALL_LIGHTNING /;"	d
+WEAPON_DISINTEGRATE	../include/magic_weapon.h	/^#define	WEAPON_DISINTEGRATE /;"	d
+WEAPON_DRAGON_SLAYER	../include/magic_weapon.h	/^#define WEAPON_DRAGON_SLAYER /;"	d
+WEAPON_ENERGY_DRAIN	../include/magic_weapon.h	/^#define WEAPON_ENERGY_DRAIN /;"	d
+WEAPON_FIREBALL	../include/magic_weapon.h	/^#define	WEAPON_FIREBALL /;"	d
+WEAPON_FIRE_BREATH	../include/magic_weapon.h	/^#define	WEAPON_FIRE_BREATH /;"	d
+WEAPON_FLAME	../include/magic_weapon.h	/^#define WEAPON_FLAME /;"	d
+WEAPON_FROST_BREATH	../include/magic_weapon.h	/^#define	WEAPON_FROST_BREATH /;"	d
+WEAPON_GIANT_SLAYER	../include/magic_weapon.h	/^#define WEAPON_GIANT_SLAYER /;"	d
+WEAPON_ICE	../include/magic_weapon.h	/^#define WEAPON_ICE /;"	d
+WEAPON_LIGHTNING	../include/magic_weapon.h	/^#define	WEAPON_LIGHTNING /;"	d
+WEAPON_MAGIC_MISSILE	../include/magic_weapon.h	/^#define WEAPON_MAGIC_MISSILE /;"	d
+WEAPON_OUTLAW	../include/magic_weapon.h	/^#define WEAPON_OUTLAW /;"	d
+WEAPON_POLICE	../include/magic_weapon.h	/^#define WEAPON_POLICE /;"	d
+WEAPON_SHOT	../include/magic_weapon.h	/^#define WEAPON_SHOT /;"	d
+WEAPON_SMASH	../include/magic_weapon.h	/^#define WEAPON_SMASH /;"	d
+WEAR_ABOUT	../include/structs.h	/^#define WEAR_ABOUT /;"	d
+WEAR_ABOUTLEGS	../include/structs.h	/^#define WEAR_ABOUTLEGS /;"	d
+WEAR_ARMS	../include/structs.h	/^#define WEAR_ARMS /;"	d
+WEAR_BACK	../include/structs.h	/^#define WEAR_BACK /;"	d
+WEAR_BODY	../include/structs.h	/^#define WEAR_BODY /;"	d
+WEAR_FEET	../include/structs.h	/^#define WEAR_FEET /;"	d
+WEAR_FINGER_L	../include/structs.h	/^#define WEAR_FINGER_L /;"	d
+WEAR_FINGER_R	../include/structs.h	/^#define WEAR_FINGER_R /;"	d
+WEAR_HANDS	../include/structs.h	/^#define WEAR_HANDS /;"	d
+WEAR_HEAD	../include/structs.h	/^#define WEAR_HEAD /;"	d
+WEAR_KNEE_L	../include/structs.h	/^#define WEAR_KNEE_L /;"	d
+WEAR_KNEE_R	../include/structs.h	/^#define WEAR_KNEE_R /;"	d
+WEAR_LEGS	../include/structs.h	/^#define WEAR_LEGS /;"	d
+WEAR_LIGHT	../include/structs.h	/^#define WEAR_LIGHT /;"	d
+WEAR_NECK_1	../include/structs.h	/^#define WEAR_NECK_1 /;"	d
+WEAR_NECK_2	../include/structs.h	/^#define WEAR_NECK_2 /;"	d
+WEAR_SHIELD	../include/structs.h	/^#define WEAR_SHIELD /;"	d
+WEAR_WAISTE	../include/structs.h	/^#define WEAR_WAISTE /;"	d
+WEAR_WRIST_L	../include/structs.h	/^#define WEAR_WRIST_L /;"	d
+WEAR_WRIST_R	../include/structs.h	/^#define WEAR_WRIST_R /;"	d
+WELC_MESSG	../include/db.h	/^#define WELC_MESSG /;"	d
+WEST	../include/structs.h	/^#define WEST /;"	d
+WIELD	../include/structs.h	/^#define WIELD /;"	d
+WIZARDS_FILE	../include/db.h	/^#define WIZARDS_FILE /;"	d
+WORLD_FILE	../include/db.h	/^#define WORLD_FILE /;"	d
+WRITER_NAME_LEN	board.c	/^#define WRITER_NAME_LEN /;"	d	file:
+WRITER_NAME_LEN	modify.c	/^#define WRITER_NAME_LEN /;"	d	file:
+X98	../include/utils.h	/^#define X98(/;"	d
+X99	../include/utils.h	/^#define X99(/;"	d
+ZCMD	db.c	/^#define ZCMD /;"	d	file:
+ZONE_FILE	../include/db.h	/^#define ZONE_FILE /;"	d
+ZONE_NUMBER	quest.c	/^#define ZONE_NUMBER /;"	d	file:
+ZO_DEAD	db.c	/^#define ZO_DEAD /;"	d	file:
+__anon1684ae680108	quest.c	/^struct {$/;"	s	file:
+__anon1684ae680208	quest.c	/^static struct {$/;"	s	file:
+__unmask	comm.c	/^sigset_t __unmask;$/;"	v	typeref:typename:sigset_t
+_parse_name	interpreter.c	/^int _parse_name(char *arg, char *name)$/;"	f	typeref:typename:int
+a_type	../include/structs.h	/^  int a_type;               \/* Attack type              *\/$/;"	m	struct:message_list	typeref:typename:int
+abilities	../include/structs.h	/^  struct char_ability_data abilities;$/;"	m	struct:char_data	typeref:struct:char_ability_data
+abilities	../include/structs.h	/^  struct char_ability_data abilities;$/;"	m	struct:char_file_u	typeref:struct:char_ability_data
+ac_applicable	magic.c	/^int ac_applicable(struct obj_data *obj_object)$/;"	f	typeref:typename:int
+act	../include/structs.h	/^  unsigned act;$/;"	m	struct:char_file_u	typeref:typename:unsigned
+act	../include/structs.h	/^  unsigned act;$/;"	m	struct:char_special_data	typeref:typename:unsigned
+act	comm.c	/^void act(char *str, int hide_invisible, struct char_data *ch,$/;"	f	typeref:typename:void
+act_nr	act.social.c	/^  int act_nr;$/;"	m	struct:social_messg	typeref:typename:int	file:
+acthan	comm.c	/^void acthan(char *streng,char *strhan,int hide_invisible,struct char_data *ch,$/;"	f	typeref:typename:void
+action_bits	constants.c	/^char *action_bits[] = {$/;"	v	typeref:typename:char * []
+action_description	../include/structs.h	/^  char *action_description;      \/* What to write when used          *\/$/;"	m	struct:obj_data	typeref:typename:char *
+add_follower	spell_parser.c	/^void add_follower(struct char_data *ch, struct char_data *leader)$/;"	f	typeref:typename:void
+advance_level	limit.c	/^void advance_level(struct char_data *ch, int level_up)$/;"	f	typeref:typename:void
+affect_from_char	handler.c	/^void affect_from_char( struct char_data *ch, byte skill)$/;"	f	typeref:typename:void
+affect_join	handler.c	/^void affect_join( struct char_data *ch, struct affected_type *af,$/;"	f	typeref:typename:void
+affect_modify	handler.c	/^void affect_modify(struct char_data *ch, byte loc, short mod, long bitv, bool add)$/;"	f	typeref:typename:void
+affect_remove	handler.c	/^void affect_remove( struct char_data *ch, struct affected_type *af )$/;"	f	typeref:typename:void
+affect_to_char	handler.c	/^void affect_to_char( struct char_data *ch, struct affected_type *af )$/;"	f	typeref:typename:void
+affect_total	handler.c	/^void affect_total(struct char_data *ch)$/;"	f	typeref:typename:void
+affect_update	spell_parser.c	/^void affect_update( void )$/;"	f	typeref:typename:void
+affected	../include/structs.h	/^      affected[MAX_OBJ_AFFECT];  \/* Which abilities in PC to change  *\/$/;"	m	struct:obj_data	typeref:struct:obj_affected_type[]
+affected	../include/structs.h	/^  struct affected_type *affected;$/;"	m	struct:char_data	typeref:struct:affected_type *
+affected	../include/structs.h	/^  struct affected_type affected[MAX_AFFECT];$/;"	m	struct:char_file_u	typeref:struct:affected_type[]
+affected_bits	constants.c	/^char *affected_bits[] = $/;"	v	typeref:typename:char * []
+affected_by	../include/structs.h	/^  long affected_by;$/;"	m	struct:char_special_data	typeref:typename:long
+affected_by_spell	handler.c	/^bool affected_by_spell( struct char_data *ch, byte skill )$/;"	f	typeref:typename:bool
+affected_type	../include/structs.h	/^struct affected_type {$/;"	s
+age	../include/db.h	/^	int age;                \/* current age of this zone (minutes) *\/$/;"	m	struct:zone_data	typeref:typename:int
+age	utility.c	/^struct time_info_data age(struct char_data *ch)$/;"	f	typeref:struct:time_info_data
+align_msg	act.informative.c	/^static char align_msg[13][44] = {$/;"	v	typeref:typename:char[13][44]	file:
+align_msg_han	act.informative.c	/^static char *align_msg_han[13] = {$/;"	v	typeref:typename:char * [13]	file:
+alignment	../include/structs.h	/^  int alignment;            \/* +-1000 for alignments                  *\/$/;"	m	struct:char_special_data	typeref:typename:int
+alignment	../include/structs.h	/^  int alignment;$/;"	m	struct:char_file_u	typeref:typename:int
+allocate_room	db.c	/^void allocate_room(int new_top)$/;"	f	typeref:typename:void
+another_hour	weather.c	/^void another_hour(int mode)$/;"	f	typeref:typename:void
+appear	fight.c	/^void appear(struct char_data *ch)$/;"	f	typeref:typename:void
+apply_ac	handler.c	/^int apply_ac(struct char_data *ch, int eq_pos)$/;"	f	typeref:typename:int
+apply_saving_throw	../include/structs.h	/^  int apply_saving_throw[5];$/;"	m	struct:char_special_data	typeref:typename:int[5]
+apply_types	constants.c	/^char *apply_types[] = {$/;"	v	typeref:typename:char * []
+archmage	spec_procs2.c	/^int archmage(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+arena	../include/structs.h	/^  int arena; 	\/* arena flag *\/$/;"	m	struct:char_special_data	typeref:typename:int
+arena_hits	../include/structs.h	/^  int arena_hits;$/;"	m	struct:char_special_data	typeref:typename:int
+arena_mana	../include/structs.h	/^  int arena_mana;$/;"	m	struct:char_special_data	typeref:typename:int
+arena_move	../include/structs.h	/^  int arena_move;$/;"	m	struct:char_special_data	typeref:typename:int
+arg1	../include/db.h	/^	int arg1;       \/*                                      *\/$/;"	m	struct:reset_com	typeref:typename:int
+arg2	../include/db.h	/^	int arg2;       \/* Arguments to the command             *\/$/;"	m	struct:reset_com	typeref:typename:int
+arg3	../include/db.h	/^	int arg3;       \/*                                      *\/$/;"	m	struct:reset_com	typeref:typename:int
+argument_interpreter	interpreter.c	/^void argument_interpreter(char *argument,char *first_arg,char *second_arg )$/;"	f	typeref:typename:void
+argument_split_2	act.informative.c	/^void argument_split_2(char *argument, char *first_arg, char *second_arg) {$/;"	f	typeref:typename:void
+armor	../include/structs.h	/^  int armor;        \/* Internal -100..100, external -10..10 AC *\/$/;"	m	struct:char_point_data	typeref:typename:int
+arrest_by	../include/structs.h	/^  struct char_data *arrest_by;$/;"	m	struct:char_special_data	typeref:struct:char_data *
+arrest_link	../include/structs.h	/^  struct char_data *arrest_link;$/;"	m	struct:char_special_data	typeref:struct:char_data *
+assasin_skill_costs	guild_constant.c	/^int assasin_skill_costs[] =$/;"	v	typeref:typename:int[]
+assasin_skills	guild_constant.c	/^char *assasin_skills[] =$/;"	v	typeref:typename:char * []
+assign_command_pointers	interpreter.c	/^void assign_command_pointers ( void )$/;"	f	typeref:typename:void
+assign_mobiles	spec_assign.c	/^void assign_mobiles(void)$/;"	f	typeref:typename:void
+assign_objects	spec_assign.c	/^void assign_objects(void)$/;"	f	typeref:typename:void
+assign_rooms	spec_assign.c	/^void assign_rooms(void)$/;"	f	typeref:typename:void
+assign_spell_pointers	spell_parser.c	/^void assign_spell_pointers(void)$/;"	f	typeref:typename:void
+assign_the_shopkeepers	shop.c	/^void assign_the_shopkeepers()$/;"	f	typeref:typename:void
+attack	../include/structs.h	/^  int attack;$/;"	m	struct:dex_app_type	typeref:typename:int
+attack_hit_han	fight.c	/^struct attack_hit_type attack_hit_han[] =$/;"	v	typeref:struct:attack_hit_type[]
+attack_hit_text	fight.c	/^struct attack_hit_type attack_hit_text[] =$/;"	v	typeref:struct:attack_hit_type[]
+attack_hit_type	../include/spells.h	/^struct attack_hit_type {$/;"	s
+attack_type	../include/structs.h	/^  int attack_type;          \/* The Attack Type Bitvector for NPC's    *\/$/;"	m	struct:char_special_data	typeref:typename:int
+attacker_msg	../include/structs.h	/^  char *attacker_msg;  \/* message to attacker *\/$/;"	m	struct:msg_type	typeref:typename:char *
+avail_descs	comm.c	/^int maxdesc, avail_descs;$/;"	v	typeref:typename:int
+backstab_mult	constants.c	/^byte backstab_mult[IMO+4] = {$/;"	v	typeref:typename:byte[]
+baddomain	../include/comm2.h	/^char baddomain[BADDOMS][32];$/;"	v	typeref:typename:char[][32]
+baddoms	../include/comm2.h	/^int baddoms;$/;"	v	typeref:typename:int
+bank	../include/structs.h	/^  LONGLONG bank;$/;"	m	struct:char_data	typeref:typename:LONGLONG
+bank	../include/structs.h	/^  LONGLONG bank;$/;"	m	struct:char_file_u	typeref:typename:LONGLONG
+bank	spec_procs2.c	/^int bank(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+beats	../include/spells.h	/^  byte beats;             \/* Heartbeats until ready for next *\/$/;"	m	struct:spell_info_type	typeref:typename:byte
+bfile	board.c	/^    char bfile[50];  \/* board file name *\/$/;"	m	struct:board_data	typeref:typename:char[50]	file:
+bfile	mail.c	/^    char bfile[50];  \/* mbox file name *\/$/;"	m	struct:mbox_data	typeref:typename:char[50]	file:
+bfile	modify.c	/^    char bfile[50];  \/* board file name *\/$/;"	m	struct:board_data	typeref:typename:char[50]	file:
+birth	../include/structs.h	/^  time_t birth;$/;"	m	struct:char_file_u	typeref:typename:time_t
+birth	../include/structs.h	/^  time_t birth;$/;"	m	struct:time_data	typeref:typename:time_t
+bitvector	../include/structs.h	/^  long bitvector;       \/* Tells which bits to set (AFF_XXX)       *\/$/;"	m	struct:affected_type	typeref:typename:long
+bitvector	../include/structs.h	/^  long bitvector;     \/* To set chars bits                *\/$/;"	m	struct:obj_flag_data	typeref:typename:long
+board	board.c	/^int board(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+board_data	board.c	/^struct board_data {$/;"	s	file:
+board_data	modify.c	/^struct board_data {$/;"	s	file:
+board_list	board.c	/^struct board_data *board_list;$/;"	v	typeref:struct:board_data *
+bonus	../include/structs.h	/^  byte bonus;       \/* how many bonus skills a player can *\/$/;"	m	struct:wis_app_type	typeref:typename:byte
+boot_db	db.c	/^void boot_db(void)$/;"	f	typeref:typename:void
+boot_social_messages	act.social.c	/^void boot_social_messages(void)$/;"	f	typeref:typename:void
+boot_the_shops	shop.c	/^void boot_the_shops()$/;"	f	typeref:typename:void
+boot_world	db.c	/^void boot_world(void)$/;"	f	typeref:typename:void
+boot_zones	db.c	/^void boot_zones(void)$/;"	f	typeref:typename:void
+boottime	comm.c	/^int boottime;$/;"	v	typeref:typename:int
+buf	../include/structs.h	/^  char buf[MAX_STRING_LENGTH];  \/* buffer for raw input       *\/$/;"	m	struct:descriptor_data	typeref:typename:char[]
+build_help_index	modify.c	/^struct help_index_element *build_help_index(FILE *fl, int *num)$/;"	f	typeref:struct:help_index_element *
+build_player_index	db.c	/^void build_player_index(void)$/;"	f	typeref:typename:void
+byte	../include/structs.h	/^typedef unsigned short byte;$/;"	t	typeref:typename:unsigned short
+carried_by	../include/structs.h	/^  struct char_data *carried_by;  \/* Carried by :NULL in room\/conta   *\/$/;"	m	struct:obj_data	typeref:struct:char_data *
+carry_items	../include/structs.h	/^  byte carry_items;$/;"	m	struct:char_special_data	typeref:typename:byte
+carry_w	../include/structs.h	/^  int carry_w;  \/* Maximum weight that can be carrried *\/$/;"	m	struct:str_app_type	typeref:typename:int
+carry_weight	../include/structs.h	/^  int carry_weight;$/;"	m	struct:char_special_data	typeref:typename:int
+carrying	../include/structs.h	/^  struct obj_data *carrying;$/;"	m	struct:char_data	typeref:struct:obj_data *
+cast_all_heal	spells1.c	/^void cast_all_heal( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_armor	spells2.c	/^void cast_armor( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_bless	spells2.c	/^void cast_bless( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_blindness	spells2.c	/^void cast_blindness( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_burning_hands	spells1.c	/^void cast_burning_hands( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_call_lightning	spells1.c	/^void cast_call_lightning(byte level,struct char_data *ch,char *arg, int type,$/;"	f	typeref:typename:void
+cast_cause_critic	spells2.c	/^void cast_cause_critic( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_cause_light	spells2.c	/^void cast_cause_light( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_charm_person	spells2.c	/^void cast_charm_person( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_chill_touch	spells1.c	/^void cast_chill_touch( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_clone	spells1.c	/^void cast_clone( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_color_spray	spells1.c	/^void cast_color_spray( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_corn_of_ice	spells1.c	/^void cast_corn_of_ice( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_create_food	spells2.c	/^void cast_create_food( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_create_golden_nectar	spells2.c	/^void cast_create_golden_nectar( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_create_nectar	spells2.c	/^void cast_create_nectar( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_create_water	spells2.c	/^void cast_create_water( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_crush_armor	spells2.c	/^void cast_crush_armor( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_cure_blind	spells2.c	/^void cast_cure_blind( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_cure_critic	spells2.c	/^void cast_cure_critic( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_cure_light	spells2.c	/^void cast_cure_light( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_curse	spells2.c	/^void cast_curse( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_damage_up	spells2.c	/^void cast_damage_up( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_death	spells2.c	/^void cast_death( byte level,struct char_data *ch,char *arg,int type,$/;"	f	typeref:typename:void
+cast_detect_evil	spells2.c	/^void cast_detect_evil( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_detect_invisibility	spells2.c	/^void cast_detect_invisibility( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_disintegrate	spells1.c	/^void cast_disintegrate( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_dispel_evil	spells2.c	/^void cast_dispel_evil( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_dumb	spells3.c	/^void cast_dumb(byte level,struct char_data *ch,char *arg,$/;"	f	typeref:typename:void
+cast_earthquake	spells1.c	/^void cast_earthquake( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_enchant_armor	spells2.c	/^void cast_enchant_armor( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_enchant_person	spells2.c	/^void cast_enchant_person( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_enchant_weapon	spells2.c	/^void cast_enchant_weapon( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_energy_drain	spells1.c	/^void cast_energy_drain( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_energyflow	spells1.c	/^void cast_energyflow( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_entire_heal	spells2.c	/^void cast_entire_heal( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_far_look	spells2.c	/^void cast_far_look( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_fire_breath	spells2.c	/^void cast_fire_breath( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_fire_storm	spells1.c	/^void cast_fire_storm( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_fireball	spells1.c	/^void cast_fireball( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_frost_breath	spells2.c	/^void cast_frost_breath( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_full_fire	spells1.c	/^void cast_full_fire( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_full_heal	spells2.c	/^void cast_full_heal( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_gas_breath	spells2.c	/^void cast_gas_breath( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_hand_of_god	spells1.c	/^void cast_hand_of_god( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_harm	spells1.c	/^void cast_harm( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_haste	spells2.c	/^void cast_haste( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_heal	spells2.c	/^void cast_heal( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_holy_shield	spells3.c	/^void cast_holy_shield(byte level,struct char_data *ch,char *arg,$/;"	f	typeref:typename:void
+cast_identify	spells2.c	/^void cast_identify( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_improved_haste	spells2.c	/^void cast_improved_haste( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_infravision	spells2.c	/^void cast_infravision( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_invisibility	spells2.c	/^void cast_invisibility( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_kiss_of_process	spells3.c	/^void cast_kiss_of_process(byte level,struct char_data *ch,char *arg,$/;"	f	typeref:typename:void
+cast_lightning_bolt	spells1.c	/^void cast_lightning_bolt( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_lightning_breath	spells2.c	/^void cast_lightning_breath( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_locate_object	spells2.c	/^void cast_locate_object( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_love	spells2.c	/^void cast_love( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_magic_missile	spells1.c	/^void cast_magic_missile( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_mana_boost	spells2.c	/^void cast_mana_boost( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_mana_transfer	spells3.c	/^void cast_mana_transfer(byte level,struct char_data *ch,char *arg,$/;"	f	typeref:typename:void
+cast_mirror_image	spells2.c	/^void cast_mirror_image( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_phase	spells2.c	/^void cast_phase( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_poison	spells2.c	/^void cast_poison( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_pray_for_armor	spells2.c	/^void cast_pray_for_armor( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_preach	spells2.c	/^void cast_preach( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_protection_from_evil	spells2.c	/^void cast_protection_from_evil( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_reanimate	spells2.c	/^void cast_reanimate( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_recharger	spells2.c	/^void cast_recharger( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_reflect_damage	spells3.c	/^void cast_reflect_damage(byte level,struct char_data *ch,char *arg,$/;"	f	typeref:typename:void
+cast_relocate	spells2.c	/^void cast_relocate( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_remove_curse	spells2.c	/^void cast_remove_curse( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_remove_poison	spells2.c	/^void cast_remove_poison( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_reraise	spells2.c	/^void cast_reraise( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_restore_move	spells2.c	/^void cast_restore_move( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_sanctuary	spells2.c	/^void cast_sanctuary( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_sanctuary_cloud	spells1.c	/^void cast_sanctuary_cloud(byte level, struct char_data *ch, char *arg, int type,  struct char_da/;"	f	typeref:typename:void
+cast_self_heal	spells2.c	/^void cast_self_heal( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_sense_life	spells2.c	/^void cast_sense_life( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_shocking_grasp	spells1.c	/^void cast_shocking_grasp( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_sleep	spells2.c	/^void cast_sleep( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_spell_block	spells3.c	/^void cast_spell_block( byte level,struct char_data *ch,char *arg,$/;"	f	typeref:typename:void
+cast_strength	spells2.c	/^void cast_strength( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_summon	spells2.c	/^void cast_summon( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_sunburst	spells1.c	/^void cast_sunburst( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_teleport	spells2.c	/^void cast_teleport( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_throw	spells1.c	/^void cast_throw( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_thunder_bolt	spells3.c	/^void cast_thunder_bolt(byte level,struct char_data *ch,char *arg,$/;"	f	typeref:typename:void
+cast_trick	spells2.c	/^void cast_trick( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_ventriloquate	spells2.c	/^void cast_ventriloquate( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_vitalize	spells2.c	/^void cast_vitalize( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+cast_word_of_recall	spells2.c	/^void cast_word_of_recall( byte level, struct char_data *ch, char *arg, int type,$/;"	f	typeref:typename:void
+change	../include/structs.h	/^  int change;  \/* How fast and what way does it change. *\/$/;"	m	struct:weather_data	typeref:typename:int
+change_alignment	fight.c	/^void change_alignment(struct char_data *ch, struct char_data *victim)$/;"	f	typeref:typename:void
+char_ability_data	../include/structs.h	/^struct char_ability_data {$/;"	s
+char_auto	act.social.c	/^  char *char_auto;$/;"	m	struct:social_messg	typeref:typename:char *	file:
+char_data	../include/structs.h	/^struct char_data {$/;"	s
+char_file_u	../include/structs.h	/^struct char_file_u {$/;"	s
+char_found	act.social.c	/^  char *char_found;    \/* if NULL, read no further, ignore args *\/$/;"	m	struct:social_messg	typeref:typename:char *	file:
+char_from_room	handler.c	/^void char_from_room(struct char_data *ch)$/;"	f	typeref:typename:void
+char_no_arg	act.social.c	/^  char *char_no_arg;$/;"	m	struct:social_messg	typeref:typename:char *	file:
+char_player_data	../include/structs.h	/^struct char_player_data {$/;"	s
+char_point_data	../include/structs.h	/^struct char_point_data {$/;"	s
+char_skill_data	../include/structs.h	/^struct char_skill_data {$/;"	s
+char_special_data	../include/structs.h	/^struct char_special_data {$/;"	s
+char_to_room	handler.c	/^void char_to_room(struct char_data *ch, int room)$/;"	f	typeref:typename:void
+char_to_store	db.c	/^void char_to_store(struct char_data *ch, struct char_file_u *st)$/;"	f	typeref:typename:void
+character	../include/structs.h	/^  struct char_data *character;  \/* linked to char             *\/$/;"	m	struct:descriptor_data	typeref:struct:char_data *
+character_list	db.c	/^struct char_data *character_list = 0; \/* global l-list of chars          *\/$/;"	v	typeref:struct:char_data *
+charge_taxi	guild_command.c	/^int charge_taxi[]=$/;"	v	typeref:typename:int[]
+chatlogfp	act.wizard.c	/^FILE *chatlogfp = NULL;$/;"	v	typeref:typename:FILE *
+check_idling	limit.c	/^void check_idling(struct char_data *ch)$/;"	f	typeref:typename:void
+check_quest_mob_die	quest.c	/^void check_quest_mob_die(struct char_data *ch, int mob)$/;"	f	typeref:typename:void
+check_stat	mobact.c	/^int check_stat(struct char_data *ch)$/;"	f	typeref:typename:int
+checkpointing	comm.c	/^void checkpointing(int sig)$/;"	f	typeref:typename:void
+choose_rescue_mob	mob_magic.c	/^struct char_data *choose_rescue_mob(struct char_data *mob)$/;"	f	typeref:struct:char_data *
+choose_victim	mob_magic.c	/^struct char_data *choose_victim(struct char_data *mob, int fightmode, int mode)$/;"	f	typeref:struct:char_data *
+circle_follow	spell_parser.c	/^bool circle_follow(struct char_data *ch, struct char_data *victim)$/;"	f	typeref:typename:bool
+cityguard	spec_procs2.c	/^int cityguard(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+clear_char	db.c	/^void clear_char(struct char_data *ch)$/;"	f	typeref:typename:void
+clear_object	db.c	/^void clear_object(struct obj_data *obj)$/;"	f	typeref:typename:void
+cleric	spec_procs.c	/^int cleric(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+close1	shop.c	/^  int close1,close2;  \/* When does the shop close?    *\/$/;"	m	struct:shop_data	typeref:typename:int	file:
+close2	shop.c	/^  int close1,close2;  \/* When does the shop close?    *\/$/;"	m	struct:shop_data	typeref:typename:int	file:
+close_socket	comm.c	/^void close_socket(struct descriptor_data *d)$/;"	f	typeref:typename:void
+close_sockets	comm.c	/^void close_sockets(int s)$/;"	f	typeref:typename:void
+cmd	../include/db.h	/^	struct reset_com *cmd;  \/* command table for reset	          *\/$/;"	m	struct:zone_data	typeref:struct:reset_com *
+cmd_info	interpreter.c	/^struct command_info cmd_info[MAX_CMD_LIST];$/;"	v	typeref:struct:command_info[]
+color_liquid	constants.c	/^char *color_liquid[]=$/;"	v	typeref:typename:char * []
+combat_list	fight.c	/^struct char_data *combat_list = 0;     \/* head of l-list of fighting chars *\/$/;"	v	typeref:struct:char_data *
+combat_next_dude	fight.c	/^struct char_data *combat_next_dude = 0; \/* Next dude global trick           *\/$/;"	v	typeref:struct:char_data *
+command	../include/db.h	/^	char command;   \/* current command                      *\/ $/;"	m	struct:reset_com	typeref:typename:char
+command	interpreter.c	/^char *command[]=$/;"	v	typeref:typename:char * []
+command_info	../include/interpreter.h	/^struct command_info$/;"	s
+command_interpreter	interpreter.c	/^int command_interpreter(struct char_data *ch, char *argument) $/;"	f	typeref:typename:int
+command_pointer	../include/interpreter.h	/^	void (*command_pointer) (struct char_data *ch, char *argument, int cmd);$/;"	m	struct:command_info	typeref:typename:void (*)(struct char_data * ch,char * argument,int cmd)
+compare	db.c	/^int compare(struct player_index_element *arg1, struct player_index_element $/;"	f	typeref:typename:int
+con	../include/structs.h	/^  sbyte con;$/;"	m	struct:char_ability_data	typeref:typename:sbyte
+con_app	constants.c	/^struct con_app_type con_app[26] = {$/;"	v	typeref:struct:con_app_type[26]
+con_app_type	../include/structs.h	/^struct con_app_type {$/;"	s
+conditions	../include/structs.h	/^  int conditions[3];      \/* Drunk full etc.                        *\/$/;"	m	struct:char_special_data	typeref:typename:int[3]
+conditions	../include/structs.h	/^  int conditions[3];$/;"	m	struct:char_file_u	typeref:typename:int[3]
+connected	../include/structs.h	/^  int connected;         \/* mode of 'connectedness'    *\/$/;"	m	struct:descriptor_data	typeref:typename:int
+connected_types	constants.c	/^char *connected_types[]  =  {$/;"	v	typeref:typename:char * []
+contains	../include/structs.h	/^  struct obj_data *contains;     \/* Contains objects                 *\/$/;"	m	struct:obj_data	typeref:struct:obj_data *
+contents	../include/structs.h	/^  struct obj_data *contents;   \/* List of items in room              *\/$/;"	m	struct:room_data	typeref:struct:obj_data *
+contime	../include/structs.h	/^  int ncmds,contime;$/;"	m	struct:descriptor_data	typeref:typename:int
+cost	../include/structs.h	/^  int cost;           \/* Value when sold (gp.)            *\/$/;"	m	struct:obj_flag_data	typeref:typename:int
+create_entry	db.c	/^int create_entry(char *name)$/;"	f	typeref:typename:int
+create_money	handler.c	/^struct obj_data *create_money( int amount )$/;"	f	typeref:struct:obj_data *
+credits	db.c	/^char credits[MAX_STRING_LENGTH];      \/* the Credits List                *\/$/;"	v	typeref:typename:char[]
+dam_message	fight.c	/^void dam_message(int dam, struct char_data *ch, struct char_data *victim,$/;"	f	typeref:typename:void
+dam_weapon_type	fight.c	/^struct dam_weapon_type {$/;"	s	file:
+damage	fight.c	/^void damage(struct char_data *ch, struct char_data *victim,$/;"	f	typeref:typename:void
+damnodice	../include/structs.h	/^  byte damnodice;$/;"	m	struct:char_file_u	typeref:typename:byte
+damnodice	../include/structs.h	/^  ubyte damnodice;           \/* The number of damage dice's            *\/$/;"	m	struct:char_special_data	typeref:typename:ubyte
+damroll	../include/structs.h	/^  sbyte damroll;       \/* Any bonus or penalty to the damage roll *\/$/;"	m	struct:char_point_data	typeref:typename:sbyte
+damsizedice	../include/structs.h	/^  byte damsizedice;$/;"	m	struct:char_file_u	typeref:typename:byte
+damsizedice	../include/structs.h	/^  ubyte damsizedice;         \/* The size of the damage dice's          *\/$/;"	m	struct:char_special_data	typeref:typename:ubyte
+data	../include/structs.h	/^	int data;$/;"	m	struct:quest_data	typeref:typename:int
+day	../include/structs.h	/^  byte hours, day, month;$/;"	m	struct:time_info_data	typeref:typename:byte
+death_cry	fight.c	/^void death_cry(struct char_data *ch)$/;"	f	typeref:typename:void
+deathcure	spec_procs2.c	/^int deathcure(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+default_pos	../include/structs.h	/^  byte default_pos;$/;"	m	struct:char_special_data	typeref:typename:byte
+defensive	../include/structs.h	/^  int defensive;$/;"	m	struct:dex_app_type	typeref:typename:int
+delete_char	db.c	/^void delete_char(struct char_data *ch)$/;"	f	typeref:typename:void
+desc	../include/structs.h	/^  struct descriptor_data *desc;$/;"	m	struct:char_data	typeref:struct:descriptor_data *
+description	../include/structs.h	/^  char *description ;            \/* When in room                     *\/$/;"	m	struct:obj_data	typeref:typename:char *
+description	../include/structs.h	/^  char *description;             \/* What to see                      *\/$/;"	m	struct:extra_descr_data	typeref:typename:char *
+description	../include/structs.h	/^  char *description;           \/* Shown when entered                 *\/$/;"	m	struct:room_data	typeref:typename:char *
+description	../include/structs.h	/^  char *description;$/;"	m	struct:char_player_data	typeref:typename:char *
+description	../include/structs.h	/^  char description[300];$/;"	m	struct:char_file_u	typeref:typename:char[300]
+descriptor	../include/structs.h	/^  int descriptor;        \/* file descriptor for socket *\/$/;"	m	struct:descriptor_data	typeref:typename:int
+descriptor_data	../include/structs.h	/^struct descriptor_data {$/;"	s
+descriptor_list	comm.c	/^struct descriptor_data *descriptor_list, *next_to_process;$/;"	v	typeref:struct:descriptor_data *
+dex	../include/structs.h	/^  sbyte dex;$/;"	m	struct:char_ability_data	typeref:typename:sbyte
+dex_app	constants.c	/^struct dex_app_type dex_app[26] = {$/;"	v	typeref:struct:dex_app_type[26]
+dex_app_skill	constants.c	/^struct dex_skill_type dex_app_skill[26] = {$/;"	v	typeref:struct:dex_skill_type[26]
+dex_app_type	../include/structs.h	/^struct dex_app_type {$/;"	s
+dex_skill_type	../include/structs.h	/^struct dex_skill_type {$/;"	s
+dice	utility.c	/^int dice(int number, int size) $/;"	f	typeref:typename:int
+die	fight.c	/^void die(struct char_data *ch, int level,struct char_data *who)$/;"	f	typeref:typename:void
+die_follower	spell_parser.c	/^void die_follower(struct char_data *ch)$/;"	f	typeref:typename:void
+die_msg	../include/structs.h	/^  struct msg_type die_msg;      \/* messages when death            *\/$/;"	m	struct:message_type	typeref:struct:msg_type
+dir_option	../include/structs.h	/^  struct room_direction_data *dir_option[6]; \/* Directions           *\/$/;"	m	struct:room_data	typeref:struct:room_direction_data * [6]
+dirs	constants.c	/^char *dirs[] = $/;"	v	typeref:typename:char * []
+do_action	act.social.c	/^void do_action(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_advance	act.wizard.c	/^void do_advance(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_angry_yell	guild_skills.c	/^void do_angry_yell(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_arrest	guild_skills.c	/^void do_arrest(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_ask	act.comm.c	/^void do_ask(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_assault	act.other.c	/^void do_assault(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_assist	newcom.c	/^void do_assist(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_at	act.wizard.c	/^void do_at(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_attribute	act.informative.c	/^void do_attribute(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_backstab	act.offensive.c	/^void do_backstab(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_banish	act.wizard.c	/^void do_banish(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_bank	act.informative.c	/^void do_bank(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_bash	act.offensive.c	/^void do_bash(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_brief	act.other.c	/^void do_brief(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_cant	guild_informative.c	/^void do_cant(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_cast	spell_parser.c	/^void do_cast(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_charge	guild_skills.c	/^void do_charge(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_chat	act.wizard.c	/^void do_chat(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_checkrent	db.c	/^void do_checkrent(struct char_data *ch,char *argument, int cmd)$/;"	f	typeref:typename:void
+do_close	act.movement.c	/^void do_close(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_compact	act.other.c	/^void do_compact(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_consider	act.informative.c	/^void do_consider(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_credits	act.informative.c	/^void do_credits(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_data	act.informative.c	/^void do_data(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_demote	act.wizard.c	/^void do_demote(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_disarm	act.other.c	/^void do_disarm(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_drink	act.obj2.c	/^void do_drink(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_drop	act.obj1.c	/^void do_drop(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_eat	act.obj2.c	/^void do_eat(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_echo	act.wizard.c	/^void do_echo(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_emote	act.wizard.c	/^void do_emote(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_enter	act.movement.c	/^void do_enter(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_equipment	act.informative.c	/^void do_equipment(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_evil_strike	guild_skills.c	/^void do_evil_strike(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_examine	act.informative.c	/^void do_examine(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_exits	act.informative.c	/^void do_exits(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_extractrent	db.c	/^void do_extractrent(struct char_data *ch,char *argument, int cmd)$/;"	f	typeref:typename:void
+do_flag	act.wizard.c	/^void do_flag(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_flash	act.offensive.c	/^void do_flash(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_flee	act.offensive.c	/^void do_flee(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_flick	act.wizard.c	/^void do_flick(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_follow	act.movement.c	/^void do_follow(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_force	act.wizard.c	/^void do_force(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_get	act.obj1.c	/^void do_get(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_give	act.obj1.c	/^void do_give(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_goto	act.wizard.c	/^void do_goto(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_grab	act.obj2.c	/^void do_grab(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_group	act.other.c	/^void do_group(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_gtell	act.comm.c	/^void do_gtell(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_hangul	act.informative.c	/^void do_hangul(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_help	act.informative.c	/^void do_help(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_hide	act.other.c	/^void do_hide(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_hint	quest.c	/^void do_hint(struct char_data *ch, char *arg, int cmd)$/;"	f	typeref:typename:void
+do_hit	act.offensive.c	/^void do_hit(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_inject	guild_skills.c	/^void do_inject(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_insult	act.social.c	/^void do_insult(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_inventory	act.informative.c	/^void do_inventory(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_invis	act.wizard.c	/^void do_invis(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_junk	act.obj2.c	/^void do_junk(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_kick	act.offensive.c	/^void do_kick(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_kill	act.offensive.c	/^void do_kill(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_lastchat	act.comm.c	/^void do_lastchat(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_leave	act.movement.c	/^void do_leave(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_levels	act.informative.c	/^void do_levels(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_light_move	act.offensive.c	/^void do_light_move(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_load	act.wizard.c	/^void do_load(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_lock	act.movement.c	/^void do_lock(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_look	act.informative.c	/^void do_look(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_move	act.movement.c	/^void do_move(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_multi_kick	act.offensive.c	/^void do_multi_kick(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_news	act.informative.c	/^void do_news(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_noaffect	act.wizard.c	/^void do_noaffect(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_nochat	act.informative.c	/^void do_nochat(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_noshout	act.wizard.c	/^void do_noshout(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_not_buy	shop.c	/^  char *do_not_buy;      \/* If keeper dosn't buy such things.   *\/$/;"	m	struct:shop_data	typeref:typename:char *	file:
+do_not_here	act.other.c	/^void do_not_here(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_notell	act.informative.c	/^void do_notell(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_open	act.movement.c	/^void do_open(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_order	act.offensive.c	/^void do_order(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_pick	act.movement.c	/^void do_pick(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_plan	act.informative.c	/^void do_plan(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_police	act.informative.c	/^void do_police(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_post	act.other.c	/^void do_post(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_pour	act.obj2.c	/^void do_pour(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_power_bash	guild_skills.c	/^void do_power_bash(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_practice	act.other.c	/^bool do_practice(struct char_data *ch, char *arg, int cmd)$/;"	f	typeref:typename:bool
+do_punch	act.offensive.c	/^void do_punch(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_purge	act.wizard.c	/^void do_purge(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_put	act.obj1.c	/^void do_put(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_quaff	act.other.c	/^void do_quaff(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_query	guild_informative.c	/^void do_query(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_quest	quest.c	/^void do_quest(struct char_data *ch, char *arg, int cmd)$/;"	f	typeref:typename:void
+do_quit	act.other.c	/^void do_quit(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_read	act.informative.c	/^void do_read(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_recite	act.other.c	/^void do_recite(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_reload	act.obj1.c	/^void do_reload(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_reloadzone	newcom.c	/^void do_reloadzone(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_remove	act.obj2.c	/^void do_remove(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_rent	db.c	/^void do_rent(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:void
+do_replacerent	db.c	/^void do_replacerent(struct char_data *ch,char *argument, int cmd)$/;"	f	typeref:typename:void
+do_reply	act.comm.c	/^void do_reply(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_report	act.informative.c	/^void do_report(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_request	quest.c	/^void do_request(struct char_data *ch, char *arg, int cmd)$/;"	f	typeref:typename:void
+do_reroll	act.wizard.c	/^void do_reroll(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_rescue	act.offensive.c	/^void do_rescue(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_resetzone	newcom.c	/^void do_resetzone(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_rest	act.movement.c	/^void do_rest(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_restore	act.wizard.c	/^void do_restore(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_return	act.wizard.c	/^void do_return(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_save	act.other.c	/^void do_save(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_say	act.comm.c	/^void do_say(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_sayh	act.comm.c	/^void do_sayh(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_score	act.informative.c	/^void do_score(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_send	act.comm.c	/^void do_send(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_set	act.wizard.c	/^void do_set(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_shadow	guild_skills.c	/^void do_shadow(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_shoot	act.offensive.c	/^void do_shoot(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_shouryuken	act.other.c	/^void do_shouryuken(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_shout	act.comm.c	/^void do_shout(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_shutdow	act.wizard.c	/^void do_shutdow(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_shutdown	act.wizard.c	/^void do_shutdown(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_simple_move	act.movement.c	/^int do_simple_move(struct char_data *ch, int cmd, int following)$/;"	f	typeref:typename:int
+do_simultaneous	guild_skills.c	/^void do_simultaneous(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_sip	act.obj2.c	/^void do_sip(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_sit	act.movement.c	/^void do_sit(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_sleep	act.movement.c	/^void do_sleep(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_smoke	guild_skills.c	/^void do_smoke(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_sneak	act.other.c	/^void do_sneak(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_snoop	act.wizard.c	/^void do_snoop(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_solace	guild_skills.c	/^void do_solace(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_solo	act.informative.c	/^void do_solo(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_spells	act.informative.c	/^void do_spells(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_spin_bird_kick	act.other.c	/^void do_spin_bird_kick(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_stand	act.movement.c	/^void do_stand(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_start	act.wizard.c	/^void do_start(struct char_data *ch)$/;"	f	typeref:typename:void
+do_stat	act.wizard.c	/^void do_stat(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_steal	act.other.c	/^void do_steal(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_string	modify.c	/^void do_string(struct char_data *ch, char *arg, int cmd)$/;"	f	typeref:typename:void
+do_switch	act.wizard.c	/^void do_switch(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_sys	act.wizard.c	/^void do_sys(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_taste	act.obj2.c	/^void do_taste(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_tell	act.comm.c	/^void do_tell(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_temptation	act.offensive.c	/^void do_temptation(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_throw_object	act.other.c	/^void do_throw_object(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_time	act.informative.c	/^void do_time(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_title	act.informative.c	/^void do_title(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_tornado	act.offensive.c	/^void do_tornado(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_trans	act.wizard.c	/^void do_trans(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_transform	act.wizard.c	/^void do_transform(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_ungroup	newcom.c	/^void do_ungroup(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_unhold	act.obj2.c	/^void do_unhold(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_unlock	act.movement.c	/^void do_unlock(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_unwield	act.obj2.c	/^void do_unwield(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_use	act.other.c	/^void do_use(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_users	act.informative.c	/^void do_users(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_version	newcom.c	/^void do_version(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_wake	act.movement.c	/^void do_wake(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_wall	act.wizard.c	/^void do_wall(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_wear	act.obj2.c	/^void do_wear(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_weather	act.informative.c	/^void do_weather(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_where	act.informative.c	/^void do_where(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_whisper	act.comm.c	/^void do_whisper(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_whistle	guild_skills.c	/^void do_whistle(struct char_data *ch,char *argument,int cmd)$/;"	f	typeref:typename:void
+do_who	act.informative.c	/^void do_who(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_wield	act.obj2.c	/^void do_wield(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_wimpy	act.other.c	/^void do_wimpy(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_wizards	act.informative.c	/^void do_wizards(struct char_data *ch, char *argument, int cmd) {$/;"	f	typeref:typename:void
+do_wizhelp	act.informative.c	/^void do_wizhelp(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_wizlock	act.informative.c	/^void do_wizlock(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_wiznet	act.wizard.c	/^void do_wiznet(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+do_write	act.comm.c	/^void do_write(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+dragon	spec_procs.c	/^int dragon(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+drink_aff	constants.c	/^int drink_aff[][3] = {$/;"	v	typeref:typename:int[][3]
+drinknames	constants.c	/^char *drinknames[]=$/;"	v	typeref:typename:char * []
+drinks	constants.c	/^char *drinks[]=$/;"	v	typeref:typename:char * []
+dump	spec_procs.c	/^int dump(struct char_data *ch, int cmd, char *arg) $/;"	f	typeref:typename:int
+duration	../include/structs.h	/^  int duration;      \/* For how long its effects will last      *\/$/;"	m	struct:affected_type	typeref:typename:int
+echo_local	interpreter.c	/^void echo_local(int fd)$/;"	f	typeref:typename:void
+echo_telnet	interpreter.c	/^void echo_telnet(struct descriptor_data *d)$/;"	f	typeref:typename:void
+electric_shock	spec_procs3.c	/^int electric_shock(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+env	comm.c	/^jmp_buf env;$/;"	v	typeref:typename:jmp_buf
+equip_char	handler.c	/^void equip_char(struct char_data *ch, struct obj_data *obj, int pos)$/;"	f	typeref:typename:void
+equipment	../include/structs.h	/^  struct obj_data *equipment[MAX_WEAR];$/;"	m	struct:char_data	typeref:struct:obj_data * []
+equipment_types	constants.c	/^char *equipment_types[] = {$/;"	v	typeref:typename:char * []
+ex_description	../include/structs.h	/^  struct extra_descr_data *ex_description; \/* extra descriptions     *\/$/;"	m	struct:obj_data	typeref:struct:extra_descr_data *
+ex_description	../include/structs.h	/^  struct extra_descr_data *ex_description; \/* for examine\/look       *\/$/;"	m	struct:room_data	typeref:struct:extra_descr_data *
+exit_bits	constants.c	/^char *exit_bits[] = {$/;"	v	typeref:typename:char * []
+exit_info	../include/structs.h	/^  sh_int exit_info;                \/* Exit info                       *\/$/;"	m	struct:room_direction_data	typeref:typename:sh_int
+exp	../include/limit.h	/^	int exp;$/;"	m	struct:title_type	typeref:typename:int
+exp	../include/structs.h	/^  LONGLONG exp;             \/* The experience of the player            *\/$/;"	m	struct:char_point_data	typeref:typename:LONGLONG
+extra_bits	constants.c	/^char *extra_bits[] = {$/;"	v	typeref:typename:char * []
+extra_descr_data	../include/structs.h	/^struct extra_descr_data$/;"	s
+extra_flags	../include/structs.h	/^  int extra_flags;    \/* If it hums,glows etc             *\/$/;"	m	struct:obj_flag_data	typeref:typename:int
+extract_char	handler.c	/^void extract_char(struct char_data *ch)$/;"	f	typeref:typename:void
+extract_obj	handler.c	/^void extract_obj(struct obj_data *obj)$/;"	f	typeref:typename:void
+fido	spec_procs2.c	/^int fido(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+fight_messages	db.c	/^struct message_list fight_messages[MAX_MESSAGES]; \/* fighting messages   *\/$/;"	v	typeref:struct:message_list[]
+fighting	../include/structs.h	/^  struct char_data *fighting;$/;"	m	struct:char_special_data	typeref:struct:char_data *
+file_to_string	db.c	/^int file_to_string(char *name, char *buf)$/;"	f	typeref:typename:int
+fileid	version.c	/^char fileid[] = "@(#) v3.00 2019\/09\/23  by Cookie\\n  v1.13 94\/04\/13  by Source Manager Cold/;"	v	typeref:typename:char[]
+filename	../include/db.h	/^	char *filename;			\/* zone file name					  *\/$/;"	m	struct:zone_data	typeref:typename:char *
+fill	interpreter.c	/^char *fill[]=$/;"	v	typeref:typename:char * []
+fill_word	interpreter.c	/^int fill_word(char *argument)$/;"	f	typeref:typename:int
+find_action	act.social.c	/^int find_action(int cmd)$/;"	f	typeref:typename:int
+find_board	board.c	/^struct board_data *find_board(struct char_data *ch)$/;"	f	typeref:struct:board_data *
+find_door	act.movement.c	/^int find_door(struct char_data *ch, char *type, char *dir)$/;"	f	typeref:typename:int
+find_ex_description	act.informative.c	/^char *find_ex_description(char *word, struct extra_descr_data *list)$/;"	f	typeref:typename:char *
+find_mbox	mail.c	/^struct mbox_data *find_mbox(struct char_data *ch)$/;"	f	typeref:struct:mbox_data *
+find_name	interpreter.c	/^int find_name(char *name)$/;"	f	typeref:typename:int
+find_zone	quest.c	/^char *find_zone(int number)$/;"	f	typeref:typename:char *
+finisher	spec_procs2.c	/^int finisher(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+first_attack	spec_procs.c	/^void first_attack(struct char_data *ch, struct char_data *victim)$/;"	f	typeref:typename:void
+flush_queues	comm.c	/^void flush_queues(struct descriptor_data *d)$/;"	f	typeref:typename:void
+fname	handler.c	/^char *fname(char *namelist)$/;"	f	typeref:typename:char *
+follow_type	../include/structs.h	/^struct follow_type {$/;"	s
+follower	../include/structs.h	/^  struct char_data *follower;$/;"	m	struct:follow_type	typeref:struct:char_data *
+followers	../include/structs.h	/^  struct follow_type *followers;$/;"	m	struct:char_data	typeref:struct:follow_type *
+fourth_jangro	daerimsa.c	/^struct char_data *fourth_jangro;$/;"	v	typeref:struct:char_data *
+fourth_jangro_func	daerimsa.c	/^int fourth_jangro_func(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+fp	board.c	/^    FILE *fp;   \/* file pointer *\/$/;"	m	struct:board_data	typeref:typename:FILE *	file:
+fp	mail.c	/^    FILE *fp;   \/* file pointer *\/$/;"	m	struct:mbox_data	typeref:typename:FILE *	file:
+fp	modify.c	/^    FILE *fp;   \/* file pointer *\/$/;"	m	struct:board_data	typeref:typename:FILE *	file:
+fread_action	act.social.c	/^char *fread_action(FILE *fl)$/;"	f	typeref:typename:char *
+fread_string	db.c	/^char *fread_string(FILE *fl)$/;"	f	typeref:typename:char *
+freaky	comm.c	/^void freaky(struct descriptor_data *d)$/;"	f	typeref:typename:void
+free_char	db.c	/^void free_char(struct char_data *ch)$/;"	f	typeref:typename:void
+free_obj	db.c	/^void free_obj(struct obj_data *obj)$/;"	f	typeref:typename:void
+fullness	constants.c	/^char *fullness[] =$/;"	v	typeref:typename:char * []
+func	../include/db.h	/^	int (*func)();  \/* special procedure for this mob\/obj       *\/$/;"	m	struct:index_data	typeref:typename:int (*)()
+funct	../include/structs.h	/^  int (*funct)();              \/* special procedure                  *\/$/;"	m	struct:room_data	typeref:typename:int (*)()
+gain_condition	limit.c	/^void gain_condition(struct char_data *ch,int condition,int value)$/;"	f	typeref:typename:void
+gain_exp	limit.c	/^void gain_exp(struct char_data *ch, int gain)$/;"	f	typeref:typename:void
+gain_exp_regardless	limit.c	/^void gain_exp_regardless(struct char_data *ch, int gain)$/;"	f	typeref:typename:void
+game_loop	comm.c	/^void game_loop(int s)$/;"	f	typeref:typename:void
+gbisland_carpie	gbisland.c	/^int gbisland_carpie(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+gbisland_false_move	gbisland.c	/^void gbisland_false_move(struct char_data *ch, int dir)$/;"	f	typeref:typename:void
+gbisland_go_back	gbisland.c	/^void gbisland_go_back(struct char_data *ch)$/;"	f	typeref:typename:void
+gbisland_go_out_barrier	gbisland.c	/^void gbisland_go_out_barrier(struct char_data *ch)$/;"	f	typeref:typename:void
+gbisland_lanessa	gbisland.c	/^int gbisland_lanessa(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+gbisland_magic_paper	gbisland.c	/^int gbisland_magic_paper(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+gbisland_move_seashore	gbisland.c	/^void gbisland_move_seashore(struct char_data *ch)$/;"	f	typeref:typename:void
+gbisland_saint_mirror	gbisland.c	/^int gbisland_saint_mirror(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+gbisland_sea	gbisland.c	/^int gbisland_sea(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+gbisland_seed_evil_power	gbisland.c	/^int gbisland_seed_evil_power(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+general_description	../include/structs.h	/^  char *general_description;       \/* When look DIR.                  *\/$/;"	m	struct:room_direction_data	typeref:typename:char *
+generate_indices	db.c	/^struct index_data *generate_indices(FILE *fl, int *top)$/;"	f	typeref:struct:index_data *
+generic_find	handler.c	/^int generic_find(char *arg, int bitvector, struct char_data *ch,$/;"	f	typeref:typename:int
+get	act.obj1.c	/^void get(struct char_data *ch, struct obj_data *obj_object, $/;"	f	typeref:typename:void
+get_char	handler.c	/^struct char_data *get_char(char *name)$/;"	f	typeref:struct:char_data *
+get_char_num	handler.c	/^struct char_data *get_char_num(int nr)$/;"	f	typeref:struct:char_data *
+get_char_room	handler.c	/^struct char_data *get_char_room(char *name, int room)$/;"	f	typeref:struct:char_data *
+get_char_room_vis	handler.c	/^struct char_data *get_char_room_vis(struct char_data *ch, char *name)$/;"	f	typeref:struct:char_data *
+get_char_vis	handler.c	/^struct char_data *get_char_vis(struct char_data *ch, char *name)$/;"	f	typeref:struct:char_data *
+get_char_vis_zone	handler.c	/^struct char_data *get_char_vis_zone(struct char_data *ch, char *name)$/;"	f	typeref:struct:char_data *
+get_from_q	comm.c	/^int get_from_q(struct txt_q *queue, char *dest)$/;"	f	typeref:typename:int
+get_mail	mail.c	/^int get_mail(struct char_data *ch, struct mbox_data *cb, char *arg)$/;"	f	typeref:typename:int
+get_mobile_index	db.c	/^struct char_data *get_mobile_index(int index)$/;"	f	typeref:struct:char_data *
+get_number	handler.c	/^int get_number(char **name) {$/;"	f	typeref:typename:int
+get_obj	handler.c	/^struct obj_data *get_obj(char *name)$/;"	f	typeref:struct:obj_data *
+get_obj_in_list	handler.c	/^struct obj_data *get_obj_in_list(char *name, struct obj_data *list)$/;"	f	typeref:struct:obj_data *
+get_obj_in_list_num	handler.c	/^struct obj_data *get_obj_in_list_num(int num, struct obj_data *list)$/;"	f	typeref:struct:obj_data *
+get_obj_in_list_vis	handler.c	/^struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name, $/;"	f	typeref:struct:obj_data *
+get_obj_num	handler.c	/^struct obj_data *get_obj_num(int nr)$/;"	f	typeref:struct:obj_data *
+get_obj_vis	handler.c	/^struct obj_data *get_obj_vis(struct char_data *ch, char *name)$/;"	f	typeref:struct:obj_data *
+get_object_in_equip_vis	act.informative.c	/^struct obj_data *get_object_in_equip_vis(struct char_data *ch,$/;"	f	typeref:struct:obj_data *
+get_quest	quest.c	/^int get_quest(struct char_data *ch)$/;"	f	typeref:typename:int
+get_specific_vis	handler.c	/^struct char_data *get_specific_vis(struct char_data *ch, char *name, int type)$/;"	f	typeref:struct:char_data *
+give_gift_for_quest	quest.c	/^int give_gift_for_quest(int level)$/;"	f	typeref:typename:int
+god_msg	../include/structs.h	/^  struct msg_type god_msg;      \/* messages when hit on god       *\/$/;"	m	struct:message_type	typeref:struct:msg_type
+gold	../include/structs.h	/^  LONGLONG gold;            \/* Money carried                           *\/$/;"	m	struct:char_point_data	typeref:typename:LONGLONG
+gpd	../include/structs.h	/^  int gpd;            \/* general purpose data             *\/$/;"	m	struct:obj_flag_data	typeref:typename:int
+graf	limit.c	/^int graf(int age, int p0, int p1, int p2, int p3, int p4, int p5, int p6)$/;"	f	typeref:typename:int
+great_mazinga	spec_procs3.c	/^int great_mazinga(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+group_gain	fight.c	/^void group_gain(struct char_data *ch, struct char_data *victim)$/;"	f	typeref:typename:void
+guild	../include/structs.h	/^  byte guild; \/* which guild you are joining *\/$/;"	m	struct:char_player_data	typeref:typename:byte
+guild	../include/structs.h	/^  byte guild;$/;"	m	struct:char_file_u	typeref:typename:byte
+guild	spec_procs.c	/^int guild(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+guild_entry	guild_command.c	/^int guild_entry(struct char_data *ch,int cmd,char *arg)$/;"	f	typeref:typename:int
+guild_names	guild_constant.c	/^char *guild_names[] =$/;"	v	typeref:typename:char * []
+guild_practice_yard	guild_command.c	/^int guild_practice_yard(struct char_data *ch,int cmd,char *arg)$/;"	f	typeref:typename:int
+guild_skill_nums	guild_constant.c	/^int guild_skill_nums[] =$/;"	v	typeref:typename:int[]
+guild_skills	../include/structs.h	/^  ubyte guild_skills[MAX_GUILD_SKILLS]; \/* by process *\/$/;"	m	struct:char_player_data	typeref:typename:ubyte[]
+guild_skills	../include/structs.h	/^  ubyte guild_skills[MAX_GUILD_SKILLS];$/;"	m	struct:char_file_u	typeref:typename:ubyte[]
+half_chop	interpreter.c	/^void half_chop(char *string, char *arg1, char *arg2)$/;"	f	typeref:typename:void
+has_key	act.movement.c	/^int has_key(struct char_data *ch, int key)$/;"	f	typeref:typename:int
+head	../include/db2.h	/^	struct reset_q_element *head;$/;"	m	struct:reset_q_type	typeref:struct:reset_q_element *
+head	../include/structs.h	/^  struct txt_block *head;$/;"	m	struct:txt_q	typeref:struct:txt_block *
+head	board.c	/^    char *head[MAX_MSGS];  \/* head of board *\/$/;"	m	struct:board_data	typeref:typename:char * []	file:
+head	mail.c	/^    char *head[MAX_MAILS];  \/* head of mbox *\/$/;"	m	struct:mbox_data	typeref:typename:char * []	file:
+head	modify.c	/^    char *head[MAX_MSGS];  \/* head of board *\/$/;"	m	struct:board_data	typeref:typename:char * []	file:
+height	../include/structs.h	/^  ubyte height;$/;"	m	struct:char_player_data	typeref:typename:ubyte
+height	../include/structs.h	/^  ubyte weight,height;$/;"	m	struct:char_file_u	typeref:typename:ubyte
+help	db.c	/^char help[MAX_STRING_LENGTH];         \/* the main help page              *\/$/;"	v	typeref:typename:char[]
+help_fl	db.c	/^     *help_fl;                        \/* file for help texts (HELP <kwd>)*\/$/;"	v	typeref:typename:FILE *
+help_index	db.c	/^struct help_index_element *help_index = 0;$/;"	v	typeref:struct:help_index_element *
+help_index_element	../include/db.h	/^struct help_index_element$/;"	s
+helper	spec_procs3.c	/^int helper(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+hide	../include/structs.h	/^  int hide;$/;"	m	struct:dex_skill_type	typeref:typename:int
+hide	act.social.c	/^  int hide;$/;"	m	struct:social_messg	typeref:typename:int	file:
+his_end	act.wizard.c	/^int his_start=0,his_end=0; $/;"	v	typeref:typename:int
+his_start	act.wizard.c	/^int his_start=0,his_end=0; $/;"	v	typeref:typename:int
+history	act.wizard.c	/^char history[20][MAX_STRING_LENGTH];$/;"	v	typeref:typename:char[20][]
+hit	../include/structs.h	/^  int hit;$/;"	m	struct:char_point_data	typeref:typename:int
+hit	fight.c	/^void hit(struct char_data *ch, struct char_data *victim, int type)$/;"	f	typeref:typename:void
+hit_gain	limit.c	/^int hit_gain(struct char_data *ch)$/;"	f	typeref:typename:int
+hit_limit	limit.c	/^int hit_limit(struct char_data *ch)$/;"	f	typeref:typename:int
+hit_msg	../include/structs.h	/^  struct msg_type hit_msg;      \/* messages when hit              *\/$/;"	m	struct:message_type	typeref:struct:msg_type
+hitp	../include/structs.h	/^  int hitp;$/;"	m	struct:con_app_type	typeref:typename:int
+hitroll	../include/structs.h	/^  sbyte hitroll;       \/* Any bonus or penalty to the hit roll    *\/$/;"	m	struct:char_point_data	typeref:typename:sbyte
+hospital	spec_procs2.c	/^int hospital(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+host	../include/structs.h	/^  char host[16];         \/* hostname                   *\/$/;"	m	struct:descriptor_data	typeref:typename:char[16]
+hours	../include/structs.h	/^  byte hours, day, month;$/;"	m	struct:time_info_data	typeref:typename:byte
+how_good	spec_procs.c	/^char *how_good(int p1, int p2)$/;"	f	typeref:typename:char *
+hunting	../include/structs.h	/^  struct char_data *hunting;$/;"	m	struct:char_special_data	typeref:struct:char_data *
+hupsig	comm.c	/^void hupsig(int sig)$/;"	f	typeref:typename:void
+if_flag	../include/db.h	/^	bool if_flag;   \/* if TRUE: exe only if preceding exe'd *\/$/;"	m	struct:reset_com	typeref:typename:bool
+imotd	db.c	/^char imotd[MAX_STRING_LENGTH];		  \/* MOTD for immortals				 *\/$/;"	v	typeref:typename:char[]
+improve_status	interpreter.c	/^int improve_status(struct char_data *ch, char arg)$/;"	f	typeref:typename:int
+in_obj	../include/structs.h	/^  struct obj_data *in_obj;       \/* In what object NULL when none    *\/$/;"	m	struct:obj_data	typeref:struct:obj_data *
+in_room	../include/structs.h	/^  sh_int in_room;                \/* In what room -1 when conta\/carr  *\/$/;"	m	struct:obj_data	typeref:typename:sh_int
+in_room	../include/structs.h	/^  sh_int in_room;$/;"	m	struct:char_data	typeref:typename:sh_int
+in_room	shop.c	/^  int in_room;    \/* Where is the shop?      *\/$/;"	m	struct:shop_data	typeref:typename:int	file:
+index_data	../include/db.h	/^struct index_data$/;"	s
+init_a_board	board.c	/^struct board_data *init_a_board(struct char_data *ch)$/;"	f	typeref:struct:board_data *
+init_a_mbox	mail.c	/^struct mbox_data *init_a_mbox(struct char_data *ch)$/;"	f	typeref:struct:mbox_data *
+init_char	db.c	/^void init_char(struct char_data *ch)$/;"	f	typeref:typename:void
+init_mbox	mail.c	/^void init_mbox()$/;"	f	typeref:typename:void
+init_quest	quest.c	/^void init_quest(void)$/;"	f	typeref:typename:void
+init_socket	comm.c	/^int init_socket(int port)$/;"	f	typeref:typename:int
+input	../include/structs.h	/^  struct txt_q input;           \/* q of unprocessed input     *\/$/;"	m	struct:descriptor_data	typeref:struct:txt_q
+int_app	constants.c	/^struct int_app_type int_app[26] = {$/;"	v	typeref:struct:int_app_type[26]
+int_app_type	../include/structs.h	/^struct int_app_type {$/;"	s
+intel	../include/structs.h	/^  sbyte intel;$/;"	m	struct:char_ability_data	typeref:typename:sbyte
+is_abbrev	interpreter.c	/^int is_abbrev(char *arg1, char *arg2)$/;"	f	typeref:typename:int
+is_empty	db.c	/^int is_empty(int zone_nr)$/;"	f	typeref:typename:int
+is_number	interpreter.c	/^int is_number(char *str)$/;"	f	typeref:typename:int
+is_ok	shop.c	/^int is_ok(struct char_data *keeper, struct char_data *ch, int shop_nr)$/;"	f	typeref:typename:int
+isexactname	handler.c	/^int isexactname(char *str, char *namelist)$/;"	f	typeref:typename:int
+isname	handler.c	/^int isname(char *str, char *namelist)$/;"	f	typeref:typename:int
+isnhspace	interpreter.c	/^#define isnhspace(/;"	d	file:
+item_number	../include/structs.h	/^  sh_int item_number;            \/* Where in data-base               *\/$/;"	m	struct:obj_data	typeref:typename:sh_int
+item_types	constants.c	/^char *item_types[] = {$/;"	v	typeref:typename:char * []
+jail_time	../include/structs.h	/^  int jail_time;$/;"	m	struct:char_special_data	typeref:typename:int
+jale_room	spec_procs2.c	/^int jale_room(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+janitor	spec_procs2.c	/^int janitor(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+keeper	shop.c	/^  int keeper;             \/* The mobil who owns the shop (virtual)*\/$/;"	m	struct:shop_data	typeref:typename:int	file:
+key	../include/structs.h	/^  sh_int key;                       \/* Key's number (-1 for no key)    *\/$/;"	m	struct:room_direction_data	typeref:typename:sh_int
+keyword	../include/db.h	/^	char *keyword;$/;"	m	struct:help_index_element	typeref:typename:char *
+keyword	../include/structs.h	/^  char *keyword;                   \/* for open\/close                  *\/$/;"	m	struct:room_direction_data	typeref:typename:char *
+keyword	../include/structs.h	/^  char *keyword;                 \/* Keyword in look\/examine          *\/$/;"	m	struct:extra_descr_data	typeref:typename:char *
+kickbasher	spec_procs2.c	/^int kickbasher(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+last_direction	../include/structs.h	/^  byte last_direction;      \/* The last direction the monster went    *\/$/;"	m	struct:char_special_data	typeref:typename:byte
+last_input	../include/structs.h	/^  char last_input[MAX_LAST_INPUT_COUNT][MAX_INPUT_LENGTH]; \/* for use of !! *\/$/;"	m	struct:descriptor_data	typeref:typename:char[][]
+last_input_count	../include/structs.h	/^  int last_input_count;$/;"	m	struct:descriptor_data	typeref:typename:int
+last_logon	../include/structs.h	/^  time_t last_logon;$/;"	m	struct:char_file_u	typeref:typename:time_t
+learn	../include/structs.h	/^  byte learn;       \/* how many % a player learns a spell\/skill *\/$/;"	m	struct:int_app_type	typeref:typename:byte
+learned	../include/structs.h	/^  ubyte learned;           \/* % chance for success 0 = not learned   *\/$/;"	m	struct:char_skill_data	typeref:typename:ubyte
+length	modify.c	/^int length[] =$/;"	v	typeref:typename:int[]
+level	../include/structs.h	/^  byte level;         \/* PC \/ NPC s level                     *\/$/;"	m	struct:char_player_data	typeref:typename:byte
+level	quest.c	/^  int level;$/;"	m	struct:__anon1684ae680108	typeref:typename:int	file:
+level_gate	spec_procs3.c	/^int level_gate(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+level_quest	quest.c	/^int level_quest[45] = {$/;"	v	typeref:typename:int[45]
+level_taxi	guild_command.c	/^int level_taxi[]=$/;"	v	typeref:typename:int[]
+life	../include/structs.h	/^  int life,regeneration;$/;"	m	struct:char_data	typeref:typename:int
+life	../include/structs.h	/^  int played,life;$/;"	m	struct:char_file_u	typeref:typename:int
+lifespan	../include/db.h	/^	int lifespan;           \/* how long between resets (minutes)  *\/$/;"	m	struct:zone_data	typeref:typename:int
+light	../include/structs.h	/^  byte light;                  \/* Number of lightsources in room     *\/$/;"	m	struct:room_data	typeref:typename:byte
+list_char_to_char	act.informative.c	/^void list_char_to_char(struct char_data *list, struct char_data *ch, $/;"	f	typeref:typename:void
+list_obj_to_char	act.informative.c	/^void list_obj_to_char(struct obj_data *list,struct char_data *ch, int mode, $/;"	f	typeref:typename:void
+list_top	act.social.c	/^static int list_top = -1;$/;"	v	typeref:typename:int	file:
+load_board	board.c	/^void load_board(struct board_data *cb)$/;"	f	typeref:typename:void
+load_char	db.c	/^int load_char(char *name, struct char_file_u *char_element)$/;"	f	typeref:typename:int
+load_mbox	mail.c	/^void load_mbox(struct mbox_data *cb )$/;"	f	typeref:typename:void
+load_messages	fight.c	/^void load_messages(void)$/;"	f	typeref:typename:void
+load_room	../include/structs.h	/^  sh_int load_room;$/;"	m	struct:char_file_u	typeref:typename:sh_int
+load_zones	db.c	/^void load_zones(int zon)$/;"	f	typeref:typename:void
+location	../include/structs.h	/^  byte location;        \/* Tells which ability to change(APPLY_XXX)*\/$/;"	m	struct:affected_type	typeref:typename:byte
+location	../include/structs.h	/^  byte location;      \/* Which ability to change (APPLY_XXX) *\/$/;"	m	struct:obj_affected_type	typeref:typename:byte
+locker_room	guild_command.c	/^int locker_room(struct char_data *ch,int cmd,char *arg)$/;"	f	typeref:typename:int
+log	../include/utils.h	/^#define log(/;"	d
+log	utility.c	/^void log(char *str)$/;"	f	typeref:typename:void
+logon	../include/structs.h	/^  time_t logon;$/;"	m	struct:time_data	typeref:typename:time_t
+logsig	comm.c	/^void logsig(int sig)$/;"	f	typeref:typename:void
+long_descr	../include/structs.h	/^  char *long_descr;$/;"	m	struct:char_player_data	typeref:typename:char *
+m_num	board.c	/^    int m_num;  \/* msg number that board contains *\/$/;"	m	struct:board_data	typeref:typename:int	file:
+m_num	mail.c	/^    int m_num;  \/* msg number that mbox contains *\/$/;"	m	struct:mbox_data	typeref:typename:int	file:
+m_num	modify.c	/^    int m_num;  \/* msg number that board contains *\/$/;"	m	struct:board_data	typeref:typename:int	file:
+magic_number	../include/structs.h	/^  int magic_number;$/;"	m	struct:char_data	typeref:typename:int
+magic_user	spec_procs.c	/^int magic_user(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+magic_weapon_hit	magic_weapon.c	/^void magic_weapon_hit( struct char_data *ch, struct char_data *victim,$/;"	f	typeref:typename:void
+magicseed	spec_procs2.c	/^int magicseed(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+mail_error_log	mail.c	/^void mail_error_log(char *str)$/;"	f	typeref:typename:void
+main	comm.c	/^int main(int argc, char **argv)$/;"	f	typeref:typename:int
+make_corpse	fight.c	/^void make_corpse(struct char_data *ch, int level)$/;"	f	typeref:typename:void
+mana	../include/structs.h	/^  int mana;$/;"	m	struct:char_point_data	typeref:typename:int
+mana_gain	limit.c	/^int mana_gain(struct char_data *ch)$/;"	f	typeref:typename:int
+mana_limit	limit.c	/^int mana_limit(struct char_data *ch)$/;"	f	typeref:typename:int
+master	../include/structs.h	/^  struct char_data *master;$/;"	m	struct:char_data	typeref:struct:char_data *
+max_hit	../include/structs.h	/^  int max_hit;      \/* Max hit for NPC                         *\/$/;"	m	struct:char_point_data	typeref:typename:int
+max_mana	../include/structs.h	/^  int max_mana;     \/* Not useable may be erased upon player file renewal *\/$/;"	m	struct:char_point_data	typeref:typename:int
+max_move	../include/structs.h	/^  int max_move;     \/* Max move for NPC                        *\/$/;"	m	struct:char_point_data	typeref:typename:int
+max_skill	../include/spells.h	/^  byte max_skill[4];$/;"	m	struct:spell_info_type	typeref:typename:byte[4]
+max_str	../include/structs.h	/^  int max_str;           \/* -                          *\/$/;"	m	struct:descriptor_data	typeref:typename:int
+max_value	modify.c	/^int max_value[] =$/;"	v	typeref:typename:int[]
+maxdesc	comm.c	/^int maxdesc, avail_descs;$/;"	v	typeref:typename:int
+mayor	spec_procs.c	/^int mayor(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+mbox	mail.c	/^int mbox( struct char_data *ch, int cmd, char *arg )$/;"	f	typeref:typename:int
+mbox_data	mail.c	/^struct mbox_data {$/;"	s	file:
+mbox_list	mail.c	/^struct mbox_data *mbox_list;$/;"	v	typeref:struct:mbox_data *
+message_buy	shop.c	/^  char *message_buy;      \/* Message when player buys item        *\/$/;"	m	struct:shop_data	typeref:typename:char *	file:
+message_list	../include/structs.h	/^struct message_list {$/;"	s
+message_sell	shop.c	/^  char *message_sell;     \/* Message when player sells item       *\/$/;"	m	struct:shop_data	typeref:typename:char *	file:
+message_type	../include/structs.h	/^struct message_type {$/;"	s
+metahospital	spec_procs2.c	/^int metahospital(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+min_level	../include/spells.h	/^  byte min_level[4];$/;"	m	struct:spell_info_type	typeref:typename:byte[4]
+min_usesmana	../include/spells.h	/^  ubyte min_usesmana;     \/* Amount of mana used by a spell   *\/$/;"	m	struct:spell_info_type	typeref:typename:ubyte
+min_victim_position	act.social.c	/^  int min_victim_position; \/* Position of victim *\/$/;"	m	struct:social_messg	typeref:typename:int	file:
+minimum_level	../include/interpreter.h	/^	byte minimum_level[4];		\/* modified by ares *\/$/;"	m	struct:command_info	typeref:typename:byte[4]
+minimum_position	../include/interpreter.h	/^	byte minimum_position;$/;"	m	struct:command_info	typeref:typename:byte
+minimum_position	../include/spells.h	/^  byte minimum_position;  \/* Position for caster              *\/$/;"	m	struct:spell_info_type	typeref:typename:byte
+miss_msg	../include/structs.h	/^  struct msg_type miss_msg;     \/* messages when miss             *\/$/;"	m	struct:message_type	typeref:struct:msg_type
+missing_cash1	shop.c	/^  char *missing_cash1;    \/* Message if keeper hasn't got cash    *\/$/;"	m	struct:shop_data	typeref:typename:char *	file:
+missing_cash2	shop.c	/^  char *missing_cash2;    \/* Message if player hasn't got cash    *\/$/;"	m	struct:shop_data	typeref:typename:char *	file:
+mob_f	db.c	/^FILE *mob_f,                          \/* file containing mob prototypes  *\/$/;"	v	typeref:typename:FILE *
+mob_index	db.c	/^struct index_data *mob_index;         \/* index table for mobile file     *\/$/;"	v	typeref:struct:index_data *
+mob_light_move	mob_magic.c	/^void mob_light_move(struct char_data *ch, char *argument, int cmd)$/;"	f	typeref:typename:void
+mob_punch_drop	mob_magic.c	/^void mob_punch_drop(struct char_data *ch, struct char_data *victim) {$/;"	f	typeref:typename:void
+mob_spell_fire_storm	mob_magic.c	/^void mob_spell_fire_storm(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+mobile_activity	mobact.c	/^void mobile_activity(void)$/;"	f	typeref:typename:void
+mobile_activity2	mobact.c	/^void mobile_activity2(void)$/;"	f	typeref:typename:void
+modifier	../include/structs.h	/^  sbyte modifier;       \/* This is added to apropriate ability     *\/$/;"	m	struct:affected_type	typeref:typename:sbyte
+modifier	../include/structs.h	/^  sbyte modifier;     \/* How much it changes by              *\/$/;"	m	struct:obj_affected_type	typeref:typename:sbyte
+mom	spec_procs2.c	/^int mom(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+month	../include/structs.h	/^  byte hours, day, month;$/;"	m	struct:time_info_data	typeref:typename:byte
+month_name	constants.c	/^char *month_name[17] = {$/;"	v	typeref:typename:char * [17]
+motd	db.c	/^char motd[MAX_STRING_LENGTH];         \/* the messages of today           *\/$/;"	v	typeref:typename:char[]
+move	../include/structs.h	/^  int move;$/;"	m	struct:char_point_data	typeref:typename:int
+move_gain	limit.c	/^int move_gain(struct char_data *ch)$/;"	f	typeref:typename:int
+move_limit	limit.c	/^int move_limit(struct char_data *ch)$/;"	f	typeref:typename:int
+move_stashfile	db.c	/^void move_stashfile(char *victim)	\/* move file.x to file.x.y *\/$/;"	f	typeref:typename:void
+movement_loss	constants.c	/^int movement_loss[]=$/;"	v	typeref:typename:int[]
+msg	../include/structs.h	/^  struct message_type *msg; \/* List of messages.         *\/$/;"	m	struct:message_list	typeref:struct:message_type *
+msg_for_taxi	guild_command.c	/^char *msg_for_taxi[]=$/;"	v	typeref:typename:char * []
+msg_type	../include/structs.h	/^struct msg_type {$/;"	s
+msgs	board.c	/^    char *msgs[MAX_MSGS];  \/* msg of board *\/$/;"	m	struct:board_data	typeref:typename:char * []	file:
+msgs	mail.c	/^    char *msgs[MAX_MAILS];  \/* msg of mbox *\/$/;"	m	struct:mbox_data	typeref:typename:char * []	file:
+msgs	modify.c	/^    char *msgs[MAX_MSGS];  \/* msg of board *\/$/;"	m	struct:board_data	typeref:typename:char * []	file:
+mud_message	spec_procs2.c	/^int mud_message(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+mud_time_passed	utility.c	/^struct time_info_data mud_time_passed(time_t t2, time_t t1)$/;"	f	typeref:struct:time_info_data
+musashi	spec_procs2.c	/^int musashi(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+name	../include/db.h	/^	char *name;             \/* name of this zone                  *\/$/;"	m	struct:zone_data	typeref:typename:char *
+name	../include/db.h	/^	char *name;$/;"	m	struct:player_index_element	typeref:typename:char *
+name	../include/structs.h	/^  char *name;                    \/* Title of object :get etc.        *\/$/;"	m	struct:obj_data	typeref:typename:char *
+name	../include/structs.h	/^  char *name;                  \/* Rooms name 'You are ...'           *\/$/;"	m	struct:room_data	typeref:typename:char *
+name	../include/structs.h	/^  char *name;$/;"	m	struct:char_player_data	typeref:typename:char *
+name	../include/structs.h	/^  char name[20];$/;"	m	struct:char_file_u	typeref:typename:char[20]
+name	quest.c	/^  char *name;$/;"	m	struct:__anon1684ae680108	typeref:typename:char *	file:
+name	quest.c	/^  char *name;$/;"	m	struct:__anon1684ae680208	typeref:typename:char *	file:
+name_from_drinkcon	act.obj2.c	/^void name_from_drinkcon(struct obj_data *obj)$/;"	f	typeref:typename:void
+name_to_drinkcon	act.obj2.c	/^void name_to_drinkcon(struct obj_data *obj,int type)$/;"	f	typeref:typename:void
+nanny	interpreter.c	/^void nanny(struct descriptor_data *d, char *arg)$/;"	f	typeref:typename:void
+ncmds	../include/structs.h	/^  int ncmds,contime;$/;"	m	struct:descriptor_data	typeref:typename:int
+neverland	spec_procs3.c	/^int neverland(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+new	spell_parser.c	/^    char new[10];$/;"	m	struct:say_spell::syllable	typeref:typename:char[10]	file:
+new_connection	comm.c	/^int new_connection(int s)$/;"	f	typeref:typename:int
+new_descriptor	comm.c	/^int new_descriptor(int s)$/;"	f	typeref:typename:int
+news	db.c	/^char news[MAX_STRING_LENGTH];         \/* the news                        *\/$/;"	v	typeref:typename:char[]
+next	../include/db2.h	/^	struct reset_q_element *next;	$/;"	m	struct:reset_q_element	typeref:struct:reset_q_element *
+next	../include/structs.h	/^  struct affected_type *next;$/;"	m	struct:affected_type	typeref:struct:affected_type *
+next	../include/structs.h	/^  struct char_data *next;$/;"	m	struct:char_data	typeref:struct:char_data *
+next	../include/structs.h	/^  struct descriptor_data *next; \/* link to next descriptor    *\/$/;"	m	struct:descriptor_data	typeref:struct:descriptor_data *
+next	../include/structs.h	/^  struct extra_descr_data *next; \/* Next in list                     *\/$/;"	m	struct:extra_descr_data	typeref:struct:extra_descr_data *
+next	../include/structs.h	/^  struct follow_type *next;$/;"	m	struct:follow_type	typeref:struct:follow_type *
+next	../include/structs.h	/^  struct message_type *next;\/* to next messages of this kind.*\/$/;"	m	struct:message_type	typeref:struct:message_type *
+next	../include/structs.h	/^  struct obj_data *next;         \/* For the object list              *\/$/;"	m	struct:obj_data	typeref:struct:obj_data *
+next	../include/structs.h	/^  struct txt_block *next;$/;"	m	struct:txt_block	typeref:struct:txt_block *
+next	board.c	/^    struct board_data *next;  \/* next *\/$/;"	m	struct:board_data	typeref:struct:board_data *	file:
+next	mail.c	/^    struct mbox_data *next;  \/* next *\/$/;"	m	struct:mbox_data	typeref:struct:mbox_data *	file:
+next	modify.c	/^    struct board_data *next;  \/* next *\/$/;"	m	struct:board_data	typeref:struct:board_data *	file:
+next_content	../include/structs.h	/^  struct obj_data *next_content; \/* For 'contains' lists             *\/$/;"	m	struct:obj_data	typeref:struct:obj_data *
+next_fighting	../include/structs.h	/^  struct char_data *next_fighting;$/;"	m	struct:char_data	typeref:struct:char_data *
+next_in_room	../include/structs.h	/^  struct char_data *next_in_room;$/;"	m	struct:char_data	typeref:struct:char_data *
+next_to_process	comm.c	/^struct descriptor_data *descriptor_list, *next_to_process;$/;"	v	typeref:struct:descriptor_data *
+no_echo	interpreter.c	/^int no_echo = 0;$/;"	v	typeref:typename:int
+no_echo_local	interpreter.c	/^void no_echo_local(int fd)	$/;"	f	typeref:typename:void
+no_echo_local	interpreter.c	/^void no_echo_local(int fd)$/;"	f	typeref:typename:void
+no_echo_telnet	interpreter.c	/^void no_echo_telnet(struct descriptor_data *d)$/;"	f	typeref:typename:void
+no_of_change_guild	../include/structs.h	/^  int no_of_change_guild;$/;"	m	struct:char_file_u	typeref:typename:int
+no_of_change_guild	../include/structs.h	/^  int no_of_change_guild;$/;"	m	struct:char_player_data	typeref:typename:int
+no_specials	comm.c	/^int no_specials = 0; \/* Suppress ass. of special routines *\/$/;"	v	typeref:typename:int
+no_such_item1	shop.c	/^  char *no_such_item1;    \/* Message if keeper hasn't got an item *\/$/;"	m	struct:shop_data	typeref:typename:char *	file:
+no_such_item2	shop.c	/^  char *no_such_item2;    \/* Message if player hasn't got an item *\/$/;"	m	struct:shop_data	typeref:typename:char *	file:
+nochatflag	comm.c	/^int nochatflag = 0;$/;"	v	typeref:typename:int
+nodisarmflag	comm.c	/^int nodisarmflag = 0; \/* for disarm .Chase written *\/$/;"	v	typeref:typename:int
+noenchantflag	comm.c	/^int noenchantflag = 0; \/* noenchant!! *\/$/;"	v	typeref:typename:int
+nokillflag	comm.c	/^int nokillflag = 0;$/;"	v	typeref:typename:int
+nonblock	comm.c	/^void nonblock(int s)$/;"	f	typeref:typename:void
+nonewplayers	comm.c	/^int nonewplayers = 0;$/;"	v	typeref:typename:int
+noshoutflag	comm.c	/^int noshoutflag = 0;$/;"	v	typeref:typename:int
+nostealflag	comm.c	/^int nostealflag = 0;$/;"	v	typeref:typename:int
+not_found	act.social.c	/^  char *not_found;$/;"	m	struct:social_messg	typeref:typename:char *	file:
+npc_class_types	constants.c	/^char *npc_class_types[] = {$/;"	v	typeref:typename:char * []
+npc_steal	spec_procs.c	/^void npc_steal(struct char_data *ch,struct char_data *victim)$/;"	f	typeref:typename:void
+npc_tornado	spec_procs.c	/^void npc_tornado(struct char_data *ch)$/;"	f	typeref:typename:void
+nr	../include/db.h	/^	int nr;$/;"	m	struct:player_index_element	typeref:typename:int
+nr	../include/structs.h	/^  int nr;$/;"	m	struct:char_data	typeref:typename:int
+number	../include/db.h	/^	int number;     \/* number of existing units of this mob\/obj	*\/$/;"	m	struct:index_data	typeref:typename:int
+number	../include/structs.h	/^  sh_int number;               \/* Rooms number                       *\/$/;"	m	struct:room_data	typeref:typename:sh_int
+number	quest.c	/^  int number;$/;"	m	struct:__anon1684ae680208	typeref:typename:int	file:
+number	utility.c	/^int number(int from, int to) $/;"	f	typeref:typename:int
+number_of_attacks	../include/structs.h	/^  int number_of_attacks;    \/* How many attack messages to chose from. *\/$/;"	m	struct:message_list	typeref:typename:int
+number_of_shops	shop.c	/^int number_of_shops;$/;"	v	typeref:typename:int
+obj_affected_type	../include/structs.h	/^struct obj_affected_type {$/;"	s
+obj_data	../include/structs.h	/^struct obj_data$/;"	s
+obj_f	db.c	/^     *obj_f,                          \/* obj prototypes                  *\/$/;"	v	typeref:typename:FILE *
+obj_flag_data	../include/structs.h	/^struct obj_flag_data$/;"	s
+obj_flags	../include/structs.h	/^  struct obj_flag_data obj_flags;\/* Object information               *\/$/;"	m	struct:obj_data	typeref:struct:obj_flag_data
+obj_from_char	handler.c	/^void obj_from_char(struct obj_data *object)$/;"	f	typeref:typename:void
+obj_from_obj	handler.c	/^void obj_from_obj(struct obj_data *obj)$/;"	f	typeref:typename:void
+obj_from_room	handler.c	/^void obj_from_room(struct obj_data *object)$/;"	f	typeref:typename:void
+obj_index	db.c	/^struct index_data *obj_index;         \/* index table for object file     *\/$/;"	v	typeref:struct:index_data *
+obj_to_char	handler.c	/^void obj_to_char(struct obj_data *object, struct char_data *ch)$/;"	f	typeref:typename:void
+obj_to_obj	handler.c	/^void obj_to_obj(struct obj_data *obj, struct obj_data *obj_to)$/;"	f	typeref:typename:void
+obj_to_room	handler.c	/^void obj_to_room(struct obj_data *object, int room)$/;"	f	typeref:typename:void
+object_list	db.c	/^struct obj_data  *object_list = 0;    \/* the global linked list of obj's *\/$/;"	v	typeref:struct:obj_data *
+object_list_new_owner	handler.c	/^void object_list_new_owner(struct obj_data *list, struct char_data *ch)$/;"	f	typeref:typename:void
+old_search_block	interpreter.c	/^int old_search_block(char *argument,int begin,int length,char **list,int mode)$/;"	f	typeref:typename:int
+one_argument	interpreter.c	/^char *one_argument(char *argument, char *first_arg )$/;"	f	typeref:typename:char *
+one_word	modify.c	/^char *one_word(char *argument, char *first_arg )$/;"	f	typeref:typename:char *
+open1	shop.c	/^  int open1,open2;  \/* When does the shop open?    *\/$/;"	m	struct:shop_data	typeref:typename:int	file:
+open2	shop.c	/^  int open1,open2;  \/* When does the shop open?    *\/$/;"	m	struct:shop_data	typeref:typename:int	file:
+org	spell_parser.c	/^    char org[10];$/;"	m	struct:say_spell::syllable	typeref:typename:char[10]	file:
+original	../include/structs.h	/^  struct char_data *original;   \/* original char              *\/$/;"	m	struct:descriptor_data	typeref:struct:char_data *
+others_auto	act.social.c	/^  char *others_auto;$/;"	m	struct:social_messg	typeref:typename:char *	file:
+others_found	act.social.c	/^  char *others_found;$/;"	m	struct:social_messg	typeref:typename:char *	file:
+others_no_arg	act.social.c	/^  char *others_no_arg;$/;"	m	struct:social_messg	typeref:typename:char *	file:
+outlaw_skill_costs	guild_constant.c	/^int outlaw_skill_costs[] =$/;"	v	typeref:typename:int[]
+outlaw_skills	guild_constant.c	/^char *outlaw_skills[] =$/;"	v	typeref:typename:char * []
+output	../include/structs.h	/^  struct txt_q output;          \/* q of strings to send       *\/$/;"	m	struct:descriptor_data	typeref:struct:txt_q
+p_locks	../include/structs.h	/^  int p_locks;$/;"	m	struct:dex_skill_type	typeref:typename:int
+p_pocket	../include/structs.h	/^  int p_pocket;$/;"	m	struct:dex_skill_type	typeref:typename:int
+page_string	modify.c	/^void page_string(struct descriptor_data *d, char *str, int keep_internal)$/;"	f	typeref:typename:void
+paladin	spec_procs.c	/^int paladin(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+pc_class_types	constants.c	/^char *pc_class_types[] = {$/;"	v	typeref:typename:char * []
+people	../include/structs.h	/^  struct char_data *people;    \/* List of NPC \/ PC in room           *\/$/;"	m	struct:room_data	typeref:struct:char_data *
+perform_violence	fight.c	/^void perform_violence(void)$/;"	f	typeref:typename:void
+perform_wear	act.obj2.c	/^void perform_wear(struct char_data *ch, struct obj_data *obj_object,$/;"	f	typeref:typename:void
+perhaps	spec_procs2.c	/^int perhaps(struct char_data *ch,int cmd,char *arg)$/;"	f	typeref:typename:int
+pet_shops	spec_procs2.c	/^int pet_shops(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+pk_num	../include/structs.h	/^  int pk_num; \/* how many did you kill assholes! *\/$/;"	m	struct:char_player_data	typeref:typename:int
+pk_num	../include/structs.h	/^  int pk_num;$/;"	m	struct:char_file_u	typeref:typename:int
+pked_num	../include/structs.h	/^  int pked_num; \/* how many have you been killed!! *\/$/;"	m	struct:char_player_data	typeref:typename:int
+pked_num	../include/structs.h	/^  int pked_num;$/;"	m	struct:char_file_u	typeref:typename:int
+plan	db.c	/^char plan[MAX_STRING_LENGTH];         \/* the info text                   *\/$/;"	v	typeref:typename:char[]
+played	../include/structs.h	/^  int played,life;$/;"	m	struct:char_file_u	typeref:typename:int
+played	../include/structs.h	/^  int played;$/;"	m	struct:time_data	typeref:typename:int
+player	../include/structs.h	/^  struct char_player_data player;$/;"	m	struct:char_data	typeref:struct:char_player_data
+player_bits	constants.c	/^char *player_bits[] = {$/;"	v	typeref:typename:char * []
+player_index_element	../include/db.h	/^struct player_index_element$/;"	s
+player_table	db.c	/^struct player_index_element *player_table = 0; \/* index to player file   *\/$/;"	v	typeref:struct:player_index_element *
+plural	../include/spells.h	/^  char *plural;$/;"	m	struct:attack_hit_type	typeref:typename:char *
+point_update	limit.c	/^void point_update( void )$/;"	f	typeref:typename:void
+points	../include/structs.h	/^  struct char_point_data points;$/;"	m	struct:char_data	typeref:struct:char_point_data
+points	../include/structs.h	/^  struct char_point_data points;$/;"	m	struct:char_file_u	typeref:struct:char_point_data
+police_skill_costs	guild_constant.c	/^int police_skill_costs[] =$/;"	v	typeref:typename:int[]
+police_skills	guild_constant.c	/^char *police_skills[] =$/;"	v	typeref:typename:char * []
+portal	spec_procs2.c	/^int portal(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+pos	../include/db.h	/^	long pos;       \/* file position of this field              *\/$/;"	m	struct:index_data	typeref:typename:long
+pos	../include/db.h	/^	long pos;$/;"	m	struct:help_index_element	typeref:typename:long
+pos	../include/structs.h	/^  int pos;               \/* position in player-file    *\/$/;"	m	struct:descriptor_data	typeref:typename:int
+position	../include/structs.h	/^  byte position;$/;"	m	struct:char_special_data	typeref:typename:byte
+position_types	constants.c	/^char *position_types[] = {$/;"	v	typeref:typename:char * []
+post_board	board.c	/^int post_board(struct char_data *ch, struct board_data *cb, char *arg)$/;"	f	typeref:typename:int
+post_mail	mail.c	/^int post_mail(struct char_data *ch, struct mbox_data *cb, char *arg)$/;"	f	typeref:typename:int
+pressure	../include/structs.h	/^  int pressure;  \/* How is the pressure ( Mb ) *\/$/;"	m	struct:weather_data	typeref:typename:int
+print_increased_skilled	utility.c	/^void print_increased_skilled(struct char_data *ch, int sk_no)$/;"	f	typeref:typename:void
+process_input	comm.c	/^int process_input(struct descriptor_data *t)$/;"	f	typeref:typename:int
+process_output	comm.c	/^int process_output(struct descriptor_data *t)$/;"	f	typeref:typename:int
+producing	shop.c	/^  int producing[MAX_PROD];\/* Which item to produce (virtual)      *\/$/;"	m	struct:shop_data	typeref:typename:int[]	file:
+profit_buy	shop.c	/^  float profit_buy;       \/* Factor to multiply cost with.        *\/$/;"	m	struct:shop_data	typeref:typename:float	file:
+profit_sell	shop.c	/^  float profit_sell;      \/* Factor to multiply cost with.        *\/$/;"	m	struct:shop_data	typeref:typename:float	file:
+prompt_mode	../include/structs.h	/^  int prompt_mode;       \/* control of prompt-printing *\/$/;"	m	struct:descriptor_data	typeref:typename:int
+puff	spec_procs2.c	/^int puff(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+pwd	../include/structs.h	/^  char pwd[11];$/;"	m	struct:char_file_u	typeref:typename:char[11]
+pwd	../include/structs.h	/^  char pwd[12];          \/* password                   *\/$/;"	m	struct:descriptor_data	typeref:typename:char[12]
+quad_arg	modify.c	/^void quad_arg(char *arg, int *type, char *name, int *field, char *string)$/;"	f	typeref:typename:void
+query_status	interpreter.c	/^void query_status(struct descriptor_data *d)$/;"	f	typeref:typename:void
+quest	../include/structs.h	/^  struct quest_data quest;$/;"	m	struct:char_data	typeref:struct:quest_data
+quest	../include/structs.h	/^  struct quest_data quest;$/;"	m	struct:char_file_u	typeref:struct:quest_data
+quest_data	../include/structs.h	/^struct quest_data {$/;"	s
+quest_room	quest.c	/^int quest_room(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+raw_kill	fight.c	/^void raw_kill(struct char_data *ch, int level)$/;"	f	typeref:typename:void
+reaction	../include/structs.h	/^  int reaction;$/;"	m	struct:dex_app_type	typeref:typename:int
+read_board	board.c	/^int read_board(struct char_data *ch, struct board_data *cb, char *arg)$/;"	f	typeref:typename:int
+read_mobile	db.c	/^struct char_data *read_mobile(int nr, int type)$/;"	f	typeref:struct:char_data *
+read_object	db.c	/^struct obj_data *read_object(int nr, int type)$/;"	f	typeref:struct:obj_data *
+real_mobile	db.c	/^int real_mobile(int virtual)$/;"	f	typeref:typename:int
+real_object	db.c	/^int real_object(int virtual)$/;"	f	typeref:typename:int
+real_room	db.c	/^int real_room(int virtual)$/;"	f	typeref:typename:int
+real_time_passed	utility.c	/^struct time_info_data real_time_passed(time_t t2, time_t t1)$/;"	f	typeref:struct:time_info_data
+reboot_time	comm.c	/^u_long reboot_time = REBOOT_TIME;$/;"	v	typeref:typename:u_long
+receiver	mail.c	/^    char receiver[MAX_MAILS][20]; \/* receiver of that mesg *\/$/;"	m	struct:mbox_data	typeref:typename:char[][20]	file:
+recognise	../include/structs.h	/^  bool recognise;         \/* If you can recognise the scroll etc.   *\/$/;"	m	struct:char_skill_data	typeref:typename:bool
+record_player_number	comm.c	/^void record_player_number()$/;"	f	typeref:typename:void
+regen_percent	comm.c	/^int regen_percent = 50;$/;"	v	typeref:typename:int
+regen_time	comm.c	/^int regen_time = 200;$/;"	v	typeref:typename:int
+regen_time_percent	comm.c	/^int regen_time_percent = 66;$/;"	v	typeref:typename:int
+regened	../include/structs.h	/^  int regened;$/;"	m	struct:char_data	typeref:typename:int
+regeneration	../include/structs.h	/^  int life,regeneration;$/;"	m	struct:char_data	typeref:typename:int
+remortal	../include/structs.h	/^  byte remortal;	\/* remortal to class *\/$/;"	m	struct:char_player_data	typeref:typename:byte
+remortal	../include/structs.h	/^  byte remortal;$/;"	m	struct:char_file_u	typeref:typename:byte
+remortal	spec_procs2.c	/^int remortal( struct char_data *ch , int cmd ,char *arg)$/;"	f	typeref:typename:int
+remove_board	board.c	/^int remove_board(struct char_data *ch, struct board_data *cb, char *arg)$/;"	f	typeref:typename:int
+remove_entry	db.c	/^int remove_entry(struct char_data *ch)$/;"	f	typeref:typename:int
+remove_mail	mail.c	/^void remove_mail(struct mbox_data *cb, int m_num)$/;"	f	typeref:typename:void
+renum_world	db.c	/^void renum_world(void)$/;"	f	typeref:typename:void
+renum_zone_table	db.c	/^void renum_zone_table(void)$/;"	f	typeref:typename:void
+replace_string	fight.c	/^char *replace_string(char *str, char *weapon)$/;"	f	typeref:typename:char *
+reply_who	../include/structs.h	/^  char reply_who[30];$/;"	m	struct:char_special_data	typeref:typename:char[30]
+rescuer	spec_procs2.c	/^int rescuer(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+reserved	../include/structs.h	/^  byte reserved[58];$/;"	m	struct:char_file_u	typeref:typename:byte[58]
+reset_char	db.c	/^void reset_char(struct char_data *ch)$/;"	f	typeref:typename:void
+reset_com	../include/db.h	/^struct reset_com$/;"	s
+reset_mode	../include/db.h	/^	int reset_mode;         \/* conditions for reset (see below)   *\/$/;"	m	struct:zone_data	typeref:typename:int
+reset_q	../include/db2.h	/^} reset_q;$/;"	v	typeref:struct:reset_q_type
+reset_q_element	../include/db2.h	/^struct reset_q_element$/;"	s
+reset_q_type	../include/db2.h	/^struct reset_q_type$/;"	s
+reset_time	db.c	/^void reset_time(void)$/;"	f	typeref:typename:void
+reset_zone	db.c	/^void reset_zone(int zone)$/;"	f	typeref:typename:void
+rev_dir	constants.c	/^int rev_dir[] = $/;"	v	typeref:typename:int[]
+roll_abilities	act.wizard.c	/^void roll_abilities(struct char_data *ch)$/;"	f	typeref:typename:void
+room_bits	constants.c	/^char *room_bits[] = {$/;"	v	typeref:typename:char * []
+room_data	../include/structs.h	/^struct room_data$/;"	s
+room_direction_data	../include/structs.h	/^struct room_direction_data$/;"	s
+room_flags	../include/structs.h	/^  int room_flags;           \/* DEATH,DARK ... etc                 *\/$/;"	m	struct:room_data	typeref:typename:int
+room_msg	../include/structs.h	/^  char *room_msg;      \/* message to room     *\/$/;"	m	struct:msg_type	typeref:typename:char *
+room_num	board.c	/^    int room_num;  \/* room number that board is in *\/$/;"	m	struct:board_data	typeref:typename:int	file:
+room_num	mail.c	/^    int room_num;  \/* room number that mbox is in *\/$/;"	m	struct:mbox_data	typeref:typename:int	file:
+room_num	modify.c	/^    int room_num;  \/* room number that board is in *\/$/;"	m	struct:board_data	typeref:typename:int	file:
+room_taxi	guild_command.c	/^int room_taxi[]=$/;"	v	typeref:typename:int[]
+run_the_game	comm.c	/^void run_the_game(int port)$/;"	f	typeref:typename:void
+s	comm.c	/^int s;$/;"	v	typeref:typename:int
+safe_house	spec_procs2.c	/^int safe_house(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+saint_water	daerimsa.c	/^int saint_water(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+sanctuary_msg	../include/structs.h	/^  struct msg_type sanctuary_msg;\/* messages when hit on sanctuary *\/$/;"	m	struct:message_type	typeref:struct:msg_type
+save_board	board.c	/^void save_board(struct board_data *cb)$/;"	f	typeref:typename:void
+save_char	db.c	/^void save_char(struct char_data *ch, sh_int load_room)$/;"	f	typeref:typename:void
+save_char_nocon	db.c	/^void save_char_nocon(struct char_data *ch, sh_int load_room )$/;"	f	typeref:typename:void
+save_mbox	mail.c	/^void save_mbox( struct mbox_data *cb )$/;"	f	typeref:typename:void
+saveallplayers	comm.c	/^void saveallplayers()$/;"	f	typeref:typename:void
+saves_spell	spell_parser.c	/^bool saves_spell(struct char_data *ch, int save_type)$/;"	f	typeref:typename:bool
+saving_throws	spell_parser.c	/^byte saving_throws[4][5][IMO+10] = {$/;"	v	typeref:typename:byte[4][5][]
+say_spell	spell_parser.c	/^void say_spell( struct char_data *ch, int si )$/;"	f	typeref:typename:void
+sbyte	../include/structs.h	/^typedef short sbyte;$/;"	t	typeref:typename:short
+search_block	interpreter.c	/^int search_block(char *arg, char **list, bool exact)$/;"	f	typeref:typename:int
+sector_type	../include/structs.h	/^  int sector_type;             \/* sector type (move\/hide)            *\/$/;"	m	struct:room_data	typeref:typename:int
+sector_types	constants.c	/^char *sector_types[] = {$/;"	v	typeref:typename:char * []
+select_victim	spec_procs.c	/^struct char_data *select_victim(struct char_data *ch)$/;"	f	typeref:struct:char_data *
+send_to_all	comm.c	/^void send_to_all(char *messg)$/;"	f	typeref:typename:void
+send_to_char	comm.c	/^void send_to_char(char *messg, struct char_data *ch)$/;"	f	typeref:typename:void
+send_to_char_han	comm.c	/^void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch)$/;"	f	typeref:typename:void
+send_to_except	comm.c	/^void send_to_except(char *messg, struct char_data *ch)$/;"	f	typeref:typename:void
+send_to_outdoor	comm.c	/^void send_to_outdoor(char *messg)$/;"	f	typeref:typename:void
+send_to_room	comm.c	/^void send_to_room(char *messg, int room)$/;"	f	typeref:typename:void
+send_to_room_except	comm.c	/^void send_to_room_except(char *messg, int room, struct char_data *ch)$/;"	f	typeref:typename:void
+send_to_room_except_two	comm.c	/^void send_to_room_except_two$/;"	f	typeref:typename:void
+sender	mail.c	/^    char sender[MAX_MAILS][20]; \/* sender of that mesg *\/$/;"	m	struct:mbox_data	typeref:typename:char[][20]	file:
+set_fighting	fight.c	/^void set_fighting(struct char_data *ch, struct char_data *vict)$/;"	f	typeref:typename:void
+set_title	limit.c	/^void set_title(struct char_data *ch)$/;"	f	typeref:typename:void
+setup_dir	db.c	/^void setup_dir(FILE *fl, int room, int dir)$/;"	f	typeref:typename:void
+sex	../include/structs.h	/^  byte sex,class,level;$/;"	m	struct:char_file_u	typeref:typename:byte
+sex	../include/structs.h	/^  byte sex;$/;"	m	struct:char_player_data	typeref:typename:byte
+sh_int	../include/structs.h	/^typedef int sh_int;$/;"	t	typeref:typename:int
+sharp	constants.c	/^int sharp[] = {$/;"	v	typeref:typename:int[]
+shock	../include/structs.h	/^  int shock;$/;"	m	struct:con_app_type	typeref:typename:int
+shoot	act.offensive.c	/^void shoot(struct char_data *ch, struct char_data *victim, int type)$/;"	f	typeref:typename:void
+shooter	spec_procs2.c	/^int shooter(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+shop_data	shop.c	/^struct shop_data$/;"	s	file:
+shop_index	shop.c	/^struct shop_data *shop_index;$/;"	v	typeref:struct:shop_data *
+shop_keeper	shop.c	/^int shop_keeper(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+shop_producing	shop.c	/^int shop_producing(struct obj_data *item, int shop_nr)$/;"	f	typeref:typename:int
+shopping_buy	shop.c	/^void shopping_buy( char *arg, struct char_data *ch,$/;"	f	typeref:typename:void
+shopping_list	shop.c	/^void shopping_list( char *arg, struct char_data *ch,$/;"	f	typeref:typename:void
+shopping_sell	shop.c	/^void shopping_sell( char *arg, struct char_data *ch,$/;"	f	typeref:typename:void
+shopping_value	shop.c	/^void shopping_value( char *arg, struct char_data *ch, $/;"	f	typeref:typename:void
+short_descr	../include/structs.h	/^  char *short_descr;$/;"	m	struct:char_player_data	typeref:typename:char *
+short_description	../include/structs.h	/^  char *short_description;       \/* when worn\/carry\/in cont.         *\/$/;"	m	struct:obj_data	typeref:typename:char *
+show_board	board.c	/^int show_board( struct char_data *ch, struct board_data *cb, char *arg )$/;"	f	typeref:typename:int
+show_char_to_char	act.informative.c	/^void show_char_to_char(struct char_data *i, struct char_data *ch, int mode)$/;"	f	typeref:typename:void
+show_mail	mail.c	/^int show_mail( struct char_data *ch, struct mbox_data *cb, char *arg )$/;"	f	typeref:typename:int
+show_obj_to_char	act.informative.c	/^void show_obj_to_char(struct obj_data *object, struct char_data *ch, int mode)$/;"	f	typeref:typename:void
+show_string	modify.c	/^void show_string(struct descriptor_data *d, char *input)$/;"	f	typeref:typename:void
+showstr_head	../include/structs.h	/^  char *showstr_head;    \/* for paging through texts  *\/$/;"	m	struct:descriptor_data	typeref:typename:char *
+showstr_point	../include/structs.h	/^  char *showstr_point;$/;"	m	struct:descriptor_data	typeref:typename:char *
+shutdown_request	comm.c	/^void shutdown_request(int sig)$/;"	f	typeref:typename:void
+shutdowngame	comm.c	/^int shutdowngame = 0;    \/* clean shutdown *\/$/;"	v	typeref:typename:int
+siginterrupt	comm.c	/^int siginterrupt(int sig, int flag)$/;"	f	typeref:typename:int
+signal_setup	comm.c	/^void signal_setup(void)$/;"	f	typeref:typename:void
+sigsetmask	../include/comm.h	/^#define sigsetmask(/;"	d
+sigsetmask	comm.c	/^int sigsetmask(unsigned mask)$/;"	f	typeref:typename:int
+singer	spec_procs2.c	/^int singer(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+singular	../include/spells.h	/^  char *singular;$/;"	m	struct:attack_hit_type	typeref:typename:char *
+skill_fields	modify.c	/^char *skill_fields[] = $/;"	v	typeref:typename:char * []
+skilled	../include/structs.h	/^  int skilled;$/;"	m	struct:char_player_data	typeref:typename:int
+skilled	../include/structs.h	/^  ubyte skilled;$/;"	m	struct:char_skill_data	typeref:typename:ubyte
+skills	../include/structs.h	/^  struct char_skill_data skills[MAX_SKILLS];$/;"	m	struct:char_data	typeref:struct:char_skill_data[]
+skills	../include/structs.h	/^  struct char_skill_data skills[MAX_SKILLS];$/;"	m	struct:char_file_u	typeref:struct:char_skill_data[]
+skip_spaces	spell_parser.c	/^char *skip_spaces(char *string)$/;"	f	typeref:typename:char *
+sky	../include/structs.h	/^  int sky;  \/* How is the sky. *\/$/;"	m	struct:weather_data	typeref:typename:int
+slot_machine	spec_procs3.c	/^int slot_machine(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+slow_death	comm.c	/^int slow_death = 0;  \/* Shut her down, Martha, she's sucking mud *\/$/;"	v	typeref:typename:int
+snake	spec_procs.c	/^int snake(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+sneak	../include/structs.h	/^  int sneak;$/;"	m	struct:dex_skill_type	typeref:typename:int
+snoop	../include/structs.h	/^  struct snoop_data snoop;      \/* to snoop people.           *\/$/;"	m	struct:descriptor_data	typeref:struct:snoop_data
+snoop_by	../include/structs.h	/^  struct char_data *snoop_by;$/;"	m	struct:snoop_data	typeref:struct:char_data *
+snoop_data	../include/structs.h	/^struct snoop_data {$/;"	s
+snooping	../include/structs.h	/^  struct char_data *snooping;$/;"	m	struct:snoop_data	typeref:struct:char_data *
+soc_mess_list	act.social.c	/^} *soc_mess_list = 0;$/;"	v	typeref:struct:social_messg *
+social_messg	act.social.c	/^struct social_messg$/;"	s	file:
+solved	../include/structs.h	/^	long solved;$/;"	m	struct:quest_data	typeref:typename:long
+son_ogong	daerimsa.c	/^struct char_data *son_ogong;$/;"	v	typeref:struct:char_data *
+son_ogong_func	daerimsa.c	/^int son_ogong_func(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+song	spec_procs2.c	/^static char *song[]={$/;"	v	typeref:typename:char * []	file:
+special	interpreter.c	/^int special(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+specials	../include/structs.h	/^  struct char_special_data specials;$/;"	m	struct:char_data	typeref:struct:char_special_data
+spell_all_heal	magic.c	/^void spell_all_heal(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_armor	magic2.c	/^void spell_armor(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_bless	magic2.c	/^void spell_bless(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_blindness	magic2.c	/^void spell_blindness(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_blocker	spec_procs2.c	/^int spell_blocker(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+spell_burning_hands	magic.c	/^void spell_burning_hands(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_call_lightning	magic.c	/^void spell_call_lightning(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_cause_critic	magic2.c	/^void spell_cause_critic(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_cause_light	magic2.c	/^void spell_cause_light(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_charm_person	magic2.c	/^void spell_charm_person(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_chill_touch	magic.c	/^void spell_chill_touch(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_clone	magic2.c	/^void spell_clone(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_color_spray	magic.c	/^void spell_color_spray(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_corn_of_ice	magic.c	/^void spell_corn_of_ice(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_create_food	magic2.c	/^void spell_create_food(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_create_golden_nectar	magic2.c	/^void spell_create_golden_nectar(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_create_nectar	magic2.c	/^void spell_create_nectar(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_create_water	magic2.c	/^void spell_create_water(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_crush_armor	magic2.c	/^void spell_crush_armor(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_cure_blind	magic2.c	/^void spell_cure_blind(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_cure_critic	magic2.c	/^void spell_cure_critic(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_cure_light	magic2.c	/^void spell_cure_light(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_curse	magic2.c	/^void spell_curse(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_damage_up	magic2.c	/^void spell_damage_up(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_death	magic2.c	/^void spell_death(byte level,struct char_data *ch,$/;"	f	typeref:typename:void
+spell_detect_evil	magic2.c	/^void spell_detect_evil(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_detect_invisibility	magic2.c	/^void spell_detect_invisibility(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_disintegrate	magic.c	/^void spell_disintegrate(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_dispel_evil	magic.c	/^void spell_dispel_evil(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_dumb	magic3.c	/^void spell_dumb(byte level,struct char_data *ch,$/;"	f	typeref:typename:void
+spell_earthquake	magic.c	/^void spell_earthquake(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_enchant_armor	magic2.c	/^void spell_enchant_armor(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_enchant_person	magic2.c	/^void spell_enchant_person(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_enchant_weapon	magic2.c	/^void spell_enchant_weapon(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_energy_drain	magic.c	/^void spell_energy_drain(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_energyflow	magic.c	/^void spell_energyflow(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_entire_heal	magic2.c	/^void spell_entire_heal(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_far_look	magic2.c	/^void spell_far_look(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_fire_breath	magic.c	/^void spell_fire_breath(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_fire_storm	magic.c	/^void spell_fire_storm(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_fireball	magic.c	/^void spell_fireball(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_frost_breath	magic.c	/^void spell_frost_breath(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_full_fire	magic.c	/^void spell_full_fire(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_full_heal	magic2.c	/^void spell_full_heal(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_gas_breath	magic.c	/^void spell_gas_breath(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_hand_of_god	magic.c	/^void spell_hand_of_god(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_harm	magic.c	/^void spell_harm(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_haste	magic2.c	/^void spell_haste(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_heal	magic2.c	/^void spell_heal(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_holy_shield	magic3.c	/^void spell_holy_shield(byte level,struct char_data *ch,$/;"	f	typeref:typename:void
+spell_identify	magic.c	/^void spell_identify(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_improved_haste	magic2.c	/^void spell_improved_haste(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_info	spell_parser.c	/^struct spell_info_type spell_info[MAX_SPL_LIST];$/;"	v	typeref:struct:spell_info_type[]
+spell_info_type	../include/spells.h	/^struct spell_info_type$/;"	s
+spell_infravision	magic2.c	/^void spell_infravision(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_invisibility	magic2.c	/^void spell_invisibility(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_kiss_of_process	magic3.c	/^void spell_kiss_of_process(byte level,struct char_data *ch,$/;"	f	typeref:typename:void
+spell_lightning_bolt	magic.c	/^void spell_lightning_bolt(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_lightning_breath	magic.c	/^void spell_lightning_breath(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_locate_object	magic2.c	/^void spell_locate_object(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_love	magic2.c	/^void spell_love(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_magic_missile	magic.c	/^void spell_magic_missile(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_mana_boost	magic2.c	/^void spell_mana_boost(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_mana_transfer	magic3.c	/^void spell_mana_transfer(byte level,struct char_data *ch,$/;"	f	typeref:typename:void
+spell_mirror_image	magic2.c	/^void spell_mirror_image(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_phase	magic2.c	/^void spell_phase(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_pointer	../include/spells.h	/^  void (*spell_pointer) (byte level, struct char_data *ch, char *arg, int type,$/;"	m	struct:spell_info_type	typeref:typename:void (*)(byte level,struct char_data * ch,char * arg,int type,struct char_data * tar_ch,struct obj_data * tar_obj)
+spell_poison	magic2.c	/^void spell_poison(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_pray_for_armor	magic2.c	/^void spell_pray_for_armor(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_preach	magic2.c	/^void spell_preach(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_protection_from_evil	magic2.c	/^void spell_protection_from_evil(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_reanimate	magic2.c	/^void spell_reanimate(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_recharger	magic2.c	/^void spell_recharger(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_reflect_damage	magic3.c	/^void spell_reflect_damage(byte level,struct char_data *ch,$/;"	f	typeref:typename:void
+spell_relocate	magic2.c	/^void spell_relocate(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_remove_curse	magic2.c	/^void spell_remove_curse(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_remove_poison	magic2.c	/^void spell_remove_poison(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_reraise	magic2.c	/^void spell_reraise(byte level,struct char_data *ch,$/;"	f	typeref:typename:void
+spell_restore_move	magic2.c	/^void spell_restore_move(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_sanctuary	magic2.c	/^void spell_sanctuary(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_sanctuary_cloud	magic.c	/^void spell_sanctuary_cloud(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_self_heal	magic2.c	/^void spell_self_heal(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_sense_life	magic2.c	/^void spell_sense_life(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_shocking_grasp	magic.c	/^void spell_shocking_grasp(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_sleep	magic2.c	/^void spell_sleep(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_spell_block	magic3.c	/^void spell_spell_block(byte level,struct char_data *ch,$/;"	f	typeref:typename:void
+spell_strength	magic2.c	/^void spell_strength(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_summon	magic2.c	/^void spell_summon(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_sunburst	magic.c	/^void spell_sunburst(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_teleport	magic2.c	/^void spell_teleport(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_throw	magic.c	/^void spell_throw(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_thunder_bolt	magic3.c	/^void spell_thunder_bolt(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_trick	magic.c	/^void spell_trick(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_ventriloquate	magic2.c	/^void spell_ventriloquate(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_vitalize	magic2.c	/^void spell_vitalize(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spell_wear_off_msg	constants.c	/^char *spell_wear_off_msg[] = {$/;"	v	typeref:typename:char * []
+spell_word_of_recall	magic2.c	/^void spell_word_of_recall(byte level, struct char_data *ch,$/;"	f	typeref:typename:void
+spells	spell_parser.c	/^char *spells[]=$/;"	v	typeref:typename:char * []
+spells_to_learn	../include/structs.h	/^  ubyte spells_to_learn;    \/* How many can you learn yet this level   *\/$/;"	m	struct:char_special_data	typeref:typename:ubyte
+spells_to_learn	../include/structs.h	/^  ubyte spells_to_learn;$/;"	m	struct:char_file_u	typeref:typename:ubyte
+spitter	spec_procs2.c	/^int spitter(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+sprintbit	utility.c	/^void sprintbit(long vektor, char *names[], char *result)$/;"	f	typeref:typename:void
+sprinttype	utility.c	/^void sprinttype(int type, char *names[], char *result)$/;"	f	typeref:typename:void
+stash_char	db.c	/^void stash_char(struct char_data *ch)$/;"	f	typeref:typename:void
+stash_contents	db.c	/^void stash_contents(FILE *fl, struct obj_data *p, int wear_flag)$/;"	f	typeref:typename:void
+stash_contents	db.c	/^void stash_contents(FILE *fp, struct obj_data *o, int wear_flag)$/;"	f	typeref:typename:void
+stash_contentsII	db.c	/^void stash_contentsII(FILE *fp, struct obj_data *o, int wear_flag)$/;"	f	typeref:typename:void
+stop_fighting	fight.c	/^void stop_fighting(struct char_data *ch)$/;"	f	typeref:typename:void
+stop_follower	spell_parser.c	/^void stop_follower(struct char_data *ch)$/;"	f	typeref:typename:void
+stop_group	newcom.c	/^void stop_group(struct char_data *ch)$/;"	f	typeref:typename:void
+store_to_char	db.c	/^void store_to_char(struct char_file_u *st, struct char_data *ch)$/;"	f	typeref:typename:void
+store_to_char_for_transform	db.c	/^void store_to_char_for_transform(struct char_file_u *st, struct char_data *ch)$/;"	f	typeref:typename:void
+str	../include/structs.h	/^  char **str;            \/* for the modify-str system  *\/$/;"	m	struct:descriptor_data	typeref:typename:char **
+str	../include/structs.h	/^  sbyte str;$/;"	m	struct:char_ability_data	typeref:typename:sbyte
+str_add	../include/structs.h	/^  sbyte str_add;$/;"	m	struct:char_ability_data	typeref:typename:sbyte
+str_app	constants.c	/^struct str_app_type str_app[31] = {$/;"	v	typeref:struct:str_app_type[31]
+str_app_type	../include/structs.h	/^struct str_app_type {$/;"	s
+str_cmp	utility.c	/^int str_cmp(char *arg1, char *arg2)$/;"	f	typeref:typename:int
+string_add	modify.c	/^void string_add(struct descriptor_data *d, char *str)$/;"	f	typeref:typename:void
+string_fields	modify.c	/^char *string_fields[] =$/;"	v	typeref:typename:char * []
+string_machine	spec_procs3.c	/^int string_machine(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+strn_cmp	utility.c	/^int strn_cmp(char *arg1, char *arg2, int n)$/;"	f	typeref:typename:int
+sunlight	../include/structs.h	/^  int sunlight;  \/* And how much sun. *\/$/;"	m	struct:weather_data	typeref:typename:int
+super_deathcure	spec_procs2.c	/^int super_deathcure(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+super_musashi	spec_procs2.c	/^int super_musashi(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+superguard	spec_procs2.c	/^int superguard(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+sweapon_anti_evil	magic_weapon.c	/^void sweapon_anti_evil(ch,victim,weapon)$/;"	f
+sweapon_anti_good	magic_weapon.c	/^void sweapon_anti_good(ch,victim,weapon)$/;"	f
+sweapon_bombard	magic_weapon.c	/^void sweapon_bombard(ch,victim,weapon)$/;"	f
+sweapon_dragon_slayer	magic_weapon.c	/^void sweapon_dragon_slayer(ch,victim,weapon)$/;"	f
+sweapon_flame	magic_weapon.c	/^void sweapon_flame(ch,victim,weapon)$/;"	f
+sweapon_god	magic_weapon.c	/^void sweapon_god(ch,victim,weapon)$/;"	f
+sweapon_ice	magic_weapon.c	/^void sweapon_ice(ch,victim,weapon)$/;"	f
+sweapon_shot	magic_weapon.c	/^void sweapon_shot(ch,victim,weapon)$/;"	f
+sweapon_smash	magic_weapon.c	/^void sweapon_smash(ch,victim,weapon)$/;"	f
+syllable	spell_parser.c	/^  struct syllable {$/;"	s	function:say_spell	file:
+tail	../include/db2.h	/^	struct reset_q_element *tail;$/;"	m	struct:reset_q_type	typeref:struct:reset_q_element *
+tail	../include/structs.h	/^  struct txt_block *tail;$/;"	m	struct:txt_q	typeref:struct:txt_block *
+targets	../include/spells.h	/^  int targets;         \/* See below for use with TAR_XXX  *\/$/;"	m	struct:spell_info_type	typeref:typename:int
+taxi	guild_command.c	/^int taxi(struct char_data *ch,int cmd,char *arg)$/;"	f	typeref:typename:int
+teleport_daerimsa_tower	daerimsa.c	/^int teleport_daerimsa_tower(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+temper1	shop.c	/^  int temper1;             \/* How does keeper react if no money    *\/$/;"	m	struct:shop_data	typeref:typename:int	file:
+temper2	shop.c	/^  int temper2;             \/* How does keeper react when attacked  *\/$/;"	m	struct:shop_data	typeref:typename:int	file:
+text	../include/structs.h	/^  char *text;$/;"	m	struct:txt_block	typeref:typename:char *
+thaco	constants.c	/^int thaco[4][IMO+4] = {$/;"	v	typeref:typename:int[4][]
+thief	spec_procs.c	/^int thief(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+tics	comm.c	/^int tics = 0;        \/* for extern checkpointing *\/$/;"	v	typeref:typename:int
+time	../include/structs.h	/^  struct time_data time;  \/* PC s AGE in days                 *\/$/;"	m	struct:char_player_data	typeref:struct:time_data
+time_data	../include/structs.h	/^struct time_data {$/;"	s
+time_info	db.c	/^struct time_info_data time_info;  \/* the infomation about the time   *\/$/;"	v	typeref:struct:time_info_data
+time_info_data	../include/structs.h	/^struct time_info_data {$/;"	s
+timediff	comm.c	/^struct timeval timediff(struct timeval *a, struct timeval *b)$/;"	f	typeref:struct:timeval
+timer	../include/structs.h	/^  int timer;               \/* Timer for update                        *\/$/;"	m	struct:char_special_data	typeref:typename:int
+timer	../include/structs.h	/^  int timer;          \/* Timer for object                 *\/$/;"	m	struct:obj_flag_data	typeref:typename:int
+title	../include/structs.h	/^  char *title;$/;"	m	struct:char_player_data	typeref:typename:char *
+title	../include/structs.h	/^  char *title;$/;"	m	struct:descriptor_data	typeref:typename:char *
+title	../include/structs.h	/^  char title[80];$/;"	m	struct:char_file_u	typeref:typename:char[80]
+title_f	../include/limit.h	/^	char *title_f;$/;"	m	struct:title_type	typeref:typename:char *
+title_m	../include/limit.h	/^	char *title_m;$/;"	m	struct:title_type	typeref:typename:char *
+title_type	../include/limit.h	/^struct title_type$/;"	s
+titles	constants.c	/^struct title_type titles[4][IMO+4] = {$/;"	v	typeref:struct:title_type[4][]
+tmpabilities	../include/structs.h	/^  struct char_ability_data tmpabilities;$/;"	m	struct:char_data	typeref:struct:char_ability_data
+to_char	fight.c	/^  char *to_char;$/;"	m	struct:dam_weapon_type	typeref:typename:char *	file:
+to_room	../include/structs.h	/^  sh_int to_room;                  \/* Where direction leeds (NOWHERE) *\/$/;"	m	struct:room_direction_data	typeref:typename:sh_int
+to_room	fight.c	/^  char *to_room;$/;"	m	struct:dam_weapon_type	typeref:typename:char *	file:
+to_victim	fight.c	/^  char *to_victim;$/;"	m	struct:dam_weapon_type	typeref:typename:char *	file:
+todam	../include/structs.h	/^  int todam;    \/* Damage Bonus\/Penalty                *\/$/;"	m	struct:str_app_type	typeref:typename:int
+tohit	../include/structs.h	/^  int tohit;    \/* To Hit (THAC0) Bonus\/Penalty        *\/$/;"	m	struct:str_app_type	typeref:typename:int
+top	../include/db.h	/^	int top;                \/* upper limit for rooms in this zone *\/$/;"	m	struct:zone_data	typeref:typename:int
+topQM	quest.c	/^int topQM;$/;"	v	typeref:typename:int
+top_of_helpt	db.c	/^int top_of_helpt;                     \/* top of help index table         *\/$/;"	v	typeref:typename:int
+top_of_mobt	db.c	/^int top_of_mobt = 0;                  \/* top of mobile index table       *\/$/;"	v	typeref:typename:int
+top_of_objt	db.c	/^int top_of_objt = 0;                  \/* top of object index table       *\/$/;"	v	typeref:typename:int
+top_of_p_file	db.c	/^int top_of_p_file = 0;$/;"	v	typeref:typename:int
+top_of_p_table	db.c	/^int top_of_p_table = 0;               \/* ref to top of table             *\/$/;"	v	typeref:typename:int
+top_of_world	db.c	/^int top_of_world = 0;                 \/* ref to the top element of world *\/$/;"	v	typeref:typename:int
+top_of_zone_table	db.c	/^int top_of_zone_table = 0;$/;"	v	typeref:typename:int
+totem	spec_procs2.c	/^int totem(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+trade_with	shop.c	/^int trade_with(struct obj_data *item, int shop_nr)$/;"	f	typeref:typename:int
+transall	comm.c	/^void transall(int room)$/;"	f	typeref:typename:void
+traps	../include/structs.h	/^  int traps;$/;"	m	struct:dex_skill_type	typeref:typename:int
+txt_block	../include/structs.h	/^struct txt_block {$/;"	s
+txt_q	../include/structs.h	/^struct txt_q {$/;"	s
+type	../include/structs.h	/^	int type;$/;"	m	struct:quest_data	typeref:typename:int
+type	../include/structs.h	/^  sbyte type;           \/* The type of spell that caused this      *\/$/;"	m	struct:affected_type	typeref:typename:sbyte
+type	shop.c	/^  byte type[MAX_TRADE];   \/* Which item to trade.                 *\/$/;"	m	struct:shop_data	typeref:typename:byte[]	file:
+type_flag	../include/structs.h	/^  byte type_flag;     \/* Type of item                     *\/$/;"	m	struct:obj_flag_data	typeref:typename:byte
+ubyte	../include/structs.h	/^typedef unsigned ubyte;$/;"	t	typeref:typename:unsigned
+unequip_char	handler.c	/^struct obj_data *unequip_char(struct char_data *ch, int pos)$/;"	f	typeref:struct:obj_data *
+unfriendly_domain	comm.c	/^int unfriendly_domain(char *h)$/;"	f	typeref:typename:int
+unstash_char	db.c	/^void unstash_char(struct char_data *ch, char *filename)$/;"	f	typeref:typename:void
+update_char_objects	handler.c	/^void update_char_objects( struct char_data *ch )$/;"	f	typeref:typename:void
+update_object	handler.c	/^void update_object( struct obj_data *obj, int use){$/;"	f	typeref:typename:void
+update_pos	fight.c	/^void update_pos( struct char_data *victim )$/;"	f	typeref:typename:void
+use_mana	spell_parser.c	/^int use_mana(struct char_data *ch, int sn)$/;"	f	typeref:typename:int
+ush_int	../include/structs.h	/^typedef unsigned ush_int;$/;"	t	typeref:typename:unsigned
+value	../include/structs.h	/^  int value[4];       \/* Values of the item (see list)    *\/$/;"	m	struct:obj_flag_data	typeref:typename:int[4]
+vict_found	act.social.c	/^  char *vict_found;$/;"	m	struct:social_messg	typeref:typename:char *	file:
+victim_msg	../include/structs.h	/^  char *victim_msg;    \/* message to victim   *\/$/;"	m	struct:msg_type	typeref:typename:char *
+virtual	quest.c	/^  int virtual;$/;"	m	struct:__anon1684ae680108	typeref:typename:int	file:
+wait	../include/structs.h	/^  int wait;              \/* wait for how many loops    *\/$/;"	m	struct:descriptor_data	typeref:typename:int
+warrior	spec_procs.c	/^int warrior(struct char_data *ch, int cmd, char *arg)$/;"	f	typeref:typename:int
+was_in_room	../include/structs.h	/^  sh_int was_in_room;      \/* storage of location for linkdead people *\/$/;"	m	struct:char_special_data	typeref:typename:sh_int
+wear	act.obj2.c	/^void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)$/;"	f	typeref:typename:void
+wear_bits	constants.c	/^char *wear_bits[] = {$/;"	v	typeref:typename:char * []
+wear_flags	../include/structs.h	/^  int wear_flags;     \/* Where you can wear it            *\/$/;"	m	struct:obj_flag_data	typeref:typename:int
+weather_and_time	weather.c	/^void weather_and_time(int mode)$/;"	f	typeref:typename:void
+weather_change	weather.c	/^void weather_change(int change)$/;"	f	typeref:typename:void
+weather_data	../include/structs.h	/^struct weather_data {$/;"	s
+weather_info	db.c	/^struct weather_data weather_info;  \/* the infomation about the weather *\/$/;"	v	typeref:struct:weather_data
+weekdays	constants.c	/^char *weekdays[7] = { $/;"	v	typeref:typename:char * [7]
+weight	../include/structs.h	/^  int weight;         \/* Weigt what else                  *\/$/;"	m	struct:obj_flag_data	typeref:typename:int
+weight	../include/structs.h	/^  ubyte weight,height;$/;"	m	struct:char_file_u	typeref:typename:ubyte
+weight	../include/structs.h	/^  ubyte weight;$/;"	m	struct:char_player_data	typeref:typename:ubyte
+weight_change_object	act.obj2.c	/^void weight_change_object(struct obj_data *obj, int weight)$/;"	f	typeref:typename:void
+where	constants.c	/^char *where[] = {$/;"	v	typeref:typename:char * []
+where_to_taxi	guild_command.c	/^char *where_to_taxi[]=$/;"	v	typeref:typename:char * []
+where_wear	act.obj2.c	/^int where_wear(struct obj_data *obj_object)$/;"	f	typeref:typename:int
+wield_w	../include/structs.h	/^  int wield_w;  \/* Maximum weight that can be wielded  *\/$/;"	m	struct:str_app_type	typeref:typename:int
+wimpyness	../include/structs.h	/^  int wimpyness;$/;"	m	struct:char_file_u	typeref:typename:int
+wimpyness	../include/structs.h	/^  int wimpyness;$/;"	m	struct:char_special_data	typeref:typename:int
+wipe_obj	db.c	/^void wipe_obj(struct obj_data *obj)$/;"	f	typeref:typename:void
+wipe_stash	db.c	/^void wipe_stash(char *filename)		\/* delete id.x and id.x.y *\/$/;"	f	typeref:typename:void
+wis	../include/structs.h	/^  sbyte wis;$/;"	m	struct:char_ability_data	typeref:typename:sbyte
+wis_app	constants.c	/^struct wis_app_type wis_app[26] = {$/;"	v	typeref:struct:wis_app_type[26]
+wis_app_type	../include/structs.h	/^struct wis_app_type {$/;"	s
+with_who	shop.c	/^  int with_who;    \/* Who does the shop trade with?  *\/$/;"	m	struct:shop_data	typeref:typename:int	file:
+wizards	db.c	/^char wizards[MAX_STRING_LENGTH];      \/* the wizards text                *\/$/;"	v	typeref:typename:char[]
+world	db.c	/^struct room_data *world;              \/* dyn alloc'ed array of rooms     *\/$/;"	v	typeref:struct:room_data *
+write_board	board.c	/^int write_board(struct char_data *ch, struct board_data *cb, char *arg)$/;"	f	typeref:typename:int
+write_to_descriptor	comm.c	/^int write_to_descriptor(int desc, char *txt)$/;"	f	typeref:typename:int
+write_to_q	comm.c	/^void write_to_q(char *txt, struct txt_q *queue)$/;"	f	typeref:typename:void
+writer	board.c	/^    char writer[MAX_MSGS][WRITER_NAME_LEN]; \/* writer of that mesg *\/$/;"	m	struct:board_data	typeref:typename:char[][]	file:
+writer	modify.c	/^    char writer[MAX_MSGS][WRITER_NAME_LEN]; \/* writer of that mesg *\/$/;"	m	struct:board_data	typeref:typename:char[][]	file:
+xo	comm.c	/^struct descriptor_data *xo;$/;"	v	typeref:struct:descriptor_data *
+year	../include/structs.h	/^  sh_int year;$/;"	m	struct:time_info_data	typeref:typename:sh_int
+zapper	comm.c	/^void zapper(void)      \/* auto shutdown *\/$/;"	f	typeref:typename:void
+zone	../include/structs.h	/^  sh_int zone;                 \/* Room zone (for resetting)          *\/$/;"	m	struct:room_data	typeref:typename:sh_int
+zone_data	../include/db.h	/^struct zone_data$/;"	s
+zone_data	quest.c	/^} zone_data[ZONE_NUMBER] = {$/;"	v	typeref:struct:__anon1684ae680208[]
+zone_table	db.c	/^struct zone_data *zone_table;         \/* table of reset data             *\/$/;"	v	typeref:struct:zone_data *
+zone_to_reset	../include/db2.h	/^	int zone_to_reset;            \/* ref to zone_data *\/$/;"	m	struct:reset_q_element	typeref:typename:int
+zone_update	db.c	/^void zone_update(void)$/;"	f	typeref:typename:void

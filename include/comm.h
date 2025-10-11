@@ -30,9 +30,11 @@ int write_to_descriptor(int desc, char *txt);
 void write_to_q(char *txt, struct txt_q *queue);
 #define SEND_TO_Q(messg, desc)  write_to_q((messg), &(desc)->output)
 
+/* move to comm2.h
 #define BADDOMS 16
 int baddoms;
 char baddomain[BADDOMS][32];
+*/
 
 // Kuldge to convert deprecated sigsetmask() call to sigprocmask() call
 

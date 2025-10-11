@@ -1,0 +1,18 @@
+============================================================================
+Mud: FAILED to run on port 5002 loop: 1 by [mint]
+     [/home/mint/works/2019/bin/mud-narai.run] in [/home/mint/works/2019/lib]
+     Time: 2025-10-09 Thu 13:14:48 PDT
+
+Mud: run finished. loop: 1
+2025-10-09 Thu 13:14:48 PDT
+Moving log/run-log to log/mud_25-10-09_13-14-1.log
+
+============================================================================
+Mud: FAILED to run on port 5002 loop: 1 by [mint]
+     [/home/mint/works/2019/bin/mud-narai.run] in [/home/mint/works/2019/lib]
+     Time: 2025-10-09 Thu 13:14:58 PDT
+
+Mud: run finished. loop: 1
+2025-10-09 Thu 13:14:58 PDT
+Moving log/run-log to log/mud_25-10-09_13-14-1.log
+

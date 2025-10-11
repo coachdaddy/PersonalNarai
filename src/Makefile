@@ -11,8 +11,8 @@ INSTDIR = ../bin
 VPATH   = .:$(INCDIR):$(UTLSRC):
 
 # CC      = clang
-# CC      = gcc
-CC      = cc
+CC      = gcc
+#CC      = cc
 
 # MAKE    = gmake
 MAKE    = make

@@ -142,25 +142,23 @@ struct index_data
 	int (*func)();  /* special procedure for this mob/obj       */
 };
 
-
-
-
-/* for queueing zones for update   */
+/* move to db2.h 
+// for queueing zones for update  
 struct reset_q_element
 {
-	int zone_to_reset;            /* ref to zone_data */
+	int zone_to_reset;            // ref to zone_data 
 	struct reset_q_element *next;	
 };
 
 
 
-/* structure for the update queue     */
+// structure for the update queue     
 struct reset_q_type
 {
 	struct reset_q_element *head;
 	struct reset_q_element *tail;
 } reset_q;
-
+*/
 
 
 struct player_index_element

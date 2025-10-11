@@ -40,6 +40,12 @@ extern char *spells[];
 
 extern char *guild_names[];
 
+#ifndef BADDOMS
+#define BADDOMS 16
+extern int baddoms;
+extern char baddomain[BADDOMS][32];
+#endif
+
 /* extern functions */
 
 struct time_info_data age(struct char_data *ch);
@@ -1823,6 +1829,7 @@ void do_police(struct char_data *ch, char *argument, int cmd)
     }
   }
 }
+
 void do_wizlock(struct char_data *ch, char *argument, int cmd)
 {
   char buf[200];

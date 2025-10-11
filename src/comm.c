@@ -27,6 +27,7 @@
 #include "structs.h"
 #include "utils.h"
 #include "comm.h"
+#include "comm2.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
