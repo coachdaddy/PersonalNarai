@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
-* text=auto
+* text indent
+ *.html ident
+ *.sh ident
+ *.c ident
+ *.h ident
