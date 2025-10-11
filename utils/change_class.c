@@ -1,13 +1,6 @@
 
-
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
-
-#ifndef __FreeBSD__
-#include <crypt.h>
-#endif
-#include <unistd.h>
 
 #include "structs.h"
 
@@ -16,10 +9,9 @@ main ()
 {
   struct char_file_u st;
   char name[20];
-  char passwd[20];
+  int class;
   long offset;
   FILE *FL;
-  int num = 0;
 
   if (!(FL = fopen ("players", "r+")))
     {
@@ -29,28 +21,27 @@ main ()
 
   printf ("Name? ");
   scanf ("%s", name);
-  printf ("Passwd? ");
-  scanf ("%s", passwd);
+  printf ("class? ");
+  scanf ("%d", &class);
 
-  printf ("%s\n", name);
+  printf ("%s %d\n", name, class);
 
   while (1)
     {
       fread (&st, sizeof (struct char_file_u), 1, FL);
-      printf ("Processing #%d %s\n", num++, st.name);
-      st.name[0] = tolower (st.name[0]);
       if (strcmp (name, st.name) == 0)
 	{
-	  printf ("Found and changing password of [%s] : ", st.name);
-	  strcpy (st.pwd, (char *) crypt (passwd, st.name));
-	  *(st.pwd + 10) = '\0';
+	  printf ("found\n");
+
+	  printf ("Changing\n");
+	  st.class = class;
 
 	  offset = ftell (FL);
 	  offset -= sizeof (struct char_file_u);
 	  rewind (FL);
 	  fseek (FL, offset, 0);
 	  fwrite (&st, sizeof (struct char_file_u), 1, FL);
-	  printf ("success.\n");
+	  printf ("successful\n");
 
 	  break;
 	}

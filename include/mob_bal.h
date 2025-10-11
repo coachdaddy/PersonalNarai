@@ -9,7 +9,5 @@ double HitrollFactor = .0007;
 double DamrollFactor = .0015;
 double ArmorFactor = .0045;
 
-int BaseExp     = 80;
-int BaseHit     = 14;
-
-
+int BaseExp = 80;
+int BaseHit = 14;

@@ -1,3 +1,6 @@
+
+
+
 /*
 guild_list.h
 made by Process
@@ -12,7 +15,7 @@ made by Process
 #define ROOM_GUILD_ASSASSIN	9650
 
 #define ROOM_GUILD_POLICE_LOCKER	3099
-#define ROOM_GUILD_OUTLAW_LOCKER	3224 
+#define ROOM_GUILD_OUTLAW_LOCKER	3224
 #define ROOM_GUILD_ASSASSIN_LOCKER	9652
 
 #define ROOM_GUILD_POLICE_PRACTICE 	3096

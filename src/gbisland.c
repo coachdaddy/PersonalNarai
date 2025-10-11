@@ -1,6 +1,6 @@
 /*  ************************************************************************
-*  file: spec_procs.c , Special module.                   Part of DIKUMUD *
-*  Usage: Procedures handling special procedures for object/room/mobile   *
+*  file: gbisland.c   , Special module.                                   *
+*  Usage: Procedures handling special procedures for Good bad island      *
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 

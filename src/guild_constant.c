@@ -1,13 +1,19 @@
+/* ************************************************************************
+*  file: guild_constant.c , Special module.               				*
+*  Usage: guild related contants   											*
+*  Made by Shin Won-dong  in KAIST                                        *
+************************************************************************* */
+
 #include "structs.h"
 #include "limit.h"
 #include "guild_list.h"
 
 char *guild_names[] =
 {
-	"NONE",
-	"POLICE",
-	"OUTLAW",
-	"ASSASSIN"
+  "NONE",
+  "POLICE",
+  "OUTLAW",
+  "ASSASSIN"
 };
 
 /*
@@ -15,9 +21,9 @@ char *guild_names[] =
 */
 int guild_skill_nums[] =
 {
-	0,
-	0,
-	0
+  0,
+  0,
+  0
 };
 /*
 int guild_skill_nums[] =
@@ -30,49 +36,49 @@ int guild_skill_nums[] =
 
 char *police_skills[] =
 {
-	"broadcast",
-	"simultaneous",
-	"arrest",
-	"power bash"
+  "broadcast",
+  "simultaneous",
+  "arrest",
+  "power bash"
 };
 
 int police_skill_costs[] =
 {
-	5000,
-	10000,
-	10000,
-	20000,
+  5000,
+  10000,
+  10000,
+  20000,
 };
 
 char *outlaw_skills[] =
 {
-	"angry yell",
-	"assault",
-	"smoke",
-	"inject",
-	"charge"
+  "angry yell",
+  "assault",
+  "smoke",
+  "inject",
+  "charge"
 };
 
 int outlaw_skill_costs[] =
 {
-	10000,
-	12000,
-	1000,
-	2000,
-	50000
+  10000,
+  12000,
+  1000,
+  2000,
+  50000
 };
 char *assasin_skills[] =
 {
-	"solace",
-	"shadow figure",
-	"evil strike",
-	"improved reflect damage"
+  "solace",
+  "shadow figure",
+  "evil strike",
+  "improved reflect damage"
 };
 
 int assasin_skill_costs[] =
 {
-	12000,
-	15000,
-	20000,
-	100000
+  12000,
+  15000,
+  20000,
+  100000
 };

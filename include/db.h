@@ -9,46 +9,46 @@
 
 /*  default directory is defined in comm.c : usually lib */
 
-#define WORLD_FILE        "tinyworld.wld" /* room definitions           */
-#define MOB_FILE          "tinyworld.mob" /* monster prototypes         */
-#define OBJ_FILE          "tinyworld.obj" /* object prototypes          */
-#define ZONE_FILE         "tinyworld.zon" /* zone defs & command tables */
-#define CREDITS_FILE      "credits"       /* for the 'credits' command  */
-#define NEWS_FILE         "news"          /* for the 'news' command     */
-#define IMOTD_FILE		  "imotd"		  /* MOTD for immortals			*/
-#define MOTD_FILE         "motd"          /* messages of today          */
-#define PLAYER_FILE       "players"       /* the player database        */
-#define TIME_FILE         "time"          /* game calendar information  */
-#define MESS_FILE         "messages"      /* damage message             */
-#define SOCMESS_FILE      "actions"       /* messgs for social acts     */
-#define HELP_KWRD_FILE    "help_table"    /* for HELP <keywrd>          */
-#define HELP_PAGE_FILE    "help"          /* for HELP <CR>              */
-#define PLAN_FILE         "plan"          /* for god's plan             */
-#define WIZARDS_FILE      "wizards"       /* for wizards command : cyb  */
+#define WORLD_FILE        "tinyworld.wld"	/* room definitions           */
+#define MOB_FILE          "tinyworld.mob"	/* monster prototypes         */
+#define OBJ_FILE          "tinyworld.obj"	/* object prototypes          */
+#define ZONE_FILE         "tinyworld.zon"	/* zone defs & command tables */
+#define CREDITS_FILE      "credits"	/* for the 'credits' command  */
+#define NEWS_FILE         "news"	/* for the 'news' command     */
+#define IMOTD_FILE		  "imotd"	/* MOTD for immortals                 */
+#define MOTD_FILE         "motd"	/* messages of today          */
+#define PLAYER_FILE       "players"	/* the player database        */
+#define TIME_FILE         "time"	/* game calendar information  */
+#define MESS_FILE         "messages"	/* damage message             */
+#define SOCMESS_FILE      "actions"	/* messgs for social acts     */
+#define HELP_KWRD_FILE    "help_table"	/* for HELP <keywrd>          */
+#define HELP_PAGE_FILE    "help"	/* for HELP <CR>              */
+#define PLAN_FILE         "plan"	/* for god's plan             */
+#define WIZARDS_FILE      "wizards"	/* for wizards command : cyb  */
 #define STASH             "stash"
 #define CHATLOG           "log/chatlog.log"
 
 /* public procedures in db.c */
 
-void boot_db(void);
-void save_char(struct char_data *ch, sh_int load_room);
-int create_entry(char *name);
-void zone_update(void);
-void init_char(struct char_data *ch);
-void clear_char(struct char_data *ch);
-void clear_object(struct obj_data *obj);
-void reset_char(struct char_data *ch);
-void free_char(struct char_data *ch);
-int real_room(int virtual);
-char *fread_string(FILE *fl);
-int real_object(int virtual);
-int real_mobile(int virtual);
+void boot_db (void);
+void save_char (struct char_data *ch, sh_int load_room);
+int create_entry (char *name);
+void zone_update (void);
+void init_char (struct char_data *ch);
+void clear_char (struct char_data *ch);
+void clear_object (struct obj_data *obj);
+void reset_char (struct char_data *ch);
+void free_char (struct char_data *ch);
+int real_room (int virtual);
+char *fread_string (FILE * fl);
+int real_object (int virtual);
+int real_mobile (int virtual);
 
 #define REAL 0
 #define VIRTUAL 1
 
-struct obj_data *read_object(int nr, int type);
-struct char_data *read_mobile(int nr, int type);
+struct obj_data *read_object (int nr, int type);
+struct char_data *read_mobile (int nr, int type);
 
 /*
 #define MENU         \
@@ -89,58 +89,58 @@ struct char_data *read_mobile(int nr, int type);
 
 /* structure for the reset commands */
 struct reset_com
-{
-	char command;   /* current command                      */ 
-	bool if_flag;   /* if TRUE: exe only if preceding exe'd */
-	int arg1;       /*                                      */
-	int arg2;       /* Arguments to the command             */
-	int arg3;       /*                                      */
+  {
+    char command;		/* current command                      */
+    bool if_flag;		/* if TRUE: exe only if preceding exe'd */
+    int arg1;			/*                                      */
+    int arg2;			/* Arguments to the command             */
+    int arg3;			/*                                      */
 
-	/* 
-	*  Commands:              *
-	*  'M': Read a mobile     *
-	*  'O': Read an object    *
-	*  'G': Give obj to mob   *
-	*  'P': Put obj in obj    *
-	*  'G': Obj to char       *
-	*  'E': Obj to char equip *
-	*  'D': Set state of door *
-	*/
-};
+    /* 
+       *  Commands:              *
+       *  'M': Read a mobile     *
+       *  'O': Read an object    *
+       *  'G': Give obj to mob   *
+       *  'P': Put obj in obj    *
+       *  'G': Obj to char       *
+       *  'E': Obj to char equip *
+       *  'D': Set state of door *
+     */
+  };
 
 
 
 /* zone definition structure. for the 'zone-table'   */
 struct zone_data
-{
-	char *name;             /* name of this zone                  */
-	char *filename;			/* zone file name					  */
-	int lifespan;           /* how long between resets (minutes)  */
-	int age;                /* current age of this zone (minutes) */
-	int top;                /* upper limit for rooms in this zone */
+  {
+    char *name;			/* name of this zone                  */
+    char *filename;		/* zone file name                                         */
+    int lifespan;		/* how long between resets (minutes)  */
+    int age;			/* current age of this zone (minutes) */
+    int top;			/* upper limit for rooms in this zone */
 
-	int reset_mode;         /* conditions for reset (see below)   */
-	struct reset_com *cmd;  /* command table for reset	          */
+    int reset_mode;		/* conditions for reset (see below)   */
+    struct reset_com *cmd;	/* command table for reset                */
 
-	/*
-	*  Reset mode:                              *
-	*  0: Don't reset, and don't update age.    *
-	*  1: Reset if no PC's are located in zone. *
-	*  2: Just reset.                           *
-	*/
-};
+    /*
+       *  Reset mode:                              *
+       *  0: Don't reset, and don't update age.    *
+       *  1: Reset if no PC's are located in zone. *
+       *  2: Just reset.                           *
+     */
+  };
 
 
 
 
 /* element in monster and object index-tables   */
 struct index_data
-{
-	int virtual;    /* virtual number of this mob/obj           */
-	long pos;       /* file position of this field              */
-	int number;     /* number of existing units of this mob/obj	*/
-	int (*func)();  /* special procedure for this mob/obj       */
-};
+  {
+    int virtual;		/* virtual number of this mob/obj           */
+    long pos;			/* file position of this field              */
+    int number;			/* number of existing units of this mob/obj     */
+    int (*func) ();		/* special procedure for this mob/obj       */
+  };
 
 /* move to db2.h 
 // for queueing zones for update  
@@ -162,14 +162,14 @@ struct reset_q_type
 
 
 struct player_index_element
-{
-	char *name;
-	int nr;
-};
+  {
+    char *name;
+    int nr;
+  };
 
 
 struct help_index_element
-{
-	char *keyword;
-	long pos;
-};
+  {
+    char *keyword;
+    long pos;
+  };

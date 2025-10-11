@@ -1,9 +1,10 @@
 #include "structs.h"
 #include "limit.h"
 
-char *spell_wear_off_msg[] = {
+char *spell_wear_off_msg[] =
+{
   "RESERVED DB.C",
-  "You feel less protected.", /* 1 */
+  "You feel less protected.",	/* 1 */
   "!Teleport!",
   "You feel less righteous.",
   "You feel a cloak of blindness dissolve.",
@@ -13,7 +14,7 @@ char *spell_wear_off_msg[] = {
   "!Chill Touch!",
   "!Reanimate!",
   "!Color Spray!",
-  "!Relocate!",  /*11*/
+  "!Relocate!",			/*11 */
   "!Create Food!",
   "!Create Water!",
   "!Cure Blind!",
@@ -23,7 +24,7 @@ char *spell_wear_off_msg[] = {
   "You sense the red in your vision disappear.",
   "The detect invisible wears off.",
   "The detect magic wears off.",
-  "!PREACH!",  /* 21 */
+  "!PREACH!",			/* 21 */
   "!Dispel Evil!",
   "!Earthquake!",
   "!Enchant Weapon!",
@@ -33,7 +34,7 @@ char *spell_wear_off_msg[] = {
   "!Heal",
   "You feel yourself exposed.",
   "!Lightning Bolt!",
-  "!Locate object!",  /* 31 */
+  "!Locate object!",		/* 31 */
   "!Magic Missile!",
   "You feel less sick.",
   "You feel less protected.",
@@ -43,7 +44,7 @@ char *spell_wear_off_msg[] = {
   "You feel les tired.",
   "You feel weaker.",
   "!Summon!",
-  "!Ventriloquate!",  /* 41 */
+  "!Ventriloquate!",		/* 41 */
   "!Word of Recall!",
   "!Remove Poison!",
   "You feel less aware of your surroundings.",
@@ -53,17 +54,17 @@ char *spell_wear_off_msg[] = {
   "!UNUSED!",
   "!UNUSED!",
   "!UNUSED!",
-  "!UNUSED!",    /* 51 */
+  "!UNUSED!",			/* 51 */
   "!UNUSED!",
   "!Identify!",
   "!UNUSED!",
-  "",  /* NO MESSAGE FOR SNEAK*/
+  "",				/* NO MESSAGE FOR SNEAK */
   "!Hide!",
   "!Steal!",
   "!Backstab!",
   "!Pick Lock!",
   "!Kick!",
-  "!Bash!",    /* 61 */
+  "!Bash!",			/* 61 */
   "!Rescue!",
   "!UNUSED!",
   "!UNUSED!",
@@ -73,7 +74,7 @@ char *spell_wear_off_msg[] = {
   "!UNUSED!",
   "!UNUSED!",
   "!UNUSED!",
-  "You feel less brave.",  /* 71 */
+  "You feel less brave.",	/* 71 */
   "!energy flow!",
   "!mana boost!",
   "!vitalize!",
@@ -83,8 +84,8 @@ char *spell_wear_off_msg[] = {
   "You feel less shirink.",
   "!full heal!",
   "!trick!",
-  "You feel things return to normal.",  /* 81 */
-  "You feel things return to normal.", 
+  "You feel things return to normal.",	/* 81 */
+  "You feel things return to normal.",
   "!far look!",
   "!all heal!",
   "!tornado!",
@@ -93,22 +94,22 @@ char *spell_wear_off_msg[] = {
   "!flash!",
   "!multi kick!",
   "!UNUSED90!",
-  "!UNUSED91!",         /* 91 */
-  "Your eyes are less sensitive now.",		/* 92 ; infra */
+  "!UNUSED91!",			/* 91 */
+  "Your eyes are less sensitive now.",	/* 92 ; infra */
   "!UNUSED93!",
   "!UNUSED94!",
   "!UNUSED95!",
   "!UNUSED96!",
-  "!UNUSED97!",	/* 97 ; mirror image */
-  "Your illusion color fades.", /* 98 ; mirror image */
+  "!UNUSED97!",			/* 97 ; mirror image */
+  "Your illusion color fades.",	/* 98 ; mirror image */
   "!UNUSED99!",
-  "!UNUSED100!", /* 100 */
+  "!UNUSED100!",		/* 100 */
   "!UNUSED101!",
   "!UNUSED102!",
   "!UNUSED103!",
-  "You are normalized again!", /* 104: love */
-  "!UNUSED105!", 
-  "You feel less angelic!", /* reraise 106  */ 
+  "You are normalized again!",	/* 104: love */
+  "!UNUSED105!",
+  "You feel less angelic!",	/* reraise 106  */
   "!UNUSED107!",
   "!UNUSED108!",
   "!UNUSED109!",
@@ -131,25 +132,25 @@ char *spell_wear_off_msg[] = {
 };
 
 
-int rev_dir[] = 
+int rev_dir[] =
 {
   2, 3, 0, 1, 5, 4
-}; 
-
-int movement_loss[]=
-{
-  1,  /* Inside     */
-  2,  /* City       */
-  2,  /* Field      */
-  3,  /* Forest     */
-  4,  /* Hills      */
-  6,  /* Mountains  */
-  4,  /* Swimming   */
-  1,  /* Unswimable */
-  1   /* Sky */
 };
 
-char *dirs[] = 
+int movement_loss[] =
+{
+  1,				/* Inside     */
+  2,				/* City       */
+  2,				/* Field      */
+  3,				/* Forest     */
+  4,				/* Hills      */
+  6,				/* Mountains  */
+  4,				/* Swimming   */
+  1,				/* Unswimable */
+  1				/* Sky */
+};
+
+char *dirs[] =
 {
   "north",
   "east",
@@ -160,17 +161,19 @@ char *dirs[] =
   "\n"
 };
 
-char *weekdays[7] = { 
+char *weekdays[7] =
+{
   "the Day of the Moon",
   "the Day of the Bull",
   "the Day of the Deception",
   "the Day of Thunder",
   "the Day of Freedom",
   "the day of the Great Gods",
-  "the Day of the Sun" };
+  "the Day of the Sun"};
 
-char *month_name[17] = {
-  "Month of Winter",           /* 0 */
+char *month_name[17] =
+{
+  "Month of Winter",		/* 0 */
   "Month of the Winter Wolf",
   "Month of the Frost Giant",
   "Month of the Old Forces",
@@ -189,21 +192,23 @@ char *month_name[17] = {
   "Month of the Great Evil"
 };
 
-int sharp[] = {
-   0,
-   0,
-   0,
-   1,    /* Slashing */
-   0,
-   0,
-   0,
-   0,    /* Bludgeon */
-   0,
-   0,
-   0,
-   0 };  /* Pierce   */
+int sharp[] =
+{
+  0,
+  0,
+  0,
+  1,				/* Slashing */
+  0,
+  0,
+  0,
+  0,				/* Bludgeon */
+  0,
+  0,
+  0,
+  0};				/* Pierce   */
 
-char *where[] = {
+char *where[] =
+{
   "<used as light>      ",
   "<worn on finger>     ",
   "<worn on finger>     ",
@@ -223,12 +228,12 @@ char *where[] = {
   "<wielded>            ",
   "<held>               ",
   "<worn around knee>   ",
-  "<worn around knee>   ", 
+  "<worn around knee>   ",
   "<worn about legs>    ",
   "<worn on back>       ",
-}; 
+};
 
-char *drinks[]=
+char *drinks[] =
 {
   "water",
   "beer",
@@ -252,7 +257,7 @@ char *drinks[]=
   "condition"
 };
 
-char *drinknames[]=
+char *drinknames[] =
 {
   "water",
   "beer",
@@ -276,30 +281,31 @@ char *drinknames[]=
   "condition"
 };
 
-int drink_aff[][3] = {
-  { 0,1,10 },  /* Water    */
-  { 2,2,5 },   /* beer     */
-  { 1,3,4 },   /* wine     */
-  { 3,2,5 },   /* ale      */
-  { 3,2,5 },   /* ale      */
-  { 6,1,4 },   /* Whiskey  */
-  { 0,1,8 },   /* lemonade */
-  { 10,0,0 },  /* firebr   */
-  { 3,3,3 },   /* local    */
-  { 0,4,-8 },  /* juice    */
-  { 0,3,6 },   /* milk     */
-  { 0,1,6 },   /* tea      */
-  { 0,1,6 },   /* coffee   */
-  { 0,2,-1 },  /* blood    */
-  { 0,1,-2 },  /* salt     */
-  { 0,3,8 },   /* sundew   */
-  { 5,5,5 },   /* nectar   */
-  { 8,8,8 },    /* golden nectar */
-  { 5,1,2 },   /* makoli 막걸리 */
-  { -4,1,1 }  /* condition */
+int drink_aff[][3] =
+{
+  {0, 1, 10},			/* Water    */
+  {2, 2, 5},			/* beer     */
+  {1, 3, 4},			/* wine     */
+  {3, 2, 5},			/* ale      */
+  {3, 2, 5},			/* ale      */
+  {6, 1, 4},			/* Whiskey  */
+  {0, 1, 8},			/* lemonade */
+  {10, 0, 0},			/* firebr   */
+  {3, 3, 3},			/* local    */
+  {0, 4, -8},			/* juice    */
+  {0, 3, 6},			/* milk     */
+  {0, 1, 6},			/* tea      */
+  {0, 1, 6},			/* coffee   */
+  {0, 2, -1},			/* blood    */
+  {0, 1, -2},			/* salt     */
+  {0, 3, 8},			/* sundew   */
+  {5, 5, 5},			/* nectar   */
+  {8, 8, 8},			/* golden nectar */
+  {5, 1, 2},			/* makoli 막걸리 */
+  {-4, 1, 1}			/* condition */
 };
 
-char *color_liquid[]=
+char *color_liquid[] =
 {
   "clear",
   "brown",
@@ -330,273 +336,279 @@ char *fullness[] =
   ""
 };
 
-struct title_type titles[4][IMO+4] = {
-{ {"the Man","the Woman",0},
-  {"the Apprentice of Magic","the Apprentice of Magic",1}, /* 1 */
-  {"the Spell Student","the Spell Student",1300},
-  {"the Scholar of Magic","the Scholar of Magic",2600},
-  {"the Delver in Spells","the Delveress in Spells",7800},
-  {"the Medium of Magic","the Medium of Magic",13000},
-  {"the Scribe of Magic","the Scribess of Magic",20800},
-  {"the Seer","the Seeress",26000},
-  {"the Sage","the Sage",36400},
-  {"the Illusionist","the Illusionist",52000},
-  {"the Abjurer","the Abjuress",78000}, /* 10 */
-  {"the Invoker","the Invoker",117000},
-  {"the Enchanter","the Enchantress",182000},
-  {"the Conjurer","the Conjuress",260000},
-  {"the Magician","the Witch",364000},
-  {"the Creator","the Creator",520000},
-  {"the Savant","the Savant",780000},
-  {"the Magus","the Craftess",1040000},
-  {"the Wizard","the Wizard",1430000},
-  {"the Warlock","the War Witch",1820000},
-  {"the Sorcerer","the Sorceress",2340000}, /* 20 */
-  {"the Man of Hecate","the Lady of Hecate", 2860000},
-  {"the Apparantice Archmage","the Apparantice Archmage", 3640000},
-  {"the Archmage of Fire","the Archmage of Fire", 4550000},
-  {"the Archmage of Water","the Archmage of Water", 5850000},
-  {"the Archmage of Earth","the Archmage of Earth", 7800000},
-  {"the Archmage of Wind","the Archmage of Wind", 10400000},
-  {"the Mage Guru","the Mage Guru", 14300000},
-  {"the Apparantice MageLord","the Apparantice MageLord", 19500000},
-  {"the MageLord of Fire","the MageLord of Fire", 26000000},
-  {"the MageLord of Water","the MageLord of Water", 39000000}, /* 30 */
-  {"the MageLord of Earth","the MageLord of Earth",58500000}, 
-  {"the MageLord of Wind","the MageLord of Wind", 78000000},
-  {"the MageLord of Moon","the MageLord of Moon",104000000},
-  {"the MageLord of Sun","the MageLord of Sun",130000000},
-  {"the MageLord of Galaxy","the MageLord of Galaxy",156000000},
-  {"the MageLord of Universe","the MageLord of Universe",182000000},
-  {"the MageLord of Metaphysics","the MageLord of Metaphysics",208000000},
-  {"the Metaphysician","the Metaphysicians",234000000},
-  {"the Master of MageLord","the Master of MageLord",260000000},
-  {"the Dangun","the Dangun", 286000000}, /* 40 */
-  {"the Dangun","the Dangun", 316000000},
-  {"the Dangun","the Dangun", 346000000},
-  {"the Dangun","the Dangun", 380000000},
-  {"the Dangun","the Dangun", 420000000},
-  {"the Dangun","the Dangun", 460000000},
-  {"the Dangun","the Dangun", 500000000},
-  {"the Dangun","the Dangun", 540000000},
-  {"the Dangun","the Dangun", 580000000},
-  {"the Dangun","the Dangun", 620000000},
-  {"the Dangun","the Dangun", 660000000}, /* 50 */
-  {"the Dangun","the Dangun", 700000000},
-  {"the Dangun","the Dangun", 750000000},
-  {"the Dangun","the Dangun", 800000000},
-  {"the Dangun","the Dangun", 850000000},
-  {"the Dangun","the Dangun", 900000000},
-  {"the Dangun","the Dangun", 950000000},
-  {"the Dangun","the Dangun",1000000000},
-  {"the Dangun","the Dangun",1100000000},
-  {"the Dangun","the Dangun",1150000000},
-  {"the Dangun","the Dangun",1200000000}, /* 60 */
-  {"the Immortal Warlock","the Immortal Enchantress",2000000000},
-  {"the Avatar of Magic","the Empress of Magic", 3000000000},
-  {"the God of magic","the Goddess of magic", 4000000000},
-  {"the Implementator","the Implementress", 5000000000} },
+struct title_type titles[4][IMO + 4] =
+{
+  {
+    {"the Man", "the Woman", 0},
+    {"the Apprentice of Magic", "the Apprentice of Magic", 1},	/* 1 */
+    {"the Spell Student", "the Spell Student", 1300},
+    {"the Scholar of Magic", "the Scholar of Magic", 2600},
+    {"the Delver in Spells", "the Delveress in Spells", 7800},
+    {"the Medium of Magic", "the Medium of Magic", 13000},
+    {"the Scribe of Magic", "the Scribess of Magic", 20800},
+    {"the Seer", "the Seeress", 26000},
+    {"the Sage", "the Sage", 36400},
+    {"the Illusionist", "the Illusionist", 52000},
+    {"the Abjurer", "the Abjuress", 78000},	/* 10 */
+    {"the Invoker", "the Invoker", 117000},
+    {"the Enchanter", "the Enchantress", 182000},
+    {"the Conjurer", "the Conjuress", 260000},
+    {"the Magician", "the Witch", 364000},
+    {"the Creator", "the Creator", 520000},
+    {"the Savant", "the Savant", 780000},
+    {"the Magus", "the Craftess", 1040000},
+    {"the Wizard", "the Wizard", 1430000},
+    {"the Warlock", "the War Witch", 1820000},
+    {"the Sorcerer", "the Sorceress", 2340000},		/* 20 */
+    {"the Man of Hecate", "the Lady of Hecate", 2860000},
+    {"the Apparantice Archmage", "the Apparantice Archmage", 3640000},
+    {"the Archmage of Fire", "the Archmage of Fire", 4550000},
+    {"the Archmage of Water", "the Archmage of Water", 5850000},
+    {"the Archmage of Earth", "the Archmage of Earth", 7800000},
+    {"the Archmage of Wind", "the Archmage of Wind", 10400000},
+    {"the Mage Guru", "the Mage Guru", 14300000},
+    {"the Apparantice MageLord", "the Apparantice MageLord", 19500000},
+    {"the MageLord of Fire", "the MageLord of Fire", 26000000},
+    {"the MageLord of Water", "the MageLord of Water", 39000000},	/* 30 */
+    {"the MageLord of Earth", "the MageLord of Earth", 58500000},
+    {"the MageLord of Wind", "the MageLord of Wind", 78000000},
+    {"the MageLord of Moon", "the MageLord of Moon", 104000000},
+    {"the MageLord of Sun", "the MageLord of Sun", 130000000},
+    {"the MageLord of Galaxy", "the MageLord of Galaxy", 156000000},
+    {"the MageLord of Universe", "the MageLord of Universe", 182000000},
+    {"the MageLord of Metaphysics", "the MageLord of Metaphysics", 208000000},
+    {"the Metaphysician", "the Metaphysicians", 234000000},
+    {"the Master of MageLord", "the Master of MageLord", 260000000},
+    {"the Dangun", "the Dangun", 286000000},	/* 40 */
+    {"the Dangun", "the Dangun", 316000000},
+    {"the Dangun", "the Dangun", 346000000},
+    {"the Dangun", "the Dangun", 380000000},
+    {"the Dangun", "the Dangun", 420000000},
+    {"the Dangun", "the Dangun", 460000000},
+    {"the Dangun", "the Dangun", 500000000},
+    {"the Dangun", "the Dangun", 540000000},
+    {"the Dangun", "the Dangun", 580000000},
+    {"the Dangun", "the Dangun", 620000000},
+    {"the Dangun", "the Dangun", 660000000},	/* 50 */
+    {"the Dangun", "the Dangun", 700000000},
+    {"the Dangun", "the Dangun", 750000000},
+    {"the Dangun", "the Dangun", 800000000},
+    {"the Dangun", "the Dangun", 850000000},
+    {"the Dangun", "the Dangun", 900000000},
+    {"the Dangun", "the Dangun", 950000000},
+    {"the Dangun", "the Dangun", 1000000000},
+    {"the Dangun", "the Dangun", 1100000000},
+    {"the Dangun", "the Dangun", 1150000000},
+    {"the Dangun", "the Dangun", 1200000000},	/* 60 */
+    {"the Immortal Warlock", "the Immortal Enchantress", 2000000000},
+    {"the Avatar of Magic", "the Empress of Magic", 3000000000},
+    {"the God of magic", "the Goddess of magic", 4000000000},
+    {"the Implementator", "the Implementress", 5000000000}},
 
-{ {"the Man","the Woman",0},
-  {"the Believer","the Believer",1}, /* 1 */
-  {"the Attendant","the Attendant",1000},
-  {"the Acolyte","the Acolyte",2000},
-  {"the Novice","the Novice",6000},
-  {"the Missionary","the Missionary",10000},
-  {"the Adept","the Adept",16000},
-  {"the Deacon","the Deaconess",20000},
-  {"the Vicar","the Vicaress",28000},
-  {"the Priest","the Priestess",40000},
-  {"the Minister","the Lady Minister",60000}, /* 10 */
-  {"the Canon","the Canon",90000},
-  {"the Levite","the Levitess",140000},
-  {"the Curate","the Curess",200000},
-  {"the Monk","the Nunne",280000},
-  {"the Healer","the Healess",400000},
-  {"the Chaplain","the Chaplain",600000},
-  {"the Expositor","the Expositress",800000},
-  {"the Bishop","the Bishop",1100000},
-  {"the Arch Bishop","the Arch Lady of the Church",1400000},
-  {"the Patriarch","the Matriarch",1800000}, /* 20 */
-  {"the Lesser Doctor","the Lesser Doctor",  2200000},
-  {"the Doctor","the Doctor", 2800000},
-  {"the Master Doctor","the Master Doctor", 3500000},
-  {"the Healer of GOD","the Healer of GOD", 4500000},
-  {"the Cleric","the Cleric", 6000000},
-  {"the Cleric for people","the Cleric for people", 8000000},
-  {"the Chief Doctor","the Chief Doctor", 11000000},
-  {"the Great Doctor","the Great Doctor", 15000000},
-  {"the Doctor in Wind","the Doctor in Wind", 20000000},
-  {"the Doctor in Fire","the Doctor in Fire", 30000000},        /* 30 */
-  {"the Doctor of earth","the Doctor of earth", 45000000},
-  {"the Doctor of Universe","the Doctor of Universe",60000000},
-  {"the Famous Doctor","the Famous Doctor",80000000},
-  {"the Prayer","the Prayer",100000000},
-  {"the Healer","the Healer",120000000},
-  {"the Healer of Lords","the Healer of Lords",140000000},
-  {"the Healer of God","the Healer of God",160000000},
-  {"the Great Prayer","the Great Prayer",180000000},
-  {"the Prayer for Dangun","the Prayer for Dangun",200000000},
-  {"the Dangun","the Dangun", 230000000},	/* 40 */
-  {"the Dangun","the Dangun", 260000000},
-  {"the Dangun","the Dangun", 290000000},
-  {"the Dangun","the Dangun", 320000000},
-  {"the Dangun","the Dangun", 350000000},
-  {"the Dangun","the Dangun", 400000000},
-  {"the Dangun","the Dangun", 450000000},
-  {"the Dangun","the Dangun", 500000000},
-  {"the Dangun","the Dangun", 550000000},
-  {"the Dangun","the Dangun", 600000000},
-  {"the Dangun","the Dangun", 650000000},	/* 50 */
-  {"the Dangun","the Dangun", 700000000},
-  {"the Dangun","the Dangun", 750000000},
-  {"the Dangun","the Dangun", 800000000},
-  {"the Dangun","the Dangun", 850000000},
-  {"the Dangun","the Dangun", 900000000},
-  {"the Dangun","the Dangun", 950000000},
-  {"the Dangun","the Dangun",1000000000},
-  {"the Dangun","the Dangun",1050000000},
-  {"the Dangun","the Dangun",1100000000},
-  {"the Dangun","the Dangun",1150000000},	/* 60 */
-  {"the Immortal Cardinal","the Immortal Priestess",2000000000},
-  {"the Inquisitor","the Inquisitress", 3000000000},
-  {"the god of good and evil","the goddess of good and evil", 4000000000},
-  {"the Implementator","the Implementress", 5000000000} },
+  {
+    {"the Man", "the Woman", 0},
+    {"the Believer", "the Believer", 1},	/* 1 */
+    {"the Attendant", "the Attendant", 1000},
+    {"the Acolyte", "the Acolyte", 2000},
+    {"the Novice", "the Novice", 6000},
+    {"the Missionary", "the Missionary", 10000},
+    {"the Adept", "the Adept", 16000},
+    {"the Deacon", "the Deaconess", 20000},
+    {"the Vicar", "the Vicaress", 28000},
+    {"the Priest", "the Priestess", 40000},
+    {"the Minister", "the Lady Minister", 60000},	/* 10 */
+    {"the Canon", "the Canon", 90000},
+    {"the Levite", "the Levitess", 140000},
+    {"the Curate", "the Curess", 200000},
+    {"the Monk", "the Nunne", 280000},
+    {"the Healer", "the Healess", 400000},
+    {"the Chaplain", "the Chaplain", 600000},
+    {"the Expositor", "the Expositress", 800000},
+    {"the Bishop", "the Bishop", 1100000},
+    {"the Arch Bishop", "the Arch Lady of the Church", 1400000},
+    {"the Patriarch", "the Matriarch", 1800000},	/* 20 */
+    {"the Lesser Doctor", "the Lesser Doctor", 2200000},
+    {"the Doctor", "the Doctor", 2800000},
+    {"the Master Doctor", "the Master Doctor", 3500000},
+    {"the Healer of GOD", "the Healer of GOD", 4500000},
+    {"the Cleric", "the Cleric", 6000000},
+    {"the Cleric for people", "the Cleric for people", 8000000},
+    {"the Chief Doctor", "the Chief Doctor", 11000000},
+    {"the Great Doctor", "the Great Doctor", 15000000},
+    {"the Doctor in Wind", "the Doctor in Wind", 20000000},
+    {"the Doctor in Fire", "the Doctor in Fire", 30000000},	/* 30 */
+    {"the Doctor of earth", "the Doctor of earth", 45000000},
+    {"the Doctor of Universe", "the Doctor of Universe", 60000000},
+    {"the Famous Doctor", "the Famous Doctor", 80000000},
+    {"the Prayer", "the Prayer", 100000000},
+    {"the Healer", "the Healer", 120000000},
+    {"the Healer of Lords", "the Healer of Lords", 140000000},
+    {"the Healer of God", "the Healer of God", 160000000},
+    {"the Great Prayer", "the Great Prayer", 180000000},
+    {"the Prayer for Dangun", "the Prayer for Dangun", 200000000},
+    {"the Dangun", "the Dangun", 230000000},	/* 40 */
+    {"the Dangun", "the Dangun", 260000000},
+    {"the Dangun", "the Dangun", 290000000},
+    {"the Dangun", "the Dangun", 320000000},
+    {"the Dangun", "the Dangun", 350000000},
+    {"the Dangun", "the Dangun", 400000000},
+    {"the Dangun", "the Dangun", 450000000},
+    {"the Dangun", "the Dangun", 500000000},
+    {"the Dangun", "the Dangun", 550000000},
+    {"the Dangun", "the Dangun", 600000000},
+    {"the Dangun", "the Dangun", 650000000},	/* 50 */
+    {"the Dangun", "the Dangun", 700000000},
+    {"the Dangun", "the Dangun", 750000000},
+    {"the Dangun", "the Dangun", 800000000},
+    {"the Dangun", "the Dangun", 850000000},
+    {"the Dangun", "the Dangun", 900000000},
+    {"the Dangun", "the Dangun", 950000000},
+    {"the Dangun", "the Dangun", 1000000000},
+    {"the Dangun", "the Dangun", 1050000000},
+    {"the Dangun", "the Dangun", 1100000000},
+    {"the Dangun", "the Dangun", 1150000000},	/* 60 */
+    {"the Immortal Cardinal", "the Immortal Priestess", 2000000000},
+    {"the Inquisitor", "the Inquisitress", 3000000000},
+    {"the god of good and evil", "the goddess of good and evil", 4000000000},
+    {"the Implementator", "the Implementress", 5000000000}},
 
-{ {"the Man","the Woman",0},
-  {"the Pilferer","the Pilferess",1}, /* 1 */
-  {"the Footpad","the Footpad",1600},
-  {"the Filcher","the Filcheress",3200},
-  {"the Pick-Pocket","the Pick-Pocket",9600},
-  {"the Sneak","the Sneak",16000},
-  {"the Pincher","the Pincheress",25600},
-  {"the Cut-Purse","the Cut-Purse",32000},
-  {"the Snatcher","the Snatcheress",44800},
-  {"the Sharper","the Sharpress",64000},
-  {"the Rogue","the Rogue",96000}, /* 10 */
-  {"the Robber","the Robber",144000},
-  {"the Magsman","the Magswoman",224000},
-  {"the Highwayman","the Highwaywoman",320000},
-  {"the Burglar","the Burglaress",448000},
-  {"the Thief","the Thief",640000},
-  {"the Knifer","the Knifer",960000},
-  {"the Quick-Blade","the Quick-Blade",1280000},
-  {"the Killer","the Murderess",1760000},
-  {"the Brigand","the Brigand",2240000},
-  {"the Cut-Throat","the Cut-Throat",2880000}, /* 20 */
-  {"the Urchin Father","the Urchin Mother",  3300000},
-  {"the Bully","the Bully",  4200000},
-  {"the Snifer","the Snifer",5250000},
-  {"the famous Killer","the Famous Killer",6700000},
-  {"the Best Snifer","the Best Snifer",9000000},
-  {"the Quick Knife","the Quick Knife",12000000},
-  {"the Stealer","the Stealer",16500000},
-  {"the Stealer of breath","the Stealer of Breath",22500000},
-  {"the Good Thief","the Good Thief",30000000},
-  {"the Lord of Thieves","the Lady of Thieves",45000000},       /* 30 */
-  {"the King of Thieves","the Queen of Thieves",67500000},
-  {"the Urchin in world","the Urchin in world", 90000000},
-  {"the Shadow","the Shadow", 120000000},
-  {"the Thief of Fire","the Thief of Fire", 150000000},
-  {"the Thief of Wind","the Thief of Wind", 180000000},
-  {"the Thief of Earth","the Thief of Earth", 210000000},
-  {"the Thief of Universe","the Thief of Universe", 240000000},
-  {"the God-Father","the God-Mother",270000000},
-  {"the Greatest Bully","the Greatest Bully",300000000},
-  {"the Dangun","the Dangun", 330000000},	/* 40 */
-  {"the Dangun","the Dangun", 360000000},	
-  {"the Dangun","the Dangun", 390000000},	
-  {"the Dangun","the Dangun", 420000000},	
-  {"the Dangun","the Dangun", 450000000},	
-  {"the Dangun","the Dangun", 480000000},	
-  {"the Dangun","the Dangun", 510000000},	
-  {"the Dangun","the Dangun", 540000000},	
-  {"the Dangun","the Dangun", 570000000},	
-  {"the Dangun","the Dangun", 600000000},	
-  {"the Dangun","the Dangun", 630000000},	/* 50 */
-  {"the Dangun","the Dangun", 670000000},	
-  {"the Dangun","the Dangun", 710000000},	
-  {"the Dangun","the Dangun", 750000000},	
-  {"the Dangun","the Dangun", 800000000},	
-  {"the Dangun","the Dangun", 850000000},	
-  {"the Dangun","the Dangun", 900000000},	
-  {"the Dangun","the Dangun",1000000000},	
-  {"the Dangun","the Dangun",1100000000},	
-  {"the Dangun","the Dangun",1200000000},	
-  {"the Dangun","the Dangun",1300000000},	/* 60 */
-  {"the Immortal Assassin","the Immortal Assassin",2000000000},
-  {"the Demi God of thieves","the Demi Goddess of thieves",3000000000},
-  {"the God of Thieves","the Goddess of Thieves",4000000000},
-  {"the Implementator","the Implementress",5000000000} },
+  {
+    {"the Man", "the Woman", 0},
+    {"the Pilferer", "the Pilferess", 1},	/* 1 */
+    {"the Footpad", "the Footpad", 1600},
+    {"the Filcher", "the Filcheress", 3200},
+    {"the Pick-Pocket", "the Pick-Pocket", 9600},
+    {"the Sneak", "the Sneak", 16000},
+    {"the Pincher", "the Pincheress", 25600},
+    {"the Cut-Purse", "the Cut-Purse", 32000},
+    {"the Snatcher", "the Snatcheress", 44800},
+    {"the Sharper", "the Sharpress", 64000},
+    {"the Rogue", "the Rogue", 96000},	/* 10 */
+    {"the Robber", "the Robber", 144000},
+    {"the Magsman", "the Magswoman", 224000},
+    {"the Highwayman", "the Highwaywoman", 320000},
+    {"the Burglar", "the Burglaress", 448000},
+    {"the Thief", "the Thief", 640000},
+    {"the Knifer", "the Knifer", 960000},
+    {"the Quick-Blade", "the Quick-Blade", 1280000},
+    {"the Killer", "the Murderess", 1760000},
+    {"the Brigand", "the Brigand", 2240000},
+    {"the Cut-Throat", "the Cut-Throat", 2880000},	/* 20 */
+    {"the Urchin Father", "the Urchin Mother", 3300000},
+    {"the Bully", "the Bully", 4200000},
+    {"the Snifer", "the Snifer", 5250000},
+    {"the famous Killer", "the Famous Killer", 6700000},
+    {"the Best Snifer", "the Best Snifer", 9000000},
+    {"the Quick Knife", "the Quick Knife", 12000000},
+    {"the Stealer", "the Stealer", 16500000},
+    {"the Stealer of breath", "the Stealer of Breath", 22500000},
+    {"the Good Thief", "the Good Thief", 30000000},
+    {"the Lord of Thieves", "the Lady of Thieves", 45000000},	/* 30 */
+    {"the King of Thieves", "the Queen of Thieves", 67500000},
+    {"the Urchin in world", "the Urchin in world", 90000000},
+    {"the Shadow", "the Shadow", 120000000},
+    {"the Thief of Fire", "the Thief of Fire", 150000000},
+    {"the Thief of Wind", "the Thief of Wind", 180000000},
+    {"the Thief of Earth", "the Thief of Earth", 210000000},
+    {"the Thief of Universe", "the Thief of Universe", 240000000},
+    {"the God-Father", "the God-Mother", 270000000},
+    {"the Greatest Bully", "the Greatest Bully", 300000000},
+    {"the Dangun", "the Dangun", 330000000},	/* 40 */
+    {"the Dangun", "the Dangun", 360000000},
+    {"the Dangun", "the Dangun", 390000000},
+    {"the Dangun", "the Dangun", 420000000},
+    {"the Dangun", "the Dangun", 450000000},
+    {"the Dangun", "the Dangun", 480000000},
+    {"the Dangun", "the Dangun", 510000000},
+    {"the Dangun", "the Dangun", 540000000},
+    {"the Dangun", "the Dangun", 570000000},
+    {"the Dangun", "the Dangun", 600000000},
+    {"the Dangun", "the Dangun", 630000000},	/* 50 */
+    {"the Dangun", "the Dangun", 670000000},
+    {"the Dangun", "the Dangun", 710000000},
+    {"the Dangun", "the Dangun", 750000000},
+    {"the Dangun", "the Dangun", 800000000},
+    {"the Dangun", "the Dangun", 850000000},
+    {"the Dangun", "the Dangun", 900000000},
+    {"the Dangun", "the Dangun", 1000000000},
+    {"the Dangun", "the Dangun", 1100000000},
+    {"the Dangun", "the Dangun", 1200000000},
+    {"the Dangun", "the Dangun", 1300000000},	/* 60 */
+    {"the Immortal Assassin", "the Immortal Assassin", 2000000000},
+    {"the Demi God of thieves", "the Demi Goddess of thieves", 3000000000},
+    {"the God of Thieves", "the Goddess of Thieves", 4000000000},
+    {"the Implementator", "the Implementress", 5000000000}},
 
-{ {"the Man","the Woman",0},
-  {"the Swordpupil","the Swordpupil",1}, /* 1 */
-  {"the Recruit","the Recruit",2000},
-  {"the Sentry","the Sentress",4000},
-  {"the Fighter","the Fighter",12000},
-  {"the Soldier","the Soldier",20000},
-  {"the Warrior","the Warrior",32000},
-  {"the Veteran","the Veteran",40000},
-  {"the Swordsman","the Swordswoman",56000},
-  {"the Fencer","the Fenceress",80000},
-  {"the Combatant","the Combatess",120000}, /* 10 */
-  {"the Hero","the Heroine",180000},
-  {"the Myrmidon","the Myrmidon",280000},
-  {"the Swashbuckler","the Swashbuckleress",400000},
-  {"the Mercenary","the Mercenaress",560000},
-  {"the Swordmaster","the Swordmistress",800000},
-  {"the Lieutenant","the Lieutenant",1200000},
-  {"the Champion","the Lady Champion",1600000},
-  {"the Dragoon","the Lady Dragoon",2200000},
-  {"the Cavalier","the Cavalier",2800000},
-  {"the Knight","the Lady Knight",3600000}, /* 20 */
-  {"the Knight of Fire","the Knight of Fire",  4400000},
-  {"the Knight of Wind","the Knight of Wind",  5600000},
-  {"the Knight of Ice","the Knight of Ice", 7000000},
-  {"the Knight of Water","the Knight of Water", 9000000},
-  {"the Powerful Knight","the Powerful Knight", 12000000},
-  {"the Lord of Wind","the Lady of Wind", 16000000},
-  {"the Lord of Fire","the Lady of Fire", 22000000},
-  {"the Lord of Water","the Lady of Water", 30000000},
-  {"the Lord of Earth","the Lord of Earth", 40000000},
-  {"the Bodyguard","the Bodyguard",60000000},  /* 30 */
-  {"the Famous knight","the Famous Knight",81000000},
-  {"the Best Knight","the Best Knight",108000000},
-  {"the Lord of Knight","The Lady of Knight",144000000},
-  {"The King of Knight","the King of Knight",180000000},
-  {"the Adventurer","the Adventurer",216000000},
-  {"the Best kid","the Best lady",252000000},
-  {"the Paladin","the Paladin",288000000},
-  {"the Best Swordman","the Best Swordwoman",324000000},
-  {"the Adventurer for Dangun","the Adventurer for Dangun",360000000},
-  {"the Dangun","the Dangun", 400000000},	/* 40 */
-  {"the Dangun","the Dangun", 440000000},	
-  {"the Dangun","the Dangun", 480000000},	
-  {"the Dangun","the Dangun", 520000000},	
-  {"the Dangun","the Dangun", 560000000},	
-  {"the Dangun","the Dangun", 600000000},	
-  {"the Dangun","the Dangun", 640000000},	
-  {"the Dangun","the Dangun", 680000000},	
-  {"the Dangun","the Dangun", 720000000},	
-  {"the Dangun","the Dangun", 760000000},	
-  {"the Dangun","the Dangun", 800000000},	/* 50 */
-  {"the Dangun","the Dangun", 850000000},	
-  {"the Dangun","the Dangun", 900000000},	
-  {"the Dangun","the Dangun", 950000000},	
-  {"the Dangun","the Dangun",1000000000},	
-  {"the Dangun","the Dangun",1050000000},	
-  {"the Dangun","the Dangun",1100000000},	
-  {"the Dangun","the Dangun",1200000000},	
-  {"the Dangun","the Dangun",1300000000},	
-  {"the Dangun","the Dangun",1400000000},	
-  {"the Dangun","the Dangun",1500000000},	/* 60 */
-  {"the Immortal Warlord","the Immortal Lady of War",2000000000},
-  {"the Extirpator","the Queen of Destruction",3000000000},
-  {"the God of war","the Goddess of war",4000000000},
-  {"the Implementator","the Implementress",5000000000} }
+  {
+    {"the Man", "the Woman", 0},
+    {"the Swordpupil", "the Swordpupil", 1},	/* 1 */
+    {"the Recruit", "the Recruit", 2000},
+    {"the Sentry", "the Sentress", 4000},
+    {"the Fighter", "the Fighter", 12000},
+    {"the Soldier", "the Soldier", 20000},
+    {"the Warrior", "the Warrior", 32000},
+    {"the Veteran", "the Veteran", 40000},
+    {"the Swordsman", "the Swordswoman", 56000},
+    {"the Fencer", "the Fenceress", 80000},
+    {"the Combatant", "the Combatess", 120000},		/* 10 */
+    {"the Hero", "the Heroine", 180000},
+    {"the Myrmidon", "the Myrmidon", 280000},
+    {"the Swashbuckler", "the Swashbuckleress", 400000},
+    {"the Mercenary", "the Mercenaress", 560000},
+    {"the Swordmaster", "the Swordmistress", 800000},
+    {"the Lieutenant", "the Lieutenant", 1200000},
+    {"the Champion", "the Lady Champion", 1600000},
+    {"the Dragoon", "the Lady Dragoon", 2200000},
+    {"the Cavalier", "the Cavalier", 2800000},
+    {"the Knight", "the Lady Knight", 3600000},		/* 20 */
+    {"the Knight of Fire", "the Knight of Fire", 4400000},
+    {"the Knight of Wind", "the Knight of Wind", 5600000},
+    {"the Knight of Ice", "the Knight of Ice", 7000000},
+    {"the Knight of Water", "the Knight of Water", 9000000},
+    {"the Powerful Knight", "the Powerful Knight", 12000000},
+    {"the Lord of Wind", "the Lady of Wind", 16000000},
+    {"the Lord of Fire", "the Lady of Fire", 22000000},
+    {"the Lord of Water", "the Lady of Water", 30000000},
+    {"the Lord of Earth", "the Lord of Earth", 40000000},
+    {"the Bodyguard", "the Bodyguard", 60000000},	/* 30 */
+    {"the Famous knight", "the Famous Knight", 81000000},
+    {"the Best Knight", "the Best Knight", 108000000},
+    {"the Lord of Knight", "The Lady of Knight", 144000000},
+    {"The King of Knight", "the King of Knight", 180000000},
+    {"the Adventurer", "the Adventurer", 216000000},
+    {"the Best kid", "the Best lady", 252000000},
+    {"the Paladin", "the Paladin", 288000000},
+    {"the Best Swordman", "the Best Swordwoman", 324000000},
+    {"the Adventurer for Dangun", "the Adventurer for Dangun", 360000000},
+    {"the Dangun", "the Dangun", 400000000},	/* 40 */
+    {"the Dangun", "the Dangun", 440000000},
+    {"the Dangun", "the Dangun", 480000000},
+    {"the Dangun", "the Dangun", 520000000},
+    {"the Dangun", "the Dangun", 560000000},
+    {"the Dangun", "the Dangun", 600000000},
+    {"the Dangun", "the Dangun", 640000000},
+    {"the Dangun", "the Dangun", 680000000},
+    {"the Dangun", "the Dangun", 720000000},
+    {"the Dangun", "the Dangun", 760000000},
+    {"the Dangun", "the Dangun", 800000000},	/* 50 */
+    {"the Dangun", "the Dangun", 850000000},
+    {"the Dangun", "the Dangun", 900000000},
+    {"the Dangun", "the Dangun", 950000000},
+    {"the Dangun", "the Dangun", 1000000000},
+    {"the Dangun", "the Dangun", 1050000000},
+    {"the Dangun", "the Dangun", 1100000000},
+    {"the Dangun", "the Dangun", 1200000000},
+    {"the Dangun", "the Dangun", 1300000000},
+    {"the Dangun", "the Dangun", 1400000000},
+    {"the Dangun", "the Dangun", 1500000000},	/* 60 */
+    {"the Immortal Warlord", "the Immortal Lady of War", 2000000000},
+    {"the Extirpator", "the Queen of Destruction", 3000000000},
+    {"the God of war", "the Goddess of war", 4000000000},
+    {"the Implementator", "the Implementress", 5000000000}}
 };
 
-char *item_types[] = {
+char *item_types[] =
+{
   "UNDEFINED",
   "LIGHT",
   "SCROLL",
@@ -625,7 +637,8 @@ char *item_types[] = {
   "\n"
 };
 
-char *wear_bits[] = {
+char *wear_bits[] =
+{
   "TAKE",
   "FINGER",
   "NECK",
@@ -649,7 +662,8 @@ char *wear_bits[] = {
   "\n"
 };
 
-char *extra_bits[] = {
+char *extra_bits[] =
+{
   "GLOW",
   "HUM",
   "DARK",
@@ -675,7 +689,8 @@ char *extra_bits[] = {
   "\n"
 };
 
-char *room_bits[] = {
+char *room_bits[] =
+{
   "DARK",
   "NOSUMMON",
   "NO_MOB",
@@ -699,7 +714,8 @@ char *room_bits[] = {
   "\n"
 };
 
-char *exit_bits[] = {
+char *exit_bits[] =
+{
   "IS-DOOR",
   "CLOSED",
   "LOCKED",
@@ -710,7 +726,8 @@ char *exit_bits[] = {
   "\n"
 };
 
-char *sector_types[] = {
+char *sector_types[] =
+{
   "Inside",
   "City",
   "Field",
@@ -723,7 +740,8 @@ char *sector_types[] = {
   "\n"
 };
 
-char *equipment_types[] = {
+char *equipment_types[] =
+{
   "Special",
   "Worn on right finger",
   "Worn on left finger",
@@ -748,40 +766,41 @@ char *equipment_types[] = {
   "Worn on back",
   "\n"
 };
-  
-char *affected_bits[] = 
-{  "BLIND",
-  "INVISIBLE",
-  "DETECT-EVIL",
-  "DETECT-INVISIBLE",
-  "INFRAVISION",
-  "SENSE-LIFE",
-  "DEAF",
-  "SANCTUARY",
-  "GROUP",
-  "DUMB",
-  "CURSE",
-  "MIRROR-IMAGE",
-  "POISON",
-  "PROTECT-EVIL",
-  "REFLECT-DAMAGE",
-  "HOLY-SHIELD",
-  "SPELL-BLOCK",
-  "SLEEP",
-  "SHADOW-FIGURE",
-  "SNEAK",
-  "HIDE",
-  "DEATH",
-  "CHARM",
-  "FOLLOW",
-  "HASTE",
-  "IMPROVED_HASTE",
-  "LOVE",
-  "RERAISE",
-  "\n"
+
+char *affected_bits[] =
+{"BLIND",
+ "INVISIBLE",
+ "DETECT-EVIL",
+ "DETECT-INVISIBLE",
+ "INFRAVISION",
+ "SENSE-LIFE",
+ "DEAF",
+ "SANCTUARY",
+ "GROUP",
+ "DUMB",
+ "CURSE",
+ "MIRROR-IMAGE",
+ "POISON",
+ "PROTECT-EVIL",
+ "REFLECT-DAMAGE",
+ "HOLY-SHIELD",
+ "SPELL-BLOCK",
+ "SLEEP",
+ "SHADOW-FIGURE",
+ "SNEAK",
+ "HIDE",
+ "DEATH",
+ "CHARM",
+ "FOLLOW",
+ "HASTE",
+ "IMPROVED_HASTE",
+ "LOVE",
+ "RERAISE",
+ "\n"
 };
 
-char *apply_types[] = {
+char *apply_types[] =
+{
   "NONE",
   "STR",
   "DEX",
@@ -812,7 +831,8 @@ char *apply_types[] = {
   "\n"
 };
 
-char *pc_class_types[] = {
+char *pc_class_types[] =
+{
   "UNDEFINED",
   "Magic User",
   "Cleric",
@@ -821,7 +841,8 @@ char *pc_class_types[] = {
   "\n"
 };
 
-char *npc_class_types[] = {
+char *npc_class_types[] =
+{
   "Normal",
   "Undead",
   "Humanoid",
@@ -833,7 +854,8 @@ char *npc_class_types[] = {
   "\n"
 };
 
-char *action_bits[] = {
+char *action_bits[] =
+{
   "SPEC",
   "SENTINEL",
   "SCAVENGER",
@@ -861,7 +883,8 @@ char *action_bits[] = {
 };
 
 
-char *player_bits[] = {
+char *player_bits[] =
+{
   "BRIEF",
   "NOSHOUT",
   "COMPACT",
@@ -883,7 +906,8 @@ char *player_bits[] = {
 };
 
 
-char *position_types[] = {
+char *position_types[] =
+{
   "Dead",
   "Mortally wounded",
   "Incapacitated",
@@ -896,7 +920,8 @@ char *position_types[] = {
   "\n"
 };
 
-char *connected_types[]  =  {
+char *connected_types[] =
+{
   "Playing",
   "Get name",
   "Confirm name",
@@ -914,213 +939,265 @@ char *connected_types[]  =  {
 /* [class], [level] (all) M, C, T, W*/
 /* cyb const int thaco[4][IMO+4] = { */
 /* probability of attack */
-int thaco[4][IMO+4] = {
-	{ 0,
-	  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-	  11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-	  21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-	  31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-	  0 },
-	{ 0,
-	  3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-	  13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-	  23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 
-	  33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
-	  0 },
-	{ 0,
-	  7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-	  17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-	  27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
-	  37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
-	  0 },
-	{ 0,
-	  11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-	  21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-	  31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-	  41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-	  0 },
+int thaco[4][IMO + 4] =
+{
+  {0,
+   1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+   11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+   21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+   31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+   0},
+  {0,
+   3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+   13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+   23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+   33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
+   0},
+  {0,
+   7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+   17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+   27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
+   37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+   0},
+  {0,
+   11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+   21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+   31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+   41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+   0},
 };
 
 /* [ch] strength apply (all) */
 /* struct = { short tohit, todam, carry_w, wield_w } */
-struct str_app_type str_app[31] = {
-  { -5, 0,   0,  0 },  /* 0  */
-  { -5, 1,   3,  1 },  /* 1  */
-  { -3, 1,   3,  2 },
-  { -3, 1,  10,  3 },  /* 3  */
-  { -2, 1,  25,  4 },
-  { -2, 1,  55,  5 },  /* 5  */
-  { -1, 2,  80,  6 },
-  { -1, 2,  90,  7 },
-  {  0, 2, 100,  8 },
-  {  0, 3, 100,  9 },
-  {  0, 3, 115, 10 }, /* 10  */
-  {  0, 4, 115, 11 },
-  {  0, 5, 130, 12 },
-  {  0, 6, 140, 13 },
-  {  0, 7, 160, 14 },
-  {  0, 8, 170, 15 }, /* 15  */
-  {  0, 9, 195, 16 },
-  {  1, 10, 220, 18 },
-  {  1, 11, 255, 20 }, /* 18  */
-  {  3, 20, 640, 40 },
-  {  3, 21, 700, 40 }, /* 20  */
-  {  4, 22, 810, 40 },
-  {  4, 23, 970, 40 },
-  {  5, 24,1130, 40 },
-  {  6, 25,1440, 40 },
-  {  7, 26,1750, 40 }, /* 25            */
-  {  1, 12, 280, 22 }, /* 18/01-50      */
-  {  1, 13, 305, 24 }, /* 18/51-75      */
-  {  2, 14, 330, 26 }, /* 18/76-90      */
-  {  2, 15, 380, 28 }, /* 18/91-99      */
-  {  3, 16, 480, 30 }, /* 18/100   (30) */
+struct str_app_type str_app[31] =
+{
+  {-5, 0, 0, 0},		/* 0  */
+  {-5, 1, 3, 1},		/* 1  */
+  {-3, 1, 3, 2},
+  {-3, 1, 10, 3},		/* 3  */
+  {-2, 1, 25, 4},
+  {-2, 1, 55, 5},		/* 5  */
+  {-1, 2, 80, 6},
+  {-1, 2, 90, 7},
+  {0, 2, 100, 8},
+  {0, 3, 100, 9},
+  {0, 3, 115, 10},		/* 10  */
+  {0, 4, 115, 11},
+  {0, 5, 130, 12},
+  {0, 6, 140, 13},
+  {0, 7, 160, 14},
+  {0, 8, 170, 15},		/* 15  */
+  {0, 9, 195, 16},
+  {1, 10, 220, 18},
+  {1, 11, 255, 20},		/* 18  */
+  {3, 20, 640, 40},
+  {3, 21, 700, 40},		/* 20  */
+  {4, 22, 810, 40},
+  {4, 23, 970, 40},
+  {5, 24, 1130, 40},
+  {6, 25, 1440, 40},
+  {7, 26, 1750, 40},		/* 25            */
+  {1, 12, 280, 22},		/* 18/01-50      */
+  {1, 13, 305, 24},		/* 18/51-75      */
+  {2, 14, 330, 26},		/* 18/76-90      */
+  {2, 15, 380, 28},		/* 18/91-99      */
+  {3, 16, 480, 30},		/* 18/100   (30) */
 };
 
 /* [dex] skill apply (thieves only) */
 /* struct = {short p_pocket, p_locks, traps, sneak, hide } */
-struct dex_skill_type dex_app_skill[26] = {
-  {-99,-99,-90,-99,-60},   /* 0 */
-  {-90,-90,-60,-90,-50},   /* 1 */
-  {-80,-80,-40,-80,-45},
-  {-70,-70,-30,-70,-40},
-  {-60,-60,-30,-60,-35},
-  {-50,-50,-20,-50,-30},   /* 5 */
-  {-40,-40,-20,-40,-25},
-  {-30,-30,-15,-30,-20},
-  {-20,-20,-15,-20,-15},
-  {-15,-10,-10,-20,-10},
-  {-10, -5,-10,-15, -5},   /* 10 */
-  { -5,  0, -5,-10,  0},
-  {  0,  0,  0, -5,  0},
-  {  0,  0,  0,  0,  0},
-  {  0,  0,  0,  0,  0},
-  {  0,  0,  0,  0,  0},   /* 15 */
-  {  0,  5,  0,  0,  0},
-  {  5, 10,  0,  5,  5},
-  { 10, 15,  5, 10, 10},
-  { 15, 20, 10, 15, 15},
-  { 15, 20, 10, 15, 15},   /* 20 */
-  { 20, 25, 10, 15, 20},
-  { 20, 25, 15, 20, 20},
-  { 25, 25, 15, 20, 20},
-  { 25, 30, 15, 25, 25},
-  { 25, 30, 15, 25, 25}
+struct dex_skill_type dex_app_skill[26] =
+{
+  {-99, -99, -90, -99, -60},	/* 0 */
+  {-90, -90, -60, -90, -50},	/* 1 */
+  {-80, -80, -40, -80, -45},
+  {-70, -70, -30, -70, -40},
+  {-60, -60, -30, -60, -35},
+  {-50, -50, -20, -50, -30},	/* 5 */
+  {-40, -40, -20, -40, -25},
+  {-30, -30, -15, -30, -20},
+  {-20, -20, -15, -20, -15},
+  {-15, -10, -10, -20, -10},
+  {-10, -5, -10, -15, -5},	/* 10 */
+  {-5, 0, -5, -10, 0},
+  {0, 0, 0, -5, 0},
+  {0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0},		/* 15 */
+  {0, 5, 0, 0, 0},
+  {5, 10, 0, 5, 5},
+  {10, 15, 5, 10, 10},
+  {15, 20, 10, 15, 15},
+  {15, 20, 10, 15, 15},		/* 20 */
+  {20, 25, 10, 15, 20},
+  {20, 25, 15, 20, 20},
+  {25, 25, 15, 20, 20},
+  {25, 30, 15, 25, 25},
+  {25, 30, 15, 25, 25}
 };
 
 /* [level] backstab multiplyer (thieves only) */
-byte backstab_mult[IMO+4] = {
-  1,   /* 0 */
-  2,   /* 1 */
+byte backstab_mult[IMO + 4] =
+{
+  1,				/* 0 */
+  2,				/* 1 */
   2,
   3,
   3,
-  3,   /* 5 */
+  3,				/* 5 */
   4,
   4,
   4,
   4,
-  5,   /* 10 */
+  5,				/* 10 */
   5,
   5,
   5,
   5,
-  6,   /* 15 */
+  6,				/* 15 */
   6,
   6,
   6,
   6,
-  6,   /* 20 */
+  6,				/* 20 */
   7,
   7,
   7,
-  7,   /* 25 */
+  7,				/* 25 */
   7,
   7,
   7,
   8,
-  8,  /* 30 */
-  8, 8, 8, 8, 8, /* 35 */
-  8, 9, 9, 9,10, /* 40 */
- 10,10,12,20,45	 /* 45 */
+  8,				/* 30 */
+  8, 8, 8, 8, 8,		/* 35 */
+  8, 9, 9, 9, 10,		/* 40 */
+  10, 10, 12, 20, 45		/* 45 */
 };
 
 /* [dex] apply (all) */
 /* struct = { short reaction, attack, defensive } */
 /* attack : possibility of attack */
 /* defensive : possibility of defensive */
-struct dex_app_type dex_app[26] = {
-  {-7, 0, 0},   /* 0 */
-  {-6, 1, 2},   /* 1 */
+struct dex_app_type dex_app[26] =
+{
+  {-7, 0, 0},			/* 0 */
+  {-6, 1, 2},			/* 1 */
   {-4, 2, 4},
   {-3, 3, 6},
   {-2, 4, 8},
-  {-1, 5, 10},   /* 5 */
-  { 0, 6, 12},
-  { 0, 7, 14},
-  { 0, 8, 16},
-  { 0, 9, 18},
-  { 0, 10, 20},   /* 10 */
-  { 0, 12, 22},
-  { 0, 14, 24},
-  { 0, 16, 26},
-  { 0, 18, 28},
-  { 0, 20, 30},   /* 15 */
-  { 1, 23, 33},
-  { 2, 26, 36},
-  { 2, 30, 40},   /* 18 */
-  { 3, 35, 45},
-  { 3, 40, 50},   /* 20 */
-  { 4, 45, 55},
-  { 4, 50, 60},
-  { 4, 55, 65},
-  { 5, 60, 70},
-  { 5, 65, 75}
+  {-1, 5, 10},			/* 5 */
+  {0, 6, 12},
+  {0, 7, 14},
+  {0, 8, 16},
+  {0, 9, 18},
+  {0, 10, 20},			/* 10 */
+  {0, 12, 22},
+  {0, 14, 24},
+  {0, 16, 26},
+  {0, 18, 28},
+  {0, 20, 30},			/* 15 */
+  {1, 23, 33},
+  {2, 26, 36},
+  {2, 30, 40},			/* 18 */
+  {3, 35, 45},
+  {3, 40, 50},			/* 20 */
+  {4, 45, 55},
+  {4, 50, 60},
+  {4, 55, 65},
+  {5, 60, 70},
+  {5, 65, 75}
 };
 
 /* [con] apply (all) */
 /* struct = { short hitp, shock }  */
-struct con_app_type con_app[26] = {
-  {-4,20},   /* 0 */
-  {-3,25},   /* 1 */
-  {-2,30},
-  {-2,35},
-  {-1,40},
-  {-1,45},   /* 5 */
-  {-1,50},
-  { 0,55},
-  { 1,65},
-  { 2,70},
-  { 3,75},   /* 10 */
-  { 4,78},
-  { 5,80},
-  { 6,85},
-  { 7,88},
-  { 8,90},   /* 15 */
-  { 9,95},
-  { 10,97},
-  { 10,99},
-  { 10,99},
-  { 10,99},   /* 20 */
-  { 10,99},
-  { 10,99},
-  { 10,99},
-  { 10,99},
-  { 10,100}  /* 25 */
+struct con_app_type con_app[26] =
+{
+  {-4, 20},			/* 0 */
+  {-3, 25},			/* 1 */
+  {-2, 30},
+  {-2, 35},
+  {-1, 40},
+  {-1, 45},			/* 5 */
+  {-1, 50},
+  {0, 55},
+  {1, 65},
+  {2, 70},
+  {3, 75},			/* 10 */
+  {4, 78},
+  {5, 80},
+  {6, 85},
+  {7, 88},
+  {8, 90},			/* 15 */
+  {9, 95},
+  {10, 97},
+  {10, 99},
+  {10, 99},
+  {10, 99},			/* 20 */
+  {10, 99},
+  {10, 99},
+  {10, 99},
+  {10, 99},
+  {10, 100}			/* 25 */
 };
 
 /* [int] apply (all) */
-struct int_app_type int_app[26] = {
-   {1},
-   {2},  {3},  {4},  {7},  {8},  {9}, {10}, {20}, {28}, {30}, /* 10 */
-  {35}, {38}, {40}, {41}, {42}, {46}, {50}, {54}, {99}, {99}, /* 20 */
-  {99}, {99}, {99}, {99}, {99}
+struct int_app_type int_app[26] =
+{
+  {1},
+  {2},
+  {3},
+  {4},
+  {7},
+  {8},
+  {9},
+  {10},
+  {20},
+  {28},
+  {30},				/* 10 */
+  {35},
+  {38},
+  {40},
+  {41},
+  {42},
+  {46},
+  {50},
+  {54},
+  {99},
+  {99},				/* 20 */
+  {99},
+  {99},
+  {99},
+  {99},
+  {99}
 };
 
 /* [wis] apply (all) struct = { byte bonus } */
-struct wis_app_type wis_app[26] = {
+struct wis_app_type wis_app[26] =
+{
   {0},
-  {1}, {1}, {1}, {1}, {1}, {2}, {2}, {2}, {3}, {3},
-  {3}, {3}, {3}, {3}, {4}, {4}, {4}, {6}, {8}, {8},
-  {8}, {8}, {8}, {8}, {8}
+  {1},
+  {1},
+  {1},
+  {1},
+  {1},
+  {2},
+  {2},
+  {2},
+  {3},
+  {3},
+  {3},
+  {3},
+  {3},
+  {3},
+  {4},
+  {4},
+  {4},
+  {6},
+  {8},
+  {8},
+  {8},
+  {8},
+  {8},
+  {8},
+  {8}
 };

@@ -1,3 +1,5 @@
+
+
 /*
    mob_magic.h
    this file is for mob's efficient attact..
@@ -31,4 +33,3 @@
 
 #define MODE_LEVEL_MAX	16	/* max level.. */
 #define MODE_LEVEL_MIN	16	/* min level.. */
-

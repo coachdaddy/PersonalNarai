@@ -27,14 +27,14 @@
 
 // To avoid name conflict with built-in log(x) function
 #define log(s) mudlog(s)
-extern void log(char *str);
+extern void log (char *str);
 
 // Don't use NULL pointer for null character ('\0')
-#define NUL '\0' 
+#define NUL '\0'
 
 #define CARRY_WEIGHT_BASE	500
 
-int hit_limit(struct char_data *ch);
+long int hit_limit (struct char_data *ch);
 
 #define TRUE  1
 
@@ -50,7 +50,7 @@ int hit_limit(struct char_data *ch);
 /* #define MAX(a,b) (((a) > (b)) ? (a) : (b)) */
 /* #define MIN(a,b) (((a) < (b)) ? (a) : (b)) */
 
-#define ISNEWL(ch) ((ch) == '\n' || (ch) == '\r') 
+#define ISNEWL(ch) ((ch) == '\n' || (ch) == '\r')
 
 #define IF_STR(st) ((st) ? (st) : "\0")
 
@@ -104,7 +104,7 @@ int hit_limit(struct char_data *ch);
   (((ch)->player.sex == 1) ? "he" : "she") : "it")
 
 #define HMHR(ch) ((ch)->player.sex ?           \
-  (((ch)->player.sex == 1) ? "him" : "her") : "it")  
+  (((ch)->player.sex == 1) ? "him" : "her") : "it")
 
 #define ANA(obj) (index("aeiouyAEIOUY", *(obj)->name) ? "An" : "A")
 
@@ -270,7 +270,7 @@ int hit_limit(struct char_data *ch);
 #define GET_SKILLED(ch, sk_no)		((ch)->skills[(int)(sk_no)].skilled)
 
 /* defined in utility.c */
-void print_increased_skilled(struct char_data *ch, int sk_no);
+void print_increased_skilled (struct char_data *ch, int sk_no);
 
 /* max skilled = 100 */
 
@@ -305,4 +305,3 @@ void print_increased_skilled(struct char_data *ch, int sk_no);
 			}	\
 		}	\
 	}
-
