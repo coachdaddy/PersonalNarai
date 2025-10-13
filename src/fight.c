@@ -322,8 +322,8 @@ make_corpse (struct char_data *ch, int level)
   if (mob_index[ch->nr].virtual == 23323)
     {
       act
-	   ("거대한 철문이 열리고, 위층으로 올라가는 계단이 보입니다.",
-	   FALSE, ch, 0, 0, TO_ROOM);
+	("거대한 철문이 열리고, 위층으로 올라가는 계단이 보입니다.",
+	 FALSE, ch, 0, 0, TO_ROOM);
       REMOVE_BIT (EXIT (ch, 4)->exit_info, EX_LOCKED);
       REMOVE_BIT (EXIT (ch, 4)->exit_info, EX_CLOSED);
     }
@@ -1620,7 +1620,8 @@ hit (struct char_data *ch, struct char_data *victim, int type)
 	     parry_num = GET_LEVEL(victim)*6;
 	   */
 	  parry_num = GET_LEVEL (victim) * ((GET_SKILLED (victim,
-					     SKILL_PARRY) >> 3) + 6);
+							  SKILL_PARRY) >> 3)
+					    + 6);
 	}
 
       if (GET_CLASS (victim) == CLASS_THIEF)
@@ -1745,7 +1746,7 @@ hit (struct char_data *ch, struct char_data *victim, int type)
 	{
 
 	  if (number (0, 49 + ((ch->specials.damnodice *
-			       ch->specials.damsizedice) << 4)) == 37)
+				ch->specials.damsizedice) << 4)) == 37)
 	    {
 	      /* Check for all remortaled by dsshin   */
 	      /* Limit is changed by epochal                  */
@@ -1795,7 +1796,7 @@ hit (struct char_data *ch, struct char_data *victim, int type)
 		  if (ch->specials.damsizedice < limit_sizedice)
 		    {
 		      send_to_char
-				    ("Your bare hand dice is enlarged!!!\n\r", ch);
+			("Your bare hand dice is enlarged!!!\n\r", ch);
 		      ch->specials.damsizedice++;
 		    }
 		}
@@ -1857,7 +1858,8 @@ hit (struct char_data *ch, struct char_data *victim, int type)
 	    dam += (dam * ((GET_SKILLED (ch, SKILL_EXTRA_DAMAGING) >> 5) + 1));
 	  else
 	    dam += number (dam >> 1, dam * ((GET_SKILLED (ch,
-					     SKILL_EXTRA_DAMAGING) >> 5) + 1));
+							  SKILL_EXTRA_DAMAGING)
+					     >> 5) + 1));
 	}
     }
 
@@ -1899,7 +1901,8 @@ hit (struct char_data *ch, struct char_data *victim, int type)
       else
 	{			/* PC */
 	  dam *= (backstab_mult[(int) GET_LEVEL (ch)] + (GET_SKILLED (ch,
-							 SKILL_BACKSTAB) >> 2));
+								      SKILL_BACKSTAB)
+							 >> 2));
 	}
       if (!IS_AFFECTED (victim, AFF_REFLECT_DAMAGE))
 	damage (ch, victim, dam << 1, SKILL_BACKSTAB);
@@ -2006,7 +2009,8 @@ perform_violence (void)
 		  if (GET_CLASS (ch) == CLASS_MAGIC_USER || GET_CLASS (ch)
 		      == CLASS_CLERIC)
 		    if (number (1, 40) > 20 + (GET_SKILLED (ch,
-					       SKILL_QUADRUPLE) >> 3))
+							    SKILL_QUADRUPLE)
+					       >> 3))
 		      goto octa;
 
 		  for (i = 0; i < 2; i++)
@@ -2069,7 +2073,7 @@ perform_violence (void)
 
 	  if (ch->equipment[WEAR_FEET] &&
 	      ch->equipment[WEAR_FEET]->item_number >= 0 &&
-								      obj_index[ch->equipment[WEAR_FEET]->item_number].virtual
+	      obj_index[ch->equipment[WEAR_FEET]->item_number].virtual
 	      == 2012)
 	    {			/* SPEED boots */
 	      hit (ch, ch->specials.fighting, TYPE_UNDEFINED);

@@ -279,7 +279,7 @@ do_get (struct char_data *ch, char *argument, int cmd)
 		    fail = TRUE;
 		  }
 		else if (IS_SET (sub_object->obj_flags.value[1],
-		  CONT_LOCKED))
+				 CONT_LOCKED))
 		  {
 		    send_to_char ("It's locked.\n\r", ch);
 		    fail = TRUE;
@@ -295,7 +295,7 @@ do_get (struct char_data *ch, char *argument, int cmd)
 			  if ((IS_CARRYING_N (ch) + 1 < CAN_CARRY_N (ch)))
 			    {
 			      if ((IS_CARRYING_W (ch) +
-				  obj_object->obj_flags.weight) <
+				   obj_object->obj_flags.weight) <
 				  CAN_CARRY_W (ch))
 				{
 				  if (CAN_WEAR (obj_object, ITEM_TAKE))
@@ -306,7 +306,7 @@ do_get (struct char_data *ch, char *argument, int cmd)
 				  else
 				    {
 				      send_to_char
-						    ("You can't take that\n\r", ch);
+					("You can't take that\n\r", ch);
 				      fail = TRUE;
 				    }
 				}
@@ -357,8 +357,8 @@ do_get (struct char_data *ch, char *argument, int cmd)
     case 5:
       {
 	send_to_char
-		      ("You can't take a thing from more than one container.\n\r",
-		      ch);
+	  ("You can't take a thing from more than one container.\n\r",
+	   ch);
       }
       break;
     case 6:
@@ -381,7 +381,7 @@ do_get (struct char_data *ch, char *argument, int cmd)
 		    fail = TRUE;
 		  }
 		else if (IS_SET (sub_object->obj_flags.value[1],
-		  CONT_LOCKED))
+				 CONT_LOCKED))
 		  {
 		    send_to_char ("It's locked.\n\r", ch);
 		    fail = TRUE;
@@ -394,7 +394,7 @@ do_get (struct char_data *ch, char *argument, int cmd)
 			if ((IS_CARRYING_N (ch) + 1 < CAN_CARRY_N (ch)))
 			  {
 			    if ((IS_CARRYING_W (ch) +
-				obj_object->obj_flags.weight) <
+				 obj_object->obj_flags.weight) <
 				CAN_CARRY_W (ch))
 			      {
 				if (CAN_WEAR (obj_object, ITEM_TAKE))
@@ -622,7 +622,7 @@ do_put (struct char_data *ch, char *argument, int cmd)
 		}
 	      next_object = ch->carrying;
 	      while ((obj_object = get_obj_in_list_vis (ch, tmp,
-		     next_object)) != 0)
+							next_object)) != 0)
 		{
 		  next_object = obj_object->next_content;
 		  if (obj_object == sub_object)
@@ -670,12 +670,12 @@ do_put (struct char_data *ch, char *argument, int cmd)
 		  if (GET_ITEM_TYPE (sub_object) == ITEM_CONTAINER)
 		    {
 		      if (!IS_SET (sub_object->obj_flags.value[1],
-			CONT_CLOSED))
+				   CONT_CLOSED))
 			{
 			  if (obj_object == sub_object)
 			    {
 			      send_to_char
-					    ("You attempt to fold it into itself, but fail.\n\r", ch);
+				("You attempt to fold it into itself, but fail.\n\r", ch);
 			      return;
 			    }
 			  if (((sub_object->obj_flags.weight) +

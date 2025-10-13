@@ -337,7 +337,8 @@ spell_corn_of_ice (byte level, struct char_data *ch,
      dam = number(dam_each[level], dam_each[level] << 1);
    */
   dam = dice (level * GET_INT (ch), (level + (GET_SKILLED (ch,
-					      SPELL_CORN_OF_ICE) >> 3)));
+							   SPELL_CORN_OF_ICE)
+					      >> 3)));
   if (saves_spell (victim, SAVING_SPELL))
     dam >>= 1;
   damage (ch, victim, dam, SPELL_CORN_OF_ICE);
@@ -395,7 +396,8 @@ spell_energyflow (byte level, struct char_data *ch,
       send_to_char ("Energyflow which is made of your Exp Quaaaaaaa!\n\r", ch);
 
       exp = level * level * level * (20 - (GET_SKILLED (ch,
-					   SPELL_ENERGY_FLOW) >> 3));
+							SPELL_ENERGY_FLOW)
+					   >> 3));
       GET_EXP (ch) -= exp;
 
       if (saves_spell (victim, SAVING_SPELL))
@@ -509,8 +511,8 @@ spell_earthquake (byte level, struct char_data *ch,
    */
   send_to_char ("The earth trembles beneath your feet!\n\r", ch);
   act
-       ("$n makes the earth tremble and shiver\n\rYou fall, and hit yourself!",
-       FALSE, ch, 0, 0, TO_ROOM);
+    ("$n makes the earth tremble and shiver\n\rYou fall, and hit yourself!",
+     FALSE, ch, 0, 0, TO_ROOM);
   for (tmp_victim = character_list; tmp_victim; tmp_victim = temp)
     {
       temp = tmp_victim->next;
@@ -525,7 +527,8 @@ spell_earthquake (byte level, struct char_data *ch,
 	    {
 	      WAIT_STATE (tmp_victim,
 			  PULSE_VIOLENCE * (1 + (GET_SKILLED (ch,
-						 SPELL_EARTHQUAKE) >> 5)));
+							      SPELL_EARTHQUAKE)
+						 >> 5)));
 	    }
 	}
       else if (world[ch->in_room].zone == world[tmp_victim->in_room].zone)
@@ -747,7 +750,7 @@ spell_harm (byte level, struct char_data *ch,
   INCREASE_SKILLED2 (ch, victim, SPELL_HARM);
 
   dam = dice (level + GET_WIS (ch) * 2, level + (GET_SKILLED (ch,
-						 SPELL_HARM) << 1));
+							      SPELL_HARM) << 1));
 
   if (saves_spell (victim, SAVING_SPELL))
     {

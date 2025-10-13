@@ -715,21 +715,21 @@ spell_enchant_person (byte level, struct char_data *ch,
       act ("OoooooooM! $n gain more mana!", TRUE, victim, 0, 0, TO_ROOM);
       act ("OoooooooM! You gain more mana!", TRUE, victim, 0, 0, TO_CHAR);
       GET_PLAYER_MAX_MANA (victim) += number (1, GET_WIS (victim)) * number
-									     (1, 3);
+	(1, 3);
     }
   else if (number (0, 9) > 8)
     {
       act ("PoooooooYa! $n gain more hit point!", TRUE, victim, 0, 0, TO_ROOM);
       act ("PoooooooYa! You gain more hit point!", TRUE, victim, 0, 0, TO_CHAR);
       GET_PLAYER_MAX_HIT (victim) += number (1, GET_CON (victim)) * number
-									    (1, 3);
+	(1, 3);
     }
   else if (number (0, 9) > 8)
     {
       act ("Shaaaaaaru! $n gain more move point!", TRUE, victim, 0, 0, TO_ROOM);
       act ("Shaaaaaaru! You gain more move point!", TRUE, victim, 0, 0, TO_CHAR);
       GET_PLAYER_MAX_MOVE (victim) += number (1, GET_DEX (victim)) * number
-									     (1, 3);
+	(1, 3);
     }
   else if (number (0, 69) == 35)
     {
@@ -738,11 +738,11 @@ spell_enchant_person (byte level, struct char_data *ch,
       act ("Barararang! You are surrounded by SMILING of XER!",
 	   TRUE, victim, 0, 0, TO_CHAR);
       GET_PLAYER_MAX_MANA (victim) += number (1, GET_WIS (victim)) * number
-									     (2, 5);
+	(2, 5);
       GET_PLAYER_MAX_HIT (victim) += number (1, GET_CON (victim)) * number
-									    (2, 5);
+	(2, 5);
       GET_PLAYER_MAX_MOVE (victim) += number (1, GET_DEX (victim)) * number
-									     (2, 5);
+	(2, 5);
     }
   else if (number (0, 499) == 267)
     {
@@ -2024,7 +2024,7 @@ spell_charm_person (byte level, struct char_data *ch,
       return;
     }
   if (level < IMO && (level < GET_LEVEL (victim) || GET_LEVEL (victim) >
-    21))
+		      21))
     {
       send_to_char ("You failed.\n\r", ch);
       return;

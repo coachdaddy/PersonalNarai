@@ -871,7 +871,7 @@ boot_zones (void)
       else if (!(zone_table = (struct zone_data *) realloc (zone_table,
 							    (zon + 1) *
 							    sizeof (struct
-	zone_data))))
+								    zone_data))))
 	{
 	  perror ("boot_zones realloc");
 	  perror (file_name);
@@ -1333,8 +1333,8 @@ read_mobile (int nr, int type)
 	{
 	  mob->skills[i].learned
 	    = (level > 40) ? 99 : number (level,
-									 spell_info[i].max_skill[class
-									 - 1]);
+					  spell_info[i].max_skill[class
+								  - 1]);
 	}
       else
 	{
@@ -1844,7 +1844,7 @@ zone_update (void)
   for (i = 0; i <= top_of_zone_table; i++)
     {
       if (zone_table[i].age < (zone_table[i].lifespan * regen_time_percent /
-	  100) &&
+			       100) &&
 	  zone_table[i].reset_mode)
 	(zone_table[i].age)++;
       else if (zone_table[i].age < ZO_DEAD && zone_table[i].reset_mode)
@@ -1988,7 +1988,7 @@ reset_zone (int zone)
 	    if (ZCMD.arg3 >= 0)
 	      {
 		if (!get_obj_in_list_num (ZCMD.arg1,
-		  world[ZCMD.arg3].contents))
+					  world[ZCMD.arg3].contents))
 		  {
 		    obj = read_object (ZCMD.arg1, REAL);
 		    if ((obj->obj_flags.type_flag == ITEM_KEY) ||

@@ -101,7 +101,7 @@ guild (struct char_data *ch, int cmd, char *arg)
       if (!IS_NPC (ch))
 	{
 	  for (i = 0; titles[GET_CLASS (ch) - 1][i].exp <= GET_EXP (ch);
-	    i++)
+	       i++)
 	    {
 	      if (i >= IMO)
 		{
@@ -111,7 +111,7 @@ guild (struct char_data *ch, int cmd, char *arg)
 		}
 	      if ((i > GET_LEVEL (ch)) && (GET_QUEST_SOLVED (ch) >=
 					   level_quest[(int) GET_LEVEL
-		(ch)]))
+						       (ch)]))
 		{
 		  send_to_char_han ("You raise a level\n\r",
 				    "레벨을 올렸습니다\n\r", ch);
@@ -325,9 +325,9 @@ mayor (struct char_data *ch, int cmd, char *arg)
 
     case 'c':
       acthan
-	      ("$n says 'Vandals! Youngsters nowadays have no respect for anything!'",
-	      "$n님이 '이런 이런! 젊은것들은 요즘 인사를 안한단말야!' 라고 말합니다.",
-	      FALSE, ch, 0, 0, TO_ROOM);
+	("$n says 'Vandals! Youngsters nowadays have no respect for anything!'",
+	 "$n님이 '이런 이런! 젊은것들은 요즘 인사를 안한단말야!' 라고 말합니다.",
+	 FALSE, ch, 0, 0, TO_ROOM);
       break;
 
     case 'd':
@@ -613,7 +613,7 @@ warrior (struct char_data *ch, int cmd, char *arg)
       if (cmd_info[do_what_cmd[do_what]].minimum_level[3] < GET_LEVEL (ch))
 	{
 	  ((*cmd_info[do_what_cmd[do_what]].command_pointer) (ch, GET_NAME
-	   (victim), 0));
+							      (victim), 0));
 	  return TRUE;
 	}
     }
@@ -670,7 +670,7 @@ thief (struct char_data *ch, int cmd, char *arg)
 	return FALSE;
 
       for (cons = world[ch->in_room].people; cons; cons =
-	cons->next_in_room)
+	   cons->next_in_room)
 	{
 	  if ((!IS_NPC (cons)) && (GET_LEVEL (cons) < IMO) &&
 	      (GET_LEVEL (cons) >= GET_LEVEL (ch)) && (number (1, 3) == 1))
@@ -889,7 +889,7 @@ thief (struct char_data *ch, int cmd, char *arg)
 		  "$n님이 '야하햐합' 하고 말합니다",
 		  1, ch, 0, 0, TO_ROOM);
 	  for (cons = world[ch->in_room].people; cons; cons =
-	    cons->next_in_room)
+	       cons->next_in_room)
 	    {
 	      if (number (10, IMO + 3) < GET_LEVEL (ch) && GET_LEVEL (cons)
 		  < IMO)
@@ -911,7 +911,7 @@ thief (struct char_data *ch, int cmd, char *arg)
   else
     {
       for (cons = world[ch->in_room].people; cons; cons =
-	cons->next_in_room)
+	   cons->next_in_room)
 	{
 	  if ((!IS_NPC (cons)) && (GET_LEVEL (cons) < IMO) &&
 	      (GET_LEVEL (cons) >= GET_LEVEL (ch)) && (number (1, 3) == 1))

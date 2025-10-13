@@ -50,7 +50,7 @@ do_cant (struct char_data *ch, char *argument, int cmd)
   if (IS_NPC (ch))
     return;
   if (IS_SET (ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL (ch) < IMO +
-    3)
+      3)
     {
       return;
     }

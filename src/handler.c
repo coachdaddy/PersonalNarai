@@ -496,7 +496,7 @@ char_from_room (struct char_data *ch)
       else
 	{
 	  log
-	       ("NOWHERE extracting char from room (handler.c, char_from_room)");
+	    ("NOWHERE extracting char from room (handler.c, char_from_room)");
 
 	  exit (1);
 	}
@@ -671,20 +671,31 @@ equip_char (struct char_data *ch, struct obj_data *obj, int pos)
       (IS_OBJ_STAT (obj, ITEM_ANTI_NEUTRAL) && IS_NEUTRAL (ch)) ||
       (!IS_NPC (ch) && IS_OBJ_STAT (obj, ITEM_ANTI_MAGE) && (GET_CLASS (ch)
 							     ==
-      CLASS_MAGIC_USER)) ||
+							     CLASS_MAGIC_USER)) ||
       (!IS_NPC (ch) && IS_OBJ_STAT (obj, ITEM_ANTI_CLERIC) && (GET_CLASS
-       (ch) == CLASS_CLERIC)) ||
+							       (ch) ==
+							       CLASS_CLERIC)) ||
       (!IS_NPC (ch) && IS_OBJ_STAT (obj, ITEM_ANTI_WARRIOR) && (GET_CLASS
-       (ch) == CLASS_WARRIOR)) ||
+								(ch) ==
+								CLASS_WARRIOR)) ||
       (!IS_NPC (ch) && IS_OBJ_STAT (obj, ITEM_ANTI_THIEF) && (GET_CLASS (ch)
 							      ==
-      CLASS_THIEF)) ||
+							      CLASS_THIEF)) ||
       (!IS_NPC (ch) && IS_OBJ_STAT (obj, ITEM_ANTI_POLICE) && (GET_GUILD
-       (ch) == POLICE || GET_GUILD (ch) == 0)) ||
+							       (ch) ==
+							       POLICE ||
+							       GET_GUILD
+							       (ch) == 0)) ||
       (!IS_NPC (ch) && IS_OBJ_STAT (obj, ITEM_ANTI_OUTLAW) && (GET_GUILD
-       (ch) == OUTLAW || GET_GUILD (ch) == 0)) ||
+							       (ch) ==
+							       OUTLAW ||
+							       GET_GUILD
+							       (ch) == 0)) ||
       (!IS_NPC (ch) && IS_OBJ_STAT (obj, ITEM_ANTI_ASSASSIN) && (GET_GUILD
-       (ch) == ASSASSIN || GET_GUILD (ch) == 0)))
+								 (ch) ==
+								 ASSASSIN ||
+								 GET_GUILD
+								 (ch) == 0)))
     {
       if (ch->in_room != NOWHERE)
 	{
@@ -1350,7 +1361,7 @@ get_char_vis_zone (struct char_data *ch, char *name)
   for (i = character_list, j = 1; i && (j <= number); i = i->next)
     if (isname (tmp, GET_NAME (i)))
       if (CAN_SEE (ch, i) && world[ch->in_room].zone ==
-	world[i->in_room].zone)
+	  world[i->in_room].zone)
 	{
 	  if (j == number)
 	    return (i);
@@ -1494,7 +1505,7 @@ create_money (int amount)
       else if (amount < 100000)
 	{
 	  sprintf (buf, "You guess there is %d coins", 1000 * ((amount /
-							       1000) +
+								1000) +
 							       number (0,
 								       (amount
 									/ 1000))));
@@ -1594,7 +1605,7 @@ generic_find (char *arg, int bitvector, struct char_data *ch,
       for (found = FALSE, i = 0; i < MAX_WEAR && !found; i++)
 	{
 	  if (ch->equipment[i] && str_cmp (name, ch->equipment[i]->name) ==
-	    0)
+	      0)
 	    {
 	      *tar_obj = ch->equipment[i];
 	      found = TRUE;
@@ -1617,7 +1628,7 @@ generic_find (char *arg, int bitvector, struct char_data *ch,
   if (IS_SET (bitvector, FIND_OBJ_ROOM))
     {
       if ((*tar_obj = get_obj_in_list_vis (ch, name,
-	world[ch->in_room].contents)))
+					   world[ch->in_room].contents)))
 	{
 	  return (FIND_OBJ_ROOM);
 	}

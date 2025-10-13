@@ -206,7 +206,7 @@ deathcure (struct char_data *ch, int cmd, char *arg)
   if (vict->equipment[WEAR_ABOUTLEGS])
     {
       if (obj_index[vict->equipment[WEAR_ABOUTLEGS]->item_number].virtual ==
-	1317)
+	  1317)
 	{
 	  /* ANTI deathcure */
 	  act ("$n tries to do something to you, but failed miserably by ANTI deathcure."
@@ -687,7 +687,7 @@ musashi (struct char_data *ch, int cmd, char *arg)
 	  damage (ch, vict, vict->points.hit / 3 - number (1,
 							   vict->points.hit
 							   / 8 + GET_LEVEL
-		  (vict) / 2), SKILL_BASH);
+							   (vict) / 2), SKILL_BASH);
 	  send_to_char ("You are falling down.\n\r", vict);
 	  send_to_char ("Quuu aaaa rrrrrrrr . .  .  . \n\r", vict);
 	  return (1);
@@ -1073,7 +1073,7 @@ cityguard (struct char_data *ch, int cmd, char *arg)
       if (tch->specials.fighting)
 	{
 	  if ((GET_ALIGNMENT (tch) < max_evil) && (IS_NPC
-	    (tch->specials.fighting)))
+						   (tch->specials.fighting)))
 	    {
 	      max_evil = GET_ALIGNMENT (tch);
 	      evil = tch;
@@ -1244,7 +1244,7 @@ pet_shops (struct char_data *ch, int cmd, char *arg)
       if (k >= 3)
 	{
 	  send_to_char
-			("당신은 지금 데리고 있는 동물로 충분할 것 같은데요.\n\r", ch);
+	    ("당신은 지금 데리고 있는 동물로 충분할 것 같은데요.\n\r", ch);
 	  return (TRUE);
 	}
       if (GET_GOLD (ch) < (GET_EXP (pet) * 10))
@@ -1354,7 +1354,7 @@ hospital (struct char_data *ch, int cmd, char *arg)
 	  if (GET_LEVEL (ch) >= IMO)
 	    {
 	      send_to_char
-			    ("쩝...당신한테만 외상으로 해드리는 거에요...\n\r", ch);
+		("쩝...당신한테만 외상으로 해드리는 거에요...\n\r", ch);
 	      cost[opt] = 0;
 	    }
 	  else
@@ -1394,7 +1394,7 @@ hospital (struct char_data *ch, int cmd, char *arg)
 	  return TRUE;
 	case 6:
 	  send_to_char
-			("프로세스 라는 의사가 당신에게 물어봅니다.\n\r", ch);
+	    ("프로세스 라는 의사가 당신에게 물어봅니다.\n\r", ch);
 	  send_to_char ("\"왜 성전환을 하려고 합니까?\"\n\r", ch);
 	  switch (GET_SEX (ch))
 	    {
@@ -1405,14 +1405,14 @@ hospital (struct char_data *ch, int cmd, char *arg)
 	      do_say (ch,
 		      "전요, 여자랑 그짓만 할 생각하는 남자가 싫어요!!!\n\r", 0);
 	      send_to_char
-			    ("프로세스는 멍텅해서 거시기를 잘라버린다!\n\r", ch);
+		("프로세스는 멍텅해서 거시기를 잘라버린다!\n\r", ch);
 	      GET_SEX (ch) = SEX_FEMALE;
 	      break;
 	    case SEX_FEMALE:
 	      do_say (ch,
 		      "전 당신같은 멋진 남자가 되고 싶었어요....\n\r", 0);
 	      send_to_char
-			    ("프로세스는 그녀를 보고 안타까워 하면서 오이를 심어줍니다.\r\n", ch);
+		("프로세스는 그녀를 보고 안타까워 하면서 오이를 심어줍니다.\r\n", ch);
 	      GET_SEX (ch) = SEX_MALE;
 	      break;
 	    }
@@ -1521,23 +1521,23 @@ hospital (struct char_data *ch, int cmd, char *arg)
 	  GET_GOLD (ch) -= cost[5];
 	  send_to_char ("\n\r", ch);
 	  send_to_char
-			("이름을 바꾸기 위해 당신은 ARES님에게 갑니다.\n\r", ch);
+	    ("이름을 바꾸기 위해 당신은 ARES님에게 갑니다.\n\r", ch);
 	  send_to_char ("흠...그래, 이름을 바꾸시겠다고?\n\r", ch);
 	  send_to_char
-			("잘 생각했네! 자네가 지금 쓰는 이름은 딱 ", ch);
+	    ("잘 생각했네! 자네가 지금 쓰는 이름은 딱 ", ch);
 	  send_to_char ("비명횡사하기 좋지...\n\r", ch);
 	  send_to_char ("자, 그럼 뭘로 할텐가?\n\r\n\r", ch);
 	  do_say (ch, temp, 0);
 	  send_to_char ("\n\r", ch);
 	  send_to_char (temp, ch);
 	  send_to_char
-			("? 그것도 제 명에 살기는 틀린 이름인데?\n\r", ch);
+	    ("? 그것도 제 명에 살기는 틀린 이름인데?\n\r", ch);
 	  send_to_char
-			("허허..거참..허나 자네가 좋다니 별수 없지 뭐...\n\r", ch);
+	    ("허허..거참..허나 자네가 좋다니 별수 없지 뭐...\n\r", ch);
 	  send_to_char
-			("당신이 가고 난 후 ARES님이 이렇게 중얼거립니다.\n\r", ch);
+	    ("당신이 가고 난 후 ARES님이 이렇게 중얼거립니다.\n\r", ch);
 	  send_to_char
-			("하! 이름 바꾼다고 잘 살수 있을거 같지?\n\r", ch);
+	    ("하! 이름 바꾼다고 잘 살수 있을거 같지?\n\r", ch);
 	  send_to_char ("어림 반 푼어치도 없다!!!!!!!!!!!!!!\n\r", ch);
 #ifdef  RETURN_TO_QUIT
 	  save_char (ch, world[ch->in_room].number);
@@ -1583,7 +1583,7 @@ metahospital (struct char_data *ch, int cmd, char *arg)
       send_to_char ("2 - Mana increase(NO LIMIT)\n\r", ch);
       send_to_char ("3 - Movement increase(NO LIMIT)\n\r", ch);
       send_to_char
-		    ("4 - Increase your practice number (+2)(small exp depend on level)\n\r", ch);
+	("4 - Increase your practice number (+2)(small exp depend on level)\n\r", ch);
       /*
          send_to_char("5 - Change exp to gold(3:2)\n\r",ch);
          send_to_char("6 - Freedom from hunger and thirsty(100M exp)\n\r",ch);
@@ -1683,7 +1683,7 @@ metahospital (struct char_data *ch, int cmd, char *arg)
 	      if (cost > GET_EXP (ch))
 		{
 		  send_to_char
-				("Come back when you are more experienced.\n\r", ch);
+		    ("Come back when you are more experienced.\n\r", ch);
 		  return (TRUE);
 		}
 	      ch->specials.spells_to_learn += (int) (ch->abilities.wis / 3);
@@ -1696,7 +1696,7 @@ metahospital (struct char_data *ch, int cmd, char *arg)
 	      if (cost > GET_EXP (ch))
 		{
 		  send_to_char
-				("Come back when you are more experienced.\n\r", ch);
+		    ("Come back when you are more experienced.\n\r", ch);
 		  return (TRUE);
 		}
 	      ch->points.gold += cost * 2 / 3;
@@ -1705,7 +1705,7 @@ metahospital (struct char_data *ch, int cmd, char *arg)
 	      if (GET_EXP (ch) < 100000000)
 		{
 		  send_to_char
-				("Come back when you are more experienced.\n\r", ch);
+		    ("Come back when you are more experienced.\n\r", ch);
 		  return (TRUE);
 		}
 	      ch->specials.conditions[0] = -1;
@@ -1745,7 +1745,7 @@ metahospital (struct char_data *ch, int cmd, char *arg)
 	      if (GET_EXP (ch) < 250000000)
 		{
 		  send_to_char
-				("Come back when you are more experienced.\n\r", ch);
+		    ("Come back when you are more experienced.\n\r", ch);
 		  return TRUE;
 		}
 	      if (ch->quest.solved <= 0)
@@ -2258,8 +2258,8 @@ finisher (struct char_data *ch, int cmd, char *arg)
 	  act ("$n 최후의 기를 모은다.  ' 하압 ~~~~~~~~~ '",
 	       FALSE, ch, 0, vict, TO_ROOM);
 	  max_dam = (GET_HITROLL (ch) + 1) * (GET_DAMROLL (ch) + 1) * number
-									      (5,
-	    1) / 2;
+	    (5,
+	     1) / 2;
 	  if (max_dam < 1000)
 	    act (" 화르르르르르르르르르르르르 `````````` ",
 		 FALSE, ch, 0, vict, TO_ROOM);
@@ -2303,8 +2303,8 @@ finisher (struct char_data *ch, int cmd, char *arg)
 	    }
 	  damage (ch, vict, max_dam, TYPE_UNDEFINED);
 	  act
-	       ("$n 기합을 준다. '끼요요요~~~~ 아아아앗~~~~~~~~  아쵸우~ 아쵸!!!' ",
-	       FALSE, ch, 0, vict, TO_ROOM);
+	    ("$n 기합을 준다. '끼요요요~~~~ 아아아앗~~~~~~~~  아쵸우~ 아쵸!!!' ",
+	     FALSE, ch, 0, vict, TO_ROOM);
 	  return (TRUE);
 	}
     }
@@ -2353,13 +2353,13 @@ bank (struct char_data *ch, int cmd, char *arg)
 	  if (amt > GET_GOLD (ch))
 	    {
 	      send_to_char
-			    ("The banker says 'You don't have that much.'\n\r", ch);
+		("The banker says 'You don't have that much.'\n\r", ch);
 	      return (TRUE);
 	    }
 	  if (ch->bank + amt < ch->bank)
 	    {
 	      send_to_char
-			    ("Too much money! I can't afford so much money.\n\r", ch);
+		("Too much money! I can't afford so much money.\n\r", ch);
 	      return (TRUE);
 	    }
 	  GET_GOLD (ch) -= amt;
@@ -2375,7 +2375,7 @@ bank (struct char_data *ch, int cmd, char *arg)
 	  if (GET_GOLD (ch) + amt < GET_GOLD (ch))
 	    {
 	      send_to_char
-			    ("Too much money! You can't afford so much money.\n\r", ch);
+		("Too much money! You can't afford so much money.\n\r", ch);
 	      return (TRUE);
 	    }
 	  GET_GOLD (ch) += amt;
@@ -2483,8 +2483,8 @@ archmage (struct char_data *ch, int cmd, char *arg)
     return FALSE;
   do_shout (ch, "SUNFIRE", 0);
   act
-       ("The outside sun flares brightly, flooding the room with searing rays.",
-       TRUE, ch, 0, 0, TO_ROOM);
+    ("The outside sun flares brightly, flooding the room with searing rays.",
+     TRUE, ch, 0, 0, TO_ROOM);
   for (vict = world[ch->in_room].people; vict; vict = vict->next_in_room)
     {
       if (vict->specials.fighting == ch)
@@ -2518,7 +2518,7 @@ spitter (struct char_data *ch, int cmd, char *arg)
     {
       if ((!IS_NPC (vict)) && (GET_POS (vict) == POSITION_FIGHTING ||
 			       (GET_MANA (vict) > 100 && GET_CLASS (vict) ==
-	CLASS_CLERIC)))
+				CLASS_CLERIC)))
 	{
 	  switch (number (1, 7))
 	    {

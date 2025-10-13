@@ -163,7 +163,7 @@ show_obj_to_char (struct obj_data *object, struct char_data *ch, int mode)
 	  // found = TRUE;
 	}
       if (IS_OBJ_STAT (object, ITEM_EVIL) && ch && IS_AFFECTED (ch,
-	AFF_DETECT_EVIL))
+								AFF_DETECT_EVIL))
 	{
 	  strcat (buffer, "..It glows red!");
 	  // found = TRUE;
@@ -240,7 +240,7 @@ show_char_to_char (struct char_data *i, struct char_data *ch, int mode)
 	  return;
 	}
       if (!(i->player.long_descr) || (GET_POS (i) !=
-	i->specials.default_pos))
+				      i->specials.default_pos))
 	{
 	  if (!IS_NPC (i))
 	    {
@@ -319,7 +319,8 @@ show_char_to_char (struct char_data *i, struct char_data *ch, int mode)
 	  strcat (buffer, "\n\r");
 	  send_to_char (buffer, ch);
 	}
-      else			/* npc with long */
+      else
+	/* npc with long */
 	{
 	  if (i && IS_AFFECTED (i, AFF_INVISIBLE))
 	    strcpy (buffer, "*");
@@ -595,14 +596,14 @@ do_look (struct char_data *ch, char *argument, int cmd)
 			    sprintf (buffer,
 				     "It's %sfull of a %s liquid.\n\r",
 				     fullness[temp],
-								  color_liquid[tmp_object->obj_flags.value[2]]);
+				     color_liquid[tmp_object->obj_flags.value[2]]);
 			    send_to_char (buffer, ch);
 			  }
 		      }
 		    else if (GET_ITEM_TYPE (tmp_object) == ITEM_CONTAINER)
 		      {
 			if (!IS_SET (tmp_object->obj_flags.value[1],
-			  CONT_CLOSED))
+				     CONT_CLOSED))
 			  {
 			    send_to_char (fname (tmp_object->name), ch);
 			    switch (bits)
@@ -1146,15 +1147,15 @@ do_score (struct char_data *ch, char *argument, int cmd)
 	       ch->specials.apply_saving_throw[SAVING_HIT_SKILL] :
 	       ch->specials.apply_saving_throw[SAVING_HIT_SKILL] +
 	       saving_throws[GET_CLASS (ch) - 1][SAVING_HIT_SKILL][GET_LEVEL
-	       (ch) - 1],
+								   (ch) - 1],
 	       IS_NPC (ch) ? ch->specials.apply_saving_throw[SAVING_BREATH] :
 	       ch->specials.apply_saving_throw[SAVING_BREATH] +
 	       saving_throws[GET_CLASS (ch) - 1][SAVING_BREATH][GET_LEVEL
-	       (ch) - 1],
+								(ch) - 1],
 	       IS_NPC (ch) ? ch->specials.apply_saving_throw[SAVING_SPELL] :
 	       ch->specials.apply_saving_throw[SAVING_SPELL] +
 	       saving_throws[GET_CLASS (ch) - 1][SAVING_SPELL][GET_LEVEL
-	       (ch) - 1]);
+							       (ch) - 1]);
       sprintf (buf2,
 	       "당신의 안전도는 para : %d, hit skill : %d, breath : %d, spell : %d입니다.\n\r",
 	       IS_NPC (ch) ? ch->specials.apply_saving_throw[SAVING_PARA] :
@@ -1165,15 +1166,15 @@ do_score (struct char_data *ch, char *argument, int cmd)
 	       ch->specials.apply_saving_throw[SAVING_HIT_SKILL] :
 	       ch->specials.apply_saving_throw[SAVING_HIT_SKILL] +
 	       saving_throws[GET_CLASS (ch) - 1][SAVING_HIT_SKILL][GET_LEVEL
-	       (ch) - 1],
+								   (ch) - 1],
 	       IS_NPC (ch) ? ch->specials.apply_saving_throw[SAVING_BREATH] :
 	       ch->specials.apply_saving_throw[SAVING_BREATH] +
 	       saving_throws[GET_CLASS (ch) - 1][SAVING_BREATH][GET_LEVEL
-	       (ch) - 1],
+								(ch) - 1],
 	       IS_NPC (ch) ? ch->specials.apply_saving_throw[SAVING_SPELL] :
 	       ch->specials.apply_saving_throw[SAVING_SPELL] +
 	       saving_throws[GET_CLASS (ch) - 1][SAVING_SPELL][GET_LEVEL
-	       (ch) - 1]);
+							       (ch) - 1]);
       send_to_char_han (buf, buf2, ch);
 
       sprintf (buf, "Your regeneration is %d.\n\r", GET_REGENERATION (ch));
@@ -1231,7 +1232,8 @@ do_score (struct char_data *ch, char *argument, int cmd)
       break;
     case POSITION_MORTALLYW:
       send_to_char ("You are mortally wounded!, you should seek help!\n\r",
-      ch); break;
+		    ch);
+      break;
     case POSITION_INCAP:
       send_to_char ("You are incapacitated, slowly fading away\n\r", ch);
       break;
@@ -1293,7 +1295,7 @@ do_score (struct char_data *ch, char *argument, int cmd)
   if (ch->player.guild >= 1 && ch->player.guild <= MAX_GUILD_LIST)
     {
       sprintf (buf, "\n\rYou are a member of %s guild.\n\r",
-									 guild_names[(int) ch->player.guild]);
+	       guild_names[(int) ch->player.guild]);
       sprintf (buf2, "\n\r당신은 %s 길드의 회원입니다. \n\r",
 	       guild_names[(int) ch->player.guild]);
       send_to_char_han (buf, buf2, ch);
@@ -1556,13 +1558,13 @@ do_spells (struct char_data *ch, char *argument, int cmd)
 	  sprintf (tmp, "%3d %-20s%3d%3d%3d%3d  %4d%4d%4d%4d%8d\n\r",
 		   i,
 		   spells[i], spell_info[i + 1].min_level[0], spell_info[i +
-		   1].min_level[1],
+									 1].min_level[1],
 		   spell_info[i + 1].min_level[2], spell_info[i +
-		   1].min_level[3],
+							      1].min_level[3],
 		   spell_info[i + 1].max_skill[0], spell_info[i +
-		   1].max_skill[1],
+							      1].max_skill[1],
 		   spell_info[i + 1].max_skill[2], spell_info[i +
-		   1].max_skill[3],
+							      1].max_skill[3],
 		   spell_info[i + 1].min_usesmana);
 	  strcat (buf, tmp);
 	}
@@ -1978,7 +1980,7 @@ do_where (struct char_data *ch, char *argument, int cmd)
 		  (d->character->in_room != NOWHERE))
 		if (CAN_SEE (ch, d->character) &&
 		    world[d->character->in_room].zone ==
-		  world[ch->in_room].zone)
+		    world[ch->in_room].zone)
 		  {
 		    sprintf (buf, "%-20s - %s [%d] \n\r",
 			     d->character->player.name,
@@ -1987,7 +1989,7 @@ do_where (struct char_data *ch, char *argument, int cmd)
 		    // world[d->character->in_room].name); 
 		    // world[d->character->in_room].number);
 		    if (d->character && (!IS_AFFECTED (d->character,
-					 AFF_SHADOW_FIGURE) ||
+						       AFF_SHADOW_FIGURE) ||
 					 d->character == ch) &&
 			(!IS_AFFECTED (d->character, AFF_HIDE) ||
 			 d->character == ch))
@@ -2381,7 +2383,8 @@ do_data (struct char_data *ch, char *argument, int cmd)
 	      break;
 	    case 6:
 	      n = (60 * victim->desc->ncmds) / (1 + t -
-	      victim->desc->contime); break;
+						victim->desc->contime);
+	      break;
 	    case 7:
 	      n = victim->specials.act;
 	      break;

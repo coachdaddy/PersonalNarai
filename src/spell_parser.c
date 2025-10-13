@@ -737,7 +737,7 @@ do_cast (struct char_data *ch, char *argument, int cmd)
    */
 
   if (GET_LEVEL (ch) < IMO && IS_SET (world[ch->in_room].room_flags,
-    NO_MAGIC))
+				      NO_MAGIC))
     {
       send_to_char ("Your magical power can't be summoned!\n\r", ch);
       return;

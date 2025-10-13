@@ -50,7 +50,7 @@ int level_quest[IMO + 4] =
 
 extern struct index_data *mob_index;
 
-#define ZONE_NUMBER 45
+#define ZONE_NUMBER 46
 static struct
   {
     int number;
@@ -58,185 +58,52 @@ static struct
   }
 zone_data[ZONE_NUMBER] =
 {
-  {
-    99, "the LIMBO"
-  }
-  ,
-  {
-    299, "the East Castle"
-  }
-  ,
-  {
-    1399, "the Mel's Dog-House"
-  }
-  ,
-  {
-    1499, "the Houses"
-  }
-  ,
-  {
-    1599, "Dirk's Castle"
-  }
-  ,
-  {
-    1799, "SHIRE"
-  }
-  ,
-  {
-    1899, "The Jale"
-  }
-  ,
-  {
-    1999, "The Lands"
-  }
-  ,
-  {
-    2099, "Process' Castle"
-  }
-  ,
-  {
-    2199, "The Wasteland"
-  }
-  ,
-  {
-    2300, "Dragon Tower"
-  }
-  ,
-  {
-    2399, "Muncie"
-  }
-  ,
-  {
-    2699, "The Corporation"
-  }
-  ,
-  {
-    2799, "The NeverLand"
-  }
-  ,
-  {
-    2899, "Kingdom Of Chok"
-  }
-  ,
-  {
-    2999, "The Keep Of MahnTor"
-  }
-  ,
-  {
-    3099, "Northern Midgaard MainCity"
-  }
-  ,
-  {
-    3199, "Southern Part Of Midgaard"
-  }
-  ,
-  {
-    3299, "River Of Midgaard"
-  }
-  ,
-  {
-    3499, "Graveyard"
-  }
-  ,
-  {
-    4199, "Moria"
-  }
-  ,
-  {
-    4330, "The Wamphyri Aerie"
-  }
-  ,
-  {
-    5099, "The Great Eastern Desert"
-  }
-  ,
-  {
-    5199, "Drow City"
-  }
-  ,
-  {
-    5299, "The City Of Thalos"
-  }
-  ,
-  {
-    6099, "HAON DOR LIGHT"
-  }
-  ,
-  {
-    6499, "HAON DOR DARK"
-  }
-  ,
-  {
-    6999, "The Dwarven Kingdom"
-  }
-  ,
-  {
-    7099, "SEWER"
-  }
-  ,
-  {
-    7199, "Second SEWER"
-  }
-  ,
-  {
-    7399, "SEWER MAZE"
-  }
-  ,
-  {
-    7899, "The Tunnels"
-  }
-  ,
-  {
-    7999, "Redfernes Residence"
-  }
-  ,
-  {
-    9099, "Arachnos"
-  }
-  ,
-  {
-    9499, "Arena"
-  }
-  ,
-  {
-    9699, "Death Kingdom"
-  }
-  ,
-  {
-    9771, "Galaxy"
-  }
-  ,
-  {
-    9851, "The Death Star"
-  }
-  ,
-  {
-    12099, "Easy Zone"
-  }
-  ,
-  {
-    13798, "Mount Olympus"
-  }
-  ,
-  {
-    15299, "Robot City"
-  }
-  ,
-  {
-    16199, "Kingdom Of Wee"
-  }
-  ,
-  {
-    17099, "O Kingdom"
-  }
-  ,
-  {
-    18099, "Moo Dang"
-  }
-  ,
-  {
-    20000, "KAIST"
-  }
+  { 99, "the LIMBO" } ,
+  { 299, "the East Castle" } ,
+  { 1399, "the Mel's Dog-House" } ,
+  { 1499, "the Houses" } ,
+  { 1599, "Dirk's Castle" } ,
+  { 1799, "SHIRE" } ,
+  { 1899, "The Jale" } ,
+  { 1999, "The Lands" } ,
+  { 2099, "Process' Castle" } ,
+  { 2199, "The Wasteland" } ,
+  { 2300, "Dragon Tower" } ,
+  { 2399, "Muncie" } ,
+  { 2699, "The Corporation" } ,
+  { 2799, "The NeverLand" } ,
+  { 2899, "Kingdom Of Chok" } ,
+  { 2999, "The Keep Of MahnTor" } ,
+  { 3099, "Northern Midgaard MainCity" } ,
+  { 3199, "Southern Part Of Midgaard" } ,
+  { 3299, "River Of Midgaard" } ,
+  { 3499, "Graveyard" } ,
+  { 4199, "Moria" } ,
+  { 4330, "The Wamphyri Aerie" } ,
+  { 5099, "The Great Eastern Desert" } ,
+  { 5199, "Drow City" } ,
+  { 5299, "The City Of Thalos" } ,
+  { 6099, "HAON DOR LIGHT" } ,
+  { 6499, "HAON DOR DARK" } ,
+  { 6999, "The Dwarven Kingdom" } ,
+  { 7099, "SEWER" } ,
+  { 7199, "Second SEWER" } ,
+  { 7399, "SEWER MAZE" } ,
+  { 7899, "The Tunnels" } ,
+  { 7999, "Redfernes Residence" } ,
+  { 9099, "Arachnos" } ,
+  { 9499, "Arena" } ,
+  { 9699, "Death Kingdom" } ,
+  { 9771, "Galaxy" } ,
+  { 9851, "The Death Star" } ,
+  { 12099, "Easy Zone" } ,
+  { 13798, "Mount Olympus" } ,
+  { 15299, "Robot City" } ,
+  { 16199, "Kingdom Of Wee" } ,
+  { 17099, "O Kingdom" } ,
+  { 18099, "Moo Dang" } ,
+  { 25099, "Ami Dae Jon" },
+  { 32099, "KAIST" }
 };
 
 char *
@@ -259,14 +126,14 @@ get_quest (struct char_data *ch)
   static int width[8] =
   {
     0,				/* 0 */ /* 10 level */
-    63,				/* 10 */ /* 16 level */
-    129,			/* 20 */ /* 20 level */
-    170,			/* 30 */ /* 24 level */
-    188,			/* 40 */ /* 27 level */
-    263,			/* 50 */ /* 30 level */
-    304,			/* 60 */ /* 32 level */
+    88,				/* 10 */ /* 4215 16 boris */
+    130,			/* 20 */ /* 9727 20 pisces */
+    159,			/* 30 */ /* 1700 25 elven wizard */
+    188,			/* 40 */ /* 9708 28 andromeda */
+    233,			/* 50 */ /* 9014 32 arachnos */
+    304,			/* 60 */ /* 15083 36 lsi robot*/
   };
-#define END_QUEST_MOBILE 538
+#define END_QUEST_MOBILE 556
 
   int low, high;
   int t;
@@ -274,13 +141,23 @@ get_quest (struct char_data *ch)
 
   if (GET_LEVEL (ch) == 60)
     {
-      low = 284;
+      low = 345;				/* 15012 39 pentium computer */
       high = END_QUEST_MOBILE;
+    }
+  else if (GET_LEVEL (ch) > 39 && GET_LEVEL (ch) < 50 )
+    {
+      low = 314;				/* 15012 35 factory gate robot */
+      high = 422;				/* 19017 40 queen designer */
+    }
+  else if (GET_LEVEL (ch) > 49 && GET_LEVEL (ch) < 60 )
+    {
+      low = 341;				/* 2817 38 general jangbi */
+      high = 505;				/* 11127 41 ju palge */
     }
   else if (ch->quest.solved >= 60)
     {
-      low = 267;		/* 34 level mobile */
-      high = 348;		/* 38 level mobile */
+      low = 280;		/* 9536 34 trainer sura */
+      high = 344;		/* 9804 38 imperial vice admiral */
     }
   else
     {

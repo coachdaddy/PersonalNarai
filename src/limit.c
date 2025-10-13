@@ -576,7 +576,7 @@ check_idling (struct char_data *ch)
 	    }
 	  act ("$n disappears into the void.", TRUE, ch, 0, 0, TO_ROOM);
 	  send_to_char
-			("You have been idle, and are pulled into a void.\n\r", ch);
+	    ("You have been idle, and are pulled into a void.\n\r", ch);
 	  char_from_room (ch);
 	  char_to_room (ch, 1);	/* Into room number 0 */
 	}
@@ -649,8 +649,8 @@ point_update (void)
       if ((titles[GET_CLASS (i) - 1][(int) GET_LEVEL (i) + 1].exp + 1000) <
 	  GET_EXP (i) && !IS_NPC (i)
 	  && (GET_LEVEL (i) < 40) && (GET_QUEST_SOLVED (i) >=
-									  level_quest[(int)
-									  GET_LEVEL (i)])
+				      level_quest[(int)
+						  GET_LEVEL (i)])
 	  && (flag == 1))
 	{
 	  GET_LEVEL (i)++;
@@ -722,7 +722,7 @@ point_update (void)
 	      if (j->carried_by)
 		act ("$p decay in your hands.", FALSE, j->carried_by, j, 0, TO_CHAR);
 	      else if ((j->in_room != NOWHERE) &&
-		(world[j->in_room].people))
+		       (world[j->in_room].people))
 		{
 		  act ("A quivering hoard of maggots consume $p.",
 		       TRUE, world[j->in_room].people, j, 0, TO_ROOM);

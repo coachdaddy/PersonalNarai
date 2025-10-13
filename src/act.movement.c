@@ -68,7 +68,7 @@ do_simple_move (struct char_data *ch, int cmd, int following)
 
   if ((world[ch->in_room].sector_type == SECT_WATER_NOSWIM) ||
       (world[world[ch->in_room].dir_option[cmd]->to_room].sector_type ==
-    SECT_WATER_NOSWIM))
+       SECT_WATER_NOSWIM))
     {
       has_boat = FALSE;
       /* See if char is carrying a boat */
@@ -170,7 +170,7 @@ do_move (struct char_data *ch, char *argument, int cmd)
 	      (ch->in_room == ch->master->in_room))
 	    {
 	      send_to_char
-			    ("The thought of leaving your master makes you weep.\n\r", ch);
+		("The thought of leaving your master makes you weep.\n\r", ch);
 	      act ("$n bursts into tears.", FALSE, ch, 0, 0, TO_ROOM);
 	    }
 	  else
@@ -893,7 +893,7 @@ do_sleep (struct char_data *ch, char *argument, int cmd)
     case POSITION_FIGHTING:
       {
 	send_to_char
-		      ("싸우면서 잔다구요 ? 지금 정신이 있습니까 ?\n\r", ch);
+	  ("싸우면서 잔다구요 ? 지금 정신이 있습니까 ?\n\r", ch);
       }
       break;
     default:

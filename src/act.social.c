@@ -278,12 +278,12 @@ do_insult (struct char_data *ch, char *argument, int cmd)
 		      {		/* Ch == Woman */
 			if (GET_SEX (victim) == SEX_MALE)
 			  act
-			       ("$n accuses you of having the smallest.... (brain?)",
-			       FALSE, ch, 0, victim, TO_VICT);
+			    ("$n accuses you of having the smallest.... (brain?)",
+			     FALSE, ch, 0, victim, TO_VICT);
 			else
 			  act
-			       ("$n tells you that you'd loose a beautycontest against a troll.",
-			       FALSE, ch, 0, victim, TO_VICT);
+			    ("$n tells you that you'd loose a beautycontest against a troll.",
+			     FALSE, ch, 0, victim, TO_VICT);
 		      }
 		  }
 		  break;

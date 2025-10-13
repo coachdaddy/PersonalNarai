@@ -200,7 +200,8 @@ do_simultaneous (struct char_data *ch, char *argument, int cmd)
       if ((vict &&
 	   !IS_NPC (vict) &&
 	   GET_GUILD (vict) == POLICE && GET_GUILD_SKILL (vict,
-	   POLICE_SKILL_SIMULTANEOUS) > number (1, 99)
+							  POLICE_SKILL_SIMULTANEOUS)
+	   > number (1, 99)
 	   && GET_MANA (vict) > 180)
 	  || (!IS_NPC (vict) && GET_LEVEL (vict) > IMO - 1))
 	{
@@ -343,7 +344,7 @@ do_charge (struct char_data *ch, char *argument, int cmd)
   level_dif <<= 4;
 
   if (number (1, 200) + level_dif < GET_GUILD_SKILL (ch,
-    OUTLAW_SKILL_CHARGE))
+						     OUTLAW_SKILL_CHARGE))
     {
       if (GET_MANA (ch) < 5000 || GET_MOVE (ch) < 5000)
 	return;

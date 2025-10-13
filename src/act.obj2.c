@@ -159,7 +159,7 @@ do_drink (struct char_data *ch, char *argument, int cmd)
 	  sprintf (buf, "$n drinks %s from $p", drinks[temp->obj_flags.value[2]]);
 	  act (buf, TRUE, ch, temp, 0, TO_ROOM);
 	  sprintf (buf, "You drink the %s.\n\r",
-							drinks[temp->obj_flags.value[2]]);
+		   drinks[temp->obj_flags.value[2]]);
 	  send_to_char (buf, ch);
 	  if (temp->obj_flags.value[2] == LIQ_NECTAR)
 	    cast_cure_critic (GET_LEVEL (ch), ch, "", SPELL_TYPE_POTION, ch, 0);
@@ -263,7 +263,7 @@ do_eat (struct char_data *ch, char *argument, int cmd)
       return;
     }
   if ((temp->obj_flags.type_flag != ITEM_FOOD) && (GET_LEVEL (ch) < (IMO +
-    1)))
+								     1)))
     {
       act ("Your stomach refuses to eat that!?!", FALSE, ch, 0, 0, TO_CHAR);
       return;
@@ -710,7 +710,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	if (CAN_WEAR (obj_object, ITEM_WEAR_FINGER))
 	  {
 	    if ((ch->equipment[WEAR_FINGER_L]) &&
-	      (ch->equipment[WEAR_FINGER_R]))
+		(ch->equipment[WEAR_FINGER_R]))
 	      {
 		send_to_char (
 			       "You are already wearing something on your fingers.\n\r", ch);
@@ -749,10 +749,10 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	if (CAN_WEAR (obj_object, ITEM_WEAR_NECK))
 	  {
 	    if ((ch->equipment[WEAR_NECK_1]) &&
-	      (ch->equipment[WEAR_NECK_2]))
+		(ch->equipment[WEAR_NECK_2]))
 	      {
 		send_to_char
-			      ("You can't wear any more around your neck.\n\r", ch);
+		  ("You can't wear any more around your neck.\n\r", ch);
 	      }
 	    else
 	      {
@@ -783,7 +783,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	    if (ch->equipment[WEAR_BODY])
 	      {
 		send_to_char
-			      ("You already wear something on your body.\n\r", ch);
+		  ("You already wear something on your body.\n\r", ch);
 	      }
 	    else
 	      {
@@ -806,7 +806,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	    if (ch->equipment[WEAR_HEAD])
 	      {
 		send_to_char
-			      ("You already wear something on your head.\n\r", ch);
+		  ("You already wear something on your head.\n\r", ch);
 	      }
 	    else
 	      {
@@ -829,7 +829,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	    if (ch->equipment[WEAR_LEGS])
 	      {
 		send_to_char
-			      ("You already wear something on your legs.\n\r", ch);
+		  ("You already wear something on your legs.\n\r", ch);
 	      }
 	    else
 	      {
@@ -852,7 +852,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	    if (ch->equipment[WEAR_FEET])
 	      {
 		send_to_char
-			      ("You already wear something on your feet.\n\r", ch);
+		  ("You already wear something on your feet.\n\r", ch);
 	      }
 	    else
 	      {
@@ -875,7 +875,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	    if (ch->equipment[WEAR_HANDS])
 	      {
 		send_to_char
-			      ("You already wear something on your hands.\n\r", ch);
+		  ("You already wear something on your hands.\n\r", ch);
 	      }
 	    else
 	      {
@@ -898,7 +898,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	    if (ch->equipment[WEAR_ARMS])
 	      {
 		send_to_char
-			      ("You already wear something on your arms.\n\r", ch);
+		  ("You already wear something on your arms.\n\r", ch);
 	      }
 	    else
 	      {
@@ -921,7 +921,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	    if (ch->equipment[WEAR_ABOUT])
 	      {
 		send_to_char
-			      ("You already wear something about your body.\n\r", ch);
+		  ("You already wear something about your body.\n\r", ch);
 	      }
 	    else
 	      {
@@ -944,8 +944,8 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	    if (ch->equipment[WEAR_WAISTE])
 	      {
 		send_to_char
-			      ("You already wear something about your waiste.\n\r",
-			      ch);
+		  ("You already wear something about your waiste.\n\r",
+		   ch);
 	      }
 	    else
 	      {
@@ -966,7 +966,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	if (CAN_WEAR (obj_object, ITEM_WEAR_WRIST))
 	  {
 	    if ((ch->equipment[WEAR_WRIST_L]) &&
-	      (ch->equipment[WEAR_WRIST_R]))
+		(ch->equipment[WEAR_WRIST_R]))
 	      {
 		send_to_char (
 			       "You already wear something around both your wrists.\n\r", ch);
@@ -1005,10 +1005,10 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	if (CAN_WEAR (obj_object, ITEM_WEAR_KNEE))
 	  {
 	    if ((ch->equipment[WEAR_KNEE_R]) &&
-	      (ch->equipment[WEAR_KNEE_L]))
+		(ch->equipment[WEAR_KNEE_L]))
 	      {
 		send_to_char
-			      ("You already wear something around your both knees.\n\r", ch);
+		  ("You already wear something around your both knees.\n\r", ch);
 	      }
 	    else
 	      {
@@ -1034,8 +1034,8 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	else
 	  {
 	    send_to_char
-			  ("You cant'wear that on around your both knees.\n\r",
-	    ch);
+	      ("You cant'wear that on around your both knees.\n\r",
+	       ch);
 	  }
       }
       break;
@@ -1047,7 +1047,7 @@ wear (struct char_data *ch, struct obj_data *obj_object, int keyword)
 	    if (ch->equipment[WEAR_ABOUTLEGS])
 	      {
 		send_to_char
-			      ("You already wear something about your legs.\n\r", ch);
+		  ("You already wear something about your legs.\n\r", ch);
 	      }
 	    else
 	      {
@@ -1268,7 +1268,7 @@ do_wear (struct char_data *ch, char *argument, int cmd)
       if (strcmp (arg1, "all") == 0)
 	{
 	  for (obj_object = ch->carrying; obj_object; obj_object =
-	    next_object)
+	       next_object)
 	    {
 	      next_object = obj_object->next_content;
 	      if (CAN_SEE_OBJ (ch, obj_object))

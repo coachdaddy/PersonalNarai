@@ -168,7 +168,7 @@ do_trans (struct char_data *ch, char *argument, int cmd)
       else
 	{
 	  if (GET_LEVEL (ch) < IMO + 3 && GET_LEVEL (victim) > GET_LEVEL
-	    (ch))
+	      (ch))
 	    {
 	      send_to_char ("That might not be appreciated.\n\r", ch);
 	      return;
@@ -250,7 +250,7 @@ do_at (struct char_data *ch, char *argument, int cmd)
   /* a location has been found. */
 
   if ((GET_LEVEL (ch) < (IMO + 3)) && (IS_SET (world[location].room_flags,
-    OFF_LIMITS)))
+					       OFF_LIMITS)))
     {
       send_to_char ("That room is off-limits.\n", ch);
       return;
@@ -881,7 +881,7 @@ do_switch (struct char_data *ch, char *argument, int cmd)
 	      return;
 	    }
 	  if (!ch->desc || ch->desc->snoop.snoop_by ||
-	    ch->desc->snoop.snooping)
+	      ch->desc->snoop.snooping)
 	    {
 	      send_to_char (
 			     "You can't do that, the body is already in use.\n\r", ch);
@@ -1106,7 +1106,7 @@ do_purge (struct char_data *ch, char *argument, int cmd)
 	    }
 	}
       else if ((obj = get_obj_in_list_vis (ch, name,
-	world[ch->in_room].contents)))
+					   world[ch->in_room].contents)))
 	{
 	  act ("$n destroys $p.", FALSE, ch, obj, 0, TO_ROOM);
 	  extract_obj (obj);
@@ -1894,7 +1894,7 @@ do_set (struct char_data *ch, char *argument, int cmd)
 	  else if (strcmp ("remortal", buf3) == 0)
 	    {
 	      if (strncmp ("w", buf4, 1) == 0 || strncmp ("W", buf4, 1) ==
-		0)
+		  0)
 		{
 		  victim->player.remortal |= REMORTAL_WARRIOR;
 		  send_to_char ("WARRIOR. Done.\n\r", ch);
@@ -2160,7 +2160,8 @@ do_sys (struct char_data *ch, char *argument, int cmd)
   sprintf (buffer,
 	   "sys time: %d secs\n\rusr time: %d secs\n\rrun time: %d secs\n\r",
 	   (int) xru.ru_stime.tv_sec, (int) xru.ru_utime.tv_sec, (int) (time
-	   (0) - boottime));
+									(0)
+									- boottime));
   send_to_char (buffer, ch);
   if (GET_LEVEL (ch) >= (IMO + 2))
     {

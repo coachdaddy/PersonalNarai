@@ -127,7 +127,7 @@ neverland (struct char_data *ch, int cmd, char *arg)
   location = real_room (loc_nr);
   act ("$n씨가 지금 내려 갔나요 ??", FALSE, ch, 0, 0, TO_NOTVICT);
   send_to_char
-		("악.\n\n악..\n\n 악...\n\n\n떨어지고 있습니다..\n\n\r", ch);
+    ("악.\n\n악..\n\n 악...\n\n\n떨어지고 있습니다..\n\n\r", ch);
   send_to_char ("여기가 어딜까 ??\n\r", ch);
   char_from_room (ch);
   char_to_room (ch, location);
@@ -242,7 +242,7 @@ great_mazinga (struct char_data *ch, int cmd, char *arg)
 	  if ((tmp = GET_MOVE (vict)) > 0)
 	    {
 	      send_to_char
-			    ("주먹에 맞아 체력이 떨어집니다.\n\r", vict);
+		("주먹에 맞아 체력이 떨어집니다.\n\r", vict);
 	      GET_MOVE (vict) = tmp * 7 / 10;
 	    }
 	}

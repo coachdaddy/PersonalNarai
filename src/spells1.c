@@ -102,7 +102,7 @@ cast_call_lightning (byte level, struct char_data *ch, char *arg, int type,
       else
 	{
 	  send_to_char
-			("You fail to call upon the lightning from the sky!\n\r", ch);
+	    ("You fail to call upon the lightning from the sky!\n\r", ch);
 	}
       break;
     case SPELL_TYPE_POTION:
@@ -374,12 +374,12 @@ cast_full_fire (byte level, struct char_data *ch, char *arg, int type,
       send_to_char ("You are trying to concentrate your all energy\n\r", ch);
       act ("$n tries to concentrate your energy.\n\r", FALSE, ch, 0, 0, TO_ROOM);
       send_to_char
-		    ("You concentrated your energy to small bright sphere\n\r", ch);
+	("You concentrated your energy to small bright sphere\n\r", ch);
       act ("$n concentrated energy to small bright sphere.\n\r",
 	   FALSE, ch, 0, 0, TO_ROOM);
       spell_full_fire (level, ch, victim, 0);
       send_to_char
-		    ("You throw your energy sphere. You see sudden brightness.\n\r", ch);
+	("You throw your energy sphere. You see sudden brightness.\n\r", ch);
       act ("$n throws the energy sphere. You cannot see anything by sudden brghtness.\n\r"
 	   ,FALSE, ch, 0, 0, TO_ROOM);
       send_to_char ("You are exhausted.\n\r", ch);

@@ -443,7 +443,7 @@ shop_keeper (struct char_data *ch, int cmd, char *arg)
       return (TRUE);
     }
   if ((cmd == 59) && (ch->in_room == real_room
-    (shop_index[shop_nr].in_room)))
+		      (shop_index[shop_nr].in_room)))
     {
       /* List */
       shopping_list (arg, ch, keeper, shop_nr);

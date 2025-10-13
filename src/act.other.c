@@ -389,7 +389,7 @@ do_practice (struct char_data *ch, char *arg, int cmd)
 	  sprintf (tmp, "%-20s %-4s\t", spells[i],
 		   how_good (victim->skills[i + 1].learned, victim->skills[i
 									   +
-			     1].skilled));
+									   1].skilled));
 	  strcat (buf, tmp);
 	}
       else
@@ -507,8 +507,8 @@ do_group (struct char_data *ch, char *argument, int cmd)
       if (ch->master)
 	{
 	  act
-	       ("You can not enroll group members without being head of a group.",
-	       FALSE, ch, 0, 0, TO_CHAR);
+	    ("You can not enroll group members without being head of a group.",
+	     FALSE, ch, 0, 0, TO_CHAR);
 	  return;
 	}
 
@@ -871,7 +871,7 @@ do_disarm (struct char_data *ch, char *argument, int cmd)
   else if (victim == ch)
     {
       send_to_char
-		    ("You stupid! How about using remove instead of disarm?\n\r", ch);
+	("You stupid! How about using remove instead of disarm?\n\r", ch);
       return;
     }
   if (!IS_NPC (victim) &&
@@ -943,7 +943,7 @@ do_spin_bird_kick (struct char_data *ch, char *argument, int cmd)
   if (GET_SEX (ch) != SEX_FEMALE)
     {
       send_to_char
-		    ("여자 전용 스킬입니다.성전환을 하는게 어떨지~~\n\r", ch);
+	("여자 전용 스킬입니다.성전환을 하는게 어떨지~~\n\r", ch);
       return;
     }
 
@@ -989,7 +989,8 @@ do_spin_bird_kick (struct char_data *ch, char *argument, int cmd)
     }
 
   dam = GET_LEVEL (ch) * (number (25, 30) + (GET_SKILLED (ch,
-					     SKILL_SPIN_BIRD_KICK) >> 3));
+							  SKILL_SPIN_BIRD_KICK)
+					     >> 3));
 
   if (saves_spell (victim, SAVING_HIT_SKILL))
     dam >>= 1;
@@ -1009,7 +1010,7 @@ do_spin_bird_kick (struct char_data *ch, char *argument, int cmd)
   if (GET_MOVE (ch) < 0)
     {
       send_to_char
-		    ("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
+	("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
       do_say (ch, "학학학...난 너무 지쳤어!!!\n\r", 0);
       return;
     }
@@ -1018,7 +1019,8 @@ do_spin_bird_kick (struct char_data *ch, char *argument, int cmd)
     {
       INCREASE_SKILLED (ch, victim, SKILL_SPIN_BIRD_KICK);
       level_plus = 10 + ((GET_LEVEL (ch) + GET_SKILLED (ch,
-			 SKILL_SPIN_BIRD_KICK)) >> 3);
+							SKILL_SPIN_BIRD_KICK))
+			 >> 3);
       tmp = number (10, level_plus);
       GET_MOVE (ch) -= 600 - GET_SKILLED (ch, SKILL_SPIN_BIRD_KICK);
       GET_MANA (ch) -= 300 - GET_SKILLED (ch, SKILL_SPIN_BIRD_KICK);
@@ -1079,7 +1081,7 @@ do_shouryuken (struct char_data *ch, char *argument, int cmd)
   if (GET_SEX (ch) != SEX_MALE)
     {
       send_to_char
-		    ("남자 전용 스킬입니다.성전환을 하는게 어떨지~~\n\r", ch);
+	("남자 전용 스킬입니다.성전환을 하는게 어떨지~~\n\r", ch);
       return;
     }
 
@@ -1128,13 +1130,14 @@ do_shouryuken (struct char_data *ch, char *argument, int cmd)
          send_to_char("You do not have enough mana.\n\r",ch);
        */
       send_to_char
-		    ("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
+	("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
       do_say (ch, "학학학...난 너무 지쳤어!!!\n\r", 0);
       return;
     }
 
   dam = GET_LEVEL (ch) * (number (13, 18) + (GET_SKILLED (ch,
-					     SKILL_SHOURYUKEN) >> 3));
+							  SKILL_SHOURYUKEN)
+					     >> 3));
 
   if (saves_spell (victim, SAVING_HIT_SKILL))
     dam >>= 1;
@@ -1148,14 +1151,14 @@ do_shouryuken (struct char_data *ch, char *argument, int cmd)
   if (ch == victim)
     {
       send_to_char
-		    ("당신은 승룡권을 실패해서 몹시 지칩니다.\n\r", ch);
+	("당신은 승룡권을 실패해서 몹시 지칩니다.\n\r", ch);
       return;
     }
 
   if (GET_MOVE (ch) < 0)
     {
       send_to_char
-		    ("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
+	("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
       do_say (ch, "헥헥헥...난 너무 지쳤어!!!\n\r", 0);
       return;
     }
@@ -1212,7 +1215,7 @@ do_shouryuken (struct char_data *ch, char *argument, int cmd)
       WAIT_STATE (ch, PULSE_VIOLENCE / 3);
       damage (ch, victim, dam, TYPE_HIT);
       send_to_char
-		    ("당신은 승룡권을 실패해서 몹시 지칩니다.\n\r", ch);
+	("당신은 승룡권을 실패해서 몹시 지칩니다.\n\r", ch);
     }
 }
 

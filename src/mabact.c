@@ -193,7 +193,7 @@ mobile_activity (void)
 		  (GET_POS (ch) == POSITION_STANDING) &&
 		  ((door = number (0, 45)) <= 5) && CAN_GO (ch, door) &&
 		  !IS_SET (world[EXIT (ch, door)->to_room].room_flags,
-		NO_MOB))
+			   NO_MOB))
 		{
 		  if (ch->specials.last_direction == door)
 		    {
@@ -236,15 +236,15 @@ mobile_activity (void)
 				  found = TRUE;
 				  if (IS_EVIL (ch) && IS_GOOD (cho_ch) &&
 				      IS_AFFECTED (cho_ch,
-				    AFF_PROTECT_EVIL))
+						   AFF_PROTECT_EVIL))
 				    {
 				      if (!saves_spell (ch, SAVING_PARA) &&
 					  GET_LEVEL (ch) < GET_LEVEL
-					(cho_ch))
+					  (cho_ch))
 					{
 					  act
-					       ("$n tries to attack, but failed miserably.",
-					       TRUE, ch, 0, 0, TO_ROOM);
+					    ("$n tries to attack, but failed miserably.",
+					     TRUE, ch, 0, 0, TO_ROOM);
 					  found = FALSE;
 					}
 				    }

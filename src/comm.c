@@ -338,13 +338,13 @@ game_loop (int s)
 	}
       sigsetmask (mask);
       if (select (maxdesc + 1, &input_set, &output_set, &exc_set,
-	  &null_time) < 0)
+		  &null_time) < 0)
 	{
 	  perror ("Select poll");
 	  exit (0);
 	}
       if (select (0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &timeout) <
-	0)
+	  0)
 	{
 	  perror ("Select sleep");
 	  exit (1);
@@ -449,7 +449,7 @@ game_loop (int s)
 	  next_point = point->next;
 	  xo = point;
 	  if (FD_ISSET (point->descriptor, &output_set) &&
-	    point->output.head)
+	      point->output.head)
 	    {
 	      if (process_output (point) < 0)
 		{
@@ -474,7 +474,7 @@ game_loop (int s)
 	{
 	  if ((!point->connected) && (!point->original) &&
 	      (GET_LEVEL (point->character) < IMO) && (point->descriptor ==
-	    xoclock))
+						       xoclock))
 	    {
 #ifdef  RETURN_TO_QUIT
 	      save_char (point->character, world[point->character->in_room].number);

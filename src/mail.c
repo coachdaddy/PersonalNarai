@@ -232,7 +232,7 @@ show_mail (struct char_data *ch, struct mbox_data *cb, char *arg)
   for (i = 0; i < cb->m_num; i++)
     {
       if (isname (GET_NAME (ch), cb->receiver[i]) || GET_LEVEL (ch) > IMO +
-	2)
+	  2)
 	{
 	  sprintf (buf + strlen (buf), "   %s from %s\n\r",
 		   cb->head[i], cb->sender[i]);

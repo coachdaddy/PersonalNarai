@@ -183,7 +183,7 @@ guild_entry (struct char_data *ch, int cmd, char *arg)
 	  if ((GET_LEVEL (ch) < 15) && GET_LEVEL (ch) < IMO)
 	    {
 	      send_to_char
-			    ("당신은 경찰이 될만한 자격이 없군요.\n\r", ch);
+		("당신은 경찰이 될만한 자격이 없군요.\n\r", ch);
 	      return TRUE;
 	    }
 	  break;
@@ -191,7 +191,7 @@ guild_entry (struct char_data *ch, int cmd, char *arg)
 	  if ((GET_LEVEL (ch) < 20) && GET_LEVEL (ch) < IMO)
 	    {
 	      send_to_char
-			    ("당신은 깡패가 될만한 자격이 없군요.\n\r", ch);
+		("당신은 깡패가 될만한 자격이 없군요.\n\r", ch);
 	      return TRUE;
 	    }
 	  break;
@@ -199,7 +199,7 @@ guild_entry (struct char_data *ch, int cmd, char *arg)
 	  if ((GET_LEVEL (ch) < 25) && GET_LEVEL (ch) < IMO)
 	    {
 	      send_to_char
-			    ("당신은 암살자가 될만한 자격이 없군요.\n\r", ch);
+		("당신은 암살자가 될만한 자격이 없군요.\n\r", ch);
 	      return TRUE;
 	    }
 	  break;
@@ -234,7 +234,7 @@ guild_entry (struct char_data *ch, int cmd, char *arg)
       if (guild_number != ch->player.guild)
 	{
 	  send_to_char
-			("You can't leave this guild as you are not a member!!", ch);
+	    ("You can't leave this guild as you are not a member!!", ch);
 	  return TRUE;
 	}
       sprintf (buf, "%s LEFT %s guild\n\r",
@@ -471,7 +471,8 @@ guild_practice_yard (struct char_data *ch, int cmd, char *arg)
 	  break;
 	case ASSASSIN:
 	  cost = assasin_skill_costs[number] * ((GET_GUILD_SKILL (ch,
-						 number) / 10) + 1) *
+								  number) /
+						 10) + 1) *
 	    GET_LEVEL (ch);
 	  sprintf (buf, "You train %s.\n\r", assasin_skills[number]);
 	  send_to_char (buf, ch);
@@ -509,7 +510,7 @@ guild_practice_yard (struct char_data *ch, int cmd, char *arg)
 		       i + 1,
 		       police_skills[i],
 		       police_skill_costs[i] * ((GET_GUILD_SKILL (ch, i) /
-						10) + 1) * GET_LEVEL (ch),
+						 10) + 1) * GET_LEVEL (ch),
 		       GET_GUILD_SKILL (ch, i));
 	      send_to_char (buf, ch);
 	    }
@@ -519,7 +520,7 @@ guild_practice_yard (struct char_data *ch, int cmd, char *arg)
 	    {
 	      sprintf (buf, "%d: %s %d (now %d%%)\n\r", i + 1, outlaw_skills[i],
 		       outlaw_skill_costs[i] * ((GET_GUILD_SKILL (ch, i) /
-						10) + 1)
+						 10) + 1)
 		       * GET_LEVEL (ch),
 		       GET_GUILD_SKILL (ch, i));
 	      send_to_char (buf, ch);
@@ -531,7 +532,7 @@ guild_practice_yard (struct char_data *ch, int cmd, char *arg)
 	      sprintf (buf, "%d: %s %d (now %d%%)\n\r", i + 1,
 		       assasin_skills[i],
 		       assasin_skill_costs[i] * ((GET_GUILD_SKILL (ch, i) /
-						 10) + 1)
+						  10) + 1)
 		       * GET_LEVEL (ch),
 		       GET_GUILD_SKILL (ch, i));
 	      send_to_char (buf, ch);

@@ -1682,7 +1682,7 @@ cast_phase (byte level, struct char_data *ch, char *arg, int type,
       return;
     }
   if (IS_SET (world[ch->in_room].dir_option[direction]->exit_info,
-    EX_NOPHASE))
+	      EX_NOPHASE))
     {
       send_to_char ("You feel it's too solid.\n\r", ch);
       return;

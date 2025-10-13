@@ -183,14 +183,14 @@ do_backstab (struct char_data *ch, char *argument, int cmd)
       if (!ch->equipment[WIELD])
 	{
 	  send_to_char
-			("You need to wield a weapon, to make it a succes.\n\r", ch);
+	    ("You need to wield a weapon, to make it a succes.\n\r", ch);
 	  return;
 	}
       if (ch->equipment[WIELD]->obj_flags.value[3] != 11)
 	{
 	  send_to_char
-			("Only piercing weapons can be used for backstabbing.\n\r",
-			ch);
+	    ("Only piercing weapons can be used for backstabbing.\n\r",
+	     ch);
 	  return;
 	}
       if (ch->specials.fighting)
@@ -436,7 +436,7 @@ do_bash (struct char_data *ch, char *argument, int cmd)
     {
       INCREASE_SKILLED (ch, victim, SKILL_BASH);
       WAIT_STATE (victim, PULSE_VIOLENCE * (2 + (GET_SKILLED (ch,
-						 SKILL_BASH) >> 5)));
+							      SKILL_BASH) >> 5)));
       dam = GET_LEVEL (ch) * (10 + GET_SKILLED (ch, SKILL_BASH));
       damage (ch, victim, dam, SKILL_BASH);
 
@@ -556,7 +556,7 @@ do_multi_kick (struct char_data *ch, char *argument, int cmd)
   for (; i; i--)
     {
       percent = ((200 - GET_AC (victim) - GET_HITROLL (ch)) >> 5) + number
-									    (1, 101);
+	(1, 101);
       if (percent > GET_LEARNED (ch, SKILL_MULTI_KICK))
 	{
 	  damage (ch, victim, 0, SKILL_KICK);
@@ -666,11 +666,13 @@ do_punch (struct char_data *ch, char *argument, int cmd)
       return;
     }
   dam = ((GET_LEARNED (ch, SKILL_PUNCH) >> 1) + (GET_SKILLED (ch,
-						 SKILL_PUNCH) << 1))
+							      SKILL_PUNCH)
+						 << 1))
     * number (GET_LEVEL (ch), GET_LEVEL (ch) << 1);
 
   percent = ((300 - GET_AC (victim) - GET_HITROLL (ch) - GET_SKILLED (ch,
-	     SKILL_PUNCH)) >> 4) + number (1, 101);
+								      SKILL_PUNCH))
+	     >> 4) + number (1, 101);
   WAIT_STATE (ch, PULSE_VIOLENCE);
   if (percent > ch->skills[SKILL_PUNCH].learned)
     {
@@ -707,7 +709,8 @@ do_tornado (struct char_data *ch, char *argument, int cmd)
 	     if(ch->skills[SKILL_TORNADO].learned>number(1,99)) {
 	   */
 	  if (GET_LEARNED (ch, SKILL_TORNADO) + (GET_SKILLED (ch,
-						 SKILL_TORNADO) >> 3)
+							      SKILL_TORNADO)
+						 >> 3)
 	      > number (1, 111))
 	    {
 	      hit (ch, tch, TYPE_UNDEFINED);
@@ -816,8 +819,8 @@ do_flash (struct char_data *ch, char *argument, int cmd)
       /* messages */
       send_to_char ("You attack like flash ...\n\r", ch);
       send_to_char
-		    ("You can see star above your head ?!? , you are confused!",
-		    victim);
+	("You can see star above your head ?!? , you are confused!",
+	 victim);
       act ("$n moves like flash and attack with flash power!!! ",
 	   FALSE, ch, 0, victim, TO_NOTVICT);
       act ("$n strike $N's head with circular spanning triple kick .",
