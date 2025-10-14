@@ -4,5 +4,7 @@ lib/players*
 lib/stash
 lib/stash.tar*
 lib/log/*
+src/obj/*
+src/tags
 log-*
 run-mud.sh
