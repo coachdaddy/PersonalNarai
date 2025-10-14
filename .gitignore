@@ -3,3 +3,5 @@ bin/
 lib/players.? 
 lib/stash.tar*
 lib/log/*
+log-*
+run-mud.sh
