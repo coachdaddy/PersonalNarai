@@ -133,7 +133,7 @@ get_quest (struct char_data *ch)
     233,			/* 50 */ /* 9014 32 arachnos */
     304,			/* 60 */ /* 15083 36 lsi robot*/
   };
-#define END_QUEST_MOBILE 556
+#define END_QUEST_MOBILE 551
 
   int low, high;
   int t;
