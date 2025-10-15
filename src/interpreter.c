@@ -94,7 +94,7 @@ void do_look (struct char_data *ch, char *argument, int cmd);
 void do_read (struct char_data *ch, char *argument, int cmd);
 void do_write (struct char_data *ch, char *argument, int cmd);
 void do_say (struct char_data *ch, char *argument, int cmd);
-void do_exit (struct char_data *ch, char *argument, int cmd);
+// void do_exit (struct char_data *ch, char *argument, int cmd);
 void do_snoop (struct char_data *ch, char *argument, int cmd);
 void do_insult (struct char_data *ch, char *argument, int cmd);
 void do_quit (struct char_data *ch, char *argument, int cmd);
