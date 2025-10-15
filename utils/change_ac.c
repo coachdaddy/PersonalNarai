@@ -10,8 +10,9 @@ main ()
 {
   struct char_file_u st;
   char name[20];
-  long exp;
-  int qnum;
+  int nac = -104;
+  int ndr = 105;
+  int nhr = 105;
   long offset;
   FILE *FL;
 
@@ -23,12 +24,14 @@ main ()
 
   printf ("Name? ");
   scanf ("%s", name);
-  printf ("Exp? ");
-  scanf ("%ld", &exp);
-  printf ("Solve quest? ");
-  scanf ("%d", &qnum);
+  printf ("ac ? ");
+  scanf ("%d", &nac);
+  printf ("dr ? ");
+  scanf ("%d", &ndr);
+  printf ("hr ? ");
+  scanf ("%d", &nhr);
 
-  printf ("%s %ld\n", name, exp);
+  printf ("%s %d %d %d \n", name, nac, ndr, nhr);
 
   while (1)
     {
@@ -38,8 +41,10 @@ main ()
 	  printf ("found\n");
 
 	  printf ("Changing\n");
-	  st.points.exp = exp;
-	  st.quest.solved = qnum;
+
+	  st.points.armor = nac;
+	  st.points.damroll = ndr;
+	  st.points.hitroll = nhr;
 
 	  offset = ftell (FL);
 	  offset -= sizeof (struct char_file_u);

@@ -265,10 +265,6 @@ zone_data[46] =
   {
     33000, "KAIST"
   }
-/* 
-{ 20200, "MooDang" },
-{ 33000, "KAIST" }
-*/
 };
 
 /* read and allocate space for a '~'-terminated string from a given file */
@@ -621,12 +617,7 @@ PrintMobileQ (FILE * fp)
   char class, sex;
   int level, hit, ac, hr, dr;
   int exp, gold, pos;
-  // int sum, over, below;
   int index[20000];
-
-  // int num;
-
-  // num = 0;
 
   ReadIndex (index);
 
@@ -669,12 +660,6 @@ PrintMobileQ (FILE * fp)
 	}
 
       printf ("%d %d %s\n", vnum, level, name);
-/*
-		if(index[vnum]){
-			printf("%d %d %s\n", vnum, level, name);
-		}
-*/
-
       free (name);
     }
 }

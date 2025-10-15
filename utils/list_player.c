@@ -25,11 +25,14 @@ main ()
       if (ok == FALSE)
 	break;
       // if (ch.level > 40)
-      printf ("NAME:%s LEVEL: %d HP: %d GUILD: %d\n\r",
-	      ch.name, ch.level, ch.points.max_hit, ch.guild);
+      printf ("NAME:%s LEVEL: %d HP: %ld Mana: %ld Move: %ld GUILD: %d ",
+	      ch.name, ch.level, ch.points.max_hit, ch.points.max_mana,
+	      ch.points.max_move, ch.guild);
+      printf ("AC %d DR %d HR %d ", ch.points.armor, ch.points.damroll, ch.points.hitroll); 
+      printf ("Barehand %d D %d \n\r", ch.damnodice, ch.damsizedice);
       a[(int) ch.guild]++;
       count++;
-      if (ch.level == 40)
+      if (ch.level == 60)
 	dan_count++;
     }
   while (!feof (fp));

@@ -207,7 +207,7 @@ do_help (char *str)
   printf ("\tsave : \n");
   printf ("\tset : \n");
   printf
-	  ("\t\tclass, level, hit, mana, move, hitroll, damroll, abilities, conditions \n");
+    ("\t\tclass, level, hit, mana, move, hitroll, damroll, abilities, conditions \n");
   printf ("\tskill : \n");
   printf ("\tshow : \n");
   return 0;

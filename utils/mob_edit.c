@@ -35,7 +35,7 @@ main ()
   mob_data.long_descr = fgets (buff_long, 256, stdin);
 
   printf
-	  ("Enter mob description(Maximum 10 lines and finish with '~' character):\n");
+    ("Enter mob description(Maximum 10 lines and finish with '~' character):\n");
 
   for (i = 0; i < 10; i++)
     {
@@ -128,7 +128,7 @@ main ()
 
   printf ("Enter the position:\n");
   printf
-	  ("1. SLEEPING\n2. RESTING\n3. SITTING\n4. STANDING\n5. SWIMMING\n6. LEVITATED\n7. FLYING\n");
+    ("1. SLEEPING\n2. RESTING\n3. SITTING\n4. STANDING\n5. SWIMMING\n6. LEVITATED\n7. FLYING\n");
   do
     {
       printf ("Choose Number: ");

@@ -1,5 +1,4 @@
 
-
 #include <stdio.h>
 #include <string.h>
 
@@ -10,7 +9,6 @@ main ()
 {
   struct char_file_u st;
   char name[20];
-  int qnum;
   long offset;
   FILE *FL;
 
@@ -22,10 +20,8 @@ main ()
 
   printf ("Name? ");
   scanf ("%s", name);
-  printf ("Solve quest? ");
-  scanf ("%d", &qnum);
 
-  printf ("%s %d\n", name, qnum);
+  printf ("%s's quest mob is initialized.\n", name);
 
   while (1)
     {
@@ -34,8 +30,9 @@ main ()
 	{
 	  printf ("found\n");
 
-	  printf ("Changing\n");
-	  st.quest.solved = qnum;
+	  printf ("Reset\n");
+	  st.quest.solved -= 0;
+      st.quest.type = 0;
 
 	  offset = ftell (FL);
 	  offset -= sizeof (struct char_file_u);
