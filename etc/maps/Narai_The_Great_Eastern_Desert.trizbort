@@ -1,0 +1,357 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<trizbort version="1.7.4.1">
+	<info />
+	<map>
+		<room id="1" name="Giant cave" subtitle="#5011" x="-640" y="64" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="2" name="Cave Entrance" subtitle="#5010" x="-480" y="-32" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="3" name="" description="">
+			<dock index="0" id="1" port="ne" />
+			<dock index="1" id="2" port="sw" />
+		</line>
+		<room id="4" name="At the foot of the rubble" subtitle="#5009" x="-480" y="64" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="5" name="" description="">
+			<dock index="0" id="4" port="n" />
+			<dock index="1" id="2" port="s" />
+		</line>
+		<room id="6" name="Narrow Bend" subtitle="#5012" x="-288" y="64" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="7" name="Large Cave" subtitle="#5013" x="-288" y="160" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="8" name="Damp Hallway" subtitle="#5014" x="-96" y="160" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="9" name="Cave In" subtitle="#5008" x="96" y="-96" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="10" name="" description="">
+			<dock index="0" id="4" port="ne" />
+			<dock index="1" id="9" port="sw" />
+		</line>
+		<line id="11" name="" description="">
+			<dock index="0" id="4" port="e" />
+			<dock index="1" id="6" port="w" />
+		</line>
+		<line id="12" name="" description="">
+			<dock index="0" id="7" port="n" />
+			<dock index="1" id="6" port="s" />
+		</line>
+		<line id="13" name="" description="">
+			<dock index="0" id="7" port="e" />
+			<dock index="1" id="8" port="w" />
+		</line>
+		<room id="14" name="Underground pool" subtitle="#5015" x="672" y="160" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="15" name="An underground lake" subtitle="#5005" x="672" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="16" name="Damp Hallway" subtitle="#5016" x="672" y="256" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="17" name="" description="">
+			<dock index="0" id="8" port="e" />
+			<dock index="1" id="14" port="w" />
+		</line>
+		<line id="18" name="" description="">
+			<dock index="0" id="16" port="n" />
+			<dock index="1" id="14" port="s" />
+		</line>
+		<line id="19" name="" description="">
+			<dock index="0" id="15" port="n" />
+			<dock index="1" id="16" port="s" />
+		</line>
+		<room id="20" name="A long tunnel" subtitle="#5004" x="480" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="21" name="A long tunnel" subtitle="#5003" x="288" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="22" name="A long tunnel" subtitle="#5002" x="96" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="23" name="" description="">
+			<dock index="0" id="9" port="s" />
+			<dock index="1" id="22" port="n" />
+		</line>
+		<line id="24" name="" description="">
+			<dock index="0" id="22" port="e" />
+			<dock index="1" id="21" port="w" />
+		</line>
+		<line id="25" name="" description="">
+			<dock index="0" id="21" port="e" />
+			<dock index="1" id="20" port="w" />
+		</line>
+		<line id="26" name="" description="">
+			<dock index="0" id="20" port="e" />
+			<dock index="1" id="15" port="w" />
+		</line>
+		<room id="27" name="A long narrow tunnel" subtitle="#5006" x="864" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="28" name="" description="">
+			<dock index="0" id="15" port="e" />
+			<dock index="1" id="27" port="w" />
+		</line>
+		<room id="29" name="A long tunnel" subtitle="#5001" x="-96" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="30" name="To Midgaard" subtitle="" x="-288" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="yes" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="31" name="" description="">
+			<dock index="0" id="30" port="e" />
+			<dock index="1" id="29" port="w" />
+		</line>
+		<line id="32" name="" description="">
+			<dock index="0" id="29" port="e" />
+			<dock index="1" id="22" port="w" />
+		</line>
+		<room id="33" name="A small cavern" subtitle="#5069" x="-672" y="704" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="34" name="A small shaft" subtitle="#5070" x="-672" y="608" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="35" name="" description="" flow="oneWay">
+			<dock index="0" id="34" port="ne" />
+			<dock index="1" id="4" port="sw" />
+		</line>
+		<line id="36" name="" description="">
+			<dock index="0" id="33" port="n" />
+			<dock index="1" id="34" port="s" />
+		</line>
+		<room id="37" name="A narrow crack" subtitle="#5068" x="-480" y="704" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="38" name="A narrow tunnel" subtitle="#5067" x="-480" y="608" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="39" name="" description="">
+			<dock index="0" id="33" port="e" />
+			<dock index="1" id="37" port="w" />
+		</line>
+		<line id="40" name="" description="">
+			<dock index="0" id="37" port="n" />
+			<dock index="1" id="38" port="s" />
+		</line>
+		<room id="41" name="A widetunnel" subtitle="#5066" x="-288" y="608" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="42" name="The mysterious lair" subtitle="#5065" x="-96" y="608" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="43" name="" description="">
+			<dock index="0" id="38" port="e" />
+			<dock index="1" id="41" port="w" />
+		</line>
+		<line id="44" name="" description="">
+			<dock index="0" id="41" port="e" />
+			<dock index="1" id="42" port="w" />
+		</line>
+		<room id="45" name="The cave mouth" subtitle="#5064" x="96" y="608" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="46" name="" description="">
+			<dock index="0" id="42" port="e" />
+			<dock index="1" id="45" port="w" />
+		</line>
+		<room id="47" name="Narrow crawlway" subtitle="#5017" x="288" y="704" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="48" name="" description="">
+			<dock index="0" id="21" port="s" />
+			<dock index="1" id="47" port="n" />
+		</line>
+		<room id="49" name="Large cavern" subtitle="#5018" x="480" y="704" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="50" name="" description="">
+			<dock index="0" id="20" port="s" />
+			<dock index="1" id="49" port="n" />
+		</line>
+		<line id="51" name="" description="">
+			<dock index="0" id="47" port="e" />
+			<dock index="1" id="49" port="w" />
+		</line>
+		<room id="52" name="Fungus Path" subtitle="#5020" x="480" y="800" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="53" name="Fungus patch" subtitle="#5019" x="288" y="800" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="54" name="" description="">
+			<dock index="0" id="53" port="n" />
+			<dock index="1" id="47" port="s" />
+		</line>
+		<line id="55" name="" description="">
+			<dock index="0" id="53" port="e" />
+			<dock index="1" id="52" port="w" />
+		</line>
+		<room id="56" name="Fungus Temple" subtitle="#5021" x="480" y="896" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="57" name="Slopping passage" subtitle="#5022" x="832" y="896" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="58" name="" description="">
+			<dock index="0" id="56" port="n" />
+			<dock index="1" id="52" port="s" />
+		</line>
+		<line id="59" name="" description="">
+			<dock index="0" id="56" port="e" />
+			<dock index="1" id="57" port="w" />
+		</line>
+		<room id="60" name="Slopping passage" subtitle="#5023" x="672" y="992" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="61" name="" description="">
+			<dock index="0" id="57" port="sw" />
+			<dock index="1" id="60" port="ne" />
+		</line>
+		<line id="62" name="" description="">
+			<dock index="0" id="15" port="s" />
+			<dock index="1" id="60" port="n" />
+		</line>
+		<room id="63" name="A wide tunnel" subtitle="#5007" x="1056" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="64" name="" description="">
+			<dock index="0" id="27" port="e" />
+			<dock index="1" id="63" port="w" />
+		</line>
+		<room id="65" name="The Great Eastern Desert" subtitle="#5026" x="1056" y="256" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="67" name="The Great Eastern Desert" subtitle="#5032" x="1056" y="512" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="68" name="The Great Eastern Desert" subtitle="#5027" x="1248" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="69" name="The Great Eastern Desert" subtitle="#5024" x="1248" y="256" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="66" name="The Great Eastern Desert" subtitle="#5030" x="1248" y="512" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="70" name="The Great Eastern Desert" subtitle="#5028" x="1440" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="71" name="The Great Eastern Desert" subtitle="#5024" x="1440" y="256" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="72" name="The Great Eastern Desert" subtitle="#5030" x="1440" y="512" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="73" name="The Great Eastern Desert" subtitle="#5030" x="1440" y="608" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="74" name="" description="">
+			<dock index="0" id="73" port="w" />
+			<dock index="1" id="45" port="e" />
+		</line>
+		<line id="75" name="" description="">
+			<dock index="0" id="63" port="e" />
+			<dock index="1" id="68" port="w" />
+		</line>
+		<line id="76" name="" description="">
+			<dock index="0" id="68" port="e" />
+			<dock index="1" id="70" port="w" />
+		</line>
+		<line id="77" name="" description="">
+			<dock index="0" id="66" port="n" />
+			<dock index="1" id="68" port="s" />
+		</line>
+		<line id="78" name="" description="">
+			<dock index="0" id="68" port="n" />
+			<dock index="1" id="69" port="s" />
+		</line>
+		<line id="79" name="" description="">
+			<dock index="0" id="73" port="n" />
+			<dock index="1" id="72" port="s" />
+		</line>
+		<line id="80" name="" description="">
+			<dock index="0" id="72" port="n" />
+			<dock index="1" id="70" port="s" />
+		</line>
+		<line id="81" name="" description="">
+			<dock index="0" id="70" port="n" />
+			<dock index="1" id="71" port="s" />
+		</line>
+		<room id="82" name="The Great Eastern Desert" subtitle="#5029" x="1632" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="83" name="Upon a small hill" subtitle="#5062" x="1824" y="384" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="84" name="" description="">
+			<dock index="0" id="70" port="e" />
+			<dock index="1" id="82" port="w" />
+		</line>
+		<line id="85" name="" description="">
+			<dock index="0" id="82" port="e" />
+			<dock index="1" id="83" port="w" />
+		</line>
+		<room id="86" name="Mega city" subtitle="" x="1824" y="512" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="yes" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="87" name="" description="">
+			<dock index="0" id="83" port="s" />
+			<dock index="1" id="86" port="n" />
+		</line>
+		<room id="88" name="A nomad camp" subtitle="#5056" x="1440" y="160" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="89" name="To the Great Pyramid" subtitle="" x="1632" y="160" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="yes" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="90" name="" description="">
+			<dock index="0" id="88" port="e" />
+			<dock index="1" id="89" port="w" />
+		</line>
+		<line id="91" name="" description="">
+			<dock index="0" id="71" port="n" />
+			<dock index="1" id="88" port="s" />
+		</line>
+		<room id="92" name="Inside a small tent" subtitle="#5057" x="1248" y="160" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="93" name="" description="">
+			<dock index="0" id="92" port="e" />
+			<dock index="1" id="88" port="w" />
+		</line>
+		<room id="94" name="Besides the camels" subtitle="#5058" x="1440" y="64" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="95" name="The main tent" subtitle="#5060" x="1440" y="-32" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="96" name="The main tent" subtitle="#5061" x="1632" y="-32" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="97" name="The warrior's tent" subtitle="#5059" x="1632" y="64" w="128" h="64" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="98" name="" description="">
+			<dock index="0" id="94" port="e" />
+			<dock index="1" id="97" port="w" />
+		</line>
+		<line id="99" name="" description="">
+			<dock index="0" id="95" port="e" />
+			<dock index="1" id="96" port="w" />
+		</line>
+		<line id="100" name="" description="">
+			<dock index="0" id="94" port="n" />
+			<dock index="1" id="95" port="s" />
+		</line>
+		<line id="101" name="" description="">
+			<dock index="0" id="88" port="n" />
+			<dock index="1" id="94" port="s" />
+		</line>
+		<line id="102" name="" description="">
+			<dock index="0" id="65" port="nnw" />
+			<dock index="1" id="67" port="sse" />
+		</line>
+		<line id="103" name="" description="">
+			<dock index="0" id="69" port="nnw" />
+			<dock index="1" id="66" port="sse" />
+		</line>
+		<line id="104" name="" description="">
+			<dock index="0" id="65" port="e" />
+			<dock index="1" id="69" port="w" />
+		</line>
+		<line id="105" name="" description="">
+			<dock index="0" id="69" port="e" />
+			<dock index="1" id="71" port="w" />
+		</line>
+		<line id="106" name="" description="">
+			<dock index="0" id="67" port="e" />
+			<dock index="1" id="66" port="w" />
+		</line>
+		<line id="107" name="" description="">
+			<dock index="0" id="66" port="e" />
+			<dock index="1" id="72" port="w" />
+		</line>
+		<line id="108" name="" description="">
+			<dock index="0" id="65" port="s" />
+			<dock index="1" id="82" port="n" />
+		</line>
+		<line id="109" name="" description="">
+			<dock index="0" id="67" port="n" />
+			<dock index="1" id="82" port="s" />
+		</line>
+		<line id="110" name="" description="">
+			<dock index="0" id="72" port="ene" />
+			<dock index="1" id="67" port="wsw" />
+		</line>
+		<line id="111" name="" description="">
+			<dock index="0" id="71" port="ene" />
+			<dock index="1" id="65" port="wsw" />
+		</line>
+	</map>
+	<settings>
+		<colors>
+			<canvas>White</canvas>
+			<border>MidnightBlue</border>
+			<line>MidnightBlue</line>
+			<selectedLine>Gold</selectedLine>
+			<hoverLine>DarkOrange</hoverLine>
+			<subTitle>MidnightBlue</subTitle>
+			<smallText>MidnightBlue</smallText>
+			<lineText>MidnightBlue</lineText>
+			<grid>#E7E7E7</grid>
+			<startRoom>GreenYellow</startRoom>
+			<endRoom>Red</endRoom>
+		</colors>
+		<regions>
+			<NoRegion Name="NoRegion" TextColor="Blue">White</NoRegion>
+		</regions>
+		<fonts>
+			<room size="13">Arial</room>
+			<object size="11">Arial</object>
+			<subTitle size="9">Arial</subTitle>
+			<line size="9">Arial</line>
+		</fonts>
+		<grid>
+			<snapTo>yes</snapTo>
+			<visible>yes</visible>
+			<showOrigin>yes</showOrigin>
+			<size>32</size>
+		</grid>
+		<lines>
+			<width>2</width>
+			<arrowSize>12</arrowSize>
+			<textOffset>4</textOffset>
+		</lines>
+		<rooms>
+			<darknessStripeSize>24</darknessStripeSize>
+			<objectListOffset>4</objectListOffset>
+			<connectionStalkLength>32</connectionStalkLength>
+			<preferredDistanceBetweenRooms>64</preferredDistanceBetweenRooms>
+			<defaultRoomName>Cave</defaultRoomName>
+			<defaultRoomShape>0</defaultRoomShape>
+		</rooms>
+		<ui>
+			<handleSize>12</handleSize>
+			<snapToElementSize>16</snapToElementSize>
+		</ui>
+		<margins>
+			<documentSpecific>no</documentSpecific>
+			<horizontal>0</horizontal>
+			<vertical>0</vertical>
+			<wrapDashes>no</wrapDashes>
+		</margins>
+		<keypadNavigation>
+			<creationModifier>control</creationModifier>
+			<unexploredModifier>alt</unexploredModifier>
+		</keypadNavigation>
+	</settings>
+</trizbort>
