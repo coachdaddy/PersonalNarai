@@ -364,7 +364,7 @@ D2
 0 -1 31004
 D3
 You can see the auto gate to the west at the entrance of 3 ho-gwan.
-~
+auto~
 auto~
 4 31001 31007
 S
@@ -394,7 +394,7 @@ D0
 ~
 0 -1 31008
 D1
-~
+auto~
 auto~
 4 31001 31005
 D2
@@ -412,7 +412,7 @@ Please be quite & don't fight because they have to study for our contry.
 310 4610 1
 D0
 You can see lecture room to the north.
-~
+door~
 door~
 2 31002 31010
 D1
@@ -450,7 +450,7 @@ In real,there is no place like this room in KAIST but you are in the SS society.
 310 4610 1
 D2
 door~
-~
+door~
 4 31002 31008
 S
 #31011
@@ -464,7 +464,7 @@ D3
 0 -1 31008
 D4
 stair~
-~
+stair~
 4 31010 31013
 S
 #31012
@@ -492,11 +492,11 @@ D3
 0 -1 31014
 D4
 panty~
-~
+panty~
 4 31011 31033
 D5
 stair~
-~
+stair~
 2 31010 31011
 S
 #31014
@@ -705,11 +705,11 @@ D3
 0 -1 31034
 D4
 two~
-~
+two~
 4 31012 31053
 D5
 panty~
-~
+panty~
 2 31011 31013
 S
 #31034
@@ -918,7 +918,7 @@ D3
 0 -1 31054
 D5
 two~
-~
+two~
 2 31012 31033
 S
 #31054
@@ -1021,8 +1021,8 @@ D0
 ~
 0 -1 31058
 D4
-prof~
 ~
+prof~
 4 31013 31066
 S
 #31060
@@ -1131,7 +1131,7 @@ D4
 0 -1 31067
 D5
 prof~
-~
+prof~
 2 31013 31059
 S
 #31067
@@ -1372,8 +1372,8 @@ You can see the accent door to the north.
 ~
 310 4610 1
 D0
-door~
 ~
+door~
 4 31009 31080
 D1
 ~
@@ -1533,7 +1533,7 @@ D3
 0 -1 31094
 D4
 chueum~
-~
+chueum~
 4 31014 31100
 S
 #31088
@@ -1819,7 +1819,7 @@ D2
 0 -1 31105
 D4
 duche~
-~
+duche~
 4 31015 31119
 S
 #31105
@@ -2214,8 +2214,8 @@ D2
 ~
 0 -1 31125
 D4
-seche ~
-~
+seche~
+seche~
 4 31016 31131
 S
 #31125
@@ -2720,7 +2720,7 @@ D0
 0 -1 31142
 D2
 computer~
-~
+computer~
 4 31017 31154
 S
 #31154
@@ -2737,7 +2737,7 @@ D0
 0 -1 31153
 D2
 micro~
-~
+micro~
 4 31018 31155
 S
 #31155
@@ -2756,7 +2756,7 @@ D0
 0 -1 31154
 D2
 communication~
-~
+communication~
 4 31019 31156
 S
 #31156
@@ -2776,7 +2776,7 @@ D0
 0 -1 31155
 D2
 circuit~
-~
+circuit~
 4 31020 31157
 S
 #31157
@@ -2797,7 +2797,7 @@ D0
 0 -1 31156
 D2
 control~
-~
+control~
 4 31021 31158
 S
 #31158
