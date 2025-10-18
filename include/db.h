@@ -30,25 +30,25 @@
 
 /* public procedures in db.c */
 
-void boot_db (void);
-void save_char (struct char_data *ch, sh_int load_room);
-int create_entry (char *name);
-void zone_update (void);
-void init_char (struct char_data *ch);
-void clear_char (struct char_data *ch);
-void clear_object (struct obj_data *obj);
-void reset_char (struct char_data *ch);
-void free_char (struct char_data *ch);
-int real_room (int virtual);
-char *fread_string (FILE * fl);
-int real_object (int virtual);
-int real_mobile (int virtual);
+void boot_db(void);
+void save_char(struct char_data *ch, sh_int load_room);
+int create_entry(char *name);
+void zone_update(void);
+void init_char(struct char_data *ch);
+void clear_char(struct char_data *ch);
+void clear_object(struct obj_data *obj);
+void reset_char(struct char_data *ch);
+void free_char(struct char_data *ch);
+int real_room(int virtual);
+char *fread_string(FILE * fl);
+int real_object(int virtual);
+int real_mobile(int virtual);
 
 #define REAL 0
 #define VIRTUAL 1
 
-struct obj_data *read_object (int nr, int type);
-struct char_data *read_mobile (int nr, int type);
+struct obj_data *read_object(int nr, int type);
+struct char_data *read_mobile(int nr, int type);
 
 /*
 #define MENU         \
@@ -70,7 +70,6 @@ struct char_data *read_mobile (int nr, int type);
 ** Delete character is removed .\n\r\n\r\
    What number? : "
 
-
 #define GREETINGS \
 "\n\r\n\r\
                            	NaraiMUD\n\r\n\r\
@@ -82,65 +81,55 @@ struct char_data *read_mobile (int nr, int type);
 "\n\rWelcome to the land of Kkang-PaeMUD. May your visit here be... Interesting.\
 \n\rIf you are new player, type 'info' or 'help' or 'NEWS'\n\r"
 
-
 #define STORY     \
 "Once upon a time ....Daystar doesn't say more. You'd better enter the Game.\n\r\n\r"
 
-
 /* structure for the reset commands */
-struct reset_com
-  {
-    char command;		/* current command                      */
-    bool if_flag;		/* if TRUE: exe only if preceding exe'd */
-    int arg1;			/*                                      */
-    int arg2;			/* Arguments to the command             */
-    int arg3;			/*                                      */
+struct reset_com {
+	char command;		/* current command                      */
+	bool if_flag;		/* if TRUE: exe only if preceding exe'd */
+	int arg1;		/*                                      */
+	int arg2;		/* Arguments to the command             */
+	int arg3;		/*                                      */
 
-    /* 
-       *  Commands:              *
-       *  'M': Read a mobile     *
-       *  'O': Read an object    *
-       *  'G': Give obj to mob   *
-       *  'P': Put obj in obj    *
-       *  'G': Obj to char       *
-       *  'E': Obj to char equip *
-       *  'D': Set state of door *
-     */
-  };
-
-
+	/* 
+	   *  Commands:              *
+	   *  'M': Read a mobile     *
+	   *  'O': Read an object    *
+	   *  'G': Give obj to mob   *
+	   *  'P': Put obj in obj    *
+	   *  'G': Obj to char       *
+	   *  'E': Obj to char equip *
+	   *  'D': Set state of door *
+	 */
+};
 
 /* zone definition structure. for the 'zone-table'   */
-struct zone_data
-  {
-    char *name;			/* name of this zone                  */
-    char *filename;		/* zone file name                                         */
-    int lifespan;		/* how long between resets (minutes)  */
-    int age;			/* current age of this zone (minutes) */
-    int top;			/* upper limit for rooms in this zone */
+struct zone_data {
+	char *name;		/* name of this zone                  */
+	char *filename;		/* zone file name                                         */
+	int lifespan;		/* how long between resets (minutes)  */
+	int age;		/* current age of this zone (minutes) */
+	int top;		/* upper limit for rooms in this zone */
 
-    int reset_mode;		/* conditions for reset (see below)   */
-    struct reset_com *cmd;	/* command table for reset                */
+	int reset_mode;		/* conditions for reset (see below)   */
+	struct reset_com *cmd;	/* command table for reset                */
 
-    /*
-       *  Reset mode:                              *
-       *  0: Don't reset, and don't update age.    *
-       *  1: Reset if no PC's are located in zone. *
-       *  2: Just reset.                           *
-     */
-  };
-
-
-
+	/*
+	   *  Reset mode:                              *
+	   *  0: Don't reset, and don't update age.    *
+	   *  1: Reset if no PC's are located in zone. *
+	   *  2: Just reset.                           *
+	 */
+};
 
 /* element in monster and object index-tables   */
-struct index_data
-  {
-    int virtual;		/* virtual number of this mob/obj           */
-    long pos;			/* file position of this field              */
-    int number;			/* number of existing units of this mob/obj     */
-    int (*func) ();		/* special procedure for this mob/obj       */
-  };
+struct index_data {
+	int virtual;		/* virtual number of this mob/obj           */
+	long pos;		/* file position of this field              */
+	int number;		/* number of existing units of this mob/obj     */
+	int (*func) ();		/* special procedure for this mob/obj       */
+};
 
 /* move to db2.h 
 // for queueing zones for update  
@@ -150,8 +139,6 @@ struct reset_q_element
 	struct reset_q_element *next;	
 };
 
-
-
 // structure for the update queue     
 struct reset_q_type
 {
@@ -160,16 +147,12 @@ struct reset_q_type
 } reset_q;
 */
 
+struct player_index_element {
+	char *name;
+	int nr;
+};
 
-struct player_index_element
-  {
-    char *name;
-    int nr;
-  };
-
-
-struct help_index_element
-  {
-    char *keyword;
-    long pos;
-  };
+struct help_index_element {
+	char *keyword;
+	long pos;
+};

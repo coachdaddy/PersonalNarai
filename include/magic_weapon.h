@@ -1,3 +1,4 @@
+
 /*  Define for magic weapon */
 #define WEAPON_SMASH 1
 #define WEAPON_FLAME 2
@@ -25,23 +26,23 @@
 #define WEAPON_MAGIC_MISSILE 21
 #define	WEAPON_ANY_MAGIC 1000
 
-void magic_weapon_hit (struct char_data *ch, struct char_data *victim,
-		       struct obj_data *weapon);
-void sweapon_smash (struct char_data *ch, struct char_data *victim,
-		    struct obj_data *weapon);
-void sweapon_flame (struct char_data *ch, struct char_data *victim,
-		    struct obj_data *weapon);
-void sweapon_ice (struct char_data *ch, struct char_data *victim,
-		  struct obj_data *weapon);
-void sweapon_bombard (struct char_data *ch, struct char_data *victim,
+void magic_weapon_hit(struct char_data *ch, struct char_data *victim,
 		      struct obj_data *weapon);
-void sweapon_shot (struct char_data *ch, struct char_data *victim,
+void sweapon_smash(struct char_data *ch, struct char_data *victim,
 		   struct obj_data *weapon);
-void sweapon_dragon_slayer (struct char_data *ch, struct char_data *victim,
-			    struct obj_data *weapon);
-void sweapon_anti_good (struct char_data *ch, struct char_data *victim,
-			struct obj_data *weapon);
-void sweapon_anti_evil (struct char_data *ch, struct char_data *victim,
-			struct obj_data *weapon);
-void sweapon_god (struct char_data *ch, struct char_data *victim,
+void sweapon_flame(struct char_data *ch, struct char_data *victim,
+		   struct obj_data *weapon);
+void sweapon_ice(struct char_data *ch, struct char_data *victim,
+		 struct obj_data *weapon);
+void sweapon_bombard(struct char_data *ch, struct char_data *victim,
+		     struct obj_data *weapon);
+void sweapon_shot(struct char_data *ch, struct char_data *victim,
 		  struct obj_data *weapon);
+void sweapon_dragon_slayer(struct char_data *ch, struct char_data *victim,
+			   struct obj_data *weapon);
+void sweapon_anti_good(struct char_data *ch, struct char_data *victim,
+		       struct obj_data *weapon);
+void sweapon_anti_evil(struct char_data *ch, struct char_data *victim,
+		       struct obj_data *weapon);
+void sweapon_god(struct char_data *ch, struct char_data *victim,
+		 struct obj_data *weapon);

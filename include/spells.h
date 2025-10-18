@@ -143,14 +143,8 @@
 #define TYPE_STING                   157	/* NO MESSAGES WRITTEN YET! */
 #define TYPE_CRUSH                   158	/* NO MESSAGES WRITTEN YET! */
 
-
-
 #define TYPE_SUFFERING               200
 /* More anything but spells and weapontypes can be insterted here! */
-
-
-
-
 
 #define MAX_TYPES 70
 
@@ -160,9 +154,7 @@
 #define SAVING_BREATH 3
 #define SAVING_SPELL  4
 
-
 #define MAX_SPL_LIST 200
-
 
 #define TAR_IGNORE        1
 #define TAR_CHAR_ROOM     2
@@ -177,20 +169,20 @@
 #define TAR_OBJ_EQUIP  1024
 #define TAR_CHAR_ZONE  2048
 
-struct spell_info_type
-  {
-    void (*spell_pointer) (byte level, struct char_data * ch, char *arg, int type,
-			   struct char_data * tar_ch, struct obj_data * tar_obj);
+struct spell_info_type {
+	void (*spell_pointer) (byte level, struct char_data * ch, char *arg,
+			       int type,
+			       struct char_data * tar_ch, struct obj_data * tar_obj);
 /* cyb
   void (*spell_pointer) ();
  */
-    byte minimum_position;	/* Position for caster              */
-    ubyte min_usesmana;		/* Amount of mana used by a spell   */
-    byte beats;			/* Heartbeats until ready for next */
-    byte min_level[4];
-    byte max_skill[4];
-    int targets;		/* See below for use with TAR_XXX  */
-  };
+	byte minimum_position;	/* Position for caster              */
+	ubyte min_usesmana;	/* Amount of mana used by a spell   */
+	byte beats;		/* Heartbeats until ready for next */
+	byte min_level[4];
+	byte max_skill[4];
+	int targets;		/* See below for use with TAR_XXX  */
+};
 
 /* Possible Targets:
 
@@ -213,11 +205,9 @@ struct spell_info_type
 #define SPELL_TYPE_STAFF   3
 #define SPELL_TYPE_SCROLL  4
 
-
 /* Attacktypes with grammar */
 
-struct attack_hit_type
-  {
-    char *singular;
-    char *plural;
-  };
+struct attack_hit_type {
+	char *singular;
+	char *plural;
+};

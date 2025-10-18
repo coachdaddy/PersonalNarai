@@ -4,45 +4,41 @@
 
 #include "structs.h"
 
-int
-main ()
+int main()
 {
-  struct char_file_u st;
-  char name[20];
-  long offset;
-  FILE *FL;
+	struct char_file_u st;
+	char name[20];
+	long offset;
+	FILE *FL;
 
-  if (!(FL = fopen ("players", "r+")))
-    {
-      printf ("Error open 'players' file\n");
-      exit (-1);
-    }
-
-  printf ("Name? ");
-  scanf ("%s", name);
-
-  printf ("%s's quest mob is initialized.\n", name);
-
-  while (1)
-    {
-      fread (&st, sizeof (struct char_file_u), 1, FL);
-      if (strcmp (name, st.name) == 0)
-	{
-	  printf ("found\n");
-
-	  printf ("Reset\n");
-	  st.quest.solved -= 0;
-      st.quest.type = 0;
-
-	  offset = ftell (FL);
-	  offset -= sizeof (struct char_file_u);
-	  rewind (FL);
-	  fseek (FL, offset, 0);
-	  fwrite (&st, sizeof (struct char_file_u), 1, FL);
-	  printf ("successful\n");
-
-	  break;
+	if (!(FL = fopen("players", "r+"))) {
+		printf("Error open 'players' file\n");
+		exit(-1);
 	}
-    }
-  fclose (FL);
+
+	printf("Name? ");
+	scanf("%s", name);
+
+	printf("%s's quest mob is initialized.\n", name);
+
+	while (1) {
+		fread(&st, sizeof(struct char_file_u), 1, FL);
+		if (strcmp(name, st.name) == 0) {
+			printf("found\n");
+
+			printf("Reset\n");
+			st.quest.solved -= 0;
+			st.quest.type = 0;
+
+			offset = ftell(FL);
+			offset -= sizeof(struct char_file_u);
+			rewind(FL);
+			fseek(FL, offset, 0);
+			fwrite(&st, sizeof(struct char_file_u), 1, FL);
+			printf("successful\n");
+
+			break;
+		}
+	}
+	fclose(FL);
 }

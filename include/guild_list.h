@@ -1,6 +1,4 @@
 
-
-
 /*
 guild_list.h
 made by Process

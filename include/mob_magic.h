@@ -1,5 +1,4 @@
 
-
 /*
    mob_magic.h
    this file is for mob's efficient attact..

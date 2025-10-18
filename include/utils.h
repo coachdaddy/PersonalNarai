@@ -1,3 +1,4 @@
+
 /* ************************************************************************
 *  file: utils.h, Utility module.                         Part of DIKUMUD *
 *  Usage: Utility macros                                                  *
@@ -27,14 +28,14 @@
 
 // To avoid name conflict with built-in log(x) function
 #define log(s) mudlog(s)
-extern void log (char *str);
+extern void log(char *str);
 
 // Don't use NULL pointer for null character ('\0')
 #define NUL '\0'
 
 #define CARRY_WEIGHT_BASE	500
 
-long int hit_limit (struct char_data *ch);
+long int hit_limit(struct char_data *ch);
 
 #define TRUE  1
 
@@ -55,7 +56,6 @@ long int hit_limit (struct char_data *ch);
 #define IF_STR(st) ((st) ? (st) : "\0")
 
 #define CAP(st)  (*(st) = UPPER(*(st)))
-
 
 // Removed +1 kuldge
 #define CREATE(result, type, number)  do {\
@@ -190,9 +190,6 @@ long int hit_limit (struct char_data *ch);
 
 #define WAIT_STATE(ch, cycle)  ((ch)->desc ? (ch)->desc->wait = (cycle) : 0)
 
-
-
-
 /* Object And Carry related macros */
 
 #define X98(sub, obj)                                    \
@@ -226,8 +223,6 @@ long int hit_limit (struct char_data *ch);
     CAN_SEE_OBJ((ch),(obj)))
 
 #define IS_OBJ_STAT(obj,stat) (IS_SET((obj)->obj_flags.extra_flags,stat))
-
-
 
 /* char name/short_desc(for mobs) or someone?  */
 
@@ -270,7 +265,7 @@ long int hit_limit (struct char_data *ch);
 #define GET_SKILLED(ch, sk_no)		((ch)->skills[(int)(sk_no)].skilled)
 
 /* defined in utility.c */
-void print_increased_skilled (struct char_data *ch, int sk_no);
+void print_increased_skilled(struct char_data *ch, int sk_no);
 
 /* max skilled = 100 */
 
