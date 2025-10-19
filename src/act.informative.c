@@ -884,9 +884,23 @@ void do_exits(struct char_data *ch, char *argument, int cmd)
 						world[EXIT(ch, door)->to_room].name);
 				} else {
 					sprintf(buf + strlen(buf),
-						"%s - %s [%5d] \n\r", exits[door],
+						"%-5s - %s [%5d] \n\r", exits[door],
 						world[EXIT(ch, door)->to_room].name,
 						world[EXIT(ch, door)->to_room].number);
+				}
+			} else if (EXIT(ch, door)->to_room != NOWHERE &&
+			    IS_SET(EXIT(ch, door)->exit_info, EX_CLOSED)) {
+				if (GET_LEVEL(ch) >= IMO) {
+					sprintf(buf + strlen(buf),
+						"(%-5s) - [%5d] %s\r\n",
+						exits[door], world[EXIT(ch,
+								   door)->to_room].number,
+						world[EXIT(ch, door)->to_room].name);
+				} else {
+					sprintf(buf + strlen(buf),
+						"(%-5s) - %s [%5d] \n\r", exits[door],
+						world[EXIT(ch, door)->to_room].name,
+						world[EXIT(ch, door)->to_room].number); 
 				}
 			} else if (IS_DARK(EXIT(ch, door)->to_room) && !OMNI(ch)) {
 				sprintf(buf + strlen(buf),
