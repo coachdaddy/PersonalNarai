@@ -168,9 +168,9 @@
 5016 25 nomad guard
 6517 25 giant snake
 2913 26 yeti white
-19011 10 auto keeper
-19012 18 door keeper
-19007 15 takari
+30011 10 auto keeper
+30012 18 door keeper
+30007 15 takari
 2241 27 dragon phase
 2543 27 President Unpopular
 3154 27 undercover cop
@@ -225,7 +225,13 @@
 5105 31 drow master
 9709 31 hercules
 9711 31 orion
-19028 32 controller
+2107 25 Stheno gorgon
+2108 25 Euryale gorgon
+2109 25 Medusa gorgon
+2114 26 Aeacus
+2115 26 Radamanthus
+2116 26 Minos
+30028 32 controller
 1912 32 king zyekian kalek
 2916 32 guard minotaur
 4205 32 shaithis wamphyri
@@ -242,8 +248,8 @@
 9723 32 scorpio zodiac
 9725 32 capricon zodiac
 9726 32 aquarius zodiac
-19016 33 poor nimpus
-19025 33 cashmon
+30016 33 poor nimpus
+30025 33 cashmon
 2119 33 Proserpina
 4203 33 dweller
 4204 33 dramal doombody wamphyri
@@ -255,24 +261,28 @@
 9729 33 bear ursa major
 9730 33 cassiopeia queen
 9731 33 cepheus king
-2107 25 Stheno gorgon
-2108 25 Euryale gorgon
-2109 25 Medusa gorgon
-2114 26 Aeacus
-2115 26 Radamanthus
-2116 26 Minos
 3071 34 furniture throne
 5107 34 drow matron 2nd mother
 5108 34 drow matron 1st mother
 5127 34 drow matron 3rd mother
 5137 34 drow matron 4th mother
 6007 34 jim lumberjack
-19014 25 takari surin
-19021 25 massmon
-19024 26 super model
-19022 27 velomon
-19023 27 accelemon
-19027 31 satteleton
+30014 25 takari surin
+30021 25 massmon
+30024 26 super model
+30022 27 velomon
+30023 27 accelemon
+30027 31 satteleton
+30014 25 takari surin
+30021 25 massmon
+30024 26 super model
+30022 27 velomon
+30023 27 accelemon
+30027 31 satteleton
+9516 28 micro quadruplets quadruplet
+9517 28 mili quadruplets quadruplet
+9518 28 mega quadruplets quadruplet
+9519 28 giga quadruplets quadruplet
 9516 28 micro quadruplets quadruplet
 9517 28 mili quadruplets quadruplet
 9518 28 mega quadruplets quadruplet
@@ -286,7 +296,7 @@
 16011 35 statue sadang
 17008 35 general taesaza
 17028 35 jumo
-19029 35 proffesor kim
+30029 35 proffesor kim
 1991 35 gate keeper gatekeeper
 2204 35 cleric draconian
 2304 35 wraith
@@ -298,11 +308,23 @@
 2919 35 minotaur high guard
 3134 35 bombard
 5010 35 dracolich
+2900 35 knight ethereal dark
+2904 35 weeping willow tree
+2911 35 chief chieftain ogre
+2918 35 minotaur gatekeeper
+2919 35 minotaur high guard
+3134 35 bombard
+5010 35 dracolich
 6516 35 mazekeeper
 9503 35 captain hook
 9532 35 ddal daughter
 15083 36 lsi robot
-19030 36 doctor park
+30030 36 doctor park
+6516 35 mazekeeper
+9503 35 captain hook
+9532 35 ddal daughter
+15083 36 lsi robot
+30030 36 doctor park
 2207 36 bodyguard draconian
 2307 36 shadow dragon
 2308 36 dark stalker
@@ -318,10 +340,28 @@
 16012 37 jwaja
 17004 37 mosa jooyu
 17005 37 general yukson
+2920 36 minotaur royal guard
+3072 36 grand mage archmage guildmaster
+9531 36 son adle second
+9522 35 learned sura
+1465 37 roy slade
+15035 37 factory gate robot
+15082 37 vlsi robot
+15110 37 factory captain robot
+15224 37 proton robot
+16012 37 jwaja
+17004 37 mosa jooyu
+17005 37 general yukson
 17006 37 general yeomong
 17007 37 general gamnyung
-19031 37 ph doctor
-19035 37 breadboard
+30031 37 ph doctor
+30035 37 breadboard
+2226 37 hydra
+2314 37 githyanki lord
+17006 37 general yeomong
+17007 37 general gamnyung
+30031 37 ph doctor
+30035 37 breadboard
 2226 37 hydra
 2314 37 githyanki lord
 15092 38 sick robot
@@ -330,13 +370,27 @@
 15226 38 human nipporica
 16007 38 general junwee
 17010 38 woogil sunin
-19010 38 professor lee
-19018 38 lover of id queen
-19019 38 electrical queen
-19032 38 computer
-19033 38 wave
-19034 38 phonemon
-19036 38 phase lag
+30010 38 professor lee
+30018 38 lover of id queen
+30019 38 electrical queen
+30032 38 computer
+30033 38 wave
+30034 38 phonemon
+30036 38 phase lag
+15092 38 sick robot
+15104 38 factory president robot
+15225 38 quantum robot
+15226 38 human nipporica
+16007 38 general junwee
+17010 38 woogil sunin
+30010 38 professor lee
+30018 38 lover of id queen
+30019 38 electrical queen
+2203 38 mage wizard
+2817 38 general jangbi
+2921 38 guard minotaur elite
+9530 38 son adle first
+9804 38 imperial vice admiral
 2203 38 mage wizard
 2817 38 general jangbi
 2921 38 guard minotaur elite
@@ -352,6 +406,25 @@
 16005 39 mosa seoseo
 16006 39 general jangryo
 16008 39 general huju
+11133 38 jygek dangju 지객당주 당주
+11134 38 geyul wonju 계율원주 원주
+15012 39 pentium computer
+15099 39 head robocop
+15126 39 bar magnet
+15168 39 super robocop
+16003 39 mosa samaui
+16005 39 mosa seoseo
+16006 39 general jangryo
+16008 39 general huju
+2221 39 dragon red
+2222 39 dragon black
+2223 39 dragon white
+2225 39 dragon green
+2315 39 githyanki warlock
+2316 39 githyanki priest
+9562 39 yuria
+9805 39 trash monster
+9806 39 imperial admiral
 2221 39 dragon red
 2222 39 dragon black
 2223 39 dragon white
@@ -374,6 +447,17 @@
 17003 40 general jutae
 17009 40 ghost king sonkyun
 18016 40 guard mudang
+15208 36 first husband
+15217 36 second husband
+15221 36 third husband
+2925 40 gorak minotaur warrior master
+2926 40 darkoth minotaur anti-paladin master
+2927 40 tyrgoth minotaur paladin master
+2928 40 amyrok minotaur mage master
+2929 40 sumaron minotaur cleric master
+2930 40 nasturn minotaur druid master
+2931 40 belrak minotaur ranger master
+2932 40 dorgar minotaur thief master
 2000 40 fighter
 2001 40 paladin
 2002 40 cleric
@@ -397,6 +481,24 @@
 2931 40 belrak minotaur ranger master
 2932 40 dorgar minotaur thief master
 3126 40 Massacre
+3135 40 super deathcure
+3145 40 mom
+4201 40 harry keogh
+5109 40 yochlol
+9509 40 laiger
+9527 40 geron najang
+9526 40 hyobik najang
+9529 40 brop
+9538 40 dragon platinum
+9801 40 imperial cruiser
+2552 41 chairman boss
+2553 41 babe
+1305 41 dragon white
+1305 41 dragon white
+9563 40 horse black king
+2120 40 Hades King
+30017 40 queen designer
+2120 40 Hades King
 3127 40 extremely hard
 3128 40 hit hard
 3129 40 hit
@@ -419,9 +521,9 @@
 1305 41 dragon white
 9563 40 horse black king
 2120 40 Hades King
-19017 40 queen designer
+30017 40 queen designer
 2120 40 Hades King
-19017 40 queen designer
+30017 40 queen designer
 18010 40 2nd apprenciate mudang SongCheongSeo
 18001 40 1st knight SongWonKyo
 18010 40 2nd apprenciate mudang SongCheongSeo
@@ -470,10 +572,10 @@
 17001 41 king sonkwun
 16001 41 king chocho
 17001 41 king sonkwun
-19039 41 Electrical king
-19039 41 Electrical king
-19039 41 Electrical king
-19039 41 Electrical king
+30039 41 Electrical king
+30039 41 Electrical king
+30039 41 Electrical king
+30039 41 Electrical king
 2220 41 tiamat dragon
 2317 41 loftwick lich
 2220 41 tiamat dragon

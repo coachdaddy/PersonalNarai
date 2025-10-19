@@ -209,15 +209,16 @@ int get_quest(struct char_data *ch)
 {
 	static int width[8] =
 	{
-		0,		/* 0 */ /* 10 level */
-		88,		/* 10 */ /* 4215 16 boris */
+		0,			/* 0 */ /* 10 level */
+		88,			/* 10 */ /* 4215 16 boris */
 		130,		/* 20 */ /* 9727 20 pisces */
-		159,		/* 30 */ /* 1700 25 elven wizard */
-		188,		/* 40 */ /* 9708 28 andromeda */
-		233,		/* 50 */ /* 9014 32 arachnos */
-		304,		/* 60 */ /* 15083 36 lsi robot */
+		222,		/* 30 */ /* 15009 31 mine robocop */
+		251,		/* 33 */ /* 30016 33 poor nimpus */
+		347,		/* 37 */ /* 1465 37 roy slade */
+		437,		/* 40 */ /* 15117 40 super magnet */
+		526,		/* 60 */ /* 18010 40 2nd apprenciate mudang SongCheongSeo */
 	};
-#define END_QUEST_MOBILE 551
+#define END_QUEST_MOBILE 654
 
 	int low, high;
 	int t;
@@ -227,14 +228,14 @@ int get_quest(struct char_data *ch)
 		low = 345;	/* 15012 39 pentium computer */
 		high = END_QUEST_MOBILE;
 	} else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) {
-		low = 314;	/* 15012 35 factory gate robot */
-		high = 422;	/* 19017 40 queen designer */
+		low = 347;	/* 15012 35 factory gate robot */
+		high = 437;	/* 19017 40 queen designer */
 	} else if (GET_LEVEL(ch) > 49 && GET_LEVEL(ch) < 60) {
-		low = 341;	/* 2817 38 general jangbi */
-		high = 505;	/* 11127 41 ju palge */
-	} else if (ch->quest.solved >= 60) {
-		low = 280;	/* 9536 34 trainer sura */
-		high = 344;	/* 9804 38 imperial vice admiral */
+		low = 367;	/* 15092 38 sick robot */
+		high = 550;	/* 1990 41 brontosaurus bronto */
+	} else if (ch->quest.solved >= 70) {
+		low = 448;	/* 15221 36 third husband */
+		high = 550;	/* 1990 41 brontosaurus bronto */
 	} else {
 		t = ch->quest.solved / 10;
 		low = width[t];
