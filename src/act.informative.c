@@ -745,6 +745,7 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 				if (!IS_SET(ch->specials.act, PLR_BRIEF))
 					send_to_char(world[ch->in_room].description, ch);
 				sprintf(buffer, "[ EXITS : ");
+				/*
 				if (EXIT(ch, 0))
 					strcat(buffer, "N ");
 				if (EXIT(ch, 1))
@@ -757,6 +758,19 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 					strcat(buffer, "U ");
 				if (EXIT(ch, 5))
 					strcat(buffer, "D ");
+					*/
+				if (EXIT(ch, 0)) 
+						IS_SET(EXIT(ch, 0)->exit_info, EX_CLOSED) ? strcat(buffer, "(N) ") : strcat(buffer, "N ");
+			   	if (EXIT(ch, 1)) 
+						IS_SET(EXIT(ch, 1)->exit_info, EX_CLOSED) ? strcat(buffer, "(E) ") : strcat(buffer, "E "); 
+				if (EXIT(ch, 2)) 
+						IS_SET(EXIT(ch, 2)->exit_info, EX_CLOSED) ? strcat(buffer, "(S) ") : strcat(buffer, "S "); 
+				if (EXIT(ch, 3)) 
+						IS_SET(EXIT(ch, 3)->exit_info, EX_CLOSED) ? strcat(buffer, "(W) ") : strcat(buffer, "W "); 
+				if (EXIT(ch, 4)) 
+						IS_SET(EXIT(ch, 4)->exit_info, EX_CLOSED) ? strcat(buffer, "(U) ") : strcat(buffer, "U "); 
+				if (EXIT(ch, 5)) 
+						IS_SET(EXIT(ch, 5)->exit_info, EX_CLOSED) ? strcat(buffer, "(D) ") : strcat(buffer, "D ");
 				strcat(buffer, " ]\n\r");
 				send_to_char(buffer, ch);
 				list_obj_to_char(world[ch->in_room].contents,
@@ -872,45 +886,26 @@ void do_exits(struct char_data *ch, char *argument, int cmd)
 	};
 
 	*buf = '\0';
-	for (door = 0; door <= 5; door++) {
-		if (EXIT(ch, door)) {
-			if (EXIT(ch, door)->to_room != NOWHERE &&
-			    !IS_SET(EXIT(ch, door)->exit_info, EX_CLOSED)) {
-				if (GET_LEVEL(ch) >= IMO) {
-					sprintf(buf + strlen(buf),
-						"%-5s - [%5d] %s\r\n",
-						exits[door], world[EXIT(ch,
-								   door)->to_room].number,
-						world[EXIT(ch, door)->to_room].name);
-				} else {
-					sprintf(buf + strlen(buf),
-						"%-5s - %s [%5d] \n\r", exits[door],
-						world[EXIT(ch, door)->to_room].name,
-						world[EXIT(ch, door)->to_room].number);
-				}
-			} else if (EXIT(ch, door)->to_room != NOWHERE &&
-			    IS_SET(EXIT(ch, door)->exit_info, EX_CLOSED)) {
-				if (GET_LEVEL(ch) >= IMO) {
-					sprintf(buf + strlen(buf),
-						"(%-5s) - [%5d] %s\r\n",
-						exits[door], world[EXIT(ch,
-								   door)->to_room].number,
-						world[EXIT(ch, door)->to_room].name);
-				} else {
-					sprintf(buf + strlen(buf),
-						"(%-5s) - %s [%5d] \n\r", exits[door],
-						world[EXIT(ch, door)->to_room].name,
-						world[EXIT(ch, door)->to_room].number); 
-				}
-			} else if (IS_DARK(EXIT(ch, door)->to_room) && !OMNI(ch)) {
-				sprintf(buf + strlen(buf),
-					"%s - Too dark to tell\n\r", exits[door]);
-			} else {
-				sprintf(buf + strlen(buf), "%s - %s\n\r",
-					exits[door],
-					world[EXIT(ch, door)->to_room].name);
-			}
-		}
+	for (door = 0; door <= 5; door++) { 
+			/* EXIT exist && not CLOSED */ 
+			if (EXIT(ch, door) && !IS_SET(EXIT(ch, door)->exit_info, EX_CLOSED)) { 
+				/* not NOWHERE */ 
+				if (EXIT(ch, door)->to_room != NOWHERE) { 
+					if (GET_LEVEL(ch) >= IMO) 
+						sprintf(buf + strlen(buf), "%-5s - [%5d] %s\r\n", exits[door], world[EXIT(ch, door)->to_room].number, world[EXIT(ch, door)->to_room].name); 
+					else 
+						sprintf(buf + strlen(buf), "%s - %s\r\n", exits[door], world[EXIT(ch, door)->to_room].name); 
+				/* NOWHERE */ 
+				} else if (EXIT(ch, door)->to_room == NOWHERE) { 
+						sprintf(buf + strlen(buf), "%s - Too dark to tell\r\n", exits[door]); 
+				/* DARK && not IMO */ 
+				} else if (IS_DARK(EXIT(ch, door)->to_room) && !OMNI(ch)) { 
+						sprintf(buf + strlen(buf), "%s - Too dark to tell\r\n", exits[door]); 
+						/* OTHERWISE */ 
+				} else { 
+						sprintf(buf + strlen(buf), "%s - %s\r\n", exits[door], world[EXIT(ch, door)->to_room].name); 
+				} 
+			} 
 	}
 
 	send_to_char_han("Obvious exits:\n\r", "명백한 출구는:\n\r", ch);
