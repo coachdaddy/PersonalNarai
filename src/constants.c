@@ -581,7 +581,7 @@ struct title_type titles[4][IMO + 4] =
 		{"the Adventurer for Dangun", "the Adventurer for Dangun", 290000000},
 		{"the Dangun", "the Dangun", 325000000},	/* 40 */
 		{"the Dangun", "the Dangun", 355000000},
-		{"the Dangun", "the Dangun", 3850000000},
+		{"the Dangun", "the Dangun", 385000000},
 		{"the Dangun", "the Dangun", 415000000},
 		{"the Dangun", "the Dangun", 445000000},
 		{"the Dangun", "the Dangun", 475000000},
