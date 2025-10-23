@@ -218,24 +218,24 @@ int get_quest(struct char_data *ch)
 		437,		/* 40 */ /* 15117 40 super magnet */
 		526,		/* 60 */ /* 18010 40 2nd apprenciate mudang SongCheongSeo */
 	};
-#define END_QUEST_MOBILE 654
+#define END_QUEST_MOBILE 635
 
 	int low, high;
 	int t;
 	int num;
 
 	if (GET_LEVEL(ch) == 60) {
-		low = 345;	/* 15012 39 pentium computer */
+		low = 345;	/* 9531 36 son adle second */
 		high = END_QUEST_MOBILE;
 	} else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) {
-		low = 347;	/* 15012 35 factory gate robot */
-		high = 437;	/* 19017 40 queen designer */
+		low = 347;	/* 1465 37 roy slade	*/
+		high = 437;	/* 15117 40 super magnet	*/
 	} else if (GET_LEVEL(ch) > 49 && GET_LEVEL(ch) < 60) {
 		low = 367;	/* 15092 38 sick robot */
-		high = 550;	/* 1990 41 brontosaurus bronto */
+		high = 539;	/* 13784 41 zeus god	*/
 	} else if (ch->quest.solved >= 70) {
-		low = 448;	/* 15221 36 third husband */
-		high = 550;	/* 1990 41 brontosaurus bronto */
+		low = 448;	/* 2928 40 amyrok minotaur mage master */
+		high = 528;	/* 1990 41 brontosaurus bronto		*/
 	} else {
 		t = ch->quest.solved / 10;
 		low = width[t];

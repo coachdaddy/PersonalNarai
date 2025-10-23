@@ -398,6 +398,8 @@
 9804 38 imperial vice admiral
 11133 38 jygek dangju 지객당주 당주
 11134 38 geyul wonju 계율원주 원주
+11133 38 jygek dangju 지객당주 당주
+11134 38 geyul wonju 계율원주 원주
 15012 39 pentium computer
 15099 39 head robocop
 15126 39 bar magnet
@@ -406,8 +408,6 @@
 16005 39 mosa seoseo
 16006 39 general jangryo
 16008 39 general huju
-11133 38 jygek dangju 지객당주 당주
-11134 38 geyul wonju 계율원주 원주
 15012 39 pentium computer
 15099 39 head robocop
 15126 39 bar magnet
@@ -435,9 +435,6 @@
 9805 39 trash monster
 9806 39 imperial admiral
 15117 40 super magnet
-15208 36 first husband
-15217 36 second husband
-15221 36 third husband
 15193 40 robot zzanga
 9508 40 sura zizon
 15194 40 robot grandiser
@@ -445,11 +442,6 @@
 16004 40 general hawoodon
 17002 40 blue dragon
 17003 40 general jutae
-17009 40 ghost king sonkyun
-18016 40 guard mudang
-15208 36 first husband
-15217 36 second husband
-15221 36 third husband
 2925 40 gorak minotaur warrior master
 2926 40 darkoth minotaur anti-paladin master
 2927 40 tyrgoth minotaur paladin master
@@ -458,6 +450,13 @@
 2930 40 nasturn minotaur druid master
 2931 40 belrak minotaur ranger master
 2932 40 dorgar minotaur thief master
+17009 40 ghost king sonkyun
+15208 36 first husband
+15217 36 second husband
+15221 36 third husband
+15208 36 first husband
+15217 36 second husband
+15221 36 third husband
 2000 40 fighter
 2001 40 paladin
 2002 40 cleric
@@ -481,7 +480,6 @@
 2931 40 belrak minotaur ranger master
 2932 40 dorgar minotaur thief master
 3126 40 Massacre
-3135 40 super deathcure
 3145 40 mom
 4201 40 harry keogh
 5109 40 yochlol
@@ -510,40 +508,20 @@
 4201 40 harry keogh
 5109 40 yochlol
 9509 40 laiger
+9529 40 brop
 9527 40 geron najang
 9526 40 hyobik najang
-9529 40 brop
 9538 40 dragon platinum
 9801 40 imperial cruiser
+30017 40 queen designer
+30017 40 queen designer
 2552 41 chairman boss
 2553 41 babe
 1305 41 dragon white
 1305 41 dragon white
-9563 40 horse black king
+18016 40 guard mudang
 2120 40 Hades King
-30017 40 queen designer
 2120 40 Hades King
-30017 40 queen designer
-18010 40 2nd apprenciate mudang SongCheongSeo
-18001 40 1st knight SongWonKyo
-18010 40 2nd apprenciate mudang SongCheongSeo
-18001 40 1st knight SongWonKyo
-18002 40 2rd knight YuYeonJu
-18003 40 3nd knight YuDaeAm
-18002 40 2rd knight YuYeonJu
-18003 40 3nd knight YuDaeAm
-18004 40 4th knight JangSongGye
-18005 40 5th knight JangChwiSan
-18004 40 4th knight JangSongGye
-18005 40 5th knight JangChwiSan
-18006 40 6th knight EunYiJeong
-18007 40 7th knight MakSeongGok
-18006 40 6th knight EunYiJeong
-18007 40 7th knight MakSeongGok
-18008 39 wife EunSoSo
-18009 39 ghost GiHyoBu
-18008 39 wife EunSoSo
-18009 39 ghost GiHyoBu
 16009 41 boss yellow bandit jangkak
 16009 41 boss yellow bandit jangkak
 1990 41 brontosaurus bronto
@@ -559,6 +537,17 @@
 13797 40 hermes
 13784 41 zeus god
 13784 41 zeus god
+18010 40 2nd apprenciate mudang SongCheongSeo
+18001 40 1st knight SongWonKyo
+18002 40 2rd knight YuYeonJu
+18003 40 3nd knight YuDaeAm
+18003 40 3nd knight YuDaeAm
+18004 40 4th knight JangSongGye
+18005 40 5th knight JangChwiSan
+18006 40 6th knight EunYiJeong
+18007 40 7th knight MakSeongGok
+18008 39 wife EunSoSo
+18009 39 ghost GiHyoBu
 15129 41 cray computer
 15129 41 cray computer
 15129 41 cray computer
@@ -587,52 +576,44 @@
 2835 35 cleric hwata
 2834 41 king yubi
 2834 41 king yubi
-2924 41 keeper minotaur ring-keeper
 2834 41 king yubi
 2924 41 keeper minotaur ring-keeper
+2924 41 keeper minotaur ring-keeper
 2933 41 mahn-tor minotaur grand master
-4200 41 karen lady wamphyri
 2933 41 mahn-tor minotaur grand master
+9563 40 horse black king
+9563 40 horse black king
+4200 41 karen lady wamphyri
 4200 41 karen lady wamphyri
 7009 41 grand knight paladin
-4200 41 karen lady wamphyri
-7009 41 grand knight paladin
-4200 41 karen lady wamphyri
 7009 41 grand knight paladin
 9807 41 darth vader
-7009 41 grand knight paladin
 9807 41 darth vader
 9808 41 dark emperor
-9807 41 darth vader
-9808 41 dark emperor
-9807 41 darth vader
 9808 41 dark emperor
 11128 41 juji 주지 스님
-9808 41 dark emperor
+11128 41 juji 주지 스님
 11128 41 juji 주지 스님
 11126 41 sa ojung 사 오정 사오정
-11128 41 juji 주지 스님
+11126 41 sa ojung 사 오정 사오정
 11126 41 sa ojung 사 오정 사오정
 11127 41 ju palge 저 팔계 저팔계
-11126 41 sa ojung 사 오정 사오정
+11127 41 ju palge 저 팔계 저팔계
 11127 41 ju palge 저 팔계 저팔계
 15183 42 queen sharon
-11127 41 ju palge 저 팔계 저팔계
+15183 42 queen sharon
 15183 42 queen sharon
 9525 42 gaiot ruler najang
-15183 42 queen sharon
 9525 42 gaiot ruler najang
-15183 42 queen sharon
-23322 42 stone giant 바위 거인
 9525 42 gaiot ruler najang
 23322 42 stone giant 바위 거인
-9525 42 gaiot ruler najang
 23322 42 stone giant 바위 거인
+23322 42 stone giant 바위 거인
+23323 43 iron golem 아이런 고렘
+23323 43 iron golem 아이런 고렘
 23323 43 iron golem 아이런 고렘
 1305 43 dragon white   
-23323 43 iron golem 아이런 고렘
 1305 43 dragon white   
-23323 43 iron golem 아이런 고렘
 1305 43 dragon white   
 23326 43 first general baron 대장 바론
 23327 43 second general zudra 대장 쥬드라
