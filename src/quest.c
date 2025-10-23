@@ -41,7 +41,7 @@ int level_quest[IMO + 4] =
 	12, 13, 14, 15, 17, 19, 21, 23, 25, 27,		/* 30 */
 	29, 31, 33, 35, 37, 39, 41, 43, 45, 47,		/* 40 */
 	49, 51, 53, 55, 57, 59, 61, 63, 65, 67,		/* 50 */
-	69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99,		/* 60 */
+	69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 99,	/* 60 */
 	120, 130, 140
 };
 
@@ -53,144 +53,52 @@ static struct {
 	char *name;
 } zone_data[ZONE_NUMBER] = {
 
-	{
-		99, "the LIMBO"
-	},
-	{
-		299, "the East Castle"
-	},
-	{
-		1399, "the Mel's Dog-House"
-	},
-	{
-		1499, "the Houses"
-	},
-	{
-		1599, "Dirk's Castle"
-	},
-	{
-		1799, "SHIRE"
-	},
-	{
-		1899, "The Jale"
-	},
-	{
-		1999, "The Lands"
-	},
-	{
-		2099, "Process' Castle"
-	},
-	{
-		2199, "The Wasteland"
-	},
-	{
-		2300, "Dragon Tower"
-	},
-	{
-		2399, "Muncie"
-	},
-	{
-		2699, "The Corporation"
-	},
-	{
-		2799, "The NeverLand"
-	},
-	{
-		2899, "Kingdom Of Chok"
-	},
-	{
-		2999, "The Keep Of MahnTor"
-	},
-	{
-		3099, "Northern Midgaard MainCity"
-	},
-	{
-		3199, "Southern Part Of Midgaard"
-	},
-	{
-		3299, "River Of Midgaard"
-	},
-	{
-		3499, "Graveyard"
-	},
-	{
-		4199, "Moria"
-	},
-	{
-		4330, "The Wamphyri Aerie"
-	},
-	{
-		5099, "The Great Eastern Desert"
-	},
-	{
-		5199, "Drow City"
-	},
-	{
-		5299, "The City Of Thalos"
-	},
-	{
-		6099, "HAON DOR LIGHT"
-	},
-	{
-		6499, "HAON DOR DARK"
-	},
-	{
-		6999, "The Dwarven Kingdom"
-	},
-	{
-		7099, "SEWER"
-	},
-	{
-		7199, "Second SEWER"
-	},
-	{
-		7399, "SEWER MAZE"
-	},
-	{
-		7899, "The Tunnels"
-	},
-	{
-		7999, "Redfernes Residence"
-	},
-	{
-		9099, "Arachnos"
-	},
-	{
-		9499, "Arena"
-	},
-	{
-		9699, "Death Kingdom"
-	},
-	{
-		9771, "Galaxy"
-	},
-	{
-		9851, "The Death Star"
-	},
-	{
-		12099, "Easy Zone"
-	},
-	{
-		13798, "Mount Olympus"
-	},
-	{
-		15299, "Robot City"
-	},
-	{
-		16199, "Kingdom Of Wee"
-	},
-	{
-		17099, "O Kingdom"
-	},
-	{
-		18099, "Moo Dang"
-	},
-	{
-		25099, "Ami Dae Jon"
-	},
-	{
-		32099, "KAIST"
-	}
+	{ 99, "the LIMBO" },
+	{ 299, "the East Castle" },
+	{ 1399, "the Mel's Dog-House" },
+	{ 1499, "the Houses" },
+	{ 1599, "Dirk's Castle" },
+	{ 1799, "SHIRE" },
+	{ 1899, "The Jale" },
+	{ 1999, "The Lands" },
+	{ 2099, "Process' Castle" },
+	{ 2199, "The Wasteland" },
+	{ 2300, "Dragon Tower" },
+	{ 2399, "Muncie" },
+	{ 2699, "The Corporation" },
+	{ 2799, "The NeverLand" },
+	{ 2899, "Kingdom Of Chok" },
+	{ 2999, "The Keep Of MahnTor" },
+	{ 3099, "Northern Midgaard MainCity" },
+	{ 3199, "Southern Part Of Midgaard" },
+	{ 3299, "River Of Midgaard" },
+	{ 3499, "Graveyard" },
+	{ 4199, "Moria" },
+	{ 4330, "The Wamphyri Aerie" },
+	{ 5099, "The Great Eastern Desert" },
+	{ 5199, "Drow City" },
+	{ 5299, "The City Of Thalos" },
+	{ 6099, "HAON DOR LIGHT" },
+	{ 6499, "HAON DOR DARK" },
+	{ 6999, "The Dwarven Kingdom" },
+	{ 7099, "SEWER" },
+	{ 7199, "Second SEWER" },
+	{ 7399, "SEWER MAZE" },
+	{ 7899, "The Tunnels" },
+	{ 7999, "Redfernes Residence" },
+	{ 9099, "Arachnos" },
+	{ 9499, "Arena" },
+	{ 9699, "Death Kingdom" },
+	{ 9771, "Galaxy" },
+	{ 9851, "The Death Star" },
+	{ 11151, "Dae Rim Sa" },
+	{ 12099, "Easy Zone" },
+	{ 13798, "Mount Olympus" },
+	{ 15299, "Robot City" },
+	{ 16199, "Kingdom Of Wee" },
+	{ 17099, "O Kingdom" },
+	{ 18039, "Moo Dang" },
+	{ 30049, "KAIST" }
 };
 
 char *find_zone(int number)
@@ -209,8 +117,8 @@ int get_quest(struct char_data *ch)
 {
 	static int width[8] =
 	{
-		0,			/* 0 */ /* 10 level */
-		88,			/* 10 */ /* 4215 16 boris */
+		0,		/* 0 */ /* 10 level */
+		88,		/* 10 */ /* 4215 16 boris */
 		130,		/* 20 */ /* 9727 20 pisces */
 		222,		/* 30 */ /* 15009 31 mine robocop */
 		251,		/* 33 */ /* 30016 33 poor nimpus */
@@ -228,14 +136,14 @@ int get_quest(struct char_data *ch)
 		low = 345;	/* 9531 36 son adle second */
 		high = END_QUEST_MOBILE;
 	} else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) {
-		low = 347;	/* 1465 37 roy slade	*/
-		high = 437;	/* 15117 40 super magnet	*/
+		low = 347;	/* 1465 37 roy slade    */
+		high = 437;	/* 15117 40 super magnet        */
 	} else if (GET_LEVEL(ch) > 49 && GET_LEVEL(ch) < 60) {
 		low = 367;	/* 15092 38 sick robot */
-		high = 539;	/* 13784 41 zeus god	*/
+		high = 539;	/* 13784 41 zeus god    */
 	} else if (ch->quest.solved >= 70) {
 		low = 448;	/* 2928 40 amyrok minotaur mage master */
-		high = 528;	/* 1990 41 brontosaurus bronto		*/
+		high = 528;	/* 1990 41 brontosaurus bronto          */
 	} else {
 		t = ch->quest.solved / 10;
 		low = width[t];
@@ -584,8 +492,8 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 				    (ch->player.remortal >= 15))
 					send_to_char("You can't use that ticket .\n\r", ch);
 				else if
-					 (obj_index[tmp_obj->item_number].virtual
-					 == 7994) {
+					    (obj_index[tmp_obj->item_number].virtual
+					     == 7994) {
 					ch->quest.type = 0;
 					do_quest(ch, arg, 302);
 					extract_obj(tmp_obj);
@@ -612,7 +520,7 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 		switch (give_gift_for_quest(GET_LEVEL(ch))) {
 		case 1:	/* some gold */
 			GET_GOLD(ch) += number(100000, (500000 *
-					       GET_LEVEL(ch)) >> 2);
+							GET_LEVEL(ch)) >> 2);
 			send_to_char_han(
 						"QUEST : QM gives some coins for your success.\n\r",
 						"QUEST : 당신의 성공을 축하하며 QM이 돈을 줍니다.\n\r", ch);
@@ -683,7 +591,7 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 			obj->obj_flags.value[1] = number(GET_LEVEL(ch) / 2, GET_LEVEL
 							 (ch) / 10);
 			obj->obj_flags.value[2] = number(5 + (GET_LEVEL(ch) >>
-							 3), 5 +
+							      3), 5 +
 							 (GET_LEVEL(ch) >> 1));
 
 			/* weapon type */
