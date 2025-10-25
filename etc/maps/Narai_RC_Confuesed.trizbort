@@ -20,8 +20,8 @@
 		</line>
 		<room id="10" name="confused space" subtitle="#15185" x="-256" y="-448" w="128" h="96" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
 		<line id="11" name="" description="" flow="oneWay">
-			<dock index="0" id="5" port="e" />
-			<dock index="1" id="10" port="w" />
+			<dock index="0" id="5" port="ene" />
+			<dock index="1" id="10" port="wnw" />
 		</line>
 		<room id="12" name="confused space" subtitle="#15196" x="-448" y="-288" w="128" h="96" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
 		<line id="13" name="" description="" flow="oneWay">
@@ -43,7 +43,7 @@
 			<dock index="1" id="16" port="nne" />
 		</line>
 		<line id="18" name="" description="" flow="oneWay">
-			<dock index="0" id="10" port="e" />
+			<dock index="0" id="10" port="ese" />
 			<dock index="1" id="5" port="se" />
 		</line>
 		<line id="20" name="" description="" flow="oneWay">
@@ -425,7 +425,7 @@
 			<dock index="0" id="134" port="sse" />
 			<dock index="1" id="4" port="ese" />
 		</line>
-		<room id="130" name="royal road" subtitle="#15176" x="1312" y="192" w="128" h="96" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="no" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<room id="130" name="royal road" subtitle="#15176" x="1312" y="192" w="128" h="96" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="yes" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
 		<line id="131" name="" description="" flow="oneWay">
 			<dock index="0" id="124" port="e" />
 			<dock index="1" id="130" port="w" />
@@ -453,6 +453,11 @@
 		<line id="143" name="" description="" flow="oneWay">
 			<dock index="0" id="124" port="s" />
 			<dock index="1" id="100" port="ssw" />
+		</line>
+		<room id="144" name="The Temple of Midgarrd" subtitle="" x="-640" y="-288" w="128" h="96" region="NoRegion" handDrawn="no" allcornersequal="yes" ellipse="yes" roundedCorners="no" octagonal="no" cornerTopLeft="15" cornerTopRight="15" cornerBottomLeft="15" cornerBottomRight="15" borderstyle="Solid" description="" roomFill="" secondFill="" secondFillLocation="Bottom" roomBorder="" roomLargeText="" roomSubtitleColor="" roomSmallText="" ZOrder="0" />
+		<line id="145" name="" description="" flow="oneWay">
+			<dock index="0" id="10" port="wsw" />
+			<dock index="1" id="144" port="ne" />
 		</line>
 	</map>
 	<settings>
