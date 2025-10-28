@@ -31,6 +31,7 @@ struct {
 	int level;
 	char *name;
 } QM[MaxQuest];
+
 int topQM;
 
 int level_quest[IMO + 4] =
@@ -47,7 +48,7 @@ int level_quest[IMO + 4] =
 
 extern struct index_data *mob_index;
 
-#define ZONE_NUMBER 46
+#define ZONE_NUMBER 47
 static struct {
 	int number;
 	char *name;
@@ -98,6 +99,7 @@ static struct {
 	{ 16199, "Kingdom Of Wee" },
 	{ 17099, "O Kingdom" },
 	{ 18039, "Moo Dang" },
+	{ 23330, "Good Bad Island" },
 	{ 30049, "KAIST" }
 };
 
@@ -264,15 +266,26 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 	num = ch->quest.data;
 
 	zone = find_zone(QM[num].virtual);
+
+	if(strcspn( QM[num].name, "\n\r")) 
+	{
+		char buf[100];
+		strncpy(buf, QM[num].name, strlen(QM[num].name));
+		buf[strlen(QM[num].name)-1] = '\0';
+		strncpy(QM[num].name, buf, strlen(buf));
+
+		log("QUEST : zone name has newline");
+	}
+
 	if (!zone) {
 		sprintf(buf1, "QUEST : Where %s is, I don't know, either.\n",
 			QM[num].name);
-		sprintf(buf2,
-			"QUEST : %s? 어디 있는 걸까? 모르겠는데...\n",
+		sprintf(buf2, "QUEST : %s? 어디 있는 걸까? 모르겠는데...\n",
 			QM[num].name);
 		log("QUEST : INVALID mobile");
 	} else {
-		sprintf(buf1, "QUEST : %s is in %s probably.\n", QM[num].name, zone);
+		sprintf(buf1, "QUEST : %s is in %s probably.\n", 
+			QM[num].name, zone);
 		sprintf(buf2, "QUEST : 아마도 %s는 %s에 있을 걸요.\n",
 			QM[num].name, zone);
 	}
@@ -302,8 +315,7 @@ void do_quest(struct char_data *ch, char *arg, int cmd)
 
 		sprintf(buf1, "QUEST : QM proposes you should kill %s.\n",
 			QM[num].name);
-		sprintf(buf2,
-			"QUEST : QM은 당신이 %s을 죽일 것을 제안합니다.\n",
+		sprintf(buf2, "QUEST : QM은 당신이 %s을 죽일 것을 제안합니다.\n",
 			QM[num].name);
 		send_to_char_han(buf1, buf2, ch);
 
@@ -323,8 +335,7 @@ void do_quest(struct char_data *ch, char *arg, int cmd)
 	num = ch->quest.data;
 
 	sprintf(buf1, "QUEST : QM proposes you should kill %s.\n", QM[num].name);
-	sprintf(buf2,
-		"QUEST : QM은 당신이 %s을 죽일 것을 제안합니다.\n",
+	sprintf(buf2, "QUEST : QM은 당신이 %s을 죽일 것을 제안합니다.\n",
 		QM[num].name);
 
 	send_to_char_han(buf1, buf2, ch);
