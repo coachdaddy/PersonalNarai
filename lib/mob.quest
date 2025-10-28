@@ -438,9 +438,8 @@
 15193 40 robot zzanga
 9508 40 sura zizon
 15194 40 robot grandiser
-16002 40 son chovi
 16004 40 general hawoodon
-17002 40 blue dragon
+16002 40 son chovi
 17003 40 general jutae
 2925 40 gorak minotaur warrior master
 2926 40 darkoth minotaur anti-paladin master
@@ -451,19 +450,13 @@
 2931 40 belrak minotaur ranger master
 2932 40 dorgar minotaur thief master
 17009 40 ghost king sonkyun
+17002 40 blue dragon
 15208 36 first husband
 15217 36 second husband
 15221 36 third husband
 15208 36 first husband
 15217 36 second husband
 15221 36 third husband
-2000 40 fighter
-2001 40 paladin
-2002 40 cleric
-2003 40 mage
-2004 40 dragon
-2005 40 thief
-2124 40 hydra
 2202 40 master dragon
 2205 40 king draconian
 2243 40 queen draconian
@@ -479,24 +472,17 @@
 2930 40 nasturn minotaur druid master
 2931 40 belrak minotaur ranger master
 2932 40 dorgar minotaur thief master
-3126 40 Massacre
 3145 40 mom
-4201 40 harry keogh
+3145 40 mom
 5109 40 yochlol
-9509 40 laiger
-9527 40 geron najang
-9526 40 hyobik najang
-9529 40 brop
-9538 40 dragon platinum
+5109 40 yochlol
 9801 40 imperial cruiser
-2552 41 chairman boss
-2553 41 babe
+9801 40 imperial cruiser
 1305 41 dragon white
 1305 41 dragon white
-9563 40 horse black king
 2120 40 Hades King
-30017 40 queen designer
 2120 40 Hades King
+3126 40 Massacre
 3127 40 extremely hard
 3128 40 hit hard
 3129 40 hit
@@ -504,30 +490,31 @@
 3131 40 tickle
 3132 40 miss
 3135 40 super deathcure
-3145 40 mom
-4201 40 harry keogh
-5109 40 yochlol
-9509 40 laiger
+30017 40 queen designer
+30017 40 queen designer
+30017 40 queen designer
+9529 40 brop
 9529 40 brop
 9527 40 geron najang
+9527 40 geron najang
+9509 40 laiger
+9509 40 laiger
+9526 40 hyobik najang
 9526 40 hyobik najang
 9538 40 dragon platinum
-9801 40 imperial cruiser
-30017 40 queen designer
-30017 40 queen designer
-2552 41 chairman boss
-2553 41 babe
-1305 41 dragon white
-1305 41 dragon white
-18016 40 guard mudang
+9538 40 dragon platinum
 2120 40 Hades King
 2120 40 Hades King
+1305 41 dragon white
+1305 41 dragon white
 16009 41 boss yellow bandit jangkak
 16009 41 boss yellow bandit jangkak
+15154 41 mazinga
 1990 41 brontosaurus bronto
 1990 41 brontosaurus bronto
 15154 41 mazinga
-15154 41 mazinga
+13784 41 zeus god
+13784 41 zeus god
 13785 30 Aphrodite goddess
 13787 30 hera goddess
 13789 30 apollo
@@ -535,8 +522,40 @@
 13793 35 ares god
 13795 40 athena goddess
 13797 40 hermes
-13784 41 zeus god
-13784 41 zeus god
+15129 41 cray computer
+15129 41 cray computer
+15129 41 cray computer
+15182 41 great mazinga
+15182 41 great mazinga
+16001 41 king chocho
+16001 41 king chocho
+16001 41 king chocho
+16001 41 king chocho
+17001 41 king sonkwun
+17001 41 king sonkwun
+17001 41 king sonkwun
+17001 41 king sonkwun
+2552 41 chairman boss
+2552 41 chairman boss
+2553 41 babe
+2553 41 babe
+2833 41 mosa gongmyung
+2833 41 mosa gongmyung
+2834 41 king yubi
+2834 41 king yubi
+2834 41 king yubi
+2834 41 king yubi
+2835 35 cleric hwata
+2835 35 cleric hwata
+2220 41 tiamat dragon
+2220 41 tiamat dragon
+2317 41 loftwick lich
+2317 41 loftwick lich
+30039 41 Electrical king
+30039 41 Electrical king
+30039 41 Electrical king
+30039 41 Electrical king
+18016 40 guard mudang
 18010 40 2nd apprenciate mudang SongCheongSeo
 18001 40 1st knight SongWonKyo
 18002 40 2rd knight YuYeonJu
@@ -548,45 +567,16 @@
 18007 40 7th knight MakSeongGok
 18008 39 wife EunSoSo
 18009 39 ghost GiHyoBu
-15129 41 cray computer
-15129 41 cray computer
-15129 41 cray computer
-15182 41 great mazinga
-15182 41 great mazinga
-16001 41 king chocho
-17001 41 king sonkwun
-16001 41 king chocho
-17001 41 king sonkwun
-16001 41 king chocho
-17001 41 king sonkwun
-16001 41 king chocho
-17001 41 king sonkwun
-30039 41 Electrical king
-30039 41 Electrical king
-30039 41 Electrical king
-30039 41 Electrical king
-2220 41 tiamat dragon
-2317 41 loftwick lich
-2220 41 tiamat dragon
-2317 41 loftwick lich
-2833 41 mosa gongmyung
-2835 35 cleric hwata
-2834 41 king yubi
-2833 41 mosa gongmyung
-2835 35 cleric hwata
-2834 41 king yubi
-2834 41 king yubi
-2834 41 king yubi
+7009 41 grand knight paladin
+7009 41 grand knight paladin
 2924 41 keeper minotaur ring-keeper
 2924 41 keeper minotaur ring-keeper
 2933 41 mahn-tor minotaur grand master
 2933 41 mahn-tor minotaur grand master
-9563 40 horse black king
-9563 40 horse black king
+4201 40 harry keogh
+4201 40 harry keogh
 4200 41 karen lady wamphyri
 4200 41 karen lady wamphyri
-7009 41 grand knight paladin
-7009 41 grand knight paladin
 9807 41 darth vader
 9807 41 darth vader
 9808 41 dark emperor
@@ -606,9 +596,19 @@
 9525 42 gaiot ruler najang
 9525 42 gaiot ruler najang
 9525 42 gaiot ruler najang
+9563 40 horse black king
+9563 40 horse black king
+9563 40 horse black king
 23322 42 stone giant 바위 거인
 23322 42 stone giant 바위 거인
 23322 42 stone giant 바위 거인
+2000 40 fighter
+2001 40 paladin
+2002 40 cleric
+2003 40 mage
+2004 40 dragon
+2005 40 thief
+2124 40 hydra
 23323 43 iron golem 아이런 고렘
 23323 43 iron golem 아이런 고렘
 23323 43 iron golem 아이런 고렘
@@ -616,21 +616,21 @@
 1305 43 dragon white   
 1305 43 dragon white   
 23326 43 first general baron 대장 바론
-23327 43 second general zudra 대장 쥬드라
-23328 43 third general olangenu 대장 오란게누
+23326 43 first general baron 대장 바론
 23326 43 first general baron 대장 바론
 23327 43 second general zudra 대장 쥬드라
-23328 43 third general olangenu 대장 오란게누
-23326 43 first general baron 대장 바론
+23327 43 second general zudra 대장 쥬드라
 23327 43 second general zudra 대장 쥬드라
 23328 43 third general olangenu 대장 오란게누
-11101 43 son ogong 손 오공 손오공
+23328 43 third general olangenu 대장 오란게누
+23328 43 third general olangenu 대장 오란게누
 11111 43 samjang bubsa 삼장 법사
+11111 43 samjang bubsa 삼장 법사
+11111 43 samjang bubsa 삼장 법사
+11101 43 son ogong 손 오공 손오공
+11101 43 son ogong 손 오공 손오공
+11101 43 son ogong 손 오공 손오공
 18000 43 chief JangSamBong
-11101 43 son ogong 손 오공 손오공
-11111 43 samjang bubsa 삼장 법사
 18000 43 chief JangSamBong
-11101 43 son ogong 손 오공 손오공
-11111 43 samjang bubsa 삼장 법사
 18000 43 chief JangSamBong
 $
