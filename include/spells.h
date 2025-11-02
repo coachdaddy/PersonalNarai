@@ -177,8 +177,10 @@ struct spell_info_type {
   void (*spell_pointer) ();
  */
 	byte minimum_position;	/* Position for caster              */
-	ubyte min_usesmana;	/* Amount of mana used by a spell   */
-	byte beats;		/* Heartbeats until ready for next */
+	ubyte min_usesmana;		/* Amount of mana used by a spell   */
+	byte beats;				/* Heartbeats until ready for next */
+	byte prev;				/* previous skill/spell */
+	byte side;				/* side skill/spell */
 	byte min_level[4];
 	byte max_skill[4];
 	int targets;		/* See below for use with TAR_XXX  */
