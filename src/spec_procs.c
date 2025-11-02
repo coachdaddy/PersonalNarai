@@ -147,22 +147,34 @@ int guild(struct char_data *ch, int cmd, char *arg)
 		page_string(ch->desc, buf3, 0);
 		return (TRUE);
 	}
+
 	number = old_search_block(arg, 0, strlen(arg), spells, FALSE);
 	if (number == -1) {
 		send_to_char_han("You do not know of this spell...\n\r",
 				 "그런 기술은 모르는데요 ...\n\r", ch);
 		return (TRUE);
 	}
+
 	if (lev < spell_info[number].min_level[cla]) {
 		send_to_char_han("Your level is too low.\n\r",
 				 "아직은 레벨이 낮아 안됩니다...\n\r", ch);
 		return (TRUE);
 	}
+
+	int pskill = spell_info[number].prev;
+
+	if ( pskill != -1 && ch->skills[pskill].learned < 30) {
+		send_to_char_han("You need to learn lower skill first.\n\r",
+				 "아직은 낮은 기술을 배우지 않았습니다....\n\r", ch);
+		return (TRUE);
+	}
+
 	if (ch->specials.spells_to_learn <= 0) {
 		send_to_char_han("You do not seem to be able to practice now.\n\r",
 				 "지금은 더이상 배울 수 없습니다.\n\r", ch);
 		return (TRUE);
 	}
+
 	if (ch->skills[number].learned >= spell_info[number].max_skill[cla]) {
 		send_to_char_han("You know this area as well as possible.\n\r",
 				 "그 분야는 배울 수 있는만큼 배웠습니다.\n\r", ch);
