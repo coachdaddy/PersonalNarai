@@ -29,6 +29,7 @@ int main()
 		printf("AC %d DR %d HR %d ", ch.points.armor,
 		       ch.points.damroll, ch.points.hitroll);
 		printf("Barehand %d D %d \n\r", ch.damnodice, ch.damsizedice);
+		printf("Quest Mob %d \n\r", ch.quest.data);
 		a[(int)ch.guild]++;
 		count++;
 		if (ch.level == 60)
