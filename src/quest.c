@@ -801,8 +801,6 @@ void do_challenge(struct char_data *ch)
 
             // 이동 성공 여부 확인 후 상태 설정
             if (challenger->in_room == room_rnum) { // 이동에 성공했다면
-                DEBUG_LOG("do_challenge: %s successfully moved to room %d.", GET_NAME(challenger), i);
-
                 // 이동 성공 시에만 상태를 설정
                 challenger->specials.challenge_room_vnum = i;
                 challenger->specials.return_room_vnum = original_vnum;
@@ -838,7 +836,6 @@ void do_challenge(struct char_data *ch)
                     }
                 }
             } else { // char_to_room 내부 문제 등으로 이동에 실패했다면...
-                DEBUG_LOG("do_challenge_error: %s failed to move to room %d. Rolling back.", GET_NAME(challenger), i);
                 // 만약의 경우를 대비해 원래 방으로 돌려보냄 (char_from_room은 이미 된 상태일 수 있음)
                 if (challenger->in_room != original_room_rnum) {  // 이미 다른 방이라면
                     char_to_room(challenger, original_room_rnum); // 원래 방으로 강제 이동
@@ -867,8 +864,6 @@ void do_begin(struct char_data *ch)
     bool mob_already_exists = FALSE; // 몬스터 존재 여부
     int target_rnum;
 
-    DEBUG_LOG("do_begin_start: by %s", GET_NAME(ch));
-
     if (IS_NPC(ch))
         return;
 
@@ -889,9 +884,9 @@ void do_begin(struct char_data *ch)
     }
 
     target_rnum = ch->quest.data; // 퀘스트 목표의 real number
-    
+
     // r_num 유효성 검사
-    if (target_rnum < 0 || target_rnum > top_of_mobt) {
+    if (target_rnum < 0) {
         send_to_char_han("&cCHALLENGE&n : &yThe information on Qeust Monster can't be found (Invalid Index). Contact the GM or Wizard.&n\n\r",
                          "&CQUEST&n : &y퀘스트 몬스터 정보를 찾을 수 없습니다 (잘못된 인덱스). 관리자에게 문의해주세요.&n\n\r", ch);
         return;
@@ -948,8 +943,6 @@ void do_begin(struct char_data *ch)
     send_to_char_han(buf_eng, buf_han, ch);
     acthan("&cCHALLENGE&n : &y$n utters an incantation, and [&h $N &y] materializes in the center of the room!&n",
            "&cCHALLENGE&n : &y$n이(가) 주문을 외우자, [&h $N &y]이(가) 방 한가운데 나타납니다!&n", FALSE, ch, 0, mob, TO_ROOM);
-
-    DEBUG_LOG("do_begin_end: Monster successfully summoned.");
 }
 
 
