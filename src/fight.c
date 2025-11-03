@@ -18,8 +18,9 @@
 
 #include "guild_list.h"
 
-/* Structures */
+#define QUEST_ROOM_VNUM	3081  // 퀘스트 룸 VNUM
 
+/* Structures */
 struct char_data *combat_list = 0;	/* head of l-list of fighting chars */
 struct char_data *combat_next_dude = 0;		/* Next dude global trick           */
 
@@ -48,6 +49,12 @@ void save_char_nocon(struct char_data *ch, sh_int load_room);
 
 /* quest */
 void check_quest_mob_die(struct char_data *ch, int mob);
+/* Challenge Room Quest System  */
+extern struct {
+    int virtual;
+    int level;
+    char *name;
+} QM[];
 
 /* Weapon attack texts */
 struct attack_hit_type attack_hit_text[] =
@@ -377,92 +384,198 @@ void raw_kill(struct char_data *ch, int level)
 
 void die(struct char_data *ch, int level, struct char_data *who)
 {
-	struct affected_type *af;
-	int exp;
+    struct affected_type *af;
+    int exp;
+    struct follow_type * f;
+    struct char_data *killer, *group_leader;
+    char debug_buf[256]; // for debugging
 
-	if (!ch)
-		return;
-	/* chase modified this for reraise */
-	if (!IS_NPC(ch) && IS_AFFECTED(ch, AFF_RERAISE)) {
-		GET_POS(ch) = POSITION_STANDING;
-		act("$n is RERAISED by Almighty Power!", TRUE, ch, 0, 0, TO_ROOM);
-		act("God blesses you with Almighty Power!", TRUE, ch, 0, 0, TO_CHAR);
-		if (ch->specials.fighting)
-			stop_fighting(ch);
-		GET_HIT(ch) = GET_PLAYER_MAX_HIT(ch);
-		GET_MANA(ch) = MAX(50, GET_MANA(ch));
-		GET_MOVE(ch) = MAX(50, GET_MOVE(ch));
-		if (number(1, 5) != 4) {
-			GET_ALIGNMENT(ch) = MIN(-1000, GET_ALIGNMENT(ch) - 200);
-			act("You feel sacred!", TRUE, ch, 0, 0, TO_CHAR);
-		} else {
-			GET_ALIGNMENT(ch) = MAX(GET_ALIGNMENT(ch) + 200, 1000);
-			act("You feel peaceful!", TRUE, ch, 0, 0, TO_CHAR);
-		}
-	}
-	/* to forbid 2 calls, by ares */
-	else if (!IS_NPC(ch) && IS_AFFECTED(ch, AFF_DEATH)) {
-		for (af = ch->affected; af; af = af->next)
-			if (af->type == SPELL_DEATH)
-				break;
-		affect_remove(ch, af);
-	} else {
-		if (!IS_NPC(ch)) {
-			wipe_stash(GET_NAME(ch));
-			GET_GOLD(ch) = 0;
-			save_char(ch, ch->in_room);
-			/* killed number(no only pk) */
-			/*
-			   if(who && !IS_NPC(who))
-			 */
-			ch->player.pked_num++;
-			/*
-			   GET_PLAYER_MAX_HIT(ch) -= GET_LEVEL(ch);
-			   GET_PLAYER_MAX_MANA(ch) -= GET_LEVEL(ch);
-			   GET_PLAYER_MAX_MOVE(ch) -= GET_LEVEL(ch);
-			 */
-			/*
-			   if (IS_SET(ch->specials.act, PLR_CRIMINAL))
-			   REMOVE_BIT(ch->specials.act, PLR_CRIMINAL);
-			   home = 0;
-			   switch (GET_GUILD(ch)) {
-			   case POLICE:
-			   home = real_room(ROOM_GUILD_POLICE_LOCKER);
-			   break;
-			   case OUTLAW:
-			   home = real_room(ROOM_GUILD_OUTLAW_LOCKER);
-			   break;
-			   case ASSASSIN:
-			   home = real_room(ROOM_GUILD_ASSASSIN_LOCKER);
-			   break;
-			   }
-			   if (home != 0 && who) {
-			   if (!IS_NPC(who))
-			   {
-			   if (ch->in_room != NOWHERE)
-			   char_from_room(ch);
-			   char_to_room(ch,home);
-			   act("$n appears in the room BLEEDING!!!",
-			   TRUE,ch,0,0,TO_ROOM);
-			   }
-			   }
-			 */
-		}
-		/*
-		   gain_exp(ch, -(GET_EXP(ch)*1/10));
-		 */
-		exp = GET_LEVEL(ch) * GET_LEVEL(ch) * level * 200;
-		gain_exp(ch, -exp);
-		/* For coin copy bug , fixed by dsshin */
+    /* 시체 이동을 위한 변수 선언 */
+    bool died_in_challenge_room = FALSE;
+    int challenge_room_rnum = ch->in_room; // raw_kill 전에 현재 방(죽은 장소)을 기억
+    char ch_name[30]; // raw_kill 전에 캐릭터 이름을 기억
+    
+    if (!IS_NPC(ch)) {
+        strcpy(ch_name, GET_NAME(ch));
+    }
 
-		if (!IS_NPC(ch)) {
-			save_char_nocon(ch, world[ch->in_room].number);
-		}
+    if (!ch)
+        return;
 
-    /***************************************/
+    /* chase modified this for reraise */
+    if (!IS_NPC(ch) && IS_AFFECTED(ch, AFF_RERAISE)) {
+        GET_POS(ch) = POSITION_STANDING;
+        act("$n is RERAISED by Almighty Power!", TRUE, ch, 0, 0, TO_ROOM);
+        act("God blesses you with Almighty Power!", TRUE, ch, 0, 0, TO_CHAR);
 
-		raw_kill(ch, level);
-	}
+        if (ch->specials.fighting)
+            stop_fighting(ch);
+
+        GET_HIT(ch) = GET_PLAYER_MAX_HIT(ch);
+        GET_MANA(ch) = MAX(50, GET_MANA(ch));
+        GET_MOVE(ch) = MAX(50, GET_MOVE(ch));
+        if (number(1, 5) != 4) {
+            GET_ALIGNMENT(ch) = MIN(-1000, GET_ALIGNMENT(ch) - 200);
+            act("You feel sacred!", TRUE, ch, 0, 0, TO_CHAR);
+        } else {
+            GET_ALIGNMENT(ch) = MAX(GET_ALIGNMENT(ch) + 200, 1000);
+            act("You feel peaceful!", TRUE, ch, 0, 0, TO_CHAR);
+        }
+    } else if (!IS_NPC(ch) && IS_AFFECTED(ch, AFF_DEATH)) { /* to forbid 2 calls, by ares */
+        for (af = ch->affected; af; af = af->next)
+            if (af->type == SPELL_DEATH)
+                break;
+        affect_remove(ch, af);
+    } else {
+        if (!IS_NPC(ch)) {
+            // *CHALLENGE* 죽은 플레이어가 도전 중이었는지 확인
+            if (ch->specials.challenge_room_vnum > 0 && 
+                world[ch->in_room].number == ch->specials.challenge_room_vnum) {
+                
+                DEBUG_LOG("Player %s died in the Challenge Room %d. Resetting his challenge state.", 
+                        GET_NAME(ch), world[ch->in_room].number);
+
+                died_in_challenge_room = TRUE; // 죽은 장소 플래그 설정
+                
+                // 방에 남아있는 다른 그룹원들에게 메시지 전달
+                group_leader = (ch->master ? ch->master : ch);
+                if (group_leader) { // 그룹 리더가 유효한 경우에만 메시지 전달 시도
+                    for (f = group_leader->followers; f; f = f->next) {
+                        if (f->follower != ch && f->follower->in_room == ch->in_room) {
+                            send_to_char_han("&cCHALLENGE&n : &rA challenger from your group died while attempting the challenge.&n\n\r", 
+                                             "&cCHALLENGE&n : &r당신 그룹의 도전자가 도전 중 사망하였습니다.&n\n\r", f->follower);
+                        }
+                    }
+                    if (group_leader != ch && group_leader->in_room == ch->in_room) {
+                        send_to_char_han("&cCHALLENGE&n : &rA challenger from your group died while attempting the challenge.&n\n\r", 
+                                         "&cCHALLENGE&n : &r당신 그룹의 도전자가 도전 중 사망하였습니다.&n\n\r", group_leader);
+                    }
+                }
+            }
+
+            wipe_stash(GET_NAME(ch));
+            GET_GOLD(ch) = 0;
+            save_char(ch, ch->in_room);
+            ch->player.pked_num++;
+        }
+        
+        exp = GET_LEVEL(ch) * GET_LEVEL(ch) * level * 200;
+        gain_exp(ch, -exp);
+        /* For coin copy bug , fixed by dsshin */
+
+        if (!IS_NPC(ch)) {
+            save_char_nocon(ch, world[ch->in_room].number);
+        }
+
+        /* Challenge Room Quest Completion Check -- START, 251017 */
+        killer = who;
+
+        // 몬스터(ch)가 플레이어(killer)에게 죽었을 때
+        if (killer && !IS_NPC(killer) && IS_NPC(ch)) {
+
+            struct char_data *challenger = NULL; // 퀘스트 주인 저장
+            struct char_data *vict; // 방 순회용 포인터
+            int victim_mob_vnum = mob_index[ch->nr].virtual; // 죽은 몬스터의 VNUM
+            int current_room_rnum = killer->in_room; // 현재 방, 아마도... 도전의 방
+            int current_room_vnum = world[current_room_rnum].number;
+
+            /* 이 방에 challenger가 있는지 찾음 */
+            for (vict = world[current_room_rnum].people; vict; vict = vict->next_in_room) {
+                if (IS_NPC(vict)) continue;
+
+                // 이 방을 자신의 도전 방으로, 이 몬스터를 자신의 퀘스트 몹으로
+                // 기억하고 있는 플레이어(vict)가 도전자(challenger)
+                if (vict->specials.challenge_room_vnum == current_room_vnum &&
+                        vict->specials.challenge_quest_mob_vnum == victim_mob_vnum)  {
+                    challenger = vict;
+                    break;
+                }
+            }
+
+            // 퀘스트 주인(==challenger)이 이 방에 존재하는 경우에만 완료 처리
+            if (challenger) {
+                
+                DEBUG_LOG("die_check: Challenger %s found in room. Quest success.", GET_NAME(challenger));
+
+                challenger->quest.type = -1;
+
+                // 도전자를 기준으로 그룹 리더를 찾음 (귀환용)
+                group_leader = (challenger->master ? challenger->master : challenger);
+                int return_rnum = real_room(challenger->specials.return_room_vnum);
+
+                /* 도전의 방에 있는 모든 그룹원 귀환 처리  */
+                // 도전자(challenger) 본인 먼저 이동
+                send_to_char("\n\r&cCHALLENGE&n : &yChallenge successful! Returning to the quest room.&n\n\r\n\r", challenger);
+                char_from_room(challenger);
+                char_to_room(challenger, return_rnum);
+                do_look(challenger, "", 15);
+                act("$n appears with a flash of light, looking victorious.", FALSE, challenger, 0, 0, TO_ROOM);
+
+                // 리더를 이동 (리더가 도전자가 아니고, 도전의 방에 있었다면)
+                if (group_leader != challenger && group_leader->in_room == current_room_rnum) {
+                    act("&cCHALLENGE&n : &yYour group's challenger has completed the challenge. Returning...&n", FALSE, group_leader, 0, 0, TO_CHAR);
+                    char_from_room(group_leader);
+                    char_to_room(group_leader, return_rnum);
+                    do_look(group_leader, "", 15);
+                }
+
+                // 나머지 그룹원들(killer 포함) 이동 (도전의 방에 있었다면)
+                for (f = group_leader->followers; f; f = f->next) {
+                    if (f->follower != challenger && f->follower != group_leader && f->follower->in_room == current_room_rnum) {
+                        act("&cCHALLENGE&n : &yYour group's challenger has completed the challenge. Returning...&n", FALSE, f->follower, 0, 0, TO_CHAR);
+                        char_from_room(f->follower);
+                        char_to_room(f->follower, return_rnum);
+                        do_look(f->follower, "", 15);
+                    }
+                }
+
+                // challenger의 임시 상태 변수 초기화
+                challenger->specials.challenge_room_vnum = 0;
+                challenger->specials.return_room_vnum = 0;
+                challenger->specials.challenge_quest_mob_vnum = 0;
+
+                // 방 청소 - 모든 플레이어가 이동한 후, 방이 비었는지 확인
+                if (world[current_room_rnum].people == NULL) {
+                    struct obj_data *obj, *next_obj;
+
+                    // 방에 남아있는 모든 오브젝트(시체 등)를 제거
+                    for (obj = world[current_room_rnum].contents; obj; obj = next_obj) {
+                        next_obj = obj->next_content;
+                        extract_obj(obj);
+                    }
+                }
+
+                // 디버깅 - 도전의 방 퇴장 및 초기화 완료 로그
+                DEBUG_LOG("die_end: Return process finished.");
+            }
+        }    /* Challenge Room Quest Completion Check -- END */
+    }
+
+    raw_kill(ch, level);
+
+    /* 도전의 방에서 사망한 플레이어 시체는 이동시켜두자... */
+    if (died_in_challenge_room) {
+        struct obj_data *corpse, *next_corpse;
+        int quest_room_rnum = real_room(QUEST_ROOM_VNUM); 
+        
+        if (quest_room_rnum != NOWHERE) {
+            for (corpse = world[challenge_room_rnum].contents; corpse; corpse = next_corpse) {
+                next_corpse = corpse->next_content;
+
+                // make_corpse에 의해 생성된 PC 시체인지 확인
+                if (GET_ITEM_TYPE(corpse) == ITEM_CONTAINER &&
+                    corpse->obj_flags.value[3] == 2 && strstr(corpse->name, ch_name)) {
+                    
+                    obj_from_room(corpse);
+                    obj_to_room(corpse, quest_room_rnum);
+                    
+                    break;
+                }
+            }
+        } else {
+            log("QUEST_CORPSE_MOVE_ERROR: Quest Room (VNUM 3081) not found.");
+        }
+    }
 }
 
 void group_gain(struct char_data *ch, struct char_data *victim)
@@ -1373,13 +1486,13 @@ void damage(struct char_data *ch, struct char_data *victim,
 		    FALSE, victim, 0, 0, TO_CHAR);
 		break;
 	case POSITION_DEAD:
-		act("$n is dead! R.I.P.", TRUE, victim, 0, 0, TO_ROOM);
-		act("You are dead!  Sorry...", FALSE, victim, 0, 0, TO_CHAR);
+		act("&r$n is dead! R.I.P.&n", TRUE, victim, 0, 0, TO_ROOM);
+		act("&rYou are dead!  Sorry...&n", FALSE, victim, 0, 0, TO_CHAR);
 		break;
 	default:		/* >= POSITION SLEEPING */
 		max_hit = hit_limit(victim);
 		if (dam > max_hit / 10)
-			act("That Really did HURT!", FALSE, victim, 0, 0, TO_CHAR);
+			act("&RThat Really did HURT!&n", FALSE, victim, 0, 0, TO_CHAR);
 		if (IS_NPC(victim) && IS_SET(victim->specials.act, ACT_WIMPY) &&
 		    GET_HIT(victim) < max_hit / 30) {
 			act("You wish that your wounds would stop BLEEDING that much!",
