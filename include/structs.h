@@ -28,7 +28,8 @@ typedef long long LONGLONG;
 //#define MAX_STRING_LENGTH   2000
 #define MAX_STRING_LENGTH   4096
 #define MAX_OUTPUT_LENGTH    512
-#define MAX_INPUT_LENGTH     200
+// #define MAX_INPUT_LENGTH 500 -> 251027
+#define MAX_INPUT_LENGTH 	2048
 #define MAX_MESSAGES          61
 #define MAX_ITEMS            153
 
@@ -46,10 +47,11 @@ typedef long long LONGLONG;
 #define SECS_PER_MUD_MONTH (35*SECS_PER_MUD_DAY)
 #define SECS_PER_MUD_YEAR  (17*SECS_PER_MUD_MONTH)
 
+/* ======================================================================= */
 /* The following defs are for obj_data  */
+/* ======================================================================= */
 
 /* For 'type_flag' */
-
 #define ITEM_LIGHT      1
 #define ITEM_SCROLL     2
 #define ITEM_WAND       3
@@ -76,73 +78,71 @@ typedef long long LONGLONG;
 #define ITEM_DRUG      24
 
 /* Bitvector For 'wear_flags' */
-
-#define ITEM_TAKE              1
-#define ITEM_WEAR_FINGER       2
-#define ITEM_WEAR_NECK         4
-#define ITEM_WEAR_BODY         8
-#define ITEM_WEAR_HEAD        16
-#define ITEM_WEAR_LEGS        32
-#define ITEM_WEAR_FEET        64
-#define ITEM_WEAR_HANDS      128
-#define ITEM_WEAR_ARMS       256
-#define ITEM_WEAR_SHIELD     512
-#define ITEM_WEAR_ABOUT     1024
-#define ITEM_WEAR_WAISTE    2048
-#define ITEM_WEAR_WRIST     4096
-#define ITEM_WIELD          8192
-#define ITEM_HOLD          16384
-#define ITEM_THROW         32768
-#define ITEM_WEAR_KNEE     65536
+#define ITEM_TAKE                1
+#define ITEM_WEAR_FINGER         2
+#define ITEM_WEAR_NECK           4
+#define ITEM_WEAR_BODY           8
+#define ITEM_WEAR_HEAD          16
+#define ITEM_WEAR_LEGS          32
+#define ITEM_WEAR_FEET          64
+#define ITEM_WEAR_HANDS        128
+#define ITEM_WEAR_ARMS         256
+#define ITEM_WEAR_SHIELD       512
+#define ITEM_WEAR_ABOUT       1024
+#define ITEM_WEAR_WAISTE      2048
+#define ITEM_WEAR_WRIST       4096
+#define ITEM_WIELD            8192
+#define ITEM_HOLD            16384
+#define ITEM_THROW           32768
+#define ITEM_WEAR_KNEE       65536
 #define ITEM_WEAR_ABOUTLEGS 131072
-#define ITEM_WEAR_BACK	262144	/* added by process */
+#define ITEM_WEAR_BACK      262144 /* added by process */
 
 /* Bitvector for 'extra_flags' */
-
-#define ITEM_GLOW            1
-#define ITEM_HUM             2
-#define ITEM_DARK            4
-#define ITEM_LOCK            8
-#define ITEM_EVIL           16
-#define ITEM_INVISIBLE      32
-#define ITEM_MAGIC          64
-#define ITEM_NODROP        128
-#define ITEM_BLESS         256
-#define ITEM_ANTI_GOOD     512	/* not usable by good people    */
-#define ITEM_ANTI_EVIL    1024	/* not usable by evil people    */
-#define ITEM_ANTI_NEUTRAL 2048	/* not usable by neutral people */
-#define ITEM_NOLOAD       4096
-#define ITEM_ANTI_MAGE    8192	/* not usable by mage */
-#define ITEM_ANTI_CLERIC 16384	/* not usable by cleric */
-#define ITEM_ANTI_THIEF  32768	/* not usable by thief */
-#define ITEM_ANTI_WARRIOR 65536	/* not usable by warrior */
-#define ITEM_NORENT		131072	/* cannot rent ,added by process */
-#define ITEM_ANTI_POLICE	262144	/* not usable by police */
-#define ITEM_ANTI_OUTLAW	524288	/* not usable by outlaw */
-#define ITEM_ANTI_ASSASSIN	1048576		/* not usable by assasin */
-#define ITEM_NOCOPY		2097152		/* do not SAVE in the locker room */
+#define ITEM_GLOW                 1
+#define ITEM_HUM                  2
+#define ITEM_DARK                 4
+#define ITEM_LOCK                 8
+#define ITEM_EVIL                16
+#define ITEM_INVISIBLE           32
+#define ITEM_MAGIC               64
+#define ITEM_NODROP             128
+#define ITEM_BLESS              256
+#define ITEM_ANTI_GOOD          512     /* not usable by good people    */
+#define ITEM_ANTI_EVIL         1024     /* not usable by evil people    */
+#define ITEM_ANTI_NEUTRAL      2048     /* not usable by neutral people */
+#define ITEM_NOLOAD            4096
+#define ITEM_ANTI_MAGE         8192     /* not usable by mage */
+#define ITEM_ANTI_CLERIC      16384     /* not usable by cleric */
+#define ITEM_ANTI_THIEF       32768     /* not usable by thief */
+#define ITEM_ANTI_WARRIOR     65536     /* not usable by warrior */
+#define ITEM_NORENT          131072     /* cannot rent ,added by process */
+#define ITEM_ANTI_POLICE     262144     /* not usable by police */
+#define ITEM_ANTI_OUTLAW     524288     /* not usable by outlaw */
+#define ITEM_ANTI_ASSASSIN  1048576     /* not usable by assasin */
+#define ITEM_NOCOPY         2097152     /* do not SAVE in the locker room */
 
 /* Some different kind of liquids */
-#define LIQ_WATER      0
-#define LIQ_BEER       1
-#define LIQ_WINE       2
-#define LIQ_ALE        3
-#define LIQ_DARKALE    4
-#define LIQ_WHISKY     5
-#define LIQ_LEMONADE   6
-#define LIQ_FIREBRT    7
-#define LIQ_LOCALSPC   8
-#define LIQ_SLIME      9
-#define LIQ_MILK       10
-#define LIQ_TEA        11
-#define LIQ_COFFE      12
-#define LIQ_BLOOD      13
-#define LIQ_SALTWATER  14
-#define LIQ_SUNDEW     15
-#define LIQ_NECTAR     16
-#define LIQ_GOLDEN_NECTAR     17
-#define LIQ_MAKOLI	18
-#define LIQ_CONDITIOIN 19
+#define LIQ_WATER           0
+#define LIQ_BEER            1
+#define LIQ_WINE            2
+#define LIQ_ALE             3
+#define LIQ_DARKALE         4
+#define LIQ_WHISKY          5
+#define LIQ_LEMONADE        6
+#define LIQ_FIREBRT         7
+#define LIQ_LOCALSPC        8
+#define LIQ_SLIME           9
+#define LIQ_MILK            10
+#define LIQ_TEA             11
+#define LIQ_COFFE           12
+#define LIQ_BLOOD           13
+#define LIQ_SALTWATER       14
+#define LIQ_SUNDEW          15
+#define LIQ_NECTAR          16
+#define LIQ_GOLDEN_NECTAR   17
+#define LIQ_MAKOLI          18
+#define LIQ_CONDITIOIN      19
 
 /* for containers  - value[1] */
 
@@ -201,12 +201,15 @@ struct obj_data {
 
 /* ======================================================================= */
 
-/* The following defs are for room_data  */
 
+
+/* ======================================================================= */
+/* The following defs are for room_data  */
+/* ======================================================================= */
 #define NOWHERE    -1		/* nil reference for room-database    */
+#define NOBODY  -1  /* nil reference for mobile-database (추가, 251017) */
 
 /* Bitvector For 'room_flags' */
-
 #define DARK           1
 #define NOSUMMON       2
 #define NO_MOB         4
@@ -225,7 +228,6 @@ struct obj_data {
 #define RESTROOM	32768	/* added by process */
 
 /* For 'dir_option' */
-
 #define NORTH          0
 #define EAST           1
 #define SOUTH          2
@@ -242,7 +244,6 @@ struct obj_data {
 #define EX_NOPHASE   64
 
 /* For 'sector types' */
-
 #define SECT_INSIDE          0
 #define SECT_CITY            1
 #define SECT_FIELD           2
@@ -254,36 +255,39 @@ struct obj_data {
 #define SECT_SKY             8
 
 struct room_direction_data {
-	char *general_description;	/* When look DIR.                  */
-	char *keyword;		/* for open/close                  */
-	sh_int exit_info;	/* Exit info                       */
-	sh_int key;		/* Key's number (-1 for no key)    */
-	sh_int to_room;		/* Where direction leeds (NOWHERE) */
+    char *general_description; /* When look DIR.                  */
+    char *keyword;             /* for open/close                  */
+    sh_int exit_info;          /* Exit info                       */
+    sh_int key;                /* Key's number (-1 for no key)    */
+    sh_int to_room;            /* Where direction leeds (NOWHERE) */
 };
 
 /* ========================= Structure for room ========================== */
-struct room_data {
-	sh_int number;		/* Rooms number                       */
-	sh_int zone;		/* Room zone (for resetting)          */
-	int sector_type;	/* sector type (move/hide)            */
-	char *name;		/* Rooms name 'You are ...'           */
-	char *description;	/* Shown when entered                 */
-	struct extra_descr_data *ex_description;	/* for examine/look       */
-	struct room_direction_data *dir_option[6];	/* Directions           */
-	int room_flags;		/* DEATH,DARK ... etc                 */
-	byte light;		/* Number of lightsources in room     */
-	int (*funct) ();	/* special procedure                  */
+struct room_data
+{
+    sh_int number;                             /* Rooms number                       */
+    sh_int zone;                               /* Room zone (for resetting)          */
+    int sector_type;                           /* sector type (move/hide)            */
+    char *name;                                /* Rooms name 'You are ...'           */
+    char *description;                         /* Shown when entered                 */
+    struct extra_descr_data *ex_description;   /* for examine/look       */
+    struct room_direction_data *dir_option[6]; /* Directions           */
+    int room_flags;                            /* DEATH,DARK ... etc                 */
+    byte light;                                /* Number of lightsources in room     */
+    int (*funct)();                            /* special procedure                  */
 
-	struct obj_data *contents;	/* List of items in room              */
-	struct char_data *people;	/* List of NPC / PC in room           */
+    struct obj_data *contents; /* List of items in room              */
+    struct char_data *people;  /* List of NPC / PC in room           */
 };
-
 /* ======================================================================== */
 
+
+
+/* ======================================================================= */
 /* The following defs and structures are related to char_data   */
+/* ======================================================================= */
 
 /* For 'equipment' */
-
 #define WEAR_LIGHT      0
 #define WEAR_FINGER_R   1
 #define WEAR_FINGER_L   2
@@ -324,17 +328,17 @@ struct room_data {
 #define AFF_DETECT_INVISIBLE  8
 #define AFF_INFRAVISION       16
 #define AFF_SENSE_LIFE        32
-#define AFF_DEAF				64	/* by process */
+#define AFF_DEAF			  64	    /* by process */
 #define AFF_SANCTUARY         128
 #define AFF_GROUP             256
-#define AFF_DUMB			  512	/* by process */
+#define AFF_DUMB			  512	    /* by process */
 #define AFF_CURSE             1024
 #define AFF_MIRROR_IMAGE      2048
 #define AFF_POISON            4096
 #define AFF_PROTECT_EVIL      8192
-#define AFF_REFLECT_DAMAGE	16384	/* by process */
-#define AFF_HOLY_SHIELD			32768
-#define AFF_SPELL_BLOCK       65536	/* by process */
+#define AFF_REFLECT_DAMAGE	  16384	    /* by process */
+#define AFF_HOLY_SHIELD		  32768
+#define AFF_SPELL_BLOCK       65536	    /* by process */
 #define AFF_SLEEP             131072
 #define AFF_SHADOW_FIGURE     262144	/* by process */
 #define AFF_SNEAK             524288
@@ -345,10 +349,10 @@ struct room_data {
 #define AFF_HASTE	          16777216
 #define AFF_IMPROVED_HASTE    33554432
 #define AFF_LOVE              67108864	/* by perhaps */
-#define AFF_RERAISE           134217728		/* by chase */
-#define AFF_ARREST            268435456		/* by sypark */
-/* modifiers to char's abilities */
+#define AFF_RERAISE           134217728	/* by chase */
+#define AFF_ARREST            268435456	/* by sypark */
 
+/* modifiers to char's abilities */
 #define APPLY_NONE              0
 #define APPLY_STR               1
 #define APPLY_DEX               2
@@ -551,6 +555,11 @@ struct char_special_data {
 	struct char_data *arrest_by;
 	struct char_data *arrest_link;
 	int wimpyness;
+
+	// For Challenge Room Quest System -- Komo, 251017
+    int challenge_room_vnum;      // 현재 입장한 도전의 방 VNUM (0이면 미입장)
+    int return_room_vnum;         // 도전 완료 후 돌아갈 방 VNUM
+    int challenge_quest_mob_vnum; // 도전 중인 몬스터의 VNUM을 저장
 };
 
 /* Used in CHAR_FILE_U *DO*NOT*CHANGE* */
@@ -614,15 +623,14 @@ struct char_data {
 
 #define SUN_DARK  0
 #define SUN_RISE  1
-#define SUN_LIGHT  2
-#define SUN_SET    3
+#define SUN_LIGHT 2
+#define SUN_SET   3
 
 /* And how is the sky ? */
-
-#define SKY_CLOUDLESS  0
-#define SKY_CLOUDY  1
-#define SKY_RAINING  2
-#define SKY_LIGHTNING  3
+#define SKY_CLOUDLESS 0
+#define SKY_CLOUDY    1
+#define SKY_RAINING   2
+#define SKY_LIGHTNING 3
 
 struct weather_data {
 	int pressure;		/* How is the pressure ( Mb ) */
@@ -679,7 +687,6 @@ struct txt_q {
 };
 
 /* modes of connectedness */
-
 #define CON_PLYNG   0
 #define CON_NME     1
 #define CON_NMECNF  2
