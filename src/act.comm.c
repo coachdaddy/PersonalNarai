@@ -222,12 +222,12 @@ void do_gtell(struct char_data *ch, char *argument, int cmd)
 	else
 		s = GET_NAME(ch);
 	if (k && IS_AFFECTED(k, AFF_GROUP)) {
-		sprintf(buf, "** %s ** '%s'\n\r", s, argument);
+		snprintf(buf, sizeof(buf), "**&u %s &n** '&X%s&n'\n\r", s, argument);
 		send_to_char(buf, k);
 	}
 	for (f = k->followers; f; f = f->next) {
 		if (f->follower && IS_AFFECTED(f->follower, AFF_GROUP)) {
-			sprintf(buf, "** %s ** '%s'\n\r", s, argument);
+			snprintf(buf, sizeof(buf), "**&u %s &n** '&X%s&n'\n\r", s, argument);
 			send_to_char(buf, f->follower);
 		}
 	}
