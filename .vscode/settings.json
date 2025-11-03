@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.wtt": "tt++",
+        "utils.h": "c"
+    }
+}
