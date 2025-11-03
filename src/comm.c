@@ -31,12 +31,13 @@
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
+#include "colors.h" // 색상 매크로
 
 #ifndef DFLT_DIR
 #define DFLT_DIR "lib"		/* default port */
 #endif				// DFLT_DIR
 #ifndef DFLT_PORT
-#define DFLT_PORT 5001		/* default port */
+#define DFLT_PORT 5101		/* default port */
 #endif				// DFLT_PORT
 
 #define MAX_NAME_LENGTH 15
@@ -46,7 +47,6 @@
 #define MAXOCLOCK 1200
 
 extern int errno;
-
 extern int no_echo;
 extern struct room_data *world;	/* In db.c */
 extern int top_of_world;	/* In db.c */
@@ -61,7 +61,6 @@ extern void weather_and_time(int mode);
 sigset_t __unmask;
 
 /* local globals */
-
 struct descriptor_data *descriptor_list, *next_to_process;
 jmp_buf env;
 
@@ -119,7 +118,6 @@ void freaky(struct descriptor_data *d);
 void zapper(void);
 
 /* extern fcnts */
-
 struct char_data *make_char(char *name, struct descriptor_data *desc);
 void boot_db(void);
 void zone_update(void);
@@ -137,6 +135,7 @@ void stop_fighting(struct char_data *ch);
 void show_string(struct descriptor_data *d, char *input);
 void save_char(struct char_data *ch, sh_int load_room);
 void do_assist(struct char_data *ch, char *argument, int cmd);
+void process_color_string(const char *input, char *output, int max_out_len); // Komo, 251022
 
 /* *********************************************************************
 *  main game loop and related stuff               *
@@ -789,6 +788,9 @@ int new_descriptor(int s)
 	unsigned int size;
 	struct sockaddr_in sock;
 
+	/* 색상 파싱을 위한 버퍼 */
+    char color_buf[MAX_STRING_LENGTH * 3];
+
 	if ((desc = new_connection(s)) < 0)
 		return (-1);
 
@@ -860,7 +862,7 @@ int new_descriptor(int s)
 		SEND_TO_Q("WARNING:\n\r", newd);
 		SEND_TO_Q("No NEW characters are being accepted right now.\n\r\n\r", newd);
 	}
-	SEND_TO_Q("By what name do you wish to be known? ", newd);
+	SEND_TO_Q("&CBy what name do you wish to be known? &n", newd);
 
 	return (0);
 }
@@ -1154,314 +1156,334 @@ void nonblock(int s)
 
 void send_to_char(char *messg, struct char_data *ch)
 {
+    char color_buf[MAX_STRING_LENGTH * 3]; // 색상 코드 확장을 고려하여 버퍼 크기 증가
 
-	if (ch->desc && messg)
-		write_to_q(messg, &ch->desc->output);
+    if (!ch || !ch->desc) /* 안전장치: 대상이 없으면 종료 */
+        return;
+
+    if (ch->desc && messg) {
+        process_color_string(messg, color_buf, sizeof(color_buf));
+        write_to_q(color_buf, &ch->desc->output);
+    }
 }
 
 void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch)
 {
+    char color_buf[MAX_STRING_LENGTH * 3];
 
-	if (ch->desc && msgeng && msghan) {
-		if ((IS_SET(ch->specials.act, PLR_KOREAN)))	/* korean */
-			write_to_q(msghan, &ch->desc->output);
-		else		/* english */
-			write_to_q(msgeng, &ch->desc->output);
-	}
+    if (!ch || !ch->desc || !msgeng || !msghan)
+        return;
+
+    if ((IS_SET(ch->specials.act, PLR_KOREAN))) { /* korean */
+        process_color_string(msghan, color_buf, sizeof(color_buf));
+        write_to_q(color_buf, &ch->desc->output);
+    }
+    else { /* english */
+        process_color_string(msgeng, color_buf, sizeof(color_buf));
+        write_to_q(color_buf, &ch->desc->output);
+    }
 }
 
 void send_to_all(char *messg)
 {
-	struct descriptor_data *i;
+    struct descriptor_data *i;
+    char color_buf[MAX_STRING_LENGTH * 3];
 
-	if (messg)
-		for (i = descriptor_list; i; i = i->next)
-			if (!i->connected)
-				write_to_q(messg, &i->output);
+    if (messg)
+        for (i = descriptor_list; i; i = i->next)
+            if (!i->connected) {
+                process_color_string(messg, color_buf, sizeof(color_buf));
+                write_to_q(color_buf, &i->output);
+            }
 }
 
 void send_to_outdoor(char *messg)
 {
-	struct descriptor_data *i;
+    struct descriptor_data *i;
+    char color_buf[MAX_STRING_LENGTH * 3];
 
-	if (messg)
-		for (i = descriptor_list; i; i = i->next)
-			if (!i->connected)
-				if (OUTSIDE(i->character))
-					write_to_q(messg, &i->output);
+    if (messg)
+        for (i = descriptor_list; i; i = i->next)
+            if (!i->connected)
+                if (OUTSIDE(i->character)) {
+                    process_color_string(messg, color_buf, sizeof(color_buf));
+                    write_to_q(color_buf, &i->output);
+                }
 }
 
 void send_to_except(char *messg, struct char_data *ch)
 {
-	struct descriptor_data *i;
+    struct descriptor_data *i;
+    char color_buf[MAX_STRING_LENGTH * 3];
 
-	if (messg)
-		for (i = descriptor_list; i; i = i->next)
-			if (ch->desc != i && !i->connected)
-				write_to_q(messg, &i->output);
+    if (messg)
+        for (i = descriptor_list; i; i = i->next)
+            if (ch->desc != i && !i->connected) {
+                process_color_string(messg, color_buf, sizeof(color_buf));
+                write_to_q(color_buf, &i->output);
+            }
 }
 
 void send_to_room(char *messg, int room)
 {
-	struct char_data *i;
+    struct char_data *i;
+    char color_buf[MAX_STRING_LENGTH * 3];
 
-	if (messg)
-		for (i = world[room].people; i; i = i->next_in_room)
-			if (i->desc)
-				write_to_q(messg, &i->desc->output);
+    if (messg)
+        for (i = world[room].people; i; i = i->next_in_room)
+            if (i->desc) {
+                process_color_string(messg, color_buf, sizeof(color_buf));
+                write_to_q(color_buf, &i->desc->output);
+            }
 }
 
 void send_to_room_except(char *messg, int room, struct char_data *ch)
 {
-	struct char_data *i;
+    struct char_data *i;
+    char color_buf[MAX_STRING_LENGTH * 3];
 
-	if (messg)
-		for (i = world[room].people; i; i = i->next_in_room)
-			if (i != ch && i->desc)
-				write_to_q(messg, &i->desc->output);
+    if (messg)
+        for (i = world[room].people; i; i = i->next_in_room)
+            if (i != ch && i->desc) {
+                process_color_string(messg, color_buf, sizeof(color_buf));
+                write_to_q(color_buf, &i->desc->output);
+            }
 }
 
-void send_to_room_except_two(char *messg, int room, struct char_data *ch1, struct char_data *ch2) {
-	struct char_data *i;
+void send_to_room_except_two(char *messg, int room, struct char_data *ch1, struct char_data *ch2)
+{
+    struct char_data *i;
+    char color_buf[MAX_STRING_LENGTH * 3];
 
-	if (messg)
-		for (i = world[room].people; i; i = i->next_in_room)
-			if (i != ch1 && i != ch2 && i->desc)
-				write_to_q(messg, &i->desc->output);
+    if (messg)
+        for (i = world[room].people; i; i = i->next_in_room)
+            if (i != ch1 && i != ch2 && i->desc) {
+                process_color_string(messg, color_buf, sizeof(color_buf));
+                write_to_q(color_buf, &i->desc->output);
+            }
 }
 
 /* higher-level communication */
-
-void act(char *str, int hide_invisible, struct char_data *ch,
-	 struct obj_data *obj, void *vict_obj, int type)
+void act(char *str, int hide_invisible, struct char_data *ch, struct obj_data *obj, void *vict_obj, int type)
 {
-	/*register */ char *strp, *point, *i = NULL;
-	struct char_data *to;
-	char buf[MAX_STRING_LENGTH];
+    char *strp, *point, *i = NULL;
+    struct char_data *to;
+    char buf[MAX_STRING_LENGTH];
 
-	if (!str || !*str)
-		return;
+    /* 색상 파싱을 위한 최종 버퍼 */
+    char color_buf[MAX_STRING_LENGTH * 3];
 
-	if (type == TO_VICT)
-		to = (struct char_data *)vict_obj;
-	else if (type == TO_CHAR)
-		to = ch;
-	else
-		to = world[ch->in_room].people;
+    if (!str || !*str)
+        return;
 
-	for (; to; to = to->next_in_room) {
-		if (to->desc && ((to != ch) || (type == TO_CHAR)) &&
-		    (CAN_SEE(to, ch) || !hide_invisible) && AWAKE(to) &&
-		    !((type == TO_NOTVICT) && (to == (struct char_data *)vict_obj))) {
-			for (strp = str, point = buf; (point - buf) <=
-			     MAX_STRING_LENGTH -
-			     1;)
-				if (*strp == '$') {
-					switch (*(++strp)) {
-					case 'n':
-						i = PERS(ch, to);
-						break;
-					case 'N':
-						i = PERS((struct char_data
-							 *)vict_obj, to);
-						break;
-					case 'm':
-						i = HMHR(ch);
-						break;
-					case 'M':
-						i = HMHR((struct char_data *)vict_obj);
-						break;
-					case 's':
-						i = HSHR(ch);
-						break;
-					case 'S':
-						i = HSHR((struct char_data *)vict_obj);
-						break;
-					case 'e':
-						i = HSSH(ch);
-						break;
-					case 'E':
-						i = HSSH((struct char_data *)vict_obj);
-						break;
-					case 'o':
-						i = OBJN(obj, to);
-						break;
-					case 'O':
-						i = OBJN((struct obj_data
-							 *)vict_obj, to);
-						break;
-					case 'p':
-						i = OBJS(obj, to);
-						break;
-					case 'P':
-						i = OBJS((struct obj_data
-							 *)vict_obj, to);
-						break;
-					case 'a':
-						i = SANA(obj);
-						break;
-					case 'A':
-						i = SANA((struct obj_data *)vict_obj);
-						break;
-					case 'T':
-						i = (char *)vict_obj;
-						break;
-					case 'F':
-						i = fname((char *)vict_obj);
-						break;
-						/* new $-code by atre */
-						/*
-						   for backstab by mobile
-						   if(no-weapon) WEAP = finger
-						 */
-					case 'w':
-						i = WEAP(obj, to);
-						break;
-					case 'W':
-						i = WEAP((struct obj_data
-							 *)vict_obj, to);
-						break;
-					case '$':
-						i = "$";
-						break;
-					default:
-						log("Illegal $-code to act():");
-						log(str);
-						break;
-					}
-					while (*i && ((point - buf) <=
-						      MAX_STRING_LENGTH - 1))
-						*point++ = *i++;
-/*
-          while (*point = *(i++))
-            ++point;
-*/
-					++strp;
-				} else if (!(*(point++) = *(strp++)))
-					break;
+    if (type == TO_VICT)
+        to = (struct char_data *)vict_obj;
+    else if (type == TO_CHAR)
+        to = ch;
+    else
+        to = world[ch->in_room].people;
 
-			*(--point) = '\n';
-			*(++point) = '\r';
-			*(++point) = '\0';
+    for (; to; to = to->next_in_room) {
+        if (to->desc && ((to != ch) || (type == TO_CHAR)) && (CAN_SEE(to, ch) || !hide_invisible) && AWAKE(to) &&
+                !((type == TO_NOTVICT) && (to == (struct char_data *)vict_obj))) {
+            for (strp = str, point = buf; (point - buf) <= MAX_STRING_LENGTH - 1;)
+                if (*strp == '$') {
+                    switch (*(++strp)) {
+                        case 'n':
+                            i = PERS(ch, to);
+                            break;
+                        case 'N':
+                            i = PERS((struct char_data *)vict_obj, to);
+                            break;
+                        case 'm':
+                            i = HMHR(ch);
+                            break;
+                        case 'M':
+                            i = HMHR((struct char_data *)vict_obj);
+                            break;
+                        case 's':
+                            i = HSHR(ch);
+                            break;
+                        case 'S':
+                            i = HSHR((struct char_data *)vict_obj);
+                            break;
+                        case 'e':
+                            i = HSSH(ch);
+                            break;
+                        case 'E':
+                            i = HSSH((struct char_data *)vict_obj);
+                            break;
+                        case 'o':
+                            i = OBJN(obj, to);
+                            break;
+                        case 'O':
+                            i = OBJN((struct obj_data *)vict_obj, to);
+                            break;
+                        case 'p':
+                            i = OBJS(obj, to);
+                            break;
+                        case 'P':
+                            i = OBJS((struct obj_data *)vict_obj, to);
+                            break;
+                        case 'a':
+                            i = SANA(obj);
+                            break;
+                        case 'A':
+                            i = SANA((struct obj_data *)vict_obj);
+                            break;
+                        case 'T':
+                            i = (char *)vict_obj;
+                            break;
+                        case 'F':
+                            i = fname((char *)vict_obj);
+                            break;
+                        case 'w':
+                            i = WEAP(obj, to);
+                            break;
+                        case 'W':
+                            i = WEAP((struct obj_data *)vict_obj, to);
+                            break;
+                        case '$':
+                            i = "$";
+                            break;
+                        default:
+                            log("Illegal $-code to act():");
+                            log(str);
+                            break;
+                    }
+                    while (*i && ((point - buf) <= MAX_STRING_LENGTH - 1))
+                        *point++ = *i++;
 
-			CAP(buf);
-			write_to_q(buf, &to->desc->output);
-		}
-		if ((type == TO_VICT) || (type == TO_CHAR))
-			return;
-	}
+                    ++strp;
+                }
+                else if (!(*(point++) = *(strp++)))
+                    break;
+
+            *(--point) = '\n';
+            *(++point) = '\r';
+            *(++point) = '\0';
+
+            CAP(buf);
+
+            process_color_string(buf, color_buf, sizeof(color_buf)); // 색상 코드 처리
+            write_to_q(color_buf, &to->desc->output);
+        }
+        if ((type == TO_VICT) || (type == TO_CHAR))
+            return;
+    }
 }
 
 void acthan(char *streng, char *strhan, int hide_invisible, struct char_data *ch,
 	    struct obj_data *obj, void *vict_obj, int type)
 {
 	register char *strp, *str, *point, *i = NULL;
-	struct char_data *to;
-	char buf[MAX_STRING_LENGTH];
+    struct char_data *to;
+    char buf[MAX_STRING_LENGTH];
 
-	if (!streng || !strhan)
-		return;
-	if (!*streng || !*strhan)
-		return;
+    /* 색상 파싱을 위한 최종 버퍼 */
+    char color_buf[MAX_STRING_LENGTH * 3];
 
-	if (type == TO_VICT)
-		to = (struct char_data *)vict_obj;
-	else if (type == TO_CHAR)
-		to = ch;
-	else
-		to = world[ch->in_room].people;
+    /* 원본 문자열이 유효하지 않으면 즉시 리턴 */
+    if (!streng || !strhan || !*streng || !*strhan)
+        return;
 
-	for (; to; to = to->next_in_room) {
-		if (to->desc && ((to != ch) || (type == TO_CHAR)) &&
-		    (CAN_SEE(to, ch) || !hide_invisible) && AWAKE(to) &&
-		    !((type == TO_NOTVICT) && (to == (struct char_data *)vict_obj))) {
-			if ((IS_SET(to->specials.act, PLR_KOREAN))) {
-				str = strhan;
-			} else {
-				str = streng;
-			}
-			for (strp = str, point = buf; (point - buf) <=
-			     MAX_STRING_LENGTH -
-			     1;)
-				if (*strp == '$') {
-					strp++;
-					switch (*strp) {
-					case 'n':
-						i = PERS(ch, to);
-						break;
-					case 'N':
-						i = PERS((struct char_data
-							 *)vict_obj, to);
-						break;
-					case 'm':
-						i = HMHR(ch);
-						break;
-					case 'M':
-						i = HMHR((struct char_data *)vict_obj);
-						break;
-					case 's':
-						i = HSHR(ch);
-						break;
-					case 'S':
-						i = HSHR((struct char_data *)vict_obj);
-						break;
-					case 'e':
-						i = HSSH(ch);
-						break;
-					case 'E':
-						i = HSSH((struct char_data *)vict_obj);
-						break;
-					case 'o':
-						i = OBJN(obj, to);
-						break;
-					case 'O':
-						i = OBJN((struct obj_data
-							 *)vict_obj, to);
-						break;
-					case 'p':
-						i = OBJS(obj, to);
-						break;
-					case 'P':
-						i = OBJS((struct obj_data
-							 *)vict_obj, to);
-						break;
-					case 'a':
-						i = SANA(obj);
-						break;
-					case 'A':
-						i = SANA((struct obj_data *)vict_obj);
-						break;
-					case 'T':
-						i = (char *)vict_obj;
-						break;
-					case 'F':
-						i = fname((char *)vict_obj);
-						break;
-					case '$':
-						i = "$";
-						break;
-					default:
-						log("Illegal $-code to act():");
-						log(str);
-						break;
-					}
-					while (*i && ((point - buf) <=
-						      MAX_STRING_LENGTH - 1))
-						*point++ = *i++;
-					++strp;
-				} else if (!(*(point++) = *(strp++)))
-					break;
+    if (type == TO_VICT)
+        to = (struct char_data *)vict_obj;
+    else if (type == TO_CHAR)
+        to = ch;
+    else
+        to = world[ch->in_room].people;
 
-			*(--point) = '\n';
-			*(++point) = '\r';
-			*(++point) = '\0';
+    for (; to; to = to->next_in_room) {
+        if (to->desc && ((to != ch) || (type == TO_CHAR)) && (CAN_SEE(to, ch) || !hide_invisible) && AWAKE(to) &&
+                !((type == TO_NOTVICT) && (to == (struct char_data *)vict_obj))) {
+            if ((IS_SET(to->specials.act, PLR_KOREAN))) {
+                str = strhan;
+            }
+            else {
+                str = streng;
+            }
 
-			CAP(buf);
-			write_to_q(buf, &to->desc->output);
-		}
-		if ((type == TO_VICT) || (type == TO_CHAR))
-			return;
-	}
+            for (strp = str, point = buf; (point - buf) <= MAX_STRING_LENGTH - 1;)
+                if (*strp == '$') {
+                    strp++;
+                    switch (*strp) {
+                        case 'n':
+                            i = PERS(ch, to);
+                            break;
+                        case 'N':
+                            i = PERS((struct char_data *)vict_obj, to);
+                            break;
+                        case 'm':
+                            i = HMHR(ch);
+                            break;
+                        case 'M':
+                            i = HMHR((struct char_data *)vict_obj);
+                            break;
+                        case 's':
+                            i = HSHR(ch);
+                            break;
+                        case 'S':
+                            i = HSHR((struct char_data *)vict_obj);
+                            break;
+                        case 'e':
+                            i = HSSH(ch);
+                            break;
+                        case 'E':
+                            i = HSSH((struct char_data *)vict_obj);
+                            break;
+                        case 'o':
+                            i = OBJN(obj, to);
+                            break;
+                        case 'O':
+                            i = OBJN((struct obj_data *)vict_obj, to);
+                            break;
+                        case 'p':
+                            i = OBJS(obj, to);
+                            break;
+                        case 'P':
+                            i = OBJS((struct obj_data *)vict_obj, to);
+                            break;
+                        case 'a':
+                            i = SANA(obj);
+                            break;
+                        case 'A':
+                            i = SANA((struct obj_data *)vict_obj);
+                            break;
+                        case 'T':
+                            i = (char *)vict_obj;
+                            break;
+                        case 'F':
+                            i = fname((char *)vict_obj);
+                            break;
+                        case '$':
+                            i = "$";
+                            break;
+                        default:
+                            log("Illegal $-code to act():");
+                            log(str);
+                            break;
+                    }
+                    while (*i && ((point - buf) <= MAX_STRING_LENGTH - 1))
+                        *point++ = *i++;
+                    ++strp;
+                }
+                else if (!(*(point++) = *(strp++)))
+                    break;
+
+            *(--point) = '\n';
+            *(++point) = '\r';
+            *(++point) = '\0';
+
+            CAP(buf);
+
+            process_color_string(buf, color_buf, sizeof(color_buf)); // 색상 코드 처리
+            write_to_q(color_buf, &to->desc->output);
+        }
+
+        if ((type == TO_VICT) || (type == TO_CHAR))
+            return;
+    }
 }
 
 void freaky(struct descriptor_data *d)
