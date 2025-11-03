@@ -583,7 +583,8 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 	}
 
 	if (ch->quest.type < 0) {
-		switch (give_gift_for_quest(GET_LEVEL(ch))) {
+//		switch (give_gift_for_quest(GET_LEVEL(ch))) {
+		switch (give_reward_for_quest(GET_LEVEL(ch))) {
 		case 1:	/* some gold */
 			GET_GOLD(ch) += number(100000, (500000 *
 							GET_LEVEL(ch)) >> 2);
