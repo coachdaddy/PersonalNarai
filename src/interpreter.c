@@ -44,7 +44,8 @@
   cmd_info[(number)].minimum_level[0] = (min_lm); \
   cmd_info[(number)].minimum_level[1] = (min_lc); \
   cmd_info[(number)].minimum_level[2] = (min_lt); \
-  cmd_info[(number)].minimum_level[3] = (min_lw); }
+  cmd_info[(number)].minimum_level[3] = (min_lw); 
+}
 
 #define NOT !
 #define AND &&
@@ -254,6 +255,16 @@ void do_reply(struct char_data *ch, char *arg, int cmd);	/* by process */
 void do_quest(struct char_data *ch, char *arg, int cmd);	/* by atre */
 void do_request(struct char_data *ch, char *arg, int cmd);	/* by atre */
 void do_hint(struct char_data *ch, char *arg, int cmd);		/* by atre */
+
+// Challenge Room Quest System
+void do_challenge(struct char_data *ch); // by komo, 251017
+void do_begin(struct char_data *ch);     // by komo, 251017
+void do_rejoin(struct char_data *ch);    // by komo, 251022
+
+// color processing function
+void process_color_string(const char *input, char *output, int max_out_len); // src/utility.c, Komo
+void do_colortest(struct char_data *ch, char *argument, int cmd); // src/utility.c, Komo
+
 
 #ifdef UNUSED_CODE
 char *command[] =
@@ -569,316 +580,320 @@ char *command[] =
 };
 #endif				// UNUSED_CODE
 
-char *command[] =
-{"north",			/* 1 */
- "east",
- "south",
- "west",
- "up",
- "down",
- "enter",
- "exits",
- "kill",
- "get",
- "drink",			/* 11 */
- "eat",
- "wear",
- "wield",
- "look",
- "score",
- "say",
- "shout",
- "tell",
- "inventory",
- "qui",				/* 21 */
- "backstab",
- "smile",
- "dance",
- "kiss",
- "chat",
- "laugh",
- "giggle",
- "shake",
- "puke",
- "group",			/* 31 */
- "scream",
- "insult",
- "comfort",
- "nod",
- "sigh",
- "sulk",
- "help",
- "who",
- "emote",
- "echo",			/* 41 */
- "stand",
- "sit",
- "rest",
- "sleep",
- "wake",
- "follow",
- "transfer",
- "hug",
- "snuggle",
- "cuddle",			/* 51 */
- "nuzzle",
- "cry",
- "news",
- "equipment",
- "buy",
- "sell",
- "value",
- "list",
- "drop",
- "goto",			/* 61 */
- "weather",
- "read",
- "pour",
- "grab",
- "remove",
- "put",
- "shutdow",
- "save",
- "hit",
- "string",			/* 71 */
- "give",
- "quit",
- "stat",
- "bellow",
- "time",
- "load",
- "purge",
- "shutdown",
- "scratch",
- "",				/* 81 */
- "replacerent",
- "whisper",
- "cast",
- "at",
- "ask",
- "order",
- "sip",
- "taste",
- "snoop",
- "force",			/* 91 */
- "rent",
- "junk",
- "poke",
- "advance",
- "accuse",
- "grin",
- "bow",
- "open",
- "close",
- "lock",			/* 101 */
- "unlock",
- "leave",
- "applaud",
- "blush",
- "burp",
- "cackle",
- "clap",
- "cough",
- "curtsey",
- "fart",			/* 111 */
- "flee",
- "fondle",
- "frown",
- "gasp",
- "glare",
- "groan",
- "grope",
- "hiccup",
- "lick",
- "love",			/* 121 */
- "moan",
- "nibble",
- "pout",
- "purr",
- "ruffle",
- "shiver",
- "shrug",
- "sing",
- "slap",
- "smirk",			/* 131 */
- "snap",
- "sneeze",
- "snicker",
- "sniff",
- "snore",
- "spit",
- "squeeze",
- "stare",
- "strut",
- "thank",			/* 141 */
- "twiddle",
- "wave",
- "whistle",
- "wiggle",
- "wink",
- "yawn",
- "snowball",
- "extractrent",
- "hold",
- "flip",			/* 151 */
- "sneak",
- "hide",
- "bounce",
- "pick",
- "steal",
- "bash",
- "rescue",
- "kick",
- "french",
- "comb",			/* 161 */
- "massage",
- "tickle",
- "practice",
- "pat",
- "examine",
- "take",
- "",
- "'",
- "practise",
- "curse",			/* 171 */
- "use",
- "where",
- "levels",
- "reroll",
- "pray",
- ",",
- "beg",
- "piss",
- "cringe",
- "daydream",			/* 181 */
- "fume",
- "grovel",
- "hop",
- "nudge",
- "peer",
- "point",
- "ponder",
- "drool",
- "snarl",
- "spank",			/* 191 */
- "shoot",
- "bark",
- "taunt",
- "think",
- "whine",
- "worship",
- "yodel",			/* 198 */
- "brief",
- "wiznet",
- "consider",			/* 201 */
- "growl",
- "restore",
- "return",
- "switch",			/* 205 */
- "quaff",
- "recite",
- "users",
- "flash",
- "noshout",
- "wizhelp",			/* 211 */
- "credits",
- "compact",
- "flick",
- "wall",
- "set",
- "police",
- "wizlock",
- "noaffect",
- "invis",
- "notell",
- "banish",
- "reload",
- "data",
- "checkrent",			/* 225 */
- "chuckle",
- "balance",
- "deposit",
- "withdraw",
- "sys",
- "log",				/* 231 */
- "mstat",
- "pstat",
- "tornado",
- "light",
- "title",
- "report",
- "spells",
- "flag",
- "multi kick",
- "demote",			/*241 */
- "nochat",
- "wimpy",
- "gtell",
- "send",
- "write",
- "post",
- "웃음",
- "말",
- "울음",
- "춤",				/* 251 */
- "ㅣ",
- "하하",
- "체팅",
- "haha",
- "jjup",
- "wow",				/* 257 */
- "bye",
- "hee",
- "brb",
- "hmm",				/* 261 */
- "assist",
- "ungroup",
- "wizlist",
- "hangul",
- "NEWS",
- "version",
- "disarm",			/* by chase 268 */
- "shouryuken",			/* chase 269 */
- "throw",			/* chase 270 */
- "punch",
- "assault",			/* process 272 */
- "JOIN",			/* guild join 273 */
- "LEAVE",			/* guild leave 274 */
- "train",			/* guild skill practice 275 */
- "cant",			/* guild chat 276 */
- "SAVE",			/* 277 SAVE at locker room */
- "LOAD",			/* 278 LOAD at locker room */
- "QUERY",			/* 279 QUERY,querys player's guild */
- "broadcast",			/* 280 for police */
- "simultaneous",		/* 281 for police */
- "arrest",			/* 282 for police */
- "angry yell",			/* 283 for outlaws */
- "solace",			/* 284 for assasins */
- "unwield",
- "unhold",
- "temptation",			/* 287 */
- "shadow figure",		/* 288 for assasins */
- "smoke",			/* 289 for outlaws */
- "inject",			/* 290 for outlaws */
- "plan",
- "power bash",
- "evil strike",
- "call",			/* 294 for board shuttle bus */
- "charge",
- "solo",
- "dumb",
- "spin bird kick",
- "view",			/* used in new_shop.c */
- "reply",
- "",				/* 301 */
- "quest",
- "request",
- "hint",
- "pull",
- "change",
- ":",
- "lastchat",
- "\n"
+char *command[] = {
+	"north",			/* 1 */
+	"east",
+	"south",
+	"west",
+	"up",
+	"down",
+	"enter",
+	"exits",
+	"kill",
+	"get",
+	"drink",			/* 11 */
+	"eat",
+	"wear",
+	"wield",
+	"look",
+	"score",
+	"say",
+	"shout",
+	"tell",
+	"inventory",
+	"qui",				/* 21 */
+	"backstab",
+	"smile",
+	"dance",
+	"kiss",
+	"chat",
+	"laugh",
+	"giggle",
+	"shake",
+	"puke",
+	"group",			/* 31 */
+	"scream",
+	"insult",
+	"comfort",
+	"nod",
+	"sigh",
+	"sulk",
+	"help",
+	"who",
+	"emote",
+	"echo",			/* 41 */
+	"stand",
+	"sit",
+	"rest",
+	"sleep",
+	"wake",
+	"follow",
+	"transfer",
+	"hug",
+	"snuggle",
+	"cuddle",			/* 51 */
+	"nuzzle",
+	"cry",
+	"news",
+	"equipment",
+	"buy",
+	"sell",
+	"value",
+	"list",
+	"drop",
+	"goto",			/* 61 */
+	"weather",
+	"read",
+	"pour",
+	"grab",
+	"remove",
+	"put",
+	"shutdow",
+	"save",
+	"hit",
+	"string",			/* 71 */
+	"give",
+	"quit",
+	"stat",
+	"bellow",
+	"time",
+	"load",
+	"purge",
+	"shutdown",
+	"scratch",
+	"",				/* 81 */
+	"replacerent",
+	"whisper",
+	"cast",
+	"at",
+	"ask",
+	"order",
+	"sip",
+	"taste",
+	"snoop",
+	"force",			/* 91 */
+	"rent",
+	"junk",
+	"poke",
+	"advance",
+	"accuse",
+	"grin",
+	"bow",
+	"open",
+	"close",
+	"lock",			/* 101 */
+	"unlock",
+	"leave",
+	"applaud",
+	"blush",
+	"burp",
+	"cackle",
+	"clap",
+	"cough",
+	"curtsey",
+	"fart",			/* 111 */
+	"flee",
+	"fondle",
+	"frown",
+	"gasp",
+	"glare",
+	"groan",
+	"grope",
+	"hiccup",
+	"lick",
+	"love",			/* 121 */
+	"moan",
+	"nibble",
+	"pout",
+	"purr",
+	"ruffle",
+	"shiver",
+	"shrug",
+	"sing",
+	"slap",
+	"smirk",			/* 131 */
+	"snap",
+	"sneeze",
+	"snicker",
+	"sniff",
+	"snore",
+	"spit",
+	"squeeze",
+	"stare",
+	"strut",
+	"thank",			/* 141 */
+	"twiddle",
+	"wave",
+	"whistle",
+	"wiggle",
+	"wink",
+	"yawn",
+	"snowball",
+	"extractrent",
+	"hold",
+	"flip",			/* 151 */
+	"sneak",
+	"hide",
+	"bounce",
+	"pick",
+	"steal",
+	"bash",
+	"rescue",
+	"kick",
+	"french",
+	"comb",			/* 161 */
+	"massage",
+	"tickle",
+	"practice",
+	"pat",
+	"examine",
+	"take",
+	"",
+	"'",
+	"practise",
+	"curse",			/* 171 */
+	"use",
+	"where",
+	"levels",
+	"reroll",
+	"pray",
+	",",
+	"beg",
+	"piss",
+	"cringe",
+	"daydream",			/* 181 */
+	"fume",
+	"grovel",
+	"hop",
+	"nudge",
+	"peer",
+	"point",
+	"ponder",
+	"drool",
+	"snarl",
+	"spank",			/* 191 */
+	"shoot",
+	"bark",
+	"taunt",
+	"think",
+	"whine",
+	"worship",
+	"yodel",			/* 198 */
+	"brief",
+	"wiznet",
+	"consider",			/* 201 */
+	"growl",
+	"restore",
+	"return",
+	"switch",			/* 205 */
+	"quaff",
+	"recite",
+	"users",
+	"flash",
+	"noshout",
+	"wizhelp",			/* 211 */
+	"credits",
+	"compact",
+	"flick",
+	"wall",
+	"set",
+	"police",
+	"wizlock",
+	"noaffect",
+	"invis",
+	"notell",
+	"banish",
+	"reload",
+	"data",
+	"checkrent",			/* 225 */
+	"chuckle",
+	"balance",
+	"deposit",
+	"withdraw",
+	"sys",
+	"log",				/* 231 */
+	"mstat",
+	"pstat",
+	"tornado",
+	"light",
+	"title",
+	"report",
+	"spells",
+	"flag",
+	"multi kick",
+	"demote",			/*241 */
+	"nochat",
+	"wimpy",
+	"gtell",
+	"send",
+	"write",
+	"post",
+	"웃음",
+	"말",
+	"울음",
+	"춤",				/* 251 */
+	"ㅣ",
+	"하하",
+	"체팅",
+	"haha",
+	"jjup",
+	"wow",				/* 257 */
+	"bye",
+	"hee",
+	"brb",
+	"hmm",				/* 261 */
+	"assist",
+	"ungroup",
+	"wizlist",
+	"hangul",
+	"NEWS",
+	"version",
+	"disarm",			/* by chase 268 */
+	"shouryuken",			/* chase 269 */
+	"throw",			/* chase 270 */
+	"punch",
+	"assault",			/* process 272 */
+	"JOIN",			/* guild join 273 */
+	"LEAVE",			/* guild leave 274 */
+	"train",			/* guild skill practice 275 */
+	"cant",			/* guild chat 276 */
+	"SAVE",			/* 277 SAVE at locker room */
+	"LOAD",			/* 278 LOAD at locker room */
+	"QUERY",			/* 279 QUERY,querys player's guild */
+	"broadcast",			/* 280 for police */
+	"simultaneous",		/* 281 for police */
+	"arrest",			/* 282 for police */
+	"angry yell",			/* 283 for outlaws */
+	"solace",			/* 284 for assasins */
+	"unwield",
+	"unhold",
+	"temptation",			/* 287 */
+	"shadow figure",		/* 288 for assasins */
+	"smoke",			/* 289 for outlaws */
+	"inject",			/* 290 for outlaws */
+	"plan",
+	"power bash",
+	"evil strike",
+	"call",			/* 294 for board shuttle bus */
+	"charge",
+	"solo",
+	"dumb",
+	"spin bird kick",
+	"view",			/* used in new_shop.c */
+	"reply",
+	"",				/* 301 */
+	"quest",
+	"request",
+	"hint",
+	"pull",
+	"change",
+	":",
+	"lastchat", /* 308 */
+	"challenge", // by komo, 309
+	"begin",     // by komo, 310
+	"rejoin",    // by komo, 311
+	"colortest", /* by komo, 312 */
+	"\n"
 };
 
 char *fill[] =
@@ -1981,8 +1996,7 @@ void assign_command_pointers(void)
 	COMMANDO(294, POSITION_STANDING, do_not_here, 1, 1, 1, 1);
 	COMMANDO(295, POSITION_FIGHTING, do_charge, 20, 20, 20, 20);
 	COMMANDO(296, POSITION_STANDING, do_solo, 1, 1, 1, 1);
-	COMMANDO(297, POSITION_STANDING, do_flag, IMO + 3, IMO + 3, IMO + 3, IMO
-		 + 3);
+	COMMANDO(297, POSITION_STANDING, do_flag, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
 	COMMANDO(298, POSITION_FIGHTING, do_spin_bird_kick, IMO, IMO, IMO, 30);
 	COMMANDO(299, POSITION_STANDING, do_not_here, 1, 1, 1, 1);
 	COMMANDO(300, POSITION_SLEEPING, do_reply, 1, 1, 1, 1);
@@ -1993,6 +2007,11 @@ void assign_command_pointers(void)
 	COMMANDO(306, POSITION_SLEEPING, do_not_here, 1, 1, 1, 1);
 	COMMANDO(307, POSITION_DEAD, do_wiznet, IMO, IMO, IMO, IMO);
 	COMMANDO(308, POSITION_SLEEPING, do_lastchat, 2, 2, 2, 2);
+	/* Challenge Room Quest System, Komo */
+    COMMANDO(309, POSITION_STANDING, do_challenge, 1, 1, 1, 1);
+    COMMANDO(310, POSITION_STANDING, do_begin, 1, 1, 1, 1);
+    COMMANDO(311, POSITION_STANDING, do_rejoin, 1, 1, 1, 1);
+    COMMANDO(312, POSITION_DEAD, do_colortest, 1, 1, 1, 1); /* 색상 출력 미리보기, 251022 */
 }
 
 void query_status(struct descriptor_data *d)
@@ -2082,7 +2101,7 @@ void nanny(struct descriptor_data *d, char *arg)
 			close_socket(d);
 		else {
 			if (_parse_name(arg, tmp_name)) {
-				SEND_TO_Q("Illegal name, please try another.", d);
+				SEND_TO_Q("&rIllegal name, please try another.&n", d);
 				SEND_TO_Q("Name : ", d);
 				return;
 			}
@@ -2116,7 +2135,7 @@ void nanny(struct descriptor_data *d, char *arg)
 				strcpy(d->pwd, tmp_store.pwd);
 				d->pos = player_table[player_i].nr;
 				no_echo = 1;
-				SEND_TO_Q("Password : ", d);
+				SEND_TO_Q("&CPassword : &n", d);
 				STATE(d) = CON_PWDNRM;
 			} else {
 				/* player unknown gotta make a new */
@@ -2166,9 +2185,9 @@ void nanny(struct descriptor_data *d, char *arg)
 			close_socket(d);
 		else {
 			if (strncmp((char *)crypt(arg, d->pwd), d->pwd, 10)) {
-				SEND_TO_Q("Wrong password.\n\r", d);
+				SEND_TO_Q("&rWrong password.&n\n\r", d);
 				no_echo = 1;
-				SEND_TO_Q("Password : ", d);
+				SEND_TO_Q("&CPassword : &n", d);
 				d->wait = 20;
 				return;
 			}
@@ -2176,14 +2195,13 @@ void nanny(struct descriptor_data *d, char *arg)
 				if (!str_cmp(GET_NAME(d->character),
 				    GET_NAME(tmp_ch)) &&
 				    !tmp_ch->desc && !IS_NPC(tmp_ch)) {
-					SEND_TO_Q("Reconnecting.\n\r", d);
+					SEND_TO_Q("&uReconnecting.&n\n\r", d);
 					free_char(d->character);
 					tmp_ch->desc = d;
 					d->character = tmp_ch;
 					tmp_ch->specials.timer = 0;
 					STATE(d) = CON_PLYNG;
-					act("$n has reconnected.", TRUE,
-					    tmp_ch, 0, 0, TO_ROOM);
+					act("&u$n has reconnected.&n", TRUE, tmp_ch, 0, 0, TO_ROOM);
 					sprintf(buf,
 						"%s(%d)[%s] has reconnected.",
 						GET_NAME(d->character),
@@ -2197,7 +2215,7 @@ void nanny(struct descriptor_data *d, char *arg)
 				GET_LEVEL(d->character), d->host);
 			log(buf);
 			SEND_TO_Q(motd, d);
-			SEND_TO_Q("\n\r\n*** PRESS RETURN : ", d);
+			SEND_TO_Q("\n\r\n&C*** PRESS RETURN : &n", d);
 			STATE(d) = CON_RMOTD;
 		}
 		break;
@@ -2209,7 +2227,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		if (!*arg || strlen(arg) > 10) {
 			SEND_TO_Q("Illegal password.\n\r", d);
 			no_echo = 1;
-			SEND_TO_Q("Password : ", d);
+			SEND_TO_Q("&CPassword : &n", d);
 			return;
 		}
 
@@ -2296,14 +2314,14 @@ void nanny(struct descriptor_data *d, char *arg)
 			sprintf(buf, "%s [%s] new player.", GET_NAME(d->character),
 				d->host);
 			log(buf);
-			SEND_TO_Q("\n\r*** PRESS RETURN : ", d);
+			SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
 		}
 		break;
 
 	case CON_RMOTD:	/* read CR after printing motd */
 		if (GET_LEVEL(d->character) >= IMO) {
 			SEND_TO_Q(imotd, d);
-			SEND_TO_Q("\n\r*** PRESS RETURN : ", d);
+			SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
 			STATE(d) = CON_IMOTD;
 			break;
 		}
@@ -2406,7 +2424,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		if (!*arg || strlen(arg) > 10) {
 			SEND_TO_Q("Illegal password.\n\r", d);
 			no_echo = 1;
-			SEND_TO_Q("Password : ", d);
+			SEND_TO_Q("&CPassword : &n", d);
 			return;
 		}
 		strncpy(d->pwd, (char *)crypt(arg, d->character->player.name), 10);
@@ -2459,12 +2477,12 @@ void nanny(struct descriptor_data *d, char *arg)
 			case 'r':
 				init_char(d->character);
 				SEND_TO_Q("\n\rYour stat is rerolled.\n\r", d);
-				SEND_TO_Q("\n\r*** PRESS RETURN : ", d);
+				SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
 				STATE(d) = CON_QSTATE;
 				return;
 			default:
 				SEND_TO_Q("\n\rCan't you understand? Retry!\n\r", d);
-				SEND_TO_Q("\n\r*** PRESS RETURN : ", d);
+				SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
 				STATE(d) = CON_QSTATE;
 				return;
 			}
@@ -2489,7 +2507,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		d->pos = create_entry(GET_NAME(d->character));
 		save_char(d->character, NOWHERE);
 		SEND_TO_Q(motd, d);
-		SEND_TO_Q("\n\r\n*** PRESS RETURN : ", d);
+		SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
 		break;
 	case CON_DELCNF:
 		/* check passwd */
