@@ -50,16 +50,6 @@ int real_mobile(int virtual);
 struct obj_data *read_object(int nr, int type);
 struct char_data *read_mobile(int nr, int type);
 
-/*
-#define MENU         \
-"\n\rGOOD luck to NaraiMUDDER\n\r\n\
-0) Get away from NaraiMUD.\n\r\
-1) Into the NaraiMUD.\n\r\
-2) Modify description.\n\r\
-3) Change secret key.\n\r\
-4) Delete this player.\n\r\n\r\
-   What number? : "
-*/
 
 #define MENU         \
 "\n\rGOOD luck to NaraiMUDDER\n\r\n\
@@ -69,13 +59,28 @@ struct char_data *read_mobile(int nr, int type);
 3) Change secret key.\n\r\
 ** Delete character is removed .\n\r\n\r\
    What number? : "
-
+/* 
 #define GREETINGS \
 "\n\r\n\r\
                            	NaraiMUD\n\r\n\r\
                            A derivative of KITMUD\n\r\n\r\
                              Continued from EVE\n\r\
                          Restarted at 2010. 12. 20. .........\n\r\n\r"
+ */
+
+#define GREETINGS \
+"\n\r\n\r\
+&Y   _   _    _    ____     _    ._.  &C  __  __  _   _  ____   &n\n\r\
+&Y  | \\ | |  / \\  |  _ \\   / \\   | |  &C |  \\/  || | | ||  _ \\  &n\n\r\
+&Y  |  \\| | / _ \\ | |_) | / _ \\  | |  &C | |\\/| || | | || | \\ \\ &n\n\r\
+&C  | |\\  |/ ___ \\|  _ < / ___ \\ | |  &Y | |  | || \\_/ || |_/ / &n\n\r\
+&C  |_| \\_/_/   \\_\\_| \\_\\_/   \\_\\|_|  &Y |_|  |_|\\_____/|____/  &n\n\r\n\r\
+&W                     NaraiMUD (PERSONAL)            &n\n\r\n\r\
+&D                   A derivative of KIT-MUD          &n\n\r\
+&A                      Continued from EVE            &n\n\r\
+&g                 Restarted at 2010. 12. 20.         &n\n\r\
+&G                 Revisited at 2025. 10. 14. .....   &n\n\r\n\r"
+
 
 #define WELC_MESSG \
 "\n\rWelcome to the land of Kkang-PaeMUD. May your visit here be... Interesting.\
