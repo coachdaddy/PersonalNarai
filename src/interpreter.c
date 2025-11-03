@@ -44,7 +44,7 @@
   cmd_info[(number)].minimum_level[0] = (min_lm); \
   cmd_info[(number)].minimum_level[1] = (min_lc); \
   cmd_info[(number)].minimum_level[2] = (min_lt); \
-  cmd_info[(number)].minimum_level[3] = (min_lw); 
+  cmd_info[(number)].minimum_level[3] = (min_lw); \
 }
 
 #define NOT !
