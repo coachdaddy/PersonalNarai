@@ -3652,7 +3652,7 @@ A small leather pack rests here.~
 200 0 0 0
 9 1000 250
 E
-pack
+pack~
 It looks pretty big on the inside.
 ~
 #2936
@@ -3846,7 +3846,7 @@ A small red key lies here.~
 ~
 18 0 1
 2 0 0 0
-1 0 0 0
+1 0 0
 #2952
 key black~
 a black key~
