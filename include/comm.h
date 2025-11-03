@@ -27,7 +27,20 @@ void acthan(char *seng, char *shan, int hide_invisible, struct char_data *ch,
 
 int write_to_descriptor(int desc, char *txt);
 void write_to_q(char *txt, struct txt_q *queue);
-#define SEND_TO_Q(messg, desc)  write_to_q((messg), &(desc)->output)
+
+// #define SEND_TO_Q(messg, desc)  write_to_q((messg), &(desc)->output)
+/*    SEND_TO_Q 컬러 출력을 위해 정의 변경
+ * 색상 버퍼(color_buf__) 선언 -> process_color_string로 메시지 파싱
+ * -> 파싱이 완료된 color_buf__를 write_to_q로 보냄
+ */
+#define SEND_TO_Q(messg, desc) \
+    do { \
+        if ((desc) && (messg)) { \
+            char color_buf__[MAX_STRING_LENGTH * 3]; \
+            process_color_string(messg, color_buf__, sizeof(color_buf__)); \
+            write_to_q(color_buf__, &(desc)->output); \
+        } \
+    } while(0)
 
 /* move to comm2.h
 #define BADDOMS 16
