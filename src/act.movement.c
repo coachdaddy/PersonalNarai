@@ -18,7 +18,6 @@
 #include "guild_list.h"
 
 /*   external vars  */
-
 extern struct room_data *world;
 extern struct char_data *character_list;
 extern struct descriptor_data *descriptor_list;
@@ -26,6 +25,12 @@ extern struct index_data *obj_index;
 extern int rev_dir[];
 extern char *dirs[];
 extern int movement_loss[];
+/* Challenge Room Quest System -- komo, 251017 */
+extern struct {
+    int virtual;
+    int level;
+    char *name;
+} QM[];
 
 /* external functs */
 
@@ -51,6 +56,7 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
 {
 	char tmp[80];
 	int was_in;
+	bool was_in_challenge_room = FALSE;
 	int need_movement;
 	struct obj_data *obj;
 	bool has_boat, has_wing;
@@ -102,6 +108,18 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
 
 		return (FALSE);
 	}
+
+	/* (temp) 플레이어가 지정된 도전의 방을 떠나는 경우, 본인 도전의 방 상태만 초기화 */
+    if (!IS_NPC(ch) && ch->specials.challenge_room_vnum > 0 && world[ch->in_room].number == ch->specials.challenge_room_vnum) {
+        
+		was_in = ch->in_room;
+		was_in_challenge_room = TRUE;
+
+		DEBUG_LOG("Player %s leaving Challenge Room %d.", GET_NAME(ch), world[ch->in_room].number);
+        send_to_char_han("&cCHALLENGE&n : &yYou leave the Room of Challenge.&n\n\r", "&cCHALLENGE&n : &y당신은 도전을 완료하지 않고 방을 나갑니다.&n\n\r", ch);
+    } else {
+        was_in = ch->in_room;
+    }
 
 	if (GET_LEVEL(ch) < IMO && !IS_NPC(ch))
 		GET_MOVE(ch) -= need_movement;
