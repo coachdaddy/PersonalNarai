@@ -1,19 +1,29 @@
 ================================ TODAYS NEWS ===================================
                             Welcome to NARAI-MUD
 --------------------------------------------------------------------------------
-96/8/9		MUD Restart	96/8/9 pm 10:00 
-97/1/27		Mud work again 		-_-
-97/2/24		MUD Restart 97/2/24 pm 9:20 
-97/2/24		Meta, Quest changed.
-97/3/10		Wimpy changed.
+96/08/09		MUD Restart	96/8/9 pm 10:00 
+97/01/27		Mud work again 		-_-
+97/02/24		MUD Restart 97/2/24 pm 9:20 
+97/02/24		Meta, Quest changed.
+97/03/10		Wimpy changed.
 
 10/12/20	MUD restarted
-11/1/17		Changes in lastchat (Timestamp added)
-11/1/20		Changes in command order (k, b, gr, f, c, ca, fl, fla)
-11/1/29		'enchant weapon' modified ("EXTREMELY" increased success rate)
-11/2/23		'enchant weapon' will be gradually rolled back.
+11/01/17		Changes in lastchat (Timestamp added)
+11/01/20		Changes in command order (k, b, gr, f, c, ca, fl, fla)
+11/01/29		'enchant weapon' modified ("EXTREMELY" increased success rate)
+11/02/23		'enchant weapon' will be gradually rolled back.
 11/12/24	Visit Users Forum ( http://narai.forumkorean.com/ )
 
 12/01/30	MUD restarted and 'enchant weapon' rerolled
 18/05/22	MUD restarted
 --------------------------------------------------------------------------------
+old MOTDs moved here.
+25/10/14    
+  ** &TDyaus&n : 리모탈 이후 최고 레벨 60까지 확장
+  ** &JXone &n : Quest Room에서 'challenge'로 도전의 방 입장, 'begin'으로 몹 소환
+             몹이 사용하는 'shouryuken'의 2, 3타 데미지 조정
+  ** &TDyaus&n : EXITS 명령 수정, Quest Mob 할당 변경 내용 반영
+  ** &TDyaus&n : EXITS 명령 추가 수정, 레벨별 퀘스트 갯수 조정 내용 반영
+  ** &JXone &n : [CHALLENGE] 퀘스트 미완료 상태일 때 rejoin으로 다시 도전방 입장
+  ** &JXone &n : (Dyaus) constants.c 경험치 0 하나 삭제 반영, 
+            challenge 관련 코드 개선, 기타 자잘한 수정(CRASH 방지 시도)

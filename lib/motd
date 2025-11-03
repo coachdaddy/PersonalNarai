@@ -1,16 +1,28 @@
+--------------------------N-A-R-A-I-------------M-U-D--------------------------
 
------------------N-A-R-A-I------------------M-U-D------------------
+    *** 오픈카톡방 : &bhttps://open.kakao.com/o/gAx75aN&n
+    *** 틴틴 계정 드립니다. 카톡방에서 신청해주세요.
+    *** Visit Users Forum :&b http://narai.forumkorean.com/ &n            - &yIMPLE&n 
+        --------------------------------------------------------
 
-   *** 오픈카톡방 : https://open.kakao.com/o/gAx75aN
-   
-   *** 틴틴 계정 드립니다. 카톡방에서 신청해주세요.
+    *** Running Dyaus' PersonalNarai based version. (Docker/Ununtu 24.04)
+        -> &bhttps://github.com/coachdaddy/PersonalNarai.git&n
 
-   *** PK is LEGAL!
-       Only a RULE is you can't kill your GUILD MEMBER.
+&#Modified/Added :&n
+&l25/10/24&n
+  ** &TDyaus&n : 10월 24일 08:30 기준 커밋 내용 반영
+  ** &JXone &n : colortest 명령 추가 -> 인수 없이 사용하면 64종 색상 출력
+&l25/10/28&n
+  ** &JXone &n : [CHALLENGE] 도전 상태 변경 관련 수정
+           : [COLORTEST] 인수로 색상 출력 확인 가능 
+             (ex. colortest &&rThis is in red. &&bThis is in blue.)
+&l25/10/29&n
+  ** &TDyaus&n : 10월 29일 17:00 기준 커밋 내용 반영(mob.quest 순서 변경, 선악도 추가)
+&l25/11/01&n
+  ** &JXone &n : [void hit() (fight.c)] 전투 시 reflect damage의 반사 판정 기준 수정
+           : 공격자의 learned 값으로 반사 성공률을 계산하고 있었음
+           : [QUEST] mob.quest - KAIST mob vnum 수정
 
-   *** NO REIMBURSE !!!
+* &dCRASH는 많이 잡힌 것 같습니다. 자주 리붓될 수 있습니다. &n    - &JXone &n
 
-   *** MULTI/ROBOT PLAYING allowed. 
-
-                                            - IMPLE 
---------------------------------------------------------------------
+-------------------------------------------------------------------------------
