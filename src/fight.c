@@ -1907,7 +1907,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 		if (!IS_AFFECTED(victim, AFF_REFLECT_DAMAGE))
 			damage(ch, victim, dam << 1, SKILL_BACKSTAB);
 		else {
-			if (ch->skills[SPELL_REFLECT_DAMAGE].learned >
+			if (victim->skills[SPELL_REFLECT_DAMAGE].learned >
 									      number(1, 500)) {
 				INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
 				act("You reflect damage on $N succesfully.",
@@ -1930,7 +1930,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 		if (!IS_AFFECTED(victim, AFF_REFLECT_DAMAGE))
 			damage(ch, victim, dam, w_type);
 		else {
-			if (ch->skills[SPELL_REFLECT_DAMAGE].learned >
+			if (victim->skills[SPELL_REFLECT_DAMAGE].learned >
 									      number(1, 300)) {
 				INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
 				act("You reflect damage on $N successfully.",
