@@ -51,7 +51,25 @@
 #define SPELL_SENSE_LIFE             44
 #define SPELL_SUNBURST               45
 #define SPELL_CLONE                  46
-
+/* 47-52 UNUSED */
+#define SPELL_IDENTIFY               53
+/* 54 UNUSED */
+#define SKILL_SNEAK                  55
+#define SKILL_HIDE                   56
+#define SKILL_STEAL                  57
+#define SKILL_BACKSTAB               58
+#define SKILL_PICK_LOCK              59
+#define SKILL_KICK                   60
+#define SKILL_BASH                   61
+#define SKILL_RESCUE                 62
+#define SKILL_DOUBLE                 63
+#define SKILL_QUADRUPLE              64
+#define SKILL_EXTRA_DAMAGING         65
+#define SPELL_FIRE_BREATH            66
+#define SPELL_GAS_BREATH             67
+#define SPELL_FROST_BREATH           68
+#define SPELL_ACID_BREATH            69
+#define SPELL_LIGHTNING_BREATH       70
 #define SPELL_DAMAGE_UP              71
 #define SPELL_ENERGY_FLOW            72
 #define SPELL_MANA_BOOST             73
@@ -60,42 +78,17 @@
 #define SPELL_THROW                  76
 #define SPELL_FIRE_STORM             77
 #define SPELL_CRUSH_ARMOR            78
-#define SPELL_FULL_HEAL		     79
+#define SPELL_FULL_HEAL		     	 79
 #define SPELL_TRICK                  80
 #define SPELL_HASTE                  81
 #define SPELL_IMPROVED_HASTE         82
 #define SPELL_FAR_LOOK               83
 #define SPELL_ALL_HEAL               84
-
-#define MAXSPELL 150
-
-#define SPELL_IDENTIFY               53
-
-#define SKILL_SNEAK                  55
-#define SKILL_HIDE                   56
-#define SKILL_STEAL                  57
-#define SKILL_BACKSTAB               58
-#define SKILL_PICK_LOCK              59
-
-#define SKILL_KICK                   60
-#define SKILL_BASH                   61
-#define SKILL_RESCUE                 62
-#define SKILL_DOUBLE                 63
-#define SKILL_QUADRUPLE              64
-#define SKILL_EXTRA_DAMAGING         65
-
-#define SPELL_FIRE_BREATH            66
-#define SPELL_GAS_BREATH             67
-#define SPELL_FROST_BREATH           68
-#define SPELL_ACID_BREATH            69
-#define SPELL_LIGHTNING_BREATH       70
-
 #define SKILL_TORNADO                85
 #define SKILL_LIGHT_MOVE             86
 #define SKILL_PARRY                  87
 #define SKILL_FLASH	                 88
 #define SKILL_MULTI_KICK             89
-
 #define SPELL_ENCHANT_ARMOR          90
 #define SPELL_PRAY_FOR_ARMOR         91
 #define SPELL_INFRAVISION            92
@@ -112,49 +105,52 @@
 #define SKILL_OCTA					103
 #define SPELL_LOVE  	            104
 #define SKILL_DISARM				105
-#define SPELL_RERAISE				106	/* by chase */
-#define SKILL_SHOURYUKEN			107	/* by chase */
-#define SKILL_THROW_OBJECT			108	/* by chase */
+#define SPELL_RERAISE				106		/* by chase */
+#define SKILL_SHOURYUKEN			107		/* by chase */
+#define SKILL_THROW_OBJECT			108		/* by chase */
 #define SKILL_PUNCH					109
-#define SPELL_DEATH					110	/* by process */
-#define SPELL_ENCHANT_PERSON		111	/* by wings */
+#define SPELL_DEATH					110		/* by process */
+#define SPELL_ENCHANT_PERSON		111		/* by wings */
 #define SPELL_SPELL_BLOCK           112		/* by process */
-#define SKILL_TEMPTATION			113	/* by process */
-#define SPELL_SHADOW_FIGURE			114	/* by process */
-#define SPELL_MANA_TRANSFER			115	/* by process */
+#define SKILL_TEMPTATION			113		/* by process */
+#define SPELL_SHADOW_FIGURE			114		/* by process */
+#define SPELL_MANA_TRANSFER			115		/* by process */
 #define SPELL_SELF_HEAL			    116		/* by process */
-#define SPELL_HOLY_SHIELD			117	/* by process */
-#define SPELL_RESTORE_MOVE	        118	/* by ares */
+#define SPELL_HOLY_SHIELD			117		/* by process */
+#define SPELL_RESTORE_MOVE	        118		/* by ares */
 #define SPELL_KISS_OF_PROCESS       119		/* by process */
 #define SPELL_REFLECT_DAMAGE	    120		/* by process */
-#define SPELL_DUMB					121	/* by process */
-#define SKILL_SPIN_BIRD_KICK		122	/* by ares */
+#define SPELL_DUMB					121		/* by process */
+#define SKILL_SPIN_BIRD_KICK		122		/* by ares */
 #define SPELL_THUNDERBOLT			123
 #define SKILL_ARREST				124
-#define SPELL_SANCTUARY_CLOUD		125	/* by atre */
+#define SPELL_SANCTUARY_CLOUD		125
 
-#define TYPE_HIT                     150
-#define TYPE_BLUDGEON                151
-#define TYPE_PIERCE                  152
-#define TYPE_SLASH                   153
-#define TYPE_WHIP                    154	/* EXAMPLE */
-#define TYPE_SHOOT                   155	/* NO MESSAGES WRITTEN YET! */
-#define TYPE_BITE                    156	/* NO MESSAGES WRITTEN YET! */
-#define TYPE_STING                   157	/* NO MESSAGES WRITTEN YET! */
-#define TYPE_CRUSH                   158	/* NO MESSAGES WRITTEN YET! */
+#define MAXSPELL 150
+
+	/* by atre */
+#define TYPE_HIT        150
+#define TYPE_BLUDGEON 	151
+#define TYPE_PIERCE     152
+#define TYPE_SLASH      153
+#define TYPE_WHIP       154	/* EXAMPLE */
+#define TYPE_SHOOT      155	/* NO MESSAGES WRITTEN YET! */
+#define TYPE_BITE       156	/* NO MESSAGES WRITTEN YET! */
+#define TYPE_STING      157	/* NO MESSAGES WRITTEN YET! */
+#define TYPE_CRUSH      158	/* NO MESSAGES WRITTEN YET! */
 
 #define TYPE_SUFFERING               200
 /* More anything but spells and weapontypes can be insterted here! */
 
 #define MAX_TYPES 70
 
-#define SAVING_PARA   0
+#define SAVING_PARA   		0
 #define SAVING_HIT_SKILL    1
-#define SAVING_PETRI  2
-#define SAVING_BREATH 3
-#define SAVING_SPELL  4
+#define SAVING_PETRI  		2
+#define SAVING_BREATH 		3
+#define SAVING_SPELL  		4
 
-#define MAX_SPL_LIST 200
+#define MAX_SPL_LIST 	200
 
 #define TAR_IGNORE        1
 #define TAR_CHAR_ROOM     2
