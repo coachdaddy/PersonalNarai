@@ -1051,15 +1051,26 @@ void do_shouryuken(struct char_data *ch, char *argument, int cmd)
 		act("쇼오오오~~", TRUE, ch, 0, 0, TO_ROOM);
 		damage(ch, victim, dam, TYPE_HIT);
 
-		dam *= number(2, 3);
-		act("류우우우~~", TRUE, ch, 0, 0, TO_ROOM);
-		damage(ch, victim, dam, TYPE_HIT);
+		/* NPC, PC의 damage 증폭 분리, 251019 */
+		if (IS_NPC(ch)) { // 시전자가 NPC(몬스터)인 경우
+            dam += GET_LEVEL(ch) * 10; // 2타
+            act("류우우우~~", TRUE, ch, 0, 0, TO_ROOM);
+            damage(ch, victim, dam, TYPE_HIT);
 
-		dam *= number(5, 7 + (GET_SKILLED(ch, SKILL_SHOURYUKEN) >> 4));
-		act("켄!!!!!!!!", TRUE, ch, 0, 0, TO_ROOM);
-		damage(ch, victim, dam, TYPE_HIT);
+            dam += GET_LEVEL(ch) * 20; // 3타
+            act("켄!!!!!!!!", TRUE, ch, 0, 0, TO_ROOM);
+            damage(ch, victim, dam, TYPE_HIT);
+        } else { // 시전자가 플레이어인 경우 기존 로직대로
+            dam *= number(2, 3);
+            act("류우우우~~", TRUE, ch, 0, 0, TO_ROOM);
+            damage(ch, victim, dam, TYPE_HIT);
 
-		send_to_char("빠샤!!!!!!\n\r", ch);
+            dam *= number(5, 7 + (GET_SKILLED(ch, SKILL_SHOURYUKEN) >> 4));
+            act("켄!!!!!!!!", TRUE, ch, 0, 0, TO_ROOM);
+            damage(ch, victim, dam, TYPE_HIT);
+
+            send_to_char("빠샤!!!!!!\n\r", ch);
+        }
 	} else {
 		WAIT_STATE(ch, PULSE_VIOLENCE / 3);
 		damage(ch, victim, dam, TYPE_HIT);
