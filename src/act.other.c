@@ -19,7 +19,6 @@
 #include "guild_list.h"
 
 /* extern variables */
-
 extern struct str_app_type str_app[];
 extern struct room_data *world;
 extern struct descriptor_data *descriptor_list;
@@ -28,7 +27,6 @@ extern struct dex_skill_type dex_app_skill[];
 extern struct spell_info_type spell_info[];
 
 /* extern procedures */
-
 void stash_char(struct char_data *ch);
 void wipe_stash(char *filename);
 void hit(struct char_data *ch, struct char_data *victim, int type);
@@ -42,6 +40,8 @@ void do_say(struct char_data *ch, char *str, int cmd);
 bool saves_spell(struct char_data *ch, int type);
 void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
 int MIN(int a, int b);
+
+
 
 void do_quit(struct char_data *ch, char *argument, int cmd)
 {
@@ -60,6 +60,9 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 		die(ch, GET_LEVEL(ch), NULL);	/* cyb :do not know who killed him */
 		return;
 	}
+
+    act ("$n has left the game.", TRUE, ch, 0, 0, TO_ROOM);
+
 #ifdef	RETURN_TO_QUIT
 	save_char(ch, world[ch->in_room].number);
 #else
@@ -71,6 +74,7 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 	log(cyb);
 	if (ch->desc)
 		close_socket(ch->desc);
+	extract_char(ch);
 }
 
 void do_wimpy(struct char_data *ch, char *argument, int cmd)
@@ -123,6 +127,7 @@ void do_wimpy(struct char_data *ch, char *argument, int cmd)
 void do_save(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[100];
+	int save_result;
 
 	if (IS_NPC(ch) || !ch->desc)
 		return;
@@ -134,6 +139,13 @@ void do_save(struct char_data *ch, char *argument, int cmd)
 	save_char(ch, ch->in_room);
 #endif
 	stash_char(ch);
+	
+    save_result = move_stashfile_safe(GET_NAME(ch));
+
+    if (save_result != 0) {
+        send_to_char("Error saving your equipment/inventory!\n\r", ch);
+        DEBUG_LOG("do_save: move_stashfile_safe failed for %s", GET_NAME(ch));
+    }
 }
 
 void do_not_here(struct char_data *ch, char *argument, int cmd)
