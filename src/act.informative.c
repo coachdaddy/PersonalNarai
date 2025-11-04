@@ -47,7 +47,7 @@ void page_string(struct descriptor_data *d, char *str, int keep_internal);
 int number(int from, int to);
 int strn_cmp(char *arg1, char *arg2, int n);
 void log(char *str);
-void move_stashfile(char *victim);
+int move_stashfile_safe (const char *victim);
 void close_socket(struct descriptor_data *d);
 void sprintbit(long vektor, char *names[], char *result);
 void weather_change(int);
@@ -2081,7 +2081,7 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 			if ((d->connected == CON_PLYNG) && (d->character)) {
 				if (d->character->player.level < ch->player.level) {
 					stash_char(d->character);
-					move_stashfile(d->character->player.name);
+					move_stashfile_safe(d->character->player.name);
 					for (i = 0; i < MAX_WEAR; i++)
 						if (d->character->equipment[i]) {
 							extract_obj(unequip_char(d->character, i));

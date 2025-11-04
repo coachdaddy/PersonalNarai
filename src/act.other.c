@@ -29,7 +29,7 @@ extern struct spell_info_type spell_info[];
 
 /* extern procedures */
 
-// void stash_char (struct char_data *ch, char *filename, int flag);
+void stash_char(struct char_data *ch);
 void wipe_stash(char *filename);
 void hit(struct char_data *ch, struct char_data *victim, int type);
 void do_shout(struct char_data *ch, char *argument, int cmd);
@@ -133,7 +133,7 @@ void do_save(struct char_data *ch, char *argument, int cmd)
 #else
 	save_char(ch, ch->in_room);
 #endif
-//  stash_char (ch, 0, 0);
+	stash_char(ch);
 }
 
 void do_not_here(struct char_data *ch, char *argument, int cmd)

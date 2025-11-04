@@ -2980,7 +2980,9 @@ int real_object(int virtual)
 			bot = mid + 1;
 	}
 }
-void move_stashfile(char *victim)	/* move file.x to file.x.y */
+/* move file.x to file.x.y */
+/* 
+void move_stashfile(char *victim)	
 {
 	char sf1[256], sf2[256], name[100];
 	int i;
@@ -2992,6 +2994,56 @@ void move_stashfile(char *victim)	/* move file.x to file.x.y */
 	sprintf(sf1, "%s/%c/%s.x", STASH, name[0], name);
 	sprintf(sf2, "%s/%c/%s.x.y", STASH, name[0], name);
 	rename(sf1, sf2);
+}
+ */
+
+// re-work by komoyon@gmail.com, 251016
+/* * 안전하게 stash 파일 이동 - 성공 시 0, 실패 시 -1 반환
+ */
+int move_stashfile_safe (const char *victim)
+{
+    char sf1[256], sf2[256], name[100];
+    int i;
+    char log_buf[1024];
+
+    if (!victim || victim[0] == '\0') {
+        log("move_stashfile_safe error: victim name is NULL or empty.");
+        return -1;
+    }
+
+    if (strlen(victim) >= sizeof(name)) {
+        sprintf(log_buf, "move_stashfile_safe error: victim name '%s' is too long.", victim);
+        log(log_buf);
+        return -1;
+    }
+    strncpy(name, victim, sizeof(name) - 1);
+    name[sizeof(name) - 1] = '\0'; // 항상 NULL 문자로 끝나도록
+
+    /* 경로 조작 방지 */
+    for (i = 0; name[i]; ++i) {
+        if (!isalnum((unsigned char)name[i])) {
+            sprintf(log_buf, "move_stashfile_safe error: victim name '%s' contains invalid characters.", victim);
+            log(log_buf);
+            return -1;
+        }
+        name[i] = tolower((unsigned char)name[i]);
+    }
+    
+    snprintf(sf1, sizeof(sf1), "%s/%c/%s.x", STASH, name[0], name);
+    snprintf(sf2, sizeof(sf2), "%s/%c/%s.x.y", STASH, name[0], name);
+
+    /* 오류 처리 */
+    if (rename(sf1, sf2) != 0) {
+        sprintf(log_buf, "move_stashfile_safe error: Failed to rename '%s' to '%s'", sf1, sf2);
+        log(log_buf);
+        perror("move_stashfile_safe system error");
+        return -1; // 실패 반환
+    }
+
+    sprintf(log_buf, "move_stashfile_safe: Successfully renamed '%s' to '%s'", sf1, sf2);
+    log(log_buf);
+    
+    return 0; // 성공 반환
 }
 
 void stash_char(struct char_data *ch)
@@ -3021,9 +3073,10 @@ void stash_char(struct char_data *ch)
 	for (i = 0; name[i]; ++i)
 		if (isupper(name[i]))
 			name[i] = tolower(name[i]);
-	sprintf(stashfile, "%s/%c/%s.x.y", STASH, name[0], name);
+	// 최종 파일(.x.y) 대신 임시 파일(.x)의 경로 생성, 251016
+    sprintf (stashfile, "%s/%c/%s.x", STASH, name[0], name); // 확장자를 .x 로 변경
 
-	sprintf(buf, "Stash : %s\n", stashfile);
+    sprintf (buf, "Saving character data to stash : %s", stashfile);
 	log(buf);
 
 	sigsetmask(mask);
@@ -3449,7 +3502,7 @@ void do_replacerent(struct char_data *ch, char *argument, int cmd)
 	if (!*name)
 		return;
 	stash_char(ch);
-	move_stashfile(name);
+	move_stashfile_safe(name);
 	send_to_char("OK.\n\r", ch);
 	sprintf(buf, "%s replaced rent for %s", GET_NAME(ch), name);
 	log(buf);
@@ -3472,7 +3525,7 @@ void do_rent(struct char_data *ch, int cmd, char *arg)
 		act("$n retires for the night.", FALSE, ch, 0, 0, TO_NOTVICT);
 	}
 	stash_char(ch);		/* clear file.x and save into file.x */
-	move_stashfile(ch->player.name);	/* move file.x to file.x.y */
+	move_stashfile_safe(ch->player.name);	/* move file.x to file.x.y */
 	wipe_obj(ch->carrying);
 	for (i = 0; i < MAX_WEAR; i++)
 		if (ch->equipment[i]) {
