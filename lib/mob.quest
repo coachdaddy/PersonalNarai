@@ -168,9 +168,9 @@
 5016 25 nomad guard
 6517 25 giant snake
 2913 26 yeti white
-30011 10 auto keeper
-30012 18 door keeper
-30007 15 takari
+19011 10 auto keeper
+19012 18 door keeper
+19007 15 takari
 2241 27 dragon phase
 2543 27 President Unpopular
 3154 27 undercover cop
@@ -231,7 +231,7 @@
 2114 26 Aeacus
 2115 26 Radamanthus
 2116 26 Minos
-30028 32 controller
+19028 32 controller
 1912 32 king zyekian kalek
 2916 32 guard minotaur
 4205 32 shaithis wamphyri
@@ -248,8 +248,8 @@
 9723 32 scorpio zodiac
 9725 32 capricon zodiac
 9726 32 aquarius zodiac
-30016 33 poor nimpus
-30025 33 cashmon
+19016 33 poor nimpus
+19025 33 cashmon
 2119 33 Proserpina
 4203 33 dweller
 4204 33 dramal doombody wamphyri
@@ -267,18 +267,18 @@
 5127 34 drow matron 3rd mother
 5137 34 drow matron 4th mother
 6007 34 jim lumberjack
-30014 25 takari surin
-30021 25 massmon
-30024 26 super model
-30022 27 velomon
-30023 27 accelemon
-30027 31 satteleton
-30014 25 takari surin
-30021 25 massmon
-30024 26 super model
-30022 27 velomon
-30023 27 accelemon
-30027 31 satteleton
+19014 25 takari surin
+19021 25 massmon
+19024 26 super model
+19022 27 velomon
+19023 27 accelemon
+19027 31 satteleton
+19014 25 takari surin
+19021 25 massmon
+19024 26 super model
+19022 27 velomon
+19023 27 accelemon
+19027 31 satteleton
 9516 28 micro quadruplets quadruplet
 9517 28 mili quadruplets quadruplet
 9518 28 mega quadruplets quadruplet
@@ -296,7 +296,7 @@
 16011 35 statue sadang
 17008 35 general taesaza
 17028 35 jumo
-30029 35 proffesor kim
+19029 35 proffesor kim
 1991 35 gate keeper gatekeeper
 2204 35 cleric draconian
 2304 35 wraith
@@ -319,12 +319,12 @@
 9503 35 captain hook
 9532 35 ddal daughter
 15083 36 lsi robot
-30030 36 doctor park
+19030 36 doctor park
 6516 35 mazekeeper
 9503 35 captain hook
 9532 35 ddal daughter
 15083 36 lsi robot
-30030 36 doctor park
+19030 36 doctor park
 2207 36 bodyguard draconian
 2307 36 shadow dragon
 2308 36 dark stalker
@@ -354,14 +354,14 @@
 17005 37 general yukson
 17006 37 general yeomong
 17007 37 general gamnyung
-30031 37 ph doctor
-30035 37 breadboard
+19031 37 ph doctor
+19035 37 breadboard
 2226 37 hydra
 2314 37 githyanki lord
 17006 37 general yeomong
 17007 37 general gamnyung
-30031 37 ph doctor
-30035 37 breadboard
+19031 37 ph doctor
+19035 37 breadboard
 2226 37 hydra
 2314 37 githyanki lord
 15092 38 sick robot
@@ -370,22 +370,22 @@
 15226 38 human nipporica
 16007 38 general junwee
 17010 38 woogil sunin
-30010 38 professor lee
-30018 38 lover of id queen
-30019 38 electrical queen
-30032 38 computer
-30033 38 wave
-30034 38 phonemon
-30036 38 phase lag
+19010 38 professor lee
+19018 38 lover of id queen
+19019 38 electrical queen
+19032 38 computer
+19033 38 wave
+19034 38 phonemon
+19036 38 phase lag
 15092 38 sick robot
 15104 38 factory president robot
 15225 38 quantum robot
 15226 38 human nipporica
 16007 38 general junwee
 17010 38 woogil sunin
-30010 38 professor lee
-30018 38 lover of id queen
-30019 38 electrical queen
+19010 38 professor lee
+19018 38 lover of id queen
+19019 38 electrical queen
 2203 38 mage wizard
 2817 38 general jangbi
 2921 38 guard minotaur elite
@@ -488,9 +488,9 @@
 3131 40 tickle
 3132 40 miss
 3135 40 super deathcure
-30017 40 queen designer
-30017 40 queen designer
-30017 40 queen designer
+19017 40 queen designer
+19017 40 queen designer
+19017 40 queen designer
 9529 40 brop
 9529 40 brop
 9527 40 geron najang
@@ -547,10 +547,10 @@
 2220 41 tiamat dragon
 2317 41 loftwick lich
 2317 41 loftwick lich
-30039 41 Electrical king
-30039 41 Electrical king
-30039 41 Electrical king
-30039 41 Electrical king
+19039 41 Electrical king
+19039 41 Electrical king
+19039 41 Electrical king
+19039 41 Electrical king
 18016 40 guard mudang
 18010 40 2nd apprenciate mudang SongCheongSeo
 18001 40 1st knight SongWonKyo
