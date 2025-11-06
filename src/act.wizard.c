@@ -57,7 +57,7 @@ void store_to_char_for_transform(struct char_file_u *st, struct char_data *ch);
 void stash_char(struct char_data *ch);
 void unstash_char(struct char_data *ch, char *filename);
 void page_string(struct descriptor_data *d, char *str, int keep);
-void move_stashfile(char *name);
+int move_stashfile_safe (const char *victim);
 void wipe_obj(struct obj_data *o);
 void close_socket(struct descriptor_data *d);
 int number(int from, int to);
@@ -976,7 +976,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 					return;
 				}
 				stash_char(vict);
-				move_stashfile(vict->player.name);
+				move_stashfile_safe(vict->player.name);
 				for (i = 0; i < MAX_WEAR; i++)
 					if (vict->equipment[i]) {
 						extract_obj(unequip_char(vict, i));

@@ -95,7 +95,7 @@ void shutdown_request(int sig);
 void checkpointing(int sig);
 void on_echo_local(int fd);
 void stash_char(struct char_data *ch);
-void move_stashfile(char *victim);
+int move_stashfile_safe (const char *victim);
 void transall(int room);
 int unfriendly_domain(char *h);
 
@@ -353,7 +353,7 @@ void game_loop(int s)
 					FD_CLR(point->descriptor, &output_set);
 					if (point->connected == CON_PLYNG) {
 						stash_char(point->character);
-						move_stashfile(point->character->player.name);
+						move_stashfile_safe(point->character->player.name);
 					}
 					close_socket(point);
 				}
@@ -421,7 +421,7 @@ void game_loop(int s)
 					FD_CLR(point->descriptor, &output_set);
 					if (point->connected == CON_PLYNG) {
 						stash_char(point->character);
-						move_stashfile(point->character->player.name);
+						move_stashfile_safe(point->character->player.name);
 					}
 					close_socket(point);
 				} else
