@@ -20,7 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "json/json.h"
+// #include "json/json.h"
+#include "json.h"
 
 static JsonValue *parse_value(const char *json, int *index);
 static void json_print_value(JsonValue *value, int indent);

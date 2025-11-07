@@ -15,7 +15,8 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "json/json_mapper.h"
+// #include "json/json_mapper.h"
+#include "json_mapper.h"
 
 // void map_json_to_member(JsonValue *val, void *dest)
 // {

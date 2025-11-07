@@ -1,9 +1,9 @@
-#include "../include/json/json.h"
-#include "../include/json/json_mapper.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "json.h"
+#include "json_mapper.h"
 
 // Example usage:
 
