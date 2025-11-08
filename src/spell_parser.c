@@ -184,11 +184,11 @@ void cast_mirror_image(byte level, struct char_data *ch, char *arg, int si,
 void cast_love(byte level, struct char_data *ch, char *arg, int si,
 	       struct char_data *tar_ch, struct obj_data *tar_obj);
    /* LOVE spell perhaps written */
-void cast_reraise(byte level, struct char_data *ch, char *arg, int si,
-		  struct char_data *tar_ch, struct obj_data *tar_obj);
+// void cast_reraise(byte level, struct char_data *ch, char *arg, int si,
+// 		  struct char_data *tar_ch, struct obj_data *tar_obj);
    /* reraise spell chase written */
-void cast_death(byte level, struct char_data *ch, char *arg, int si,
-		struct char_data *tar_ch, struct obj_data *tar_obj);
+// void cast_death(byte level, struct char_data *ch, char *arg, int si,
+// 		struct char_data *tar_ch, struct obj_data *tar_obj);
 void cast_spell_block(byte level, struct char_data *ch, char *arg, int si,
 		      struct char_data *tar_ch, struct obj_data *tar_obj);
 void cast_mana_transfer(byte level, struct char_data *ch, char *arg, int si,
@@ -199,8 +199,8 @@ void cast_holy_shield(byte level, struct char_data *ch, char *arg, int si,
 		      struct char_data *tar_ch, struct obj_data *tar_obj);
 void cast_restore_move(byte level, struct char_data *ch, char *arg, int si,
 		       struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_kiss_of_process(byte level, struct char_data *ch, char *arg, int si,
-			  struct char_data *tar_ch, struct obj_data *tar_obj);
+// void cast_kiss_of_process(byte level, struct char_data *ch, char *arg, int si,
+// 			  struct char_data *tar_ch, struct obj_data *tar_obj);
 void cast_reflect_damage(byte level, struct char_data *ch, char *arg, int si,
 			 struct char_data *tar_ch, struct obj_data *tar_obj);
 void cast_dumb(byte level, struct char_data *ch, char *arg, int si,
@@ -315,29 +315,36 @@ char *spells[] =
 	"hand of god",
 	"cause light",		/* 100 */
 	"cause critic",		/* 101 */
-	"entire heal",
+//	"entire heal",
+	"",					/* 102 */
 	"octa attack",
 	"love",
 	"disarm",		/* 105 */
-	"reraise",
+//	"reraise",
+	"",				/* 106 */
 	"shouryuken",		/* 107 */
 	"throw object",		/* 108 */
 	"punch",		/* 109 */
-	"death",		/* 110 */
+//	"death",	
+	"",		/* 110 */
 	"enchant person",	/* 111 */
 	"spell block",		/* 112 */
-	"temptation",		/* 113 */
-	"shadow figure",	/* 114 */
+//	"temptation",	
+	"",		/* 113 */
+//	"shadow figure",	
+	"",	/* 114 */
 	"mana transfer",
 	"self heal",
 	"holy shield",
 	"restore move",
-	"heal the world",
+//	"heal the world",
+	"",
 	"reflect damage",
 	"dumb",
 	"spin bird kick",
 	"thunderbolt",
-	"arrest",
+//	"arrest",
+	"",
 	"sanctuary cloud",	/* 125 */
 	"\n"
 };
@@ -1212,15 +1219,15 @@ void assign_spell_pointers(void)
 	       TAR_CHAR_ROOM, cast_love);
 	SPELLO(105, 1, POSITION_FIGHTING, IMO, IMO, 1, 10, 30, 30, 39, 30, 0, -1, -1,
 	       TAR_CHAR_ROOM, 0);
-	SPELLO(106, 12, POSITION_STANDING, IMO, 40, IMO, IMO, 30, 75, 30, 30, 255, -1, -1,
-	       TAR_SELF_ONLY, cast_reraise);
+/*	SPELLO(106, 12, POSITION_STANDING, IMO, 40, IMO, IMO, 30, 75, 30, 30, 255, -1, -1,
+	       TAR_SELF_ONLY, cast_reraise); */
 	SPELLO(107, 1, POSITION_FIGHTING, IMO, IMO, IMO, 30, 30, 30, 30, 95, 0, -1, -1,
 	       TAR_CHAR_ROOM, 0);
 	SPELLO(108, 1, POSITION_FIGHTING, IMO, IMO, 30, IMO, 30, 30, 95, 30, 0, -1, -1,
 	       TAR_CHAR_ROOM, 0);
 	SPELLO(109, 1, POSITION_FIGHTING, IMO, IMO, 30, 25, 30, 30, 50, 95, 0, -1, -1,
 	       TAR_CHAR_ROOM, 0);
-	SPELLO(110, 12, POSITION_STANDING, 30, 30, 30, 30, 95, 95, 95, 95, 250, -1, -1,
+/*	SPELLO(110, 12, POSITION_STANDING, 30, 30, 30, 30, 95, 95, 95, 95, 250, -1, -1,
 	       TAR_SELF_ONLY, cast_death);	/* death by process */
 	SPELLO(111, 12, POSITION_STANDING, 30, 30, 40, 40, 70, 70, 30, 30, 200, -1, -1,
 	       TAR_SELF_ONLY, cast_enchant_person);	/* by wings */
@@ -1236,7 +1243,7 @@ void assign_spell_pointers(void)
 	       TAR_SELF_ONLY, cast_holy_shield);	/* by process */
 	SPELLO(118, 12, POSITION_FIGHTING, IMO, IMO, 30, 40, 30, 30, 49, 30, 200, -1, -1,
 	       TAR_SELF_ONLY, cast_restore_move);	/* by ares */
-	SPELLO(119, 12, POSITION_STANDING, IMO, IMO, IMO, IMO, 30, 39, 30, 30, 200, -1, -1,
+/*	SPELLO(119, 12, POSITION_STANDING, IMO, IMO, IMO, IMO, 30, 39, 30, 30, 200, -1, -1,
 	       TAR_IGNORE, cast_kiss_of_process);	/* by process */
 	SPELLO(120, 12, POSITION_STANDING, 35, 30, IMO, IMO, 50, 80, 30, 30, 200, -1, -1,
 	       TAR_SELF_ONLY, cast_reflect_damage);	/* by process */
