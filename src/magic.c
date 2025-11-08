@@ -49,18 +49,9 @@ void spell_magic_missile(byte level, struct char_data *ch,
 			 struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
-	/*
-	   static int dam_each[] = 
-	   { 0,
-	   10,10,15,15,15, 20,20,20,20,20, 20,20,20,20,20, 20,20,20,20,20,
-	   20,20,20,20,20, 20,20,20,20,20, 20,20,20,20,20, 20,20,20,20,20,
-	   20,20,20,20,20, 20,20,20,20,20 };
-	 */
+
 	INCREASE_SKILLED2(ch, victim, SPELL_MAGIC_MISSILE);
 	dam = dice(level * 2, level + GET_SKILLED(ch, SPELL_MAGIC_MISSILE));
-	/*
-	   dam = number(dam_each[level] >> 1, dam_each[level] << 1);
-	 */
 
 	if (saves_spell(victim, SAVING_SPELL))
 		dam >>= 1;
@@ -75,11 +66,13 @@ void spell_chill_touch(byte level, struct char_data *ch,
 	int dam;
 	static int dam_each[] =
 	{0,
-	 20, 20, 25, 25, 25, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
-	 30, 30,
-	 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-	 35, 35,
-	 40, 40, 40, 40, 40, 40, 40, 40, 40, 40};
+	 20, 20, 25, 25, 25, 30, 30, 30, 30, 30, 
+	 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
+	 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 
+	 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+	 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+	 40, 40, 40, 40, 40, 40, 40, 40, 40, 40
+	};
 
 	INCREASE_SKILLED2(ch, victim, SPELL_CHILL_TOUCH);
 	dam = number(dam_each[(int)level] >> 1, dam_each[(int)level] << 1);
@@ -102,11 +95,13 @@ void spell_burning_hands(byte level, struct char_data *ch,
 	int dam;
 	static int dam_each[] =
 	{0,
-	 30, 30, 35, 35, 35, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
-	 40, 40,
-	 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45,
-	 45, 45,
-	 50, 50, 50, 50, 50, 50, 50, 50, 50, 50};
+	 30, 30, 35, 35, 35, 40, 40, 40, 40, 40, 
+	 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+	 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 
+	 45, 45, 45, 45, 45, 45, 45, 45, 45, 45,
+	 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+	 60, 60, 60, 60, 60, 60, 60, 60, 60, 60
+	};
 
 	INCREASE_SKILLED2(ch, victim, SPELL_BURNING_HANDS);
 	dam = number(dam_each[(int)level] >> 1, dam_each[(int)level] << 1);
@@ -123,11 +118,13 @@ void spell_shocking_grasp(byte level, struct char_data *ch,
 	int dam;
 	static int dam_each[] =
 	{0,
-	 40, 40, 45, 45, 45, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-	 50, 50,
-	 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
-	 55, 55,
-	 60, 60, 60, 60, 60, 60, 60, 60, 60, 60};
+	 40, 40, 45, 45, 45, 50, 50, 50, 50, 50, 
+	 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+	 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 
+	 55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
+	 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+	 70, 70, 70, 70, 70, 70, 70, 70, 70, 70
+	};
 
 	INCREASE_SKILLED2(ch, victim, SPELL_SHOCKING_GRASP);
 	dam = number(dam_each[(int)level] >> 1, dam_each[(int)level] << 1);
@@ -144,14 +141,7 @@ void spell_lightning_bolt(byte level, struct char_data *ch,
 			  struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
-	/*
-	   static int dam_each[] = 
-	   { 0,
-	   100,100,100,100,100, 100,100,100,100,100, 120,120,120,120,120,
-	   130,130,130,130,130, 140,140,140,140,140, 140,140,140,140,140,
-	   150,150,150,150,150, 150,150,150,150,150, 150,150,150,150,150,
-	   150,150,150,150,150 };
-	 */
+
 	if (!ch || !victim)
 		return;
 
@@ -174,10 +164,13 @@ void spell_color_spray(byte level, struct char_data *ch,
 	int dam;
 	static int dam_each[] =
 	{0,
-	 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 120, 120, 120, 120, 120,
-	 130, 130, 130, 130, 130, 140, 140, 140, 140, 140, 140, 140, 140, 140, 140,
-	 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 150,
-	 150, 150, 150, 150, 150};
+	 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 
+	 120, 120, 120, 120, 120, 130, 130, 130, 130, 130, 
+	 140, 140, 140, 140, 140, 140, 140, 140, 140, 140, 
+	 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 
+	 160, 160, 160, 160, 160, 160, 160, 160, 160, 160, 
+	 170, 170, 170, 170, 170, 180, 180, 180, 180, 180
+	};
 
 	INCREASE_SKILLED2(ch, victim, SPELL_COLOUR_SPRAY);
 	dam = number(dam_each[(int)level], dam_each[(int)level] << 2);	/* 1 */
@@ -236,21 +229,12 @@ void spell_fireball(byte level, struct char_data *ch,
 {
 	int dam;
 	extern struct weather_data weather_info;
-	/*
-	   static int dam_each[] = 
-	   { 0,
-	   100,100,100,100,100, 100,100,100,100,100, 140,140,140,140,140,
-	   150,150,150,150,150, 160,160,160,160,160, 160,160,160,160,160,
-	   170,170,170,170,170, 170,170,170,170,170, 170,170,170,170,170,
-	   180,180,180,180,180 };
-	 */
+
 	if (!ch || !victim)
 		return;
 
 	INCREASE_SKILLED2(ch, victim, SPELL_FIREBALL);
-	/*
-	   dam = number(dam_each[(int) level], dam_each[(int)level] << 1);
-	 */
+	 
 	dam = dice(level, (level + GET_SKILLED(ch, SPELL_FIREBALL)) >> 1);
 
 	if (saves_spell(victim, SAVING_SPELL))
@@ -288,21 +272,12 @@ void spell_corn_of_ice(byte level, struct char_data *ch,
 		       struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
-	/*
-	   static int dam_each[] = 
-	   { 0,
-	   500,500,500,500,500, 500,500,500,500,500, 540,540,540,540,540,
-	   550,550,550,550,550, 560,560,560,560,560, 560,560,560,560,560,
-	   570,570,570,570,570, 570,570,570,570,570, 570,570,570,570,570,
-	   580,580,580,580,580 }; */
 
 	if (!ch || !victim)
 		return;
 
 	INCREASE_SKILLED2(ch, victim, SPELL_CORN_OF_ICE);
-	/*
-	   dam = number(dam_each[level], dam_each[level] << 1);
-	 */
+	 
 	dam = dice(level * GET_INT(ch), (level + (GET_SKILLED(ch,
 							      SPELL_CORN_OF_ICE)
 						  >> 3)));
@@ -321,10 +296,13 @@ void spell_sunburst(byte level, struct char_data *ch,
 
 	static int dam_each[] =
 	{0,
-	 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 440, 440, 440, 440, 440,
-	 440, 440, 440, 440, 440, 460, 460, 460, 460, 460, 460, 460, 460, 460, 460,
-	 470, 470, 470, 470, 470, 470, 470, 470, 470, 470, 470, 470, 470, 470, 470,
-	 480, 480, 480, 480, 480};
+	 400, 400, 400, 400, 400, 440, 440, 440, 440, 440, 
+	 460, 460, 460, 460, 460, 480, 480, 480, 480, 480, 
+	 500, 500, 500, 500, 500, 520, 520, 520, 520, 520, 
+	 540, 540, 540, 540, 540, 560, 560, 560, 560, 560, 
+	 580, 580, 580, 580, 580, 600, 600, 600, 600, 600, 
+	 640, 640, 640, 640, 640, 680, 680, 680, 680, 680
+	};
 
 	if (!ch || !victim)
 		return;
@@ -351,9 +329,6 @@ void spell_energyflow(byte level, struct char_data *ch,
 	if (GET_EXP(ch) > 2000000) {
 		INCREASE_SKILLED2(ch, victim, SPELL_ENERGY_FLOW);
 
-		/*
-		   dam = dice(level, 30) + 200;
-		 */
 		dam = dice(level, (level >> 1) + GET_SKILLED(ch, SPELL_ENERGY_FLOW));
 		dam <<= (1 + (GET_SKILLED(ch, SPELL_ENERGY_FLOW) >> 5));
 
@@ -397,13 +372,7 @@ void spell_full_fire(byte level, struct char_data *ch,
 		for (; i; i--) {
 			dam += dice(level, level);
 		}
-		/*
-		   limit = level * number(200, 300);
-		   i = GET_MANA(ch) > limit ? GET_MANA(ch) : 0;
-		   step = (300 - (level << 2)) << 1;
-		   for (dam = GET_MANA(ch); i > 0; i -= step)
-		   dam += dice(level, level);
-		 */
+
 		GET_MANA(ch) = 0;
 		WAIT_STATE(ch, 3 * PULSE_VIOLENCE);
 	}
@@ -445,20 +414,11 @@ void spell_earthquake(byte level, struct char_data *ch,
 {
 	int dam;
 	struct char_data *tmp_victim, *temp;
-	/*
-	   static int dam_each[] = 
-	   { 0,
-	   40,40,45,45,45, 100,100,100,100,100, 100,100,100,100,100,
-	   100,100,100,100,100, 120,120,120,120,120, 120,120,120,120,120,
-	   130,130,130,130,130, 130,130,130,130,130, 140,140,140,140,140,
-	   150,150,150,150,150 };
-	 */
+
 	INCREASE_SKILLED2(ch, ch, SPELL_EARTHQUAKE);
 
 	dam = dice(level, (level >> 2) + GET_SKILLED(ch, SPELL_EARTHQUAKE));
-	/*
-	   dam = dam_each[level] + number(level, level << 1);
-	 */
+
 	send_to_char("The earth trembles beneath your feet!\n\r", ch);
 	act
 	    ("$n makes the earth tremble and shiver\n\rYou fall, and hit yourself!",
@@ -649,9 +609,6 @@ void spell_call_lightning(byte level, struct char_data *ch,
 
 	if (OUTSIDE(ch) && (weather_info.sky >= SKY_RAINING)) {
 		dam = dice(level, level + GET_SKILLED(ch, SPELL_CALL_LIGHTNING));
-		/*
-		   dam = dice(level, level);
-		 */
 		dam <<= (weather_info.sky - 1);
 		damage(ch, victim, dam, SPELL_CALL_LIGHTNING);
 	} else
@@ -680,20 +637,6 @@ void spell_harm(byte level, struct char_data *ch,
 
 	damage(ch, victim, dam, SPELL_HARM);
 
-/*
-	dam = GET_HIT(victim);
-	if (dam < 0)
-		dam = 0;
-	else {
-		if (saves_spell(victim, SAVING_SPELL)) {
-			dam >>= 1;
-			damage(ch, victim, 0, SPELL_HARM);
-		}
-	}
-	limit = level * GET_INT(ch);
-	dam = MIN(limit, dam);
-	GET_HIT(victim) -= dam;
-*/
 }
 
 /* ***************************************************************************
