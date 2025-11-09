@@ -2092,7 +2092,7 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 						wipe_obj(d->character->carrying);
 					d->character->carrying = 0;
 					close_socket(d);
-					extract_char(d->character);
+					extract_char(d->character, TRUE);
 				}
 			} else {
 				close_socket(d);

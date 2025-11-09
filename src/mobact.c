@@ -40,7 +40,7 @@ int finisher(struct char_data *ch, int cmd, char *arg);
 int warrior(struct char_data *ch, int cmd, char *arg);
 void first_attack(struct char_data *ch, struct char_data *victim);
 void do_cast(struct char_data *ch, char *arg, int cmd);
-void extract_char(struct char_data *ch);
+void extract_char(struct char_data *ch, int drop_items);
 
 int check_stat(struct char_data *ch)
 {
@@ -125,7 +125,7 @@ void mobile_activity(void)
 		if (mob_index[ch->nr].virtual == SON_OGONG_MIRROR) {
 			(ch->quest.solved)++;
 			if (ch->quest.solved > 50) {
-				extract_char(ch);
+				extract_char(ch, TRUE);
 			}
 		}
 		ch = tmp_ch;

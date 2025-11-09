@@ -3535,7 +3535,7 @@ void do_rent(struct char_data *ch, int cmd, char *arg)
 	wipe_obj(ch->carrying);
 	ch->carrying = 0;
 	// save_room = ch->in_room;
-	extract_char(ch);
+	extract_char(ch, TRUE);
 /*
 	ch->in_room = world[save_room].number;
 	save_char(ch, ch->in_room);

@@ -57,7 +57,7 @@ struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name,
 				     struct obj_data *list);
 struct obj_data *get_obj_vis(struct char_data *ch, char *name);
 
-void extract_char(struct char_data *ch);
+void extract_char(struct char_data *ch, int drop_items);
 
 /* Generic Find */
 

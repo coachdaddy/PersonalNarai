@@ -1000,12 +1000,12 @@ void update_char_objects(struct char_data *ch)
 }
 
 /* Extract a ch completely from the world, and leave his stuff behind */
-void extract_char(struct char_data *ch)
+void extract_char(struct char_data *ch, int drop_items)
 {
 	struct obj_data *i;
 	struct char_data *k, *next_char;
 	struct descriptor_data *t_desc;
-	int l, was_in;
+	int l, was_in, drop_items;
 	struct affected_type *af;
 
 	char for_debug[256];
@@ -1048,24 +1048,26 @@ void extract_char(struct char_data *ch)
 		ch->desc->snoop.snooping = ch->desc->snoop.snoop_by = 0;
 	}
 
-	if (ch->carrying) {
-		/* transfer ch's objects to room */
-		if (world[ch->in_room].contents)	/* room nonempty */
-		{
-			/* locate tail of room-contents */
-			// BUG FIX!!!
-			for (i = world[ch->in_room].contents; i->next_content;
-			     i = i->next_content) {
-				/* append ch's stuff to room-contents */
-				i->next_content = ch->carrying;
-			}
-		} else
-			world[ch->in_room].contents = ch->carrying;
+	if (drop_items) { // flag 검사, 251109
+		if (ch->carrying) {
+			/* transfer ch's objects to room */
+			if (world[ch->in_room].contents)	/* room nonempty */
+			{
+				/* locate tail of room-contents */
+				// BUG FIX!!!
+				for (i = world[ch->in_room].contents; i->next_content;
+					i = i->next_content) {
+					/* append ch's stuff to room-contents */
+					i->next_content = ch->carrying;
+				}
+			} else
+				world[ch->in_room].contents = ch->carrying;
 
-		/* connect the stuff to the room */
-		for (i = ch->carrying; i; i = i->next_content) {
-			i->carried_by = 0;
-			i->in_room = ch->in_room;
+			/* connect the stuff to the room */
+			for (i = ch->carrying; i; i = i->next_content) {
+				i->carried_by = 0;
+				i->in_room = ch->in_room;
+			}
 		}
 	}
 
@@ -1076,13 +1078,18 @@ void extract_char(struct char_data *ch)
 		if (k->specials.fighting == ch)
 			stop_fighting(k);
 	}
+
 	/* Must remove from room before removing the equipment! */
 	was_in = ch->in_room;
 	char_from_room(ch);
-	/* clear equipment_list */
-	for (l = 0; l < MAX_WEAR; l++)
-		if (ch->equipment[l])
-			obj_to_room(unequip_char(ch, l), was_in);
+
+	if (drop_items) { // flag 검사, 251109
+		/* clear equipment_list */
+		for (l = 0; l < MAX_WEAR; l++)
+			if (ch->equipment[l])
+				obj_to_room(unequip_char(ch, l), was_in);
+	}
+
 	/* pull the char from the list */
 	if (!character_list) {
 		return;
