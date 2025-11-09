@@ -379,7 +379,7 @@ void raw_kill(struct char_data *ch, int level)
 
 	death_cry(ch);
 	make_corpse(ch, level);
-	extract_char(ch);
+	extract_char(ch, TRUE);
 }
 
 void die(struct char_data *ch, int level, struct char_data *who)

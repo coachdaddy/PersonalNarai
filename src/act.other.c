@@ -74,7 +74,7 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 	log(cyb);
 	if (ch->desc)
 		close_socket(ch->desc);
-	extract_char(ch);
+	extract_char(ch, FALSE);
 }
 
 void do_wimpy(struct char_data *ch, char *argument, int cmd)

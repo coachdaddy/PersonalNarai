@@ -65,27 +65,20 @@ void gbisland_move_seashore(struct char_data *ch)
 	send_to_char(".........\n\r", ch);
 	send_to_char(".........\n\r", ch);
 	send_to_char(".........\n\r", ch);
-	send_to_char
-	    ("빗방울이 굵어 지더니 배가 심하게 흔들립니다.\n\r", ch);
-	send_to_char
-	    ("당신은 배의 난간을 잡고 힘껏 버티어 봅니다.\n\r", ch);
-	send_to_char
-	    ("난간이 부서져 나가고 당신은 배의 반대쪽으로 쓰러져 갑니다.\n\r", ch);
+	send_to_char("빗방울이 굵어 지더니 배가 심하게 흔들립니다.\n\r", ch);
+	send_to_char("당신은 배의 난간을 잡고 힘껏 버티어 봅니다.\n\r", ch);
+	send_to_char("난간이 부서져 나가고 당신은 배의 반대쪽으로 쓰러져 갑니다.\n\r", ch);
 	send_to_char(".........\n\r", ch);
 	send_to_char(".........\n\r", ch);
-	send_to_char
-	    ("설상가상으로 멀리 소용돌이가 보입니다.\n\r", ch);
-	send_to_char
-	    ("당신은 당신의 배와 함께 소용돌이로 빨려들어갑니다.\n\r", ch);
+	send_to_char("설상가상으로 멀리 소용돌이가 보입니다.\n\r", ch);
+	send_to_char("당신은 당신의 배와 함께 소용돌이로 빨려들어갑니다.\n\r", ch);
 	send_to_char(".........\n\r", ch);
 	send_to_char(".........\n\r", ch);
 	send_to_char(".........\n\r", ch);
-	send_to_char
-	    ("소용돌이의 힘에 배가 부서지고, 당신은 바다로 내동댕이 쳐 집니다.\n\r", ch);
+	send_to_char("소용돌이의 힘에 배가 부서지고, 당신은 바다로 내동댕이 쳐 집니다.\n\r", ch);
 	send_to_char(".........\n\r", ch);
-	send_to_char
-	    ("헤엄을 잘치는 당신이지만 소용돌이의 힘에서는 어쩔수 없습니다.\n\r", ch);
-	send_to_char("당신은 점차로 의식을 일어갑니다.\n\r", ch);
+	send_to_char("수영을 잘하는 당신이지만 소용돌이의 힘 앞에서는 어쩔수 없습니다.\n\r", ch);
+	send_to_char("당신은 점차로 의식을 잃어갑니다.\n\r", ch);
 	send_to_char(".........\n\r", ch);
 	send_to_char("으~~~\n\r", ch);
 	send_to_char("으~~\n\r", ch);
@@ -118,8 +111,7 @@ void gbisland_move_seashore(struct char_data *ch)
 
 	/* check - remortal */
 	if ((ch->player.remortal < 15) && (GET_LEVEL(ch) < IMO)) {
-		send_to_char
-		    ("당신은 소용돌이에 휘말려 정신을 차리지 못합니다.\n\r", ch);
+		send_to_char("당신은 소용돌이에 휘말려 정신을 차리지 못합니다.\n\r", ch);
 		send_to_char("당신은 죽습니다.\n\r", ch);
 
 		wipe_stash(GET_NAME(ch));
@@ -451,7 +443,7 @@ int gbisland_lanessa(struct char_data *ch, int cmd, char *arg)
 
 				obj_to_room(obj, ch->in_room);
 
-				extract_char(ch);
+				extract_char(ch, TRUE);
 			} else if (paper1 || paper2) {
 				do_say(ch,
 				       "다른 부분도 마저 찾아 주세요...", 0);

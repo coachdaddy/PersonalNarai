@@ -124,7 +124,7 @@ void mobile_activity(void)
 		if (mob_index[ch->nr].virtual == SON_OGONG_MIRROR) {
 			(ch->quest.solved)++;
 			if (ch->quest.solved > 50) {
-				extract_char(ch);
+				extract_char(ch, TRUE);
 			}
 		}
 		ch = tmp_ch;
