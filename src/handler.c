@@ -1005,7 +1005,7 @@ void extract_char(struct char_data *ch, int drop_items)
 	struct obj_data *i;
 	struct char_data *k, *next_char;
 	struct descriptor_data *t_desc;
-	int l, was_in, drop_items;
+	int l, was_in;
 	struct affected_type *af;
 
 	char for_debug[256];
