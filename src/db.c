@@ -1946,7 +1946,7 @@ void reset_zone(int zone)
 					    || last_cmd == 'E')) {
 					obj = read_object(ZCMD.arg1, REAL);
 					if ((obj->obj_flags.type_flag ==
-					    ITEM_KEY) ||
+					    ITEM_KEY) || (regen == 1) ||
 					    (!IS_SET(obj->obj_flags.extra_flags, ITEM_NOLOAD)))
 						/*
 						   (    number(1,100) <= regen_percent ) )
