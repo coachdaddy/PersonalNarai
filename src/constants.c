@@ -675,7 +675,7 @@ char *extra_bits[] =
 	"ANTI-GOOD",
 	"ANTI-EVIL",
 	"ANTI-NEUTRAL",
-	"NOLOAD",
+	"EQ_LVL_LIMIT",
 	"ANTI-MAGE",
 	"ANTI-CLERIC",
 	"ANTI-THIEF",

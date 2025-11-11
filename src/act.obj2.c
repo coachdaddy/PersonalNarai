@@ -620,7 +620,7 @@ void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
 	int gpd;
 
 	gpd = obj_object->obj_flags.gpd;
-	if (IS_SET(obj_object->obj_flags.extra_flags, ITEM_NOLOAD)) {
+	if (IS_SET(obj_object->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) {
 		if (gpd == 0 && (GET_LEVEL(ch) < 10)) {
 			sprintf(buffer, "You are too lowly to use %s.\n\r",
 				obj_object->short_description);

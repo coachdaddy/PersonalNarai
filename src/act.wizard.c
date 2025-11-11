@@ -932,15 +932,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
 			return;
 		}
 		obj = read_object(r_num, REAL);
-		if (GET_LEVEL(ch) < (IMO + 2))
-			if (IS_SET(obj->obj_flags.extra_flags, ITEM_NOLOAD)) {
-				send_to_char("That item is not loadable.\n\r", ch);
-				extract_obj(obj);
-				sprintf(buf, "%s tried to load %d",
-					ch->player.name, number);
-				log(buf);
-				return;
-			}
+		// ITEM_NOLOAD 검사 로직 제거, by Komo 251111
 		act("$n makes a strange magical gesture.", TRUE, ch, 0, 0, TO_ROOM);
 		act("$n has created $p!", FALSE, ch, obj, 0, TO_ROOM);
 		if (IS_SET(obj->obj_flags.wear_flags, ITEM_TAKE)) {
