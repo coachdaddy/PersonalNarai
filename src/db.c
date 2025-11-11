@@ -1834,8 +1834,19 @@ void reset_zone(int zone)
 	 */
 	int regen;
 	int real_load;
+	int zone_lifespan = zone_table[zone].lifespan; // .zon 파일에 정의된 리셋 주기(분)
+    int regen_chance_denominator; // 확률 계산의 분모
 
-	regen = (number(0, regen_time / zone_table[zone].lifespan) == 0);
+    if (zone_lifespan <= 0) { /* 0으로 나누기 방지 */
+        regen = 0; 
+    } else {
+        regen_chance_denominator = regen_time / zone_lifespan; /* 분모 먼저 계산 */
+        if (regen_chance_denominator < 1) { /* 최소 1/2 (50%) 확률 보장 */
+            regen_chance_denominator = 1; 
+        }
+
+        regen = (number(0, regen_chance_denominator) == 0);
+    }
 
 	real_load = 0;
 	for (cmd_no = 0;; cmd_no++) {
@@ -1879,7 +1890,7 @@ void reset_zone(int zone)
 						if ((obj->obj_flags.type_flag
 						     == ITEM_KEY) ||
 						    (!IS_SET(obj->obj_flags.extra_flags,
-						    ITEM_NOLOAD)) ||
+						    ITEM_EQ_LVL_LIMIT)) ||
 						    (regen == 1))
 							/*
 							   (   number(1,100) <= regen_percent ) )
@@ -1895,7 +1906,7 @@ void reset_zone(int zone)
 					if ((obj->obj_flags.type_flag ==
 					    ITEM_KEY) ||
 					    (!IS_SET(obj->obj_flags.extra_flags,
-					    ITEM_NOLOAD)) ||
+					    ITEM_EQ_LVL_LIMIT)) ||
 					    (regen == 1))
 						/*
 						   ( number(1,100) <= regen_percent ) )
@@ -1920,7 +1931,7 @@ void reset_zone(int zone)
 					if ((obj->obj_flags.type_flag ==
 					    ITEM_KEY) ||
 					    (!IS_SET(obj->obj_flags.extra_flags,
-					    ITEM_NOLOAD)) ||
+					    ITEM_EQ_LVL_LIMIT)) ||
 					    (regen == 1))
 						/*
 						   (   number(1,100) <= regen_percent ) )
@@ -1941,24 +1952,23 @@ void reset_zone(int zone)
 				/*
 				   if (obj_index[ZCMD.arg1].number < ZCMD.arg2 &&
 				 */
-				if (
-					   (last_cmd == 'M' || last_cmd == 'G'
-					    || last_cmd == 'E')) {
-					obj = read_object(ZCMD.arg1, REAL);
-					if ((obj->obj_flags.type_flag ==
-					    ITEM_KEY) ||
-					    (!IS_SET(obj->obj_flags.extra_flags, ITEM_NOLOAD)))
-						/*
-						   (    number(1,100) <= regen_percent ) )
-						 */
-					{
+				if ( (last_cmd == 'M' || last_cmd == 'G' || last_cmd == 'E')) {
+					obj = read_object (ZCMD.arg1, REAL);
+
+					if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT))) {
 						if (mob && real_load) {
 							obj_to_char(obj, mob);
 							last_cmd = 'G';
 						} else
-							extract_obj(obj);
+							extract_obj (obj);
+					} else if (IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) {
+						if (mob && real_load) {
+							obj_to_char(obj, mob);
+							last_cmd = 'G';
+						} else
+							extract_obj (obj);
 					} else
-						extract_obj(obj);
+						extract_obj (obj);
 				}
 				break;
 
@@ -1972,7 +1982,7 @@ void reset_zone(int zone)
 					obj = read_object(ZCMD.arg1, REAL);
 					if (obj->obj_flags.type_flag == ITEM_KEY)
 						/*
-						   (   !IS_SET(obj->obj_flags.extra_flags,ITEM_NOLOAD) ) )
+						   (   !IS_SET(obj->obj_flags.extra_flags,ITEM_EQ_LVL_LIMIT) ) )
 						   (   number(1,100) <= regen_percent ) )
 						 */
 					{

@@ -111,7 +111,7 @@ typedef long long LONGLONG;
 #define ITEM_ANTI_GOOD          512     /* not usable by good people    */
 #define ITEM_ANTI_EVIL         1024     /* not usable by evil people    */
 #define ITEM_ANTI_NEUTRAL      2048     /* not usable by neutral people */
-#define ITEM_NOLOAD            4096
+#define ITEM_EQ_LVL_LIMIT      4096     /* 구 ITEM_NOLOAD, wear()의 레벨 제한(gpd)에 사용 */
 #define ITEM_ANTI_MAGE         8192     /* not usable by mage */
 #define ITEM_ANTI_CLERIC      16384     /* not usable by cleric */
 #define ITEM_ANTI_THIEF       32768     /* not usable by thief */
