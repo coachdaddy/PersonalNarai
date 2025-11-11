@@ -154,7 +154,7 @@ int get_quest(struct char_data *ch)
 		437,		/* 40 */ /* 15117 40 super magnet */
 		526,		/* 60 */ /* 18010 40 2nd apprenciate mudang SongCheongSeo */
 	};
-#define END_QUEST_MOBILE 635
+#define END_QUEST_MOBILE 631
 
 	int low, high;
 	int t;
