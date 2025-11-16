@@ -220,7 +220,10 @@ void print_increased_skilled(struct char_data *ch, int sk_no)
 	send_to_char(buf, ch);
 }
 
-
+void choppy( char *s )
+{
+    s[strcspn ( s, "\n" )] = '\0';
+}
 
 // 잠재적 문제를 없앤 새로운 log 함수, 251018
 void log(char *str)
