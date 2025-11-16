@@ -1993,7 +1993,7 @@ void do_levels(struct char_data *ch, char *argument, int cmd)
 	}
 	*buf = '\0';
 	for (i = 1; i < IMO; i++) {
-		sprintf(buf + strlen(buf), "%2d: %9ld to %9ld: ", i,
+		sprintf(buf + strlen(buf), "%2d: %11ld to %11ld: ", i,
 			titles[GET_CLASS(ch) - 1][i].exp,
 			titles[GET_CLASS(ch) - 1][i + 1].exp);
 		switch (GET_SEX(ch)) {

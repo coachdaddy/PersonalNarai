@@ -1901,7 +1901,7 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 		send_to_char("Your Last Rebirth.!!!\n\r", ch);
 	}
 
-	sprintf(buf, "%s님이 %s로 직업을 바꾸셨습니다.", GET_NAME(ch),
+	sprintf(buf, "%s님이 %s로 직업을 바꾸셨습니다.\n\r", GET_NAME(ch),
 		classes[class - 1]);
 	send_to_all(buf);
 
