@@ -86,42 +86,8 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	extern char *spells[];
 	extern struct spell_info_type spell_info[MAX_SPL_LIST];
 	extern struct int_app_type int_app[26];
-	extern int level_quest[];
 
 	strcpy(buf3, "");
-
-	/*
-	if ((cmd != 95) && (cmd != 164) && (cmd != 170))
-		return (FALSE);
-
-	if (cmd == 95) {	// cmd 95 : advance
-		if (!IS_NPC(ch)) {
-			for (i = 0; titles[GET_CLASS(ch) - 1][i].exp <=
-			     GET_EXP(ch);
-			     i++) {
-				if (i >= IMO) {
-					send_to_char_han("Immortality cannot be gained here.\n\r",
-							 "여기서는 신이 될 수 없습니다.\n\r", ch);
-					return (TRUE);
-				}
-				if ((i > GET_LEVEL(ch)) &&
-				    (GET_QUEST_SOLVED(ch) >=
-				     level_quest[(int)GET_LEVEL
-						 (ch)])) {
-					send_to_char_han("You raise a level\n\r",
-							 "레벨을 올렸습니다\n\r", ch);
-					GET_LEVEL(ch) = i;
-					advance_level(ch, 1);
-					set_title(ch);
-					return (TRUE);
-				}
-			}
-			send_to_char_han("You need more experience.\n\r",
-					 "경험이 더 필요합니다.\n\r", ch);
-			return (TRUE);
-		}
-	}
-	*/
 
 	if ((cmd != 164) && (cmd != 170)) // cmd 164, 170 : practice
 		return (FALSE);
@@ -143,8 +109,7 @@ int guild(struct char_data *ch, int cmd, char *arg)
 
 		sprintf(buf, "You have %d practices left.\n\r",
 			ch->specials.spells_to_learn);
-		sprintf(buf2,
-			"지금 %d 번 기술을 연마(practice)할 수 있습니다. \n\r",
+		sprintf(buf2, "지금 %d 번 기술을 연마(practice)할 수 있습니다. \n\r",
 			ch->specials.spells_to_learn);
 
 		send_to_char_han(buf, buf2, ch);
@@ -154,12 +119,8 @@ int guild(struct char_data *ch, int cmd, char *arg)
 
 	number = old_search_block(arg, 0, strlen(arg), spells, FALSE);
 
-	/*
-	int pskill = 0;
+	int pskill = -1;
 	pskill = spell_info[number].prev;
-
-	DEBUG_LOG("Player %s try to learn new skill %d .", GET_NAME(ch), pskill );
-	*/
 
 	if (number == -1) {
 		send_to_char_han("You do not know of this spell...\n\r",
@@ -185,13 +146,16 @@ int guild(struct char_data *ch, int cmd, char *arg)
 		return (TRUE);
 	}
 
-	/*
 	if (pskill > 0 && ch->skills[pskill].learned < 30) {
-		send_to_char_han("You need to learn prior skill first.\n\r",
-				 "아직은 낮은 단계의 기술을 배우지 않았습니다....\n\r", ch);
+		sprintf(buf, "First, You you need to learn %s .\n\r",
+			spells[pskill]);
+		sprintf(buf2, "먼저 %s 기술을 배워야 합니다. \n\r",
+			spells[pskill]);
+
+		send_to_char_han(buf, buf2, ch);
+		DEBUG_LOG("Player %s try to learn skill %d .", GET_NAME(ch), pskill );
 		return (TRUE);
 	}
-	*/
 
 	send_to_char_han("You Practice for a while...\n\r", "기술이 늘고 있습니다...\n\r", ch);
 
