@@ -1024,7 +1024,10 @@ void SPELLO(int nr, byte beat, byte pos, int l0, int l1, int l2, int l3,
 	spell_info[nr].max_skill[3] = (s3);
 	spell_info[nr].targets = (tar);
 
-	DEBUG_LOG("spell number %d, %s prev: %d side: %d.", nr, spells[nr-1], prev, side );
+	if( prev != -1)
+	{ 
+		DEBUG_LOG("spell number(%d): %s prev(%d): %s.", nr, spells[nr-1], prev, spells[prev-1]);
+	}
 }
 
 void assign_spell_pointers(void)
@@ -1062,7 +1065,7 @@ void assign_spell_pointers(void)
 	       TAR_OBJ_INV, cast_create_water);
 	SPELLO(14, 12, POSITION_STANDING, 10, 4, IMO, IMO, 80, 95, 30, 30, 80, -1, -1,
 	       TAR_CHAR_ROOM, cast_cure_blind);
-	SPELLO(15, 12, POSITION_FIGHTING, 11, 7, 20, 20, 80, 95, 70, 70, 85, -1, -1,
+	SPELLO(15, 12, POSITION_FIGHTING, 11, 7, 20, 20, 80, 95, 70, 70, 85, 16, -1,
 	       TAR_CHAR_ROOM, cast_cure_critic);
 	SPELLO(16, 12, POSITION_FIGHTING, 4, 1, 10, 10, 80, 95, 70, 70, 55, -1, -1,
 	       TAR_CHAR_ROOM, cast_cure_light);
@@ -1196,9 +1199,9 @@ void assign_spell_pointers(void)
 	       TAR_OBJ_INV, cast_pray_for_armor);
 	SPELLO(92, 12, POSITION_STANDING, 7, 5, IMO, IMO, 95, 95, 30, 30, 30, -1, -1,
 	       TAR_SELF_ONLY, cast_infravision);
-	SPELLO(93, 12, POSITION_STANDING, IMO, 25, IMO, IMO, 30, 95, 30, 30, 150, -1, -1,
+	SPELLO(93, 12, POSITION_STANDING, IMO, 25, IMO, IMO, 30, 95, 30, 30, 150, 12, -1,
 	       TAR_OBJ_INV, cast_create_nectar);
-	SPELLO(94, 12, POSITION_FIGHTING, IMO, 33, IMO, IMO, 30, 95, 30, 30, 255, -1, -1,
+	SPELLO(94, 12, POSITION_FIGHTING, IMO, 33, IMO, IMO, 30, 95, 30, 30, 255, 93, -1,
 	       TAR_OBJ_INV, cast_create_golden_nectar);
 	SPELLO(95, 12, POSITION_FIGHTING, 30, IMO, IMO, IMO, 95, 30, 30, 30, 150, -1, -1,
 	       TAR_CHAR_ROOM | TAR_FIGHT_VICT | TAR_SELF_NONO, cast_corn_of_ice);
