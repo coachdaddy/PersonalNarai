@@ -1751,7 +1751,6 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 
 	case 'W':
 	case 'w':
-		class = 4;
 		if ((ch->player.level == 40 && rcnt == 1)) {
 			if (ch->abilities.str == 18) {
 				if (ch->abilities.str_add < 100) {
@@ -1764,8 +1763,11 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 			} else {
 				ch->abilities.str++;
 			}
+
+			class = 4;
 			ch->player.remortal |= REMORTAL_WARRIOR;
 		}
+
 		if ((ch->player.level == 50 && rcnt == 2)) {
 			if (ch->abilities.str == 18) {
 				if (ch->abilities.str_add < 100) {
@@ -1778,8 +1780,11 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 			} else {
 				ch->abilities.str++;
 			}
+
+			class = 4;
 			ch->player.remortal |= REMORTAL_WARRIOR;
 		}
+
 		if ((ch->player.level == 60 && rcnt == 3)) {
 			if (ch->abilities.str == 18) {
 				if (ch->abilities.str_add < 100) {
@@ -1792,8 +1797,11 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 			} else {
 				ch->abilities.str++;
 			}
+
+			class = 4;
 			ch->player.remortal |= REMORTAL_WARRIOR;
 		}
+
 		if ((ch->player.level == 60 && rcnt == 4)) {
 			if (ch->abilities.str == 18) {
 				if (ch->abilities.str_add < 100) {
@@ -1806,81 +1814,94 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 			} else {
 				ch->abilities.str++;
 			}
+			class = 4;
 			ch->player.remortal |= REMORTAL_WARRIOR;
 		}
 		break;
 
 	case 'C':
 	case 'c':
-		class = 2;
 		if ((ch->player.level == 40 && rcnt == 1)) {
 			if (ch->abilities.wis < 18)
 				ch->abilities.wis++;
 			ch->player.remortal |= REMORTAL_CLERIC;
+			class = 2;
 		}
 		if ((ch->player.level == 50 && rcnt == 2)) {
 			if (ch->abilities.wis < 18)
 				ch->abilities.wis++;
 			ch->player.remortal |= REMORTAL_CLERIC;
+			class = 2;
 		}
 		if ((ch->player.level == 60 && rcnt == 3)) {
 			if (ch->abilities.wis < 18)
 				ch->abilities.wis++;
 			ch->player.remortal |= REMORTAL_CLERIC;
+			class = 2;
 		}
 		if ((ch->player.level == 60 && rcnt == 4)) {
 			if (ch->abilities.wis < 18)
 				ch->abilities.wis++;
 			ch->player.remortal |= REMORTAL_CLERIC;
+			class = 2;
 		}
 		break;
 
 	case 'M':
 	case 'm':
-		class = 1;
 		if ((ch->player.level == 40 && rcnt == 1)) {
 			if (ch->abilities.intel < 18)
 				ch->abilities.intel++;
+			class = 1;
 			ch->player.remortal |= REMORTAL_MAGIC_USER;
 		}
+
 		if ((ch->player.level == 50 && rcnt == 2)) {
 			if (ch->abilities.intel < 18)
 				ch->abilities.intel++;
+			class = 1;
 			ch->player.remortal |= REMORTAL_MAGIC_USER;
 		}
+
 		if ((ch->player.level == 60 && rcnt == 3)) {
 			if (ch->abilities.intel < 18)
 				ch->abilities.intel++;
+			class = 1;
 			ch->player.remortal |= REMORTAL_MAGIC_USER;
 		}
+
 		if ((ch->player.level == 60 && rcnt == 4)) {
 			if (ch->abilities.intel < 18)
 				ch->abilities.intel++;
+			class = 1;
 			ch->player.remortal |= REMORTAL_MAGIC_USER;
 		}
 		break;
 
 	case 'T':
 	case 't':
-		class = 3;
 		if ((ch->player.level == 40 && rcnt == 1)) {
 			if (ch->abilities.dex < 18)
 				ch->abilities.dex++;
+			class = 3;
 			ch->player.remortal |= REMORTAL_THIEF;
 		}
 		if ((ch->player.level == 50 && rcnt == 2)) {
 			if (ch->abilities.dex < 18)
 				ch->abilities.dex++;
+			class = 3;
 			ch->player.remortal |= REMORTAL_THIEF;
 		}
 		if ((ch->player.level == 60 && rcnt == 3)) {
 			if (ch->abilities.dex < 18)
 				ch->abilities.dex++;
+			class = 3;
 			ch->player.remortal |= REMORTAL_THIEF;
 		}
 		if ((ch->player.level == 60 && rcnt == 4)) {
 			if (ch->abilities.dex < 18)
 				ch->abilities.dex++;
+			class = 3;
 			ch->player.remortal |= REMORTAL_THIEF;
 		}
 		break;
@@ -1898,8 +1919,20 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 	}
 
 	if ((rcnt == 3) && ch->player.level == 60) {
-		send_to_char("Your Last Rebirth.!!!\n\r", ch);
+		send_to_char("Your Third Rebirth.!!!\n\r", ch);
 	}
+
+	/*
+	if ((rcnt > 1) && ch->player.level == 40) {
+		send_to_char("You need to make level 50 for new class remortal.!!!\n\r", ch);
+		return TRUE;
+	}
+
+	if ((rcnt > 2) && ch->player.level == 50) {
+		send_to_char("You need to make level 60 for new class remortal.!!!\n\r", ch);
+		return TRUE;
+	}
+	*/
 
 	sprintf(buf, "%s님이 %s로 직업을 바꾸셨습니다.\n\r", GET_NAME(ch),
 		classes[class - 1]);
