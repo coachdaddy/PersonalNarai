@@ -1733,6 +1733,16 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 	if (ch->player.remortal & REMORTAL_WARRIOR)
 		rcnt++;
 
+	if ((rcnt > 1) && ch->player.level == 40) {
+		send_to_char("You need to make level 50 for remortal.!!!\n\r", ch);
+		return 0;
+	}
+
+	if ((rcnt > 2) && ch->player.level == 50) {
+		send_to_char("You need to make level 60 for remortal.!!!\n\r", ch);
+		return 0;
+	}
+
 	half_chop(arg, buf1, buf2);
 	class = buf1[0];
 
@@ -1921,18 +1931,6 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 	if ((rcnt == 3) && ch->player.level == 60) {
 		send_to_char("Your Third Rebirth.!!!\n\r", ch);
 	}
-
-	/*
-	if ((rcnt > 1) && ch->player.level == 40) {
-		send_to_char("You need to make level 50 for new class remortal.!!!\n\r", ch);
-		return TRUE;
-	}
-
-	if ((rcnt > 2) && ch->player.level == 50) {
-		send_to_char("You need to make level 60 for new class remortal.!!!\n\r", ch);
-		return TRUE;
-	}
-	*/
 
 	sprintf(buf, "%s님이 %s로 직업을 바꾸셨습니다.\n\r", GET_NAME(ch),
 		classes[class - 1]);
