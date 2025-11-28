@@ -61,7 +61,6 @@ void spell_spell_block(byte level, struct char_data *ch,
 			return;
 		}
 	}
-
 	if (!affected_by_spell(victim, SPELL_SPELL_BLOCK)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_SPELL_BLOCK);
 		act("$n is surrounded by a Magical cloud.", TRUE, victim, 0,
@@ -76,7 +75,6 @@ void spell_spell_block(byte level, struct char_data *ch,
 	}
 	send_to_char("ok\n\r", ch);
 }
-
 void spell_reflect_damage(byte level, struct char_data *ch,
 			  struct char_data *victim, struct obj_data *obj)
 {
@@ -93,7 +91,6 @@ void spell_reflect_damage(byte level, struct char_data *ch,
 	}
 	send_to_char("You get ready to reflect damages!", ch);
 }
-
 void spell_dumb(byte level, struct char_data *ch,
 		struct char_data *victim, struct obj_data *obj)
 {
