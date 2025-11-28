@@ -11,10 +11,13 @@
 #include "structs.h"
 #include "utils.h"
 #include "comm.h"
-#include "db.h"
-#include "interpreter.h"
-#include "spells.h"
 #include "handler.h"
+#include "interpreter.h"
+#include "db.h"
+#include "spells.h"
+
+#include "guild_list.h"
+
 
 /* Global data */
 
@@ -254,7 +257,7 @@ char *spells[] =
 	"sleep",
 	"strength",
 	"summon",
-	"ventriloquate",	/* 41 */
+	"",					/* 41 */
 	"word of recall",
 	"remove poison",
 	"sense life",		/* 44 */
@@ -315,35 +318,28 @@ char *spells[] =
 	"hand of god",
 	"cause light",		/* 100 */
 	"cause critic",		/* 101 */
-//	"entire heal",
 	"",					/* 102 */
 	"octa attack",
 	"love",
 	"disarm",		/* 105 */
-//	"reraise",
 	"",				/* 106 */
 	"shouryuken",		/* 107 */
 	"throw object",		/* 108 */
 	"punch",		/* 109 */
-//	"death",	
 	"",		/* 110 */
 	"enchant person",	/* 111 */
 	"spell block",		/* 112 */
-//	"temptation",	
 	"",		/* 113 */
-//	"shadow figure",	
 	"",	/* 114 */
 	"mana transfer",
 	"self heal",
 	"holy shield",
 	"restore move",
-//	"heal the world",
 	"",
 	"reflect damage",
 	"dumb",
 	"spin bird kick",
 	"thunderbolt",
-//	"arrest",
 	"",
 	"sanctuary cloud",	/* 125 */
 	"\n"
@@ -693,9 +689,7 @@ saves_spell(struct char_data *ch, int save_type)
 	save = ch->specials.apply_saving_throw[save_type];
 
 	if (!IS_NPC(ch))
-		save += saving_throws[GET_CLASS(ch) -
-								    1][save_type][GET_LEVEL(ch)
-								    - 1];
+		save += saving_throws[GET_CLASS(ch) -1][save_type][GET_LEVEL(ch) - 1];
 
 	return (MAX(1, save) < number(1, 100));
 }
@@ -1117,8 +1111,6 @@ void assign_spell_pointers(void)
 	       TAR_SELF_ONLY, cast_strength);
 	SPELLO(40, 12, POSITION_STANDING, 20, 8, IMO, IMO, 60, 95, 30, 30, 200, -1, -1,
 	       TAR_CHAR_WORLD, cast_summon);
-	SPELLO(41, 12, POSITION_STANDING, 1, 1, 1, 1, 95, 95, 95, 95, 5, -1, -1,
-	       TAR_CHAR_ROOM | TAR_OBJ_ROOM | TAR_SELF_NONO, cast_ventriloquate);
 	SPELLO(42, 12, POSITION_STANDING, 20, 11, IMO, IMO, 50, 95, 30, 30, 200, -1, -1,
 	       TAR_SELF_ONLY, cast_word_of_recall);
 	SPELLO(43, 12, POSITION_STANDING, IMO, 9, 33, IMO, 30, 95, 50, 30, 50, -1, -1,
