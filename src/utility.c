@@ -415,6 +415,29 @@ void process_color_string(const char *input, char *output, int max_out_len)
         }
     }
 
+    /* [추가, 251130] 버퍼가 꽉 차서 루프가 끝난 경우, 
+       마지막이 불완전한 한글 바이트인지 확인하고 정리 */
+    if (remaining_len <= 0) {
+        int backtrack = 0;
+        char *end_ptr = out_ptr; // 현재 끝 위치
+        
+        while (backtrack < 4 && end_ptr > output) {
+            unsigned char ch = (unsigned char)*(end_ptr - 1);
+            
+            if ((ch & 0x80) == 0) break;
+
+            if ((ch & 0xC0) == 0xC0) {
+                *end_ptr = '\0';
+                out_ptr = end_ptr - 1;
+                break;
+            }
+            
+            end_ptr--;
+            out_ptr--;
+            backtrack++;
+        }
+    }
+
     *out_ptr = '\0';
 }
 
@@ -492,4 +515,86 @@ void do_colortest(struct char_data *ch, char *argument, int cmd)
     send_to_char("(&33&n/&##&n): &3 Sample Text :: How do you think about this?!  &n / &# Sample Text :: How do you think about this?!  &n\n\r", ch);
     
     send_to_char("\n\r&n--- Test End ---&n\n\r", ch);
+}
+
+/* * 시스템(OS)에 상관없이 안전하게 문자열을 이어붙이는 함수
+ * dest: 목표 버퍼
+ * src: 붙일 내용
+ * size: 목표 버퍼의 전체 크기 (sizeof(dest))
+ * 251125 by Komo
+ */
+size_t strlcat(char *dest, const char *src, size_t size)
+{
+    size_t dlen = strlen(dest);
+    size_t slen = strlen(src);
+    size_t n = size;
+
+    if (n <= dlen) return (slen + n); 
+
+    char *d = dest + dlen;
+    const char *s = src;
+    size_t left = n - dlen - 1;
+
+    while (*s && left > 0) {
+        *d++ = *s++;
+        left--;
+    }
+    *d = '\0';
+
+    return (dlen + slen);
+}
+
+
+/* * 기존 PERS 매크로를 대체하는 함수
+ * char name/short_desc(for mobs) or someone? -> PERS 매크로의 주석 옮겨둠
+ * 보는 사람(viewer)이 대상(ch)을 볼 수 있으면 이름/설명을, 없으면 "someone"을 반환
+ *                  --- 251125 by Komo
+ */
+const char *get_char_name(struct char_data *ch, struct char_data *viewer)
+{
+    if (!CAN_SEE(viewer, ch)) {
+        return "someone";
+    }
+    
+    // NPC면 short_desc, PC면 name 반환
+    return IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch);
+}
+
+// 문자열 끝에 \r 또는 \n이 있을 때만 안전하게 제거하는 함수, 251130 by Komo
+void prune_crlf(char *txt) {
+    int len = strlen(txt);
+    while (len > 0 && (txt[len-1] == '\n' || txt[len-1] == '\r')) {
+        txt[--len] = '\0';
+    }
+}
+
+
+/*
+ * UTF-8 문자열을 바이트 길이(n)에 맞춰 안전하게 복사하는 함수
+ * 251130 by Komo
+ */
+void utf8_safe_strncpy(char *dest, const char *src, size_t n) {
+    size_t i;
+    
+    strncpy(dest, src, n - 1);
+    dest[n - 1] = '\0';
+
+    size_t len = strlen(dest);
+    
+    // UTF-8은 1xxxxxxx 형태로 시작하므로, 최상위 비트 확인
+    int backtrack = 0;
+    while (backtrack < 4 && len > 0) { // 한글은 보통 3바이트, 최대 4바이트까지 검사
+        unsigned char ch = (unsigned char)dest[len - 1];
+
+        if ((ch & 0x80) == 0) break;
+
+        if ((ch & 0xC0) == 0xC0) {
+            dest[len - 1] = '\0';
+            break;
+        }
+        
+        dest[len - 1] = '\0';
+        len--;
+        backtrack++;
+    }
 }

@@ -2347,4 +2347,73 @@ If you wield nothing, you will hit with your hand. If you are a warrior
 and you use bare hand, the damage of your bare hand increases.
 
 See also : SKILLED
+#
+CHALLENGE
+
+>> INFORMATION
+[도전의 방 시스템]
+ - 사용 가능 레벨 : 11 ~ 39
+플레이어를 비어있는 도전의 방으로 이동시키고 도전 상태로 설정합니다.
+그룹원이 같이 이동할 수 있으며, [begin] 명령으로 도전을 시작합니다.
+
+See also : QUEST, REQUEST, HINT, BEGIN, REJOIN, GIVEUP
+#
+BEGIN
+
+>> INFORMATION
+[도전의 방 시스템]
+도전의 방에서 명령을 사용하면, 퀘스트 몬스터를 불러와 도전을 시작합니다.
+
+See also : QUEST, REQUEST, HINT, CHALLENGE, REJOIN, GIVEUP
+#
+REJOIN
+
+>> INFORMATION
+[도전의 방 시스템]
+아직 도전 상태인 플레이어를 도전의 방으로 다시 이동시킵니다.
+퀘스트 룸에서만 사용할 수 있습니다.
+
+See also : QUEST, REQUEST, HINT, CHALLENGE, BEGIN, GIVEUP
+#
+GIVEUP
+
+>> INFORMATION
+[도전의 방 시스템]
+도전을 포기하고 다음 기회를 기약합니다.
+
+See also : QUEST, REQUEST, HINT, CHALLENGE, BEGIN, REJOIN
+#
+REMORTAL
+
+>> INFORMATION
+*** 장소 : Remortal Place ***
+===============================================================================
+단계			요구 사항	비고
+-------------------------------------------------------------------------------
+1차 리모탈		Level 40	첫 번째 환생
+2차 리모탈		Level 50	두 번째 환생
+3차(마지막) 리모탈	Level 60	세 번째 환생
+지존(Grand Master)	10억 EXP	모든 직업 리모탈(올리모) 완료 시
+-------------------------------------------------------------------------------
+지존 단계를 제외한 일반 리모탈 시, 레벨과 경험치가 1로 초기화됩니다.
+ (단, 습득한 기술과 마법은 유지됩니다.)
+
+리모탈 시 선택하는 직업에 따라 영구적인 스탯 보너스를 받습니다.
+- Warrior: 힘(STR) 상승. (STR이 18인 경우, /STR_ADD가 10씩 상승합니다.)
+- Magic User: 지능(INT) 상승
+- Cleric: 지혜(WIS) 상승
+- Thief: 민첩(DEX) 상승
+올리모 이전에 이미 경험한 직업으로 환생할 경우 보너스 스탯이 주어지지 않습니다.
+
+🗣️ 리모탈 방법 (명령어)
+리모탈의 방에 입장하여 채팅창에 아래와 같이 입력하세요.
+명령어: say [직업 이니셜]
+- ex: Warrior로 환생: say W
+- ex: Magic User로 환생: say M
+- ex: Cleric으로 환생: say C
+- ex: Thief로 환생: say T
+
+== Tip: 자신의 현재 리모탈 상태를 확인하고 싶다면 say ?를 입력하세요.
+
+See also : <NONE>
 #~

@@ -30,16 +30,16 @@
 #define log(s) mudlog(s)
 extern void log(char *str);
 
-// Don't use NULL pointer for null character ('\0')
-#define NUL '\0'
-
-#define CARRY_WEIGHT_BASE	500
-
+size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 안전한 문자열 연결 함수, 251125 by Komo */
+const char *get_char_name(struct char_data *ch, struct char_data *viewer);  /* in utility.c PERS 매크로 대체 함수, 251125 by Komo */
 long int hit_limit(struct char_data *ch);
 
+// Don't use NULL pointer for null character ('\0')
+#define NUL '\0'
 #define TRUE  1
-
 #define FALSE 0
+
+#define CARRY_WEIGHT_BASE	500
 
 #define LOWER(c) (((c)>='A'  && (c) <= 'Z') ? ((c)+('a'-'A')) : (c))
 
@@ -223,13 +223,6 @@ long int hit_limit(struct char_data *ch);
     CAN_SEE_OBJ((ch),(obj)))
 
 #define IS_OBJ_STAT(obj,stat) (IS_SET((obj)->obj_flags.extra_flags,stat))
-
-/* char name/short_desc(for mobs) or someone?  */
-
-#define PERS(ch, vict)   (                                          \
-  CAN_SEE(vict, ch) ?                                                \
-    (!IS_NPC(ch) ? (ch)->player.name : (ch)->player.short_descr) :  \
-    "someone")
 
 /*
 	new $-code for backstab
