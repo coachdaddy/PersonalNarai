@@ -2004,8 +2004,7 @@ int safe_house(struct char_data *ch, int cmd, char *arg)
 	case 298:		/* spin bird kick */
 /* by Moon */
 		send_to_char("You cannot do that here.\n\r", ch);
-		sprintf(buf, "%s attempts to misbehave here.\n\r", ch->player.name);
-		send_to_room_except(buf, ch->in_room, ch);
+		act("$n attempts to misbehave here.", FALSE, ch, 0, 0, TO_ROOM); // send_to_room_except 대체
 		return TRUE;
 	default:
 		return FALSE;

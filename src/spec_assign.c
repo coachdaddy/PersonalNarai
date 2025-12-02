@@ -98,9 +98,8 @@ void assign_mobiles(void)
 	mob_index[real_mobile(4000)].func = snake;
 	mob_index[real_mobile(4001)].func = snake;
 	mob_index[real_mobile(4053)].func = snake;
-	mob_index[real_mobile(1660)].func = snake;
-	mob_index[real_mobile(5004)].func = snake;
 	mob_index[real_mobile(4102)].func = snake;
+	mob_index[real_mobile(5004)].func = snake;
 
 	/* SEWERS */
 	mob_index[real_mobile(7006)].func = snake;
