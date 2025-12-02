@@ -21,117 +21,190 @@
 #include <sys/time.h>
 
 /* extern variables */
-extern char history[20][MAX_STRING_LENGTH];
-extern int his_start, his_end;
-
 extern struct room_data *world;
 extern struct descriptor_data *descriptor_list;
 
 int file_to_string(char *name, char *buf);
+void prune_crlf(char *txt);                                     /* in utility.c 251130 */
+void utf8_safe_strncpy(char *dest, const char *src, size_t n); /* in utility.c 251130 */
+
+#define MAX_HISTORY_MSG 512  // 넉넉한 크기
+#define HISTORY_SIZE 100     // 20 -> 100으로 확장, 251124 by Komo
+static char history[HISTORY_SIZE][MAX_HISTORY_MSG];
+static int his_start = 0, his_end = 0;
+static FILE *chatlogfp = NULL;
 
 /* 말하기 */
 void do_say(struct char_data *ch, char *argument, int cmd)
 {
-	int i;
-	static char buf[MAX_STRING_LENGTH];
+	char buf[MAX_STRING_LENGTH];
 
-	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
-		return;
-	}
-	for (i = 0; *(argument + i) == ' '; i++) ;
+    if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
+        return;
+    }
 
-	if (!*(argument + i))
-		send_to_char("Yes, but WHAT do you want to say?\n\r", ch);
-	else {
-		sprintf(buf, "You say '%s'\n\r", argument + i);
-		send_to_char(buf, ch);
-		sprintf(buf, "$n says '%s'", argument + i);
-		act(buf, FALSE, ch, 0, 0, TO_ROOM);
-	}
+    prune_crlf(argument); // 251130 by Komo
+    for (; *argument == ' '; argument++);
+
+    if (!*argument)
+        send_to_char("Yes, but WHAT do you want to say?\n\r", ch);
+    else {
+        snprintf(buf, sizeof(buf), "You say '%s'\n\r", argument);
+        send_to_char(buf, ch);
+        snprintf(buf, sizeof(buf), "$n says '%s'", argument);
+        act(buf, FALSE, ch, 0, 0, TO_ROOM);
+    }
 }
 
 void do_sayh(struct char_data *ch, char *argument, int cmd)
 {				/* hangul say */
-	int i;
-	static char buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
+	char buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
 
-	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
-		return;
-	}
-	for (i = 0; *(argument + i) == ' '; i++) ;
+    if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
+        return;
+    }
 
-	if (!*(argument + i))
-		send_to_char_han("Yes, but WHAT do you want to say?\n\r",
-				 "예? 뭐라고 말해요 ?\n\r", ch);
-	else {
-		sprintf(buf, "You say '%s'\n\r", argument + i);
-		sprintf(buf2, "'%s' 하고 말합니다\n\r", argument + i);
-		/* English - Korean display act() , english text first.. */
-		send_to_char_han(buf, buf2, ch);
+    prune_crlf(argument); // 251130 by Komo
+    for (; *argument == ' '; argument++);
 
-		sprintf(buf, "$n says '%s'", argument + i);
-		sprintf(buf2, "$n 님이 '%s' 하고 말합니다", argument + i);
-		/* English - Korean display act() , english text first.. */
-		acthan(buf, buf2, FALSE, ch, 0, 0, TO_ROOM);
-	}
+    if (!*argument)
+        send_to_char_han("Yes, but WHAT do you want to say?\n\r", "예? 뭐라고 말해요?\n\r", ch);
+    else {
+        snprintf(buf, sizeof(buf), "You say '%s'\n\r", argument);
+        snprintf(buf2, sizeof(buf2), "'%s' 하고 말합니다\n\r",argument);
+        /* English - Korean display act() , english text first.. */
+        send_to_char_han(buf, buf2, ch);
+
+        snprintf(buf, sizeof(buf), "$n says '%s'", argument);
+        snprintf(buf2, sizeof(buf2), "$n 님이 '%s' 하고 말합니다", argument);
+        acthan(buf, buf2, FALSE, ch, 0, 0, TO_ROOM);
+    }
 }
+
+/* 채팅 : 히스토리와 로그 파일에 저장하는 공통 함수 */
+void save_chat_history(struct char_data *ch, char *argument)
+{
+    char buf[MAX_HISTORY_MSG];      // 날짜용
+    char temp_msg[MAX_HISTORY_MSG]; // 전체 메시지 조립용 임시 버퍼
+    time_t tt = time(NULL);
+    
+    strftime(buf, sizeof(buf), "%F %H:%M", localtime(&tt));
+    
+    snprintf(temp_msg, sizeof(temp_msg), "%s %s> %s\n\r", &buf[5], GET_NAME(ch), argument);
+
+    utf8_safe_strncpy(history[his_end], temp_msg, MAX_HISTORY_MSG);
+
+    his_end = (his_end + 1) % HISTORY_SIZE;
+
+    if (his_end == his_start) {
+        his_start = (his_start + 1) % HISTORY_SIZE;
+    }
+
+    // 파일 로그 저장
+    if (chatlogfp == NULL)
+        chatlogfp = fopen(CHATLOG, "a");
+
+    if (chatlogfp) {
+        fprintf(chatlogfp, "%s %s> %s\n", buf, GET_NAME(ch), argument); 
+        fflush(chatlogfp);
+    }
+}
+
 /* 외치기 */
 void do_shout(struct char_data *ch, char *argument, int cmd)
 {
-	static char buf[MAX_STRING_LENGTH], buf1[MAX_STRING_LENGTH];
-	struct descriptor_data *i;
-	extern int noshoutflag;
+	char buf[MAX_STRING_LENGTH], buf1[MAX_STRING_LENGTH];
+    struct descriptor_data *i;
+    extern int noshoutflag;
 
-	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
-		return;
-	}
-	if (noshoutflag && !IS_NPC(ch) && (GET_LEVEL(ch) < IMO)) {
-		send_to_char("I guess you can't shout now?\n\r", ch);
-		return;
-	}
-	if (!IS_NPC(ch))
-		if (IS_SET(ch->specials.act, PLR_NOSHOUT)) {
-			send_to_char("You can't shout!!\n\r", ch);
-			return;
-		}
-	for (; *argument == ' '; argument++) ;
-	if (!(*argument))
-		send_to_char("Shout? Yes! Fine! Shout we must, but WHAT??\n\r", ch);
-	else {
-		send_to_char("Ok.\n\r", ch);
-		sprintf(buf1, "$n shouts '%s'", argument);
+    if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
+        send_to_char("Your mouth moves, but no sound comes out! (You have been silenced by the Gods)\n\r", ch);
+        return;
+    }
+    if (noshoutflag && !IS_NPC(ch) && (GET_LEVEL(ch) < IMO)) {
+        send_to_char("The air is still. The Gods have forbidden shouting at this moment.\n\r", ch);
+        return;
+    }
+    if (!IS_NPC(ch))
+        if (IS_SET(ch->specials.act, PLR_NOSHOUT)) {
+            send_to_char("You try to shout, but your voice fails you. (The Gods have taken your ability to shout)\n\r", ch);
+            return;
+        }
+    
+    prune_crlf(argument); // 251130 by Komo
+    for (; *argument == ' '; argument++);
 
-		// sprintf(buf, "%s shouts '%s'\n\r", GET_NAME(ch), argument);
+    if (!(*argument))
+        send_to_char("Shout? Yes! Fine! Shout we must, but WHAT??\n\r", ch);
+    else {
+        snprintf(buf, sizeof(buf), "You shout '%s'\n\r", argument);
+        send_to_char(buf, ch);
 
-		time_t tt = time(NULL);
-		strftime(buf, 127, "%F %H:%M", localtime(&tt));
-		sprintf(buf + strlen(buf), " %s >> %s\n\r", GET_NAME(ch), argument);
-		assert(his_end >= 0 && his_end < 20);
-		strcpy(history[his_end], &buf[5]);	// omit year part
-		his_end++;
-		if ((his_end % 20) == (his_start % 20)) {
-			his_end = his_start % 20;
-			his_start = (his_start + 1) % 20;
-		}
+        snprintf(buf1, sizeof(buf1), "$n shouts '%s'", argument);
 
-		for (i = descriptor_list; i; i = i->next) {
-			if (i->character != ch && !i->connected &&
-			    i->character &&
-			    !IS_SET(i->character->specials.act, PLR_EARMUFFS))
-				act(buf1, 0, ch, 0, i->character, TO_VICT);
-		}
+        save_chat_history(ch, argument);
 
-#ifdef CHATLOG
-		extern FILE *chatlogfp;
-		if (chatlogfp == NULL)
-			chatlogfp = fopen(CHATLOG, "a");
-		fputs(buf, chatlogfp);
-		fflush(chatlogfp);
-		/* 20110117 by Moon */
-#endif
-
-	}
+        for (i = descriptor_list; i; i = i->next) {
+            if (i->character != ch && !i->connected && i->character && !IS_SET(i->character->specials.act, PLR_EARMUFFS))
+                act(buf1, 0, ch, 0, i->character, TO_VICT);
+        }
+    }
 }
+
+void do_chat(struct char_data *ch, char *argument, int cmd)
+{
+    struct descriptor_data *d;
+    char buf[MAX_STRING_LENGTH];
+    
+    extern int nochatflag;
+
+    // 예외 처리
+    if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
+        send_to_char("You try to speak into the orb, but it remains dark. (You have been silenced by the Gods)\n\r", ch);
+        return;
+    }
+    if (nochatflag) {
+        send_to_char("The global telepathic channels are currently closed by the Gods.\n\r", ch);
+        return;
+    }
+    if (IS_NPC(ch)) {
+        send_to_char("몬스터는 채팅 채널을 사용할 수 없습니다.\r\n", ch);
+        return;
+    }
+    if (ch->desc && ch->desc->original) {
+        send_to_char("몬스터 몸에 있을 때에는 이 명령을 사용하실 수 없습니다.\r\n", ch);
+        return;
+    }
+
+    prune_crlf(argument); // 251130 by Komo
+    for (; *argument == ' '; argument++);
+    
+    save_chat_history(ch, argument);
+
+    snprintf(buf, sizeof(buf), "%s> %s\n\r", GET_NAME(ch), argument);
+    
+    for (d = descriptor_list; d; d = d->next) {
+        if (d->connected) continue;
+
+        struct char_data *victim = d->character;
+        if (victim && !IS_SET(victim->specials.act, PLR_NOCHAT)) { // 대상이 존재하고, PLR_NOCHAT 상태가 아니라면 전송
+             send_to_char(buf, victim);
+        }
+    }
+}
+
+void do_lastchat(struct char_data *ch, char *argument, int cmd)
+{
+    int j;
+
+    for (j = his_start; j != his_end; j = (j + 1) % HISTORY_SIZE) {
+        // 내용이 있는 경우만 출력
+        if (history[j][0] != '\0')
+            send_to_char(history[j], ch);
+    }
+    return;
+}
+
 /* 얘기하기 */
 void do_tell(struct char_data *ch, char *argument, int cmd)
 {
@@ -141,6 +214,7 @@ void do_tell(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
+	prune_crlf(argument); // 251130 by Komo
 	half_chop(argument, name, message);
 	if (!*name || !*message)
 		send_to_char("Who do you wish to tell what??\n\r", ch);
@@ -168,7 +242,7 @@ void do_tell(struct char_data *ch, char *argument, int cmd)
 void do_reply(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_STRING_LENGTH];
-	sprintf(buf, "%s %s", ch->specials.reply_who, argument);
+	snprintf(buf, sizeof(buf), "%s %s", ch->specials.reply_who, argument);
 	do_tell(ch, buf, 0);
 }
 
@@ -182,6 +256,7 @@ void do_send(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
+	prune_crlf(argument); // 251130 by Komo
 	half_chop(argument, name, message);
 	sprintf(paint_name, "paints/%s", message);
 	if (!*name || !*message)
@@ -215,6 +290,7 @@ void do_gtell(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
+	prune_crlf(argument); // 251130 by Komo
 	if (!(k = ch->master))
 		k = ch;
 	if (IS_NPC(ch))
@@ -242,6 +318,7 @@ void do_whisper(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
+	prune_crlf(argument); // 251130 by Komo
 	half_chop(argument, name, message);
 
 	if (!*name || !*message)
@@ -270,6 +347,7 @@ void do_ask(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
+	prune_crlf(argument); // 251130 by Komo
 	half_chop(argument, name, message);
 
 	if (!*name || !*message)
@@ -285,19 +363,6 @@ void do_ask(struct char_data *ch, char *argument, int cmd)
 /*    send_to_char("Ok.\n\r", ch); */
 		act("$n asks $N a question.", FALSE, ch, 0, vict, TO_NOTVICT);
 	}
-}
-
-void do_lastchat(struct char_data *ch, char *argument, int cmd)
-{
-	/*struct descriptor_data *i;
-	   struct char_data *victim; */
-	int j;
-
-	for (j = his_start; j != his_end; j = (j + 1) % 20) {
-		assert(history[j]);
-		send_to_char(history[j], ch);
-	}
-	return;
 }
 
 #define MAX_NOTE_LENGTH MAX_STRING_LENGTH	/* arbitrary */

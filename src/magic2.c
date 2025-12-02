@@ -1299,7 +1299,7 @@ void spell_locate_object(byte level, struct char_data *ch,
 			if (i->carried_by) {
 				sprintf(buf, "%s carried by %s.\n\r",
 					i->short_description,
-								   PERS(i->carried_by, ch));
+								   get_char_name(i->carried_by, ch));
 				send_to_char(buf, ch);
 			} else if (i->in_obj) {
 				sprintf(buf, "%s in %s.\n\r", i->short_description,

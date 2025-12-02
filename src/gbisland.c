@@ -53,12 +53,20 @@ void gbisland_move_seashore(struct char_data *ch)
 	int vnum_seashore;
 	struct obj_data *obj, *next_obj;
 
-	need_movement = movement_loss[world[ch->in_room].sector_type];
+	int sect_type = world[ch->in_room].sector_type;
 
-	if (GET_MOVE(ch) < need_movement && !IS_NPC(ch) && GET_LEVEL(ch) < IMO) {
-		send_to_char("You are too exhausted.\n\r", ch);
-		return;
-	}
+    // 범위 검사
+    if (sect_type < 0 || sect_type >= 9) {
+        log("SYSERR: Invalid sector type in gbisland..."); // 필요하면 로그 남기기
+        sect_type = 0; 
+    }
+
+    need_movement = movement_loss[sect_type];
+
+    if (GET_MOVE(ch) < need_movement && !IS_NPC(ch) && GET_LEVEL(ch) < IMO) {
+        send_to_char("You are too exhausted.\n\r", ch);
+        return;
+    }
 
 	send_to_char("\n\r", ch);
 	send_to_char("갑자기 하늘이 먹구름으로 가득찹니다.\n\r", ch);

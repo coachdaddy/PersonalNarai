@@ -689,6 +689,18 @@ void write_to_q(char *txt, struct txt_q *queue)
 	}
 }
 
+/* SEND_TO_Q 매크로 구현부 (색상 처리 및 전송) */
+void send_to_q_color(const char *messg, struct descriptor_data *desc)
+{
+    char color_buf[MAX_STRING_LENGTH * 3];
+
+    if (!desc || !messg)
+        return;
+
+    process_color_string(messg, color_buf, sizeof(color_buf));
+    write_to_q(color_buf, &desc->output);
+}
+
 struct timeval timediff(struct timeval *a, struct timeval *b)
 {
 	struct timeval rslt, tmp;
@@ -984,20 +996,16 @@ int process_input(struct descriptor_data *t)
 					i++;
 				if (*(t->buf + i) && !ISNEWL(*(t->buf + i)))
 					i++;
-			} else if (!isascii(*(t->buf + i)) && !ISNEWL(*(t->buf
-									+ i + 1))) {
-				*(tmp + k++) = *(t->buf + i++);
-				*(tmp + k++) = *(t->buf + i++);
 			}
-			/* hangul routine */
-			/* strange stuff, i can't understand! */
-			else if (isascii(*(t->buf + i)) && isprint(*(t->buf + i))) {
-				if ((*(tmp + k) = *(t->buf + i)) == '$')
-					*(tmp + ++k) = '$';
-				k++;
-				i++;
-			} else
-				i++;
+			/* hangul routine - deleted, 251130 by Komo */
+            /* strange stuff, i can't understand! */
+            else if ((isascii(*(t->buf + i)) && isprint(*(t->buf + i))) || !isascii(*(t->buf + i))) {
+                if ((*(tmp + k) = *(t->buf + i)) == '$')
+                    *(tmp + ++k) = '$';
+                k++;
+                i++;
+            } else
+                i++;
 		} else {
 			*(tmp + k) = 0;
 			if (tmp[0] == '!') {
@@ -1053,8 +1061,9 @@ int process_input(struct descriptor_data *t)
 			   if ((*(t->buf + squelch) = *(t->buf + i + squelch)) == '\0')
 			   break; */
 			/* forbid infinite loop */
-			strncpy(t->buf, t->buf + i, MAX_STRING_LENGTH);
-			t->buf[MAX_STRING_LENGTH - 1] = 0;
+			/* 메모리 overlap 방지, 251202 */
+            size_t remain_len = strlen(t->buf + i);
+            memmove(t->buf, t->buf + i, remain_len + 1);
 			k = 0;
 			i = 0;
 		}
@@ -1154,33 +1163,32 @@ void nonblock(int s)
 *  Public routines for system-to-player-communication        *
 **************************************************************** */
 
-void send_to_char(char *messg, struct char_data *ch)
+/* 메시지 & 색상 처리 통합                --- 251125 by Komo */
+static void perform_send_to_char(const char *txt, struct char_data *ch)
 {
-    char color_buf[MAX_STRING_LENGTH * 3]; // 색상 코드 확장을 고려하여 버퍼 크기 증가
+    if (!ch || !ch->desc || !txt || !*txt) return;
 
-    if (!ch || !ch->desc) /* 안전장치: 대상이 없으면 종료 */
-        return;
-
-    if (ch->desc && messg) {
-        process_color_string(messg, color_buf, sizeof(color_buf));
-        write_to_q(color_buf, &ch->desc->output);
-    }
-}
-
-void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch)
-{
     char color_buf[MAX_STRING_LENGTH * 3];
 
-    if (!ch || !ch->desc || !msgeng || !msghan)
-        return;
+    process_color_string(txt, color_buf, sizeof(color_buf));
+    write_to_q(color_buf, &ch->desc->output);
+}
 
-    if ((IS_SET(ch->specials.act, PLR_KOREAN))) { /* korean */
-        process_color_string(msghan, color_buf, sizeof(color_buf));
-        write_to_q(color_buf, &ch->desc->output);
-    }
-    else { /* english */
-        process_color_string(msgeng, color_buf, sizeof(color_buf));
-        write_to_q(color_buf, &ch->desc->output);
+/* 일반 전송 */
+void send_to_char(char *messg, struct char_data *ch)
+{
+    perform_send_to_char(messg, ch);
+}
+
+/* 한글 - 한글 메시지가 NULL이어도 영어 메시지가 있으면 전송 */
+void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch)
+{
+    if (!ch || !ch->desc) return;
+
+    if (IS_SET(ch->specials.act, PLR_KOREAN) && msghan && *msghan) {
+        perform_send_to_char(msghan, ch);
+    } else {
+        perform_send_to_char(msgeng, ch);
     }
 }
 
@@ -1197,33 +1205,6 @@ void send_to_all(char *messg)
             }
 }
 
-void send_to_outdoor(char *messg)
-{
-    struct descriptor_data *i;
-    char color_buf[MAX_STRING_LENGTH * 3];
-
-    if (messg)
-        for (i = descriptor_list; i; i = i->next)
-            if (!i->connected)
-                if (OUTSIDE(i->character)) {
-                    process_color_string(messg, color_buf, sizeof(color_buf));
-                    write_to_q(color_buf, &i->output);
-                }
-}
-
-void send_to_except(char *messg, struct char_data *ch)
-{
-    struct descriptor_data *i;
-    char color_buf[MAX_STRING_LENGTH * 3];
-
-    if (messg)
-        for (i = descriptor_list; i; i = i->next)
-            if (ch->desc != i && !i->connected) {
-                process_color_string(messg, color_buf, sizeof(color_buf));
-                write_to_q(color_buf, &i->output);
-            }
-}
-
 void send_to_room(char *messg, int room)
 {
     struct char_data *i;
@@ -1232,32 +1213,6 @@ void send_to_room(char *messg, int room)
     if (messg)
         for (i = world[room].people; i; i = i->next_in_room)
             if (i->desc) {
-                process_color_string(messg, color_buf, sizeof(color_buf));
-                write_to_q(color_buf, &i->desc->output);
-            }
-}
-
-void send_to_room_except(char *messg, int room, struct char_data *ch)
-{
-    struct char_data *i;
-    char color_buf[MAX_STRING_LENGTH * 3];
-
-    if (messg)
-        for (i = world[room].people; i; i = i->next_in_room)
-            if (i != ch && i->desc) {
-                process_color_string(messg, color_buf, sizeof(color_buf));
-                write_to_q(color_buf, &i->desc->output);
-            }
-}
-
-void send_to_room_except_two(char *messg, int room, struct char_data *ch1, struct char_data *ch2)
-{
-    struct char_data *i;
-    char color_buf[MAX_STRING_LENGTH * 3];
-
-    if (messg)
-        for (i = world[room].people; i; i = i->next_in_room)
-            if (i != ch1 && i != ch2 && i->desc) {
                 process_color_string(messg, color_buf, sizeof(color_buf));
                 write_to_q(color_buf, &i->desc->output);
             }
@@ -1290,10 +1245,10 @@ void act(char *str, int hide_invisible, struct char_data *ch, struct obj_data *o
                 if (*strp == '$') {
                     switch (*(++strp)) {
                         case 'n':
-                            i = PERS(ch, to);
+                            i = get_char_name(ch, to);
                             break;
                         case 'N':
-                            i = PERS((struct char_data *)vict_obj, to);
+                            i = get_char_name((struct char_data *)vict_obj, to);
                             break;
                         case 'm':
                             i = HMHR(ch);
@@ -1409,10 +1364,10 @@ void acthan(char *streng, char *strhan, int hide_invisible, struct char_data *ch
                     strp++;
                     switch (*strp) {
                         case 'n':
-                            i = PERS(ch, to);
+                            i = get_char_name(ch, to);
                             break;
                         case 'N':
-                            i = PERS((struct char_data *)vict_obj, to);
+                            i = get_char_name((struct char_data *)vict_obj, to);
                             break;
                         case 'm':
                             i = HMHR(ch);

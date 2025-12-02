@@ -28,8 +28,15 @@
 #define STASH             "stash"
 #define CHATLOG           "log/chatlog.log"
 
-/* public procedures in db.c */
+/* db.c에서 옮겨옴 */
+#define KJHRENT      66666	/* kjh number to tell new rent format */
 
+#define NEW_ZONE_SYSTEM
+#define ALL_WORLD_FILE "world/world_files.new" /* by Komo, 251124 */
+#define ALL_ZONE_FILE "zone/zone_files.new"   /* by Komo, 251120 */
+#define ZO_DEAD  999
+
+/* public procedures in db.c */
 void boot_db(void);
 void save_char(struct char_data *ch, sh_int load_room);
 int create_entry(char *name);
@@ -111,10 +118,12 @@ struct reset_com {
 
 /* zone definition structure. for the 'zone-table'   */
 struct zone_data {
+	int number;         /* 존 고유 번호 (VNUM), 251120 */
 	char *name;		/* name of this zone                  */
 	char *filename;		/* zone file name                                         */
 	int lifespan;		/* how long between resets (minutes)  */
-	int age;		/* current age of this zone (minutes) */
+	char *wld_filename; /* 이 존에 매핑된 .wld 파일 이름, 251121 */
+    int age;		/* current age of this zone (minutes) */
 	int top;		/* upper limit for rooms in this zone */
 
 	int reset_mode;		/* conditions for reset (see below)   */

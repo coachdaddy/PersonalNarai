@@ -16,6 +16,7 @@ extern struct char_data *character_list;
 extern struct index_data *mob_index;
 extern struct room_data *world;
 extern struct str_app_type str_app[];
+extern int top_of_world;
 
 void hit(struct char_data *ch, struct char_data *victim, int type);
 void log(char *str);
@@ -110,6 +111,7 @@ void mobile_activity(void)
 	struct char_data *tmp_ch = NULL, *cho_ch = NULL;
 	struct obj_data *obj, *best_obj;
 	int door, found, max;
+	int dest_room; // ASAN, 251202
 	char buf[100];
 
 	extern int no_specials;
@@ -174,32 +176,33 @@ void mobile_activity(void)
 						}
 					}
 				}	/* Scavenger */
-				if (!IS_SET(ch->specials.act, ACT_SENTINEL) &&
-				    (GET_POS(ch) == POSITION_STANDING) &&
-				    ((door = number(0, 45)) <= 5) &&
-									    CAN_GO(ch,
-				    door) &&
-				    !IS_SET(world[EXIT(ch, door)->to_room].room_flags,
-					    NO_MOB)) {
-					if (ch->specials.last_direction == door) {
-						ch->specials.last_direction = -1;
-					} else {
-						if (!IS_SET(ch->specials.act, ACT_STAY_ZONE)) {
-							ch->specials.last_direction
-							    = door;
-							do_move(ch, "", ++door);
-						} else {
-							if (world[EXIT(ch,
-								  door)->to_room].zone ==
-							    world[ch->in_room].zone) {
-								ch->specials.last_direction
-								    = door;
-								do_move(ch,
-									"", ++door);
-							}
-						}
-					}
-				}
+				/* ASAN : 단계를 나누어 검사 */
+                if (!IS_SET(ch->specials.act, ACT_SENTINEL) && 
+                    (GET_POS(ch) == POSITION_STANDING) &&
+                    ((door = number(0, 45)) <= 5) && 
+                    CAN_GO(ch, door)) {
+
+                    dest_room = EXIT(ch, door)->to_room;
+
+                    // 방 번호가 유효한지 먼저 체크
+                    if (dest_room != NOWHERE && dest_room <= top_of_world && 
+                        !IS_SET(world[dest_room].room_flags, NO_MOB)) {
+                        
+                        if (ch->specials.last_direction == door) {
+                            ch->specials.last_direction = -1;
+                        } else {
+                            if (!IS_SET(ch->specials.act, ACT_STAY_ZONE)) {
+                                ch->specials.last_direction = door;
+                                do_move(ch, "", ++door);
+                            } else {
+                                if (world[dest_room].zone == world[ch->in_room].zone) {
+                                    ch->specials.last_direction = door;
+                                    do_move(ch, "", ++door);
+                                }
+                            }
+                        }
+                    }
+                }
 				/* if can go */
 				if (IS_SET(ch->specials.act, ACT_AGGRESSIVE)) {
 					found = FALSE;

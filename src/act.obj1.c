@@ -657,7 +657,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 			return;
 		}
 		send_to_char("Ok.\n\r", ch);
-		sprintf(buf, "%s gives you %d gold coins.\n\r", PERS(ch,
+		sprintf(buf, "%s gives you %d gold coins.\n\r", get_char_name(ch,
 			vict), amount);
 		send_to_char(buf, vict);
 		act("$n gives some gold to $N.", 1, ch, 0, vict, TO_NOTVICT);
