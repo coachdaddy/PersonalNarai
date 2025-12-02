@@ -1065,8 +1065,9 @@ int process_input(struct descriptor_data *t)
 			   if ((*(t->buf + squelch) = *(t->buf + i + squelch)) == '\0')
 			   break; */
 			/* forbid infinite loop */
-			strncpy(t->buf, t->buf + i, MAX_STRING_LENGTH);
-			t->buf[MAX_STRING_LENGTH - 1] = 0;
+			/* 메모리 overlap 방지, 251202 */
+            size_t remain_len = strlen(t->buf + i);
+            memmove(t->buf, t->buf + i, remain_len + 1);
 			k = 0;
 			i = 0;
 		}

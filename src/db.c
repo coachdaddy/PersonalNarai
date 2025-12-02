@@ -23,8 +23,6 @@
 #include "mob_bal.c"
 
 #define KJHRENT      66666	/* kjh number to tell new rent format */
-#define SYPARKRENT   900176	/* sypark student id :) */
-#define KNIFE_RENT   77777	/* Equiped Rent by Knife */
 
 #define NEW_ZONE_SYSTEM
 
@@ -347,8 +345,7 @@ void build_player_index(void)
 }
 
 /* generate index table for object or monster file */
-struct index_data *
- generate_indices(FILE * fl, int *top)
+struct index_data *generate_indices(FILE * fl, int *top)
 {
 	int i = 0;
 	struct index_data *index = NULL;
@@ -391,7 +388,7 @@ struct index_data *
 /* new version of boot_world */
 /* modified by ares */
 
-/* room data parsing    by Komo */
+/* room data parsing helper,   by Komo */
 void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
 {
     int virtual_nr, flag, tmp;
@@ -451,9 +448,7 @@ void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
     if (temp) free(temp);
 }
 
-
-/* 
- * re-written with helper function load_rooms(),    251121 by Komo */
+/* re-written with helper function load_rooms(),    251121 by Komo */
 void boot_world(void)
 {
     FILE *map_files, *fl;
@@ -3360,46 +3355,57 @@ void wipe_stash(char *filename)	/* delete id.x and id.x.y */
 
 void do_checkrent(struct char_data *ch, char *argument, int cmd)
 {
-	char stashfile[256], name[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
-	char str[255];
-	FILE *fl;
-	int i, j, n;
+    char stashfile[MAX_STRING_LENGTH], name[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
+    char str[256];
+    FILE *fl;
+    int i, j, n;
+    int written; // snprintf가 쓴 글자 수 저장용
 
-	one_argument(argument, name);
-	if (!*name)
-		return;
-	for (i = 0; name[i]; ++i)
-		if (isupper(name[i]))
-			name[i] = tolower(name[i]);
-	sprintf(stashfile, "%s/%c/%s.x.y", STASH, name[0], name);
-	if (!(fl = fopen(stashfile, "r"))) {
-		sprintf(buf, "%s has nothing in rent.\n\r", name);
-		send_to_char(buf, ch);
-		return;
-	}
-	buf[0] = 0;
-	fscanf(fl, "%d", &n);
-	for (i = j = 0;;) {
-		if (fscanf(fl, "%d", &n) <= 0)
-			break;
-		if (n < 1000)
-			continue;
-		if (n > 99999)
-			continue;
-		++j;
-		sprintf(buf + i, "%5d%c", n, (j == 10) ? '\n' : ' ');
-		if (j == 10)
-			j = 0;
-		i += 5;
-		fgets(str, 255, fl);
-		fgets(str, 255, fl);
-		fgets(str, 255, fl);
-		fgets(str, 255, fl);
-	}
-	fclose(fl);
-	strcat(buf, "\n\r");
-	send_to_char(buf, ch);
-	return;
+    one_argument(argument, name);
+    if (!*name) {
+        send_to_char("Check whose rent file?\n\r", ch);
+        return;
+    }
+
+    for (i = 0; name[i]; ++i)
+        if (isupper(name[i])) 
+            name[i] = tolower(name[i]);
+
+    snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x.y", STASH, name[0], name);
+    if (!(fl = fopen(stashfile, "r"))) {
+        snprintf(buf, sizeof(buf), "%s has nothing in rent.\n\r", name);
+        send_to_char(buf, ch);
+        return;
+    }
+    buf[0] = '\0';
+    fscanf(fl, "%d", &n);
+
+    for (i = j = 0;;) { // i: 현재 버퍼 인덱스, j: 한 줄에 출력한 아이템 개수
+        if (fscanf(fl, "%d", &n) <= 0)
+            break;
+        if (n < 1000 || n > 99999)
+            continue;
+        
+        ++j;
+
+        if (sizeof(buf) - i <= 1) break;
+
+        written = snprintf(buf + i, sizeof(buf) - i, "%5d%c", n, (j == 10) ? '\n' : ' ');
+        if (written > 0)
+            i += written;
+
+        if (j == 10)
+            j = 0;
+        
+        if (!fgets(str, sizeof(str), fl)) break;
+        if (!fgets(str, sizeof(str), fl)) break;
+        if (!fgets(str, sizeof(str), fl)) break;
+        if (!fgets(str, sizeof(str), fl)) break;
+    }
+    fclose(fl);
+    strlcat(buf, "\n\r", sizeof(buf));
+    send_to_char(buf, ch);
+    return;
 }
 void do_extractrent(struct char_data *ch, char *argument, int cmd)
 {

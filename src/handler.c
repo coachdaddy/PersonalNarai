@@ -389,12 +389,15 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
 /* Call affect_remove with every spell of spelltype "skill" */
 void affect_from_char(struct char_data *ch, byte skill)
 {
-	struct affected_type *hjp;
+	struct affected_type *hjp, *next_aff;
 
-	for (hjp = ch->affected; hjp; hjp = hjp->next)
-		if (hjp->type == skill)
-			affect_remove(ch, hjp);
-
+    // ASAN : hjp->next를 미리 저장해두고 루프
+    for (hjp = ch->affected; hjp; hjp = next_aff) {
+        next_aff = hjp->next; // 다음 것 미리 확보
+        
+        if (hjp->type == skill)
+            affect_remove(ch, hjp);
+    }
 }
 
 /* Return if a char is affected by a spell (SPELL_XXX), NULL indicates 
@@ -1002,128 +1005,129 @@ void update_char_objects(struct char_data *ch)
 /* Extract a ch completely from the world, and leave his stuff behind */
 void extract_char(struct char_data *ch, int drop_items)
 {
-	struct obj_data *i;
-	struct char_data *k, *next_char;
-	struct descriptor_data *t_desc;
-	int l, was_in, drop_items;
-	struct affected_type *af;
+    struct obj_data *i;
+    struct char_data *k, *next_char;
+    struct descriptor_data *t_desc;
+    int l, was_in;
+    struct affected_type *af;
 
-	char for_debug[256];
+    char for_debug[MAX_STRING_LENGTH]; // 버퍼 크기 변경, 251130 by Komo
 
-	extern struct char_data *combat_list;
+    extern struct char_data *combat_list;
 
-	void do_save(struct char_data *ch, char *argument, int cmd);
-	void do_return(struct char_data *ch, char *argument, int cmd);
-	void die_follower(struct char_data *ch);
+    void do_save(struct char_data * ch, char *argument, int cmd);
+    void do_return(struct char_data * ch, char *argument, int cmd);
+    void die_follower(struct char_data * ch);
 
-/*
-	assert(ch);
-*/
+    if (!ch) return;
+    if (ch->in_room == NOWHERE) {
+        log("SYSERR: NOWHERE extracting char. (handler.c, extract_char)");
+        return; /* exit(1);  <-- 기존 코드. 서버를 죽이는 것보단 리턴시킴 */
+    }
 
-	if (!ch)
-		return;
-	sprintf(for_debug, "extract_char(%s)", ch->player.name);
-	log(for_debug);
+    // 안전한 로그 출력토록 수정 (이름이 없거나 깨졌을 경우 대비), 251130 by Komo
+    if (ch->player.name)
+        snprintf(for_debug, sizeof(for_debug), "extract_char(%s)", ch->player.name);
+    else
+        snprintf(for_debug, sizeof(for_debug), "extract_char(NAME_NULL)");
+    log(for_debug);
 
-	if (!IS_NPC(ch) && !ch->desc) {
-		for (t_desc = descriptor_list; t_desc; t_desc = t_desc->next)
-			if (t_desc->original == ch)
-				do_return(t_desc->character, "", 0);
-	}
-	if (ch->in_room == NOWHERE) {
-		log("NOWHERE extracting char. (handler.c, extract_char)");
-		exit(1);
-	}
-	if (ch->followers || ch->master)
-		die_follower(ch);
-	if (ch->desc) {
-		/* Forget snooping */
-		if (ch->desc->snoop.snooping)
-			ch->desc->snoop.snooping->desc->snoop.snoop_by = 0;
-		if (ch->desc->snoop.snoop_by) {
-			send_to_char("Your victim is no longer among us.\n\r",
-				     ch->desc->snoop.snoop_by);
-			ch->desc->snoop.snoop_by->desc->snoop.snooping = 0;
-		}
-		ch->desc->snoop.snooping = ch->desc->snoop.snoop_by = 0;
-	}
+    if (!IS_NPC(ch) && !ch->desc) {
+        for (t_desc = descriptor_list; t_desc; t_desc = t_desc->next)
+            if (t_desc->original == ch)
+                do_return(t_desc->character, "", 0);
+    }
 
-	if (drop_items) { // flag 검사, 251109
-		if (ch->carrying) {
-			/* transfer ch's objects to room */
-			if (world[ch->in_room].contents)	/* room nonempty */
-			{
-				/* locate tail of room-contents */
-				// BUG FIX!!!
-				for (i = world[ch->in_room].contents; i->next_content;
-					i = i->next_content) {
-					/* append ch's stuff to room-contents */
-					i->next_content = ch->carrying;
-				}
-			} else
-				world[ch->in_room].contents = ch->carrying;
+    if (ch->followers || ch->master)
+        die_follower(ch);
 
-			/* connect the stuff to the room */
-			for (i = ch->carrying; i; i = i->next_content) {
-				i->carried_by = 0;
-				i->in_room = ch->in_room;
-			}
-		}
-	}
+    if (ch->desc) {
+        /* Forget snooping */
+        if (ch->desc->snoop.snooping)
+            ch->desc->snoop.snooping->desc->snoop.snoop_by = 0;
+        if (ch->desc->snoop.snoop_by) {
+            send_to_char("Your victim is no longer among us.\n\r", ch->desc->snoop.snoop_by);
+            ch->desc->snoop.snoop_by->desc->snoop.snooping = 0;
+        }
+        ch->desc->snoop.snooping = ch->desc->snoop.snoop_by = 0;
+    }
 
-	if (ch->specials.fighting)
-		stop_fighting(ch);
-	for (k = combat_list; k; k = next_char) {
-		next_char = k->next_fighting;
-		if (k->specials.fighting == ch)
-			stop_fighting(k);
-	}
+    //아이템 드랍 로직 수정, 251130 by Komo
+    if (drop_items && ch->carrying) { 
+        for (i = ch->carrying; i; i = i->next_content) {
+            i->carried_by = 0;
+            i->in_room = ch->in_room;
+        }
 
-	/* Must remove from room before removing the equipment! */
-	was_in = ch->in_room;
-	char_from_room(ch);
+        struct obj_data *last_obj;
+        for (last_obj = ch->carrying; last_obj->next_content; last_obj = last_obj->next_content)
+            ;
 
-	if (drop_items) { // flag 검사, 251109
-		/* clear equipment_list */
-		for (l = 0; l < MAX_WEAR; l++)
-			if (ch->equipment[l])
-				obj_to_room(unequip_char(ch, l), was_in);
-	}
+        last_obj->next_content = world[ch->in_room].contents;
+        world[ch->in_room].contents = ch->carrying;
+        
+        ch->carrying = NULL;
+    }
 
-	/* pull the char from the list */
-	if (!character_list) {
-		return;
-	} else if (ch == character_list)
-		character_list = ch->next;
-	else {
-		for (k = character_list; (k) && (k->next != ch); k = k->next) ;
-		if (k)
-			k->next = ch->next;
-		else {
-			log("Can't Find character in the list. (handler.c extract_char)");
-		}
-	}
-	if (ch->desc) {
-		if (ch->desc->original)
-			do_return(ch, "", 0);
-#ifdef  RETURN_TO_QUIT
-		save_char(ch, world[was_in].number);
-#else
-		save_char(ch, was_in);
-#endif
-	}
-	if (IS_NPC(ch)) {
-		if (ch->nr > -1)	/* if mobile */
-			mob_index[ch->nr].number--;
-		free_char(ch);
-	}
-	if (ch->desc) {
-		/* remove all affected by spell */
-		for (af = ch->affected; af != NULL; af = af->next)
-			affect_remove(ch, af);
-		ch->desc->connected = CON_SLCT;
-		SEND_TO_Q(MENU, ch->desc);
-	}
+    if (ch->specials.fighting)
+        stop_fighting(ch);
+
+    for (k = combat_list; k; k = next_char) {
+        next_char = k->next_fighting;
+        if (k->specials.fighting == ch)
+            stop_fighting(k);
+    }
+
+    /* Must remove from room before removing the equipment! */
+    was_in = ch->in_room;
+    char_from_room(ch);
+
+    if (drop_items) { // flag 검사, 251109
+        /* clear equipment_list */
+        for (l = 0; l < MAX_WEAR; l++)
+            if (ch->equipment[l])
+                obj_to_room(unequip_char(ch, l), was_in);
+    }
+
+    /* pull the char from the list */
+    if (!character_list) {
+        return;
+    } else if (ch == character_list) {
+        character_list = ch->next;
+    } else {
+        for (k = character_list; (k) && (k->next != ch); k = k->next)
+            ;
+        if (k)
+            k->next = ch->next;
+        else {
+            log("Can't Find character in the list. (handler.c extract_char)");
+        }
+    }
+
+    if (ch->desc) {
+        if (ch->desc->original)
+            do_return(ch, "", 0);
+
+        save_char(ch, world[was_in].number);
+    }
+
+    if (IS_NPC(ch)) {
+        if (ch->nr > -1) /* if mobile */
+            mob_index[ch->nr].number--;
+        free_char(ch);
+        ch = NULL;
+    }
+
+    if (ch && ch->desc) {
+        /* remove all affected by spell */
+        struct affected_type *next_af; // 임시 변수 선언
+        for (af = ch->affected; af != NULL; af = next_af) {
+            next_af = af->next; // 지우기 전에 다음 주소 미리 저장
+            affect_remove(ch, af);
+        }
+        ch->desc->connected = CON_SLCT;
+        SEND_TO_Q(MENU, ch->desc);
+    }
 }
 
 /* ***********************************************************************

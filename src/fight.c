@@ -667,30 +667,37 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 
 char *replace_string(char *str, char *weapon)
 {
-	static char buf[3][256];
-	static int count = 0;
-	char *rtn;
-	char *cp;
+	static char buf[3][MAX_STRING_LENGTH]; // ASAN, 251202
+    static int count = 0;
+    char *rtn;
+    char *cp;
+    char *wp_ptr; // 무기 이름 포인터 보존용 추가
 
-	cp = rtn = buf[count % 3];
-	count++;
+    cp = rtn = buf[count % 3];
+    count++;
 
-	for (; *str; str++) {
-		if (*str == '#') {
-			switch (*(++str)) {
-			case 'W':
-				for (; *weapon; *(cp++) = *(weapon++)) ;
-				break;
-			default:
-				*(cp++) = '#';
-				break;
-			}
-		} else {
-			*(cp++) = *str;
-		}
-		*cp = 0;
-	}			/* For */
-	return (rtn);
+    for (; *str; str++) {
+        if ((cp - rtn) > (MAX_STRING_LENGTH - 50)) {
+            break; 
+        }
+        if (*str == '#') {
+            switch (*(++str)) {
+                case 'W':
+                    if (weapon) {
+                        for (wp_ptr = weapon; *wp_ptr; *(cp++) = *(wp_ptr++))
+                            ;
+                    }
+                    break;
+                default:
+                    *(cp++) = '#';
+                    break;
+            }
+        } else {
+            *(cp++) = *str;
+        }
+    }	/* For */
+    *cp = '\0'; // 루프 밖에서 한 번만
+    return(rtn);
 }
 
 struct dam_weapon_type {
