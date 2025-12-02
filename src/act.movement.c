@@ -17,6 +17,9 @@
 
 #include "guild_list.h"
 
+#define VNUM_WINGS_1  9703
+#define VNUM_WINGS_2  2700
+
 /*   external vars  */
 extern struct room_data *world;
 extern struct char_data *character_list;
@@ -80,10 +83,23 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
     // ASan : 섹터 타입 유효성 검사 및 보정
     sect_from = world[ch->in_room].sector_type;
     sect_to   = world[dest_room_rnum].sector_type;
-    if (sect_from < 0 || sect_from >= 9) sect_from = SECT_FIELD; // 정상 범위 아니면 SECT_FIELD로
-    if (sect_to < 0   || sect_to >= 9)   sect_to = SECT_FIELD;
-    need_movement = (movement_loss[sect_from] + movement_loss[sect_to]) / 2; // 필요 move 계산
+																			 //
+	if (sect_from < 0 || sect_from >= 9) {
+        char log_buf[256];
+        sprintf(log_buf, "SYSERR: Invalid source sector type %d in room %d, clamping to SECT_FIELD", 
+                sect_from, world[ch->in_room].number);
+        log(log_buf);
+        sect_from = SECT_FIELD;
+    }
+    if (sect_to < 0 || sect_to >= 9) {
+        char log_buf[256];
+        sprintf(log_buf, "SYSERR: Invalid dest sector type %d in room %d, clamping to SECT_FIELD", 
+                sect_to, world[dest_room_rnum].number);
+        log(log_buf);
+        sect_to = SECT_FIELD;
+    }
 
+    need_movement = (movement_loss[sect_from] + movement_loss[sect_to]) / 2; // 필요 move 계산
 
     // boat 체크
     if (sect_from == SECT_WATER_NOSWIM || sect_to == SECT_WATER_NOSWIM) {
@@ -102,7 +118,7 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
         has_wing = FALSE;
         for (obj = ch->carrying; obj; obj = obj->next_content) {
             obj_number = obj_index[obj->item_number].virtual;
-            if (obj_number == 9703 || obj_number == 2700)
+			if (obj_number == VNUM_WINGS_1 || obj_number == VNUM_WINGS_2)
                 has_wing = TRUE;
         }
         if (!has_wing && (GET_LEVEL(ch) < IMO + 3)) {
