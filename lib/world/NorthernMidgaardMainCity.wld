@@ -625,13 +625,30 @@ D5
 S
 #3039
 Remortal Place~
-You are standing at the place of remortaling and demoting.You want to be new bie again. You can feel the baby in your heart. Let's reborn with your power!!!! Your spells and status can be saved. Watch out. You should type this. <say CLASS>,in which CLASS can be 'W' 'M' 'C' 'T'. E.G> remort W <<---You will be reborn with Warrior character!!!!
+You are standing at the place of remortaling and demoting.
+You want to be new bie again. You can feel the baby in your heart. 
+Let's reborn with your power!!!! Your spells and status can be saved. 
+There is a sign here.
+Watch out.   
+You should type this. <say CLASS>,in which CLASS can be 'W' 'M' 'C' 'T'. 
+For information, type 'say ?'
+Ex> say W <<---You will be reborn with Warrior character!!!!
 ~
 52 136 1
 D0
 ~
 ~
 0 0 3001
+E
+sign~
+
+First Remortal requires reaching level 40 to get new class
+
+Second Remortal requires reaching level 50 to get new class
+
+Third Remortal requires reaching level 60 to get new class
+
+~
 S
 #3040
 Inside the West Gate of Midgaard~
