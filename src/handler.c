@@ -718,23 +718,23 @@ struct obj_data *
 
 int get_number(char **name)
 {
-
 	int i;
 	char *ppos;
 	char number[MAX_INPUT_LENGTH];
 
 	number[0] = '\0';
-	if ((ppos = (char *)index((char *)(*name), '.'))) {
-		*(ppos++) = '\0';
-		strcpy(number, *name);
-		strcpy(*name, ppos);
+    if ((ppos = strchr(*name, '.'))) { // index -> strchr, 251203
+        *ppos++ = '\0';
+        strcpy(number, *name);
+        
+        memmove(*name, ppos, strlen(ppos) + 1); // strcpy -> memmove 
 
-		for (i = 0; *(number + i); i++)
-			if (!ISDIGIT(*(number + i)))
-				return (0);
+        for (i = 0; *(number + i); i++)
+            if (!isdigit(*(number + i)))
+                return (0);
 
-		return (atoi(number));
-	}
+        return (atoi(number));
+    }
 
 	return (1);
 }
@@ -1165,20 +1165,25 @@ void extract_char(struct char_data *ch, int drop_items)
    which incorporate the actual player-data.
    *********************************************************************** */
 
-struct char_data *
- get_char_room_vis(struct char_data *ch, char *name)
+struct char_data *get_char_room_vis(struct char_data *ch, char *name)
 {
 	struct char_data *i;
 	int j, number;
 	char tmpname[MAX_INPUT_LENGTH];
 	char *tmp;
 
-	strcpy(tmpname, "ALL");
-	if (name)
-		strcpy(tmpname, name);
-	tmp = tmpname;
-	if (!(number = get_number(&tmp)))
-		return (0);
+	// modified 251203
+    if (name && *name) {
+        strncpy(tmpname, name, sizeof(tmpname) - 1);
+        tmpname[sizeof(tmpname) - 1] = '\0';
+    } else {
+        strcpy(tmpname, "ALL");
+    }
+
+    tmp = tmpname;
+
+    if (!(number = get_number(&tmp)))
+        return (0);
 
 	for (i = world[ch->in_room].people, j = 1; i && (j <= number); i = i->next_in_room)
 		if (isname(tmp, GET_NAME(i)))
@@ -1190,6 +1195,7 @@ struct char_data *
 
 	return (0);
 }
+
 struct char_data *
  get_specific_vis(struct char_data *ch, char *name, int type)
 {
