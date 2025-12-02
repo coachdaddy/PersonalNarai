@@ -391,220 +391,130 @@ struct index_data *
 /* new version of boot_world */
 /* modified by ares */
 
-#define ALL_WORLD_FILE "world/world_files"
+/* room data parsing    by Komo */
+void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
+{
+    int virtual_nr, flag, tmp;
+    char *temp;
+    char chk[256]; /* 크기를 50 -> 256으로 변경 */
+    struct extra_descr_data *new_descr;
 
+    do {
+        fscanf(fl, " #%d\n", &virtual_nr);
+
+        temp = fread_string(fl);
+        if ((flag = (*temp != '$'))) {
+            allocate_room(*room_nr);
+
+            world[*room_nr].number = virtual_nr;
+            world[*room_nr].name = temp;
+            world[*room_nr].description = fread_string(fl);
+            
+            world[*room_nr].zone = zone_rnum;
+
+            int ignore_zone;
+            fscanf(fl, " %d ", &ignore_zone);
+
+            /* 방 플래그 및 지형 타입 */
+            fscanf(fl, " %d ", &tmp);
+            world[*room_nr].room_flags = tmp;
+            fscanf(fl, " %d ", &tmp);
+            world[*room_nr].sector_type = tmp;
+
+            /* 초기화 */
+            world[*room_nr].funct = 0;
+            world[*room_nr].contents = 0;
+            world[*room_nr].people = 0;
+            world[*room_nr].light = 0;
+            for (tmp = 0; tmp <= 5; tmp++) world[*room_nr].dir_option[tmp] = 0;
+            world[*room_nr].ex_description = 0;
+
+            while (1) {
+                fscanf(fl, " %255s \n", chk); 
+
+                if (*chk == 'D')        /* direction field */
+                    setup_dir(fl, *room_nr, atoi(chk + 1));
+                else if (*chk == 'E') { /* extra description field */
+                    CREATE(new_descr, struct extra_descr_data, 1);
+                    new_descr->keyword = fread_string(fl);
+                    new_descr->description = fread_string(fl);
+                    new_descr->next = world[*room_nr].ex_description;
+                    world[*room_nr].ex_description = new_descr;
+                } else if (*chk == 'S') /* end of current room */
+                    break;
+            }
+            
+            (*room_nr)++;
+        }
+    } while (flag);
+
+    if (temp) free(temp);
+}
+
+
+/* 
+ * re-written with helper function load_rooms(),    251121 by Komo */
 void boot_world(void)
 {
-	FILE *fl;
-	FILE *all_files;
-	int room_nr = 0, zone = 0, virtual_nr, flag, tmp;
-	char *temp, chk[50];
-	struct extra_descr_data *new_descr;
-	char file_name[100];
-	int len;
+    FILE *map_files, *fl;
+    int room_nr = 0;
+    char vnum_buf[256];
+    char file_name_from_list[256];
+    char buf[MAX_STRING_LENGTH]; // 로그용 버퍼
+    int zone_num_input;
+    int z_rnum;
 
-	world = 0;
-	character_list = 0;
-	object_list = 0;
+    world = 0;
+    character_list = 0;
+    object_list = 0;
 
-	if (!(all_files = fopen(ALL_WORLD_FILE, "r"))) {
-		perror("fopen");
-		log("boot_world: could not open world file.");
-		exit(0);
-	}
+    log("boot_world: Loading world files...");
 
-	while (1) {
-		fgets(file_name, 99, all_files);
+    if (!(map_files = fopen(ALL_WORLD_FILE, "r"))) {
+        perror("boot_world: Error opening ALL_WORLD_FILE");
+        exit(0);
+    }
 
-		if (file_name[0] == '$')
-			break;	/* end of file */
+    while (1) {
+        if (fscanf(map_files, "%255s", vnum_buf) != 1) break;
+        if (*vnum_buf == '$') break;
+        
+        zone_num_input = atoi(vnum_buf);
 
-		len = strlen(file_name) - 1;
-		if (file_name[len] == '\n' || file_name[len] == '\r')
-			file_name[len] = 0;
-		if (!(fl = fopen(file_name, "r"))) {
-			perror("boot_zones");
-			perror(file_name);
-			exit(0);
-		}
+        if (fscanf(map_files, "%255s", file_name_from_list) != 1) break;
 
-		do {
-			fscanf(fl, " #%d\n", &virtual_nr);
-			temp = fread_string(fl);
-			if ((flag = (*temp != '$'))) {	/* a new record to be read */
-				allocate_room(room_nr);
-				world[room_nr].number = virtual_nr;
-				world[room_nr].name = temp;
-				world[room_nr].description = fread_string(fl);
+        /* 존 찾기 */
+        z_rnum = real_zone_by_number(zone_num_input);
 
-				if (top_of_zone_table >= 0) {
-					fscanf(fl, " %*d ");
-					/* OBS: Assumes ordering of input rooms */
-					if (world[room_nr].number <=
-					    (zone ? zone_table[zone - 1].top : -1)) {
-						fprintf(stderr,
-							"Room nr %d is below zone %d.\n",
-							room_nr, zone);
-						fprintf(stderr,
-							"DEBUG: %d, %s\n",
-							world[room_nr].number,
-							world[room_nr].name);
-						exit(0);
-					}
-					while (world[room_nr].number >
-					       zone_table[zone].top)
-						if (zone > top_of_zone_table) {
-							fprintf(stderr,
-								"Room %d is outside of any zone.\n",
-								virtual_nr);
-							exit(0);
-						}
-					world[room_nr].zone = zone;
-				}
-				fscanf(fl, " %d ", &tmp);
-				world[room_nr].room_flags = tmp;
-				fscanf(fl, " %d ", &tmp);
-				world[room_nr].sector_type = tmp;
+        if (z_rnum == -1) {
+            snprintf(buf, sizeof(buf), "boot_world: Warning - World file '%s' uses undefined zone number %d.", 
+                    file_name_from_list, zone_num_input);
+            log(buf);
+            z_rnum = 0; 
+        } else {
+            CREATE(zone_table[z_rnum].wld_filename, char, strlen(file_name_from_list) + 1);
+            strcpy(zone_table[z_rnum].wld_filename, file_name_from_list);
+        }
 
-				world[room_nr].funct = 0;
-				world[room_nr].contents = 0;
-				world[room_nr].people = 0;
-				world[room_nr].light = 0;	/* Zero light sources */
+        if (!(fl = fopen(file_name_from_list, "r"))) {
+            snprintf(buf, sizeof(buf), "boot_world: Error opening world file '%s'", file_name_from_list);
+            perror(buf);
+            continue;
+        }
 
-				for (tmp = 0; tmp <= 5; tmp++)
-					world[room_nr].dir_option[tmp] = 0;
+        load_rooms(fl, z_rnum, &room_nr);
+        fclose(fl);
+    }
 
-				world[room_nr].ex_description = 0;
-
-				while (1) {
-					fscanf(fl, " %s \n", chk);
-					if (*chk == 'D')	/* direction field */
-						setup_dir(fl, room_nr,
-									    atoi(chk
-									    + 1));
-					else if (*chk == 'E') {		/* extra description field */
-						CREATE(new_descr, struct
-						       extra_descr_data, 1);
-						new_descr->keyword =
-						    fread_string(fl);
-						new_descr->description =
-						    fread_string(fl);
-						new_descr->next =
-						    world[room_nr].ex_description;
-						world[room_nr].ex_description
-						    = new_descr;
-					} else if (*chk == 'S')		/* end of current room */
-						break;
-				}
-				room_nr++;
-			}
-		}
-		while (flag);
-
-		free(temp);	/* cleanup the area containing the terminal $  */
-		fclose(fl);
-		zone++;
-	}
-
-	fclose(all_files);
-	top_of_world = --room_nr;
+    fclose(map_files);
+    top_of_world = --room_nr; 
+    
+    snprintf(buf, sizeof(buf), "boot_world: Total %d rooms loaded.", top_of_world + 1);
+    log(buf);
 }
 
 #undef ALL_WORLD_FILE
 
-/* load the rooms */
-/*
-  void boot_world(void)
-{
-  FILE *fl;
-  int room_nr = 0, zone = 0, dir_nr, virtual_nr, flag, tmp;
-  char *temp, chk[50];
-  struct extra_descr_data *new_descr;
-
-  world = 0;
-  character_list = 0;
-  object_list = 0;
-  
-  if (!(fl = fopen(WORLD_FILE, "r")))
-  {
-    perror("fopen");
-    log("boot_world: could not open world file.");
-    exit(0);
-  }
-
-  do
-  {
-    fscanf(fl, " #%d\n", &virtual_nr);
-    temp = fread_string(fl);
-    if (flag = (*temp != '$')) 
-    {
-      allocate_room(room_nr);
-      world[room_nr].number = virtual_nr;
-      world[room_nr].name = temp;
-      world[room_nr].description = fread_string(fl);
-
-      if (top_of_zone_table >= 0)
-      {
-        fscanf(fl, " %*d ");
-        if (world[room_nr].number <= (zone ? zone_table[zone-1].top : -1))
-        {
-          fprintf(stderr, "Room nr %d is below zone %d.\n",
-            room_nr, zone);
-          exit(0);
-        }
-        while (world[room_nr].number > zone_table[zone].top)
-          if (++zone > top_of_zone_table)
-          {
-            fprintf(stderr, "Room %d is outside of any zone.\n",
-              virtual_nr);
-            exit(0);
-          }
-        world[room_nr].zone = zone;
-      }
-      fscanf(fl, " %d ", &tmp);
-      world[room_nr].room_flags = tmp;
-      fscanf(fl, " %d ", &tmp);
-      world[room_nr].sector_type = tmp;
-
-      world[room_nr].funct = 0;
-      world[room_nr].contents = 0;
-      world[room_nr].people = 0;
-      world[room_nr].light = 0; 
-
-      for (tmp = 0; tmp <= 5; tmp++)
-        world[room_nr].dir_option[tmp] = 0;
-
-      world[room_nr].ex_description = 0;
-
-      for (;;)
-      {
-        fscanf(fl, " %s \n", chk);
-
-        if (*chk == 'D') 
-          setup_dir(fl, room_nr, atoi(chk + 1));
-        else if (*chk == 'E')  
-        {
-          CREATE(new_descr, struct extra_descr_data, 1);
-          new_descr->keyword = fread_string(fl);
-          new_descr->description = fread_string(fl);
-          new_descr->next = world[room_nr].ex_description;
-          world[room_nr].ex_description = new_descr;
-        }
-        else if (*chk == 'S') 
-          break;
-      }
-            
-      room_nr++;
-      }
-  }
-  while (flag);
-
-  free(temp); 
-
-  fclose(fl);
-  top_of_world = --room_nr;
-}
-*/
 
 void allocate_room(int new_top)
 {
@@ -711,7 +621,6 @@ void renum_zone_table(void)
 /* new version of boot_zone : by ares */
 /* read lib/zone/.zon files */
 
-#define ALL_ZONE_FILE "zone/zone_files"
 
 void load_zones(int zon)
 {

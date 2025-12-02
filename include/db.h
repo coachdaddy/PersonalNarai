@@ -28,6 +28,9 @@
 #define STASH             "stash"
 #define CHATLOG           "log/chatlog.log"
 
+#define ALL_WORLD_FILE 	"world/world_files.new"
+#define ALL_ZONE_FILE 	"zone/zone_files.new"
+
 /* public procedures in db.c */
 
 void boot_db(void);

@@ -518,10 +518,19 @@ void boot_the_shops()
 
 	fclose(shop_f);
 }
+
 void assign_the_shopkeepers()
 {
 	int temp1;
+    char buf[256]; // 로그용 버퍼
 
-	for (temp1 = 0; temp1 < number_of_shops; temp1++)
-		mob_index[shop_index[temp1].keeper].func = shop_keeper;
+    for (temp1 = 0; temp1 < number_of_shops; temp1++) {
+        int keeper_rnum = shop_index[temp1].keeper;
+        if (keeper_rnum >= 0) {
+            mob_index[shop_index[temp1].keeper].func = shop_keeper;
+        } else {
+            snprintf(buf, sizeof(buf), "SYSERR: Shop index #%d has invalid keeper RNUM [%d]. Skipped.", temp1, keeper_rnum);
+            log(buf);
+        }
+    }
 }
