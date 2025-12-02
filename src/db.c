@@ -2894,22 +2894,24 @@ int real_object(int virtual)
 			bot = mid + 1;
 	}
 }
-/* move file.x to file.x.y */
-/* 
-void move_stashfile(char *victim)	
-{
-	char sf1[256], sf2[256], name[100];
-	int i;
 
-	strcpy(name, victim);
-	for (i = 0; name[i]; ++i)
-		if (isupper(name[i]))
-			name[i] = tolower(name[i]);
-	sprintf(sf1, "%s/%c/%s.x", STASH, name[0], name);
-	sprintf(sf2, "%s/%c/%s.x.y", STASH, name[0], name);
-	rename(sf1, sf2);
-}
+/*
+ * 존의 고유 번호(VNUM)를 입력받아 zone_table 배열의 인덱스(RNUM)를 반환
+ * 찾지 못하면 -1을 반환. by Komo
  */
+int real_zone_by_number(int virtual)
+{
+    int i;
+
+    // 존 테이블 전체를 순회
+    for (i = 0; i <= top_of_zone_table; i++) {
+        if (zone_table[i].number == virtual)
+            return i;
+    }
+
+    return -1;
+}
+
 
 // re-work by komoyon@gmail.com, 251016
 /* * 안전하게 stash 파일 이동 - 성공 시 0, 실패 시 -1 반환

@@ -46,6 +46,7 @@ int real_room(int virtual);
 char *fread_string(FILE * fl);
 int real_object(int virtual);
 int real_mobile(int virtual);
+int real_zone_by_number(int virtual);
 
 #define REAL 0
 #define VIRTUAL 1

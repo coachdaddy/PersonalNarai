@@ -1941,3 +1941,175 @@ void do_sys(struct char_data *ch, char *argument, int cmd)
 		nits, nics, nids);
 	send_to_char(buffer, ch);
 }
+
+int compare_to_descending_order(const void *a, const void *b) {
+    return (*(ubyte *)b - *(ubyte *)a);
+}
+
+/*
+ * zreload 명령어: 특정 존 파일을 다시 로드
+ * by Komo
+ */
+void do_zreload(struct char_data *ch, char *argument, int cmd)
+{
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
+    int target_zone_num;
+    int i, zone_rnum = -1;
+
+    one_argument(argument, arg);
+
+    // 인자 확인
+    if (!*arg) {
+        send_to_char("&c[ZRELOAD]&n &W사용법: zreload <존 번호>&n\r\n"
+                     "&c[ZRELOAD]&n &W예시: zreload 30 (미드가르드), zreload 300 (카이스트)&n\r\n", ch);
+        return;
+    }
+
+    // 숫자 확인
+    if (!isdigit(*arg)) {
+        send_to_char("&c[ZRELOAD]&n 존 번호는 숫자여야 합니다.\r\n", ch);
+        return;
+    }
+
+    target_zone_num = atoi(arg);
+
+    for (i = 0; i <= top_of_zone_table; i++) {
+        if (zone_table[i].number == target_zone_num) {
+            zone_rnum = i; // 찾았다!
+            break;
+        }
+    }
+
+    if (zone_rnum == -1) { // 찾지 못한 경우
+        snprintf(buf, sizeof(buf), "&c[ZRELOAD]&n 존 번호 %d번을 찾을 수 없습니다. '%s' 목록을 확인하세요.\r\n", target_zone_num, ALL_ZONE_FILE);
+        send_to_char(buf, ch);
+        return;
+    }
+
+    snprintf(buf, sizeof(buf), "[ZRELOAD] (GC) %s reloaded Zone %d (%s).", 
+            GET_NAME(ch), target_zone_num, zone_table[zone_rnum].filename);
+    log(buf);
+
+    load_zones(zone_rnum);
+
+    snprintf(buf, sizeof(buf), "&c[ZRELOAD]&n 존 %d번 '%s' (%s) Reload 완료.\r\n", 
+            zone_table[zone_rnum].number, zone_table[zone_rnum].name, zone_table[zone_rnum].filename);
+    send_to_char(buf, ch);
+}
+
+
+/*
+ * wreload 명령어: 특정 wld 파일을 다시 로드
+ * --- by Komo
+ */
+void do_wreload(struct char_data *ch, char *argument, int cmd)
+{
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
+    int target_zone_num, zone_rnum;
+    FILE *fl;
+
+    one_argument(argument, arg);
+
+    if (!*arg) {
+        send_to_char("&c[WRELOAD]&n 존 번호를 기준으로 특정 wld 파일을 다시 읽어옵니다.\r\n", ch);
+		send_to_char("&c[WRELOAD]&n &W사용법: wreload <존 번호>&n\r\n", ch);
+        return;
+    }
+
+    if (!isdigit(*arg)) {
+        send_to_char("&c[WRELOAD]&n 존 번호는 숫자여야 합니다.\r\n", ch);
+        return;
+    }
+
+    target_zone_num = atoi(arg);
+    zone_rnum = real_zone_by_number(target_zone_num);
+
+    if (zone_rnum == -1) {
+        send_to_char("&c[WRELOAD]&n 존재하지 않는 존 번호입니다.\r\n", ch);
+        return;
+    }
+
+    /* .wld 파일이 정의되어 있는지 확인 */
+    if (!zone_table[zone_rnum].wld_filename) {
+        send_to_char("&c[WRELOAD]&n 이 존에는 연결된 World 파일(.wld)이 없습니다.\r\n", ch);
+        return;
+    }
+
+    /* 파일 열기 */
+    if (!(fl = fopen(zone_table[zone_rnum].wld_filename, "r"))) {
+        snprintf(buf, sizeof(buf), "&c[WRELOAD]&n 파일 열기 실패: %s\r\n", zone_table[zone_rnum].wld_filename);
+        send_to_char(buf, ch);
+        return;
+    }
+
+    /* 핵심 로직 호출 */
+    reload_world_file(fl, zone_rnum);
+    fclose(fl);
+
+    /* 로그 및 메시지 */
+    snprintf(buf, sizeof(buf), "[WRELOAD] (GC) %s reloaded World file for Zone %d.", GET_NAME(ch), target_zone_num);
+    log(buf);
+    
+    snprintf(buf, sizeof(buf), "&c[WRELOAD]&n 존 %d번 월드 데이터(%s) 업데이트 완료.\r\n"
+				 "&c[WRELOAD]&n 동기화를 위해 zreload 실행을 권장합니다.\r\n"
+                 "&c[WRELOAD]&n 주의: 새로 추가된 방은 반영되지 않으며, 기존 방의 정보만 갱신되었습니다.\r\n", 
+            target_zone_num, zone_table[zone_rnum].wld_filename);
+    send_to_char(buf, ch);
+}
+
+
+void do_zonelist(struct char_data *ch, char *argument, int cmd)
+{
+    int i;
+    char *buf;            /* 동적 할당할 큰 버퍼 포인터 */
+    char wld_status[64];
+    char zon_name_fmt[64];
+    char zon_file_display[64];
+    
+    size_t len = 0;       /* 현재 버퍼에 채워진 길이 */
+    size_t buf_size = 65536; /* 64KB */
+
+    CREATE(buf, char, buf_size);
+
+    /* 헤더 출력 */
+    len += snprintf(buf + len, buf_size - len,
+        " IDX    VNUM    TOP   %-30s %-25s %-25s\r\n"
+        "---------------------------------------------------------------------------------------------------------\r\n",
+        "Zone Name", "Zone File", "World File");
+
+    for (i = 0; i <= top_of_zone_table; i++) {
+        
+        sprintf(zon_name_fmt, "%-30.30s", zone_table[i].name ? zone_table[i].name : "<No Name>");
+
+        if (zone_table[i].wld_filename && *zone_table[i].wld_filename) {
+            char *fname = strrchr(zone_table[i].wld_filename, '/');
+            sprintf(wld_status, "%-25.25s", fname ? fname + 1 : zone_table[i].wld_filename);
+        } else {
+            sprintf(wld_status, "%-25s", "---");
+        }
+
+        char *zname = strrchr(zone_table[i].filename, '/');
+        sprintf(zon_file_display, "%-25.25s", zname ? zname + 1 : zone_table[i].filename);
+
+        len += snprintf(buf + len, buf_size - len, 
+            "[%3d] [%5d] [%5d] %s %s %s\r\n",
+            i,
+            zone_table[i].number,
+            zone_table[i].top,
+            zon_name_fmt,
+            zon_file_display,
+            wld_status
+        );
+
+        if (len >= buf_size - 256) {
+            strcat(buf, "** LIST TRUNCATED (Buffer really full) **\r\n");
+            break;
+        }
+    }
+
+    page_string(ch->desc, buf, 1);
+
+    free(buf);
+}
