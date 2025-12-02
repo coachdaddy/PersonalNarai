@@ -16,22 +16,41 @@
 #include "db.h"
 
 /* uses */
-
 extern struct time_info_data time_info;
 extern struct weather_data weather_info;
+extern struct descriptor_data *descriptor_list; /* in comm.c, 251126 by Komo */
+extern struct room_data *world;					/* in db.c , 251126 by Komo */
 
-void send_to_outdoor(char *mesg);
 int dice(int num, int size);
 int MIN(int a, int b);
 int MAX(int a, int b);
 
 /* In this part. */
-
 void weather_and_time(int mode);
 void another_hour(int mode);
 void weather_change(int);
 
 /* Here comes the code */
+
+/* 
+ * comm.c에서 가져와서 weather.c 전용으로 변경
+ * 이름 변경: send_to_outdoor -> announce_to_outdoors
+ */
+static void announce_to_outdoors(const char *messg)
+{
+    struct descriptor_data *d;
+
+    if (!messg || !*messg)
+        return;
+
+    for (d = descriptor_list; d; d = d->next) {
+        if (!d->connected && d->character) {
+            if (OUTSIDE(d->character)) {
+                send_to_char((char *)messg, d->character);
+            }
+        }
+    }
+}
 
 void weather_and_time(int mode)
 {
@@ -46,38 +65,28 @@ void another_hour(int mode)
 
 	if (mode) {
 		switch (time_info.hours) {
-		case 5:
-			{
+			case 5:
 				weather_info.sunlight = SUN_RISE;
-				send_to_outdoor("The sun rises in the east.\n\r");
+				announce_to_outdoors("The sun rises in the east.\n\r");
 				break;
-			}
-		case 6:
-			{
+			case 6:
 				weather_info.sunlight = SUN_LIGHT;
-				send_to_outdoor("The day has begun.\n\r");
+				announce_to_outdoors("The day has begun.\n\r");
 				break;
-			}
-		case 21:
-			{
+			case 21:
 				weather_info.sunlight = SUN_SET;
-				send_to_outdoor(
-						       "The sun slowly disappears in the west.\n\r");
+				announce_to_outdoors("The sun slowly disappears in the west.\n\r");
 				break;
-			}
-		case 22:
-			{
+			case 22:
 				weather_info.sunlight = SUN_DARK;
-				send_to_outdoor("The night has begun.\n\r");
+				announce_to_outdoors("The night has begun.\n\r");
 				break;
-			}
-		default:
-			break;
+			default:
+				break;
 		}
 	}
 
-	if (time_info.hours > 23)	/* Changed by HHS due to bug ??? */
-	{
+	if (time_info.hours > 23) { /* Changed by HHS due to bug ??? */
 		time_info.hours -= 24;
 		time_info.day++;
 
@@ -113,17 +122,14 @@ void weather_change(int change)
 
 	if (change == 0) {
 		switch (weather_info.sky) {
-		case SKY_CLOUDLESS:
-			{
+			case SKY_CLOUDLESS:
 				if (weather_info.pressure < 990)
 					change = 1;
 				else if (weather_info.pressure < 1010)
 					if (dice(1, 4) == 1)
 						change = 1;
 				break;
-			}
-		case SKY_CLOUDY:
-			{
+			case SKY_CLOUDY:
 				if (weather_info.pressure < 970)
 					change = 2;
 				else if (weather_info.pressure < 990)
@@ -136,9 +142,7 @@ void weather_change(int change)
 						change = 3;
 
 				break;
-			}
-		case SKY_RAINING:
-			{
+			case SKY_RAINING:
 				if (weather_info.pressure < 970)
 					if (dice(1, 4) == 1)
 						change = 4;
@@ -151,9 +155,7 @@ void weather_change(int change)
 						change = 5;
 
 				break;
-			}
-		case SKY_LIGHTNING:
-			{
+			case SKY_LIGHTNING:
 				if (weather_info.pressure > 1010)
 					change = 6;
 				else if (weather_info.pressure > 990)
@@ -161,62 +163,41 @@ void weather_change(int change)
 						change = 6;
 
 				break;
-			}
-		default:
-			{
+			default:
 				change = 0;
 				weather_info.sky = SKY_CLOUDLESS;
 				break;
-			}
 		}
 	}
 
 	switch (change) {
-	case 0:
-		break;
-	case 1:
-		{
-			send_to_outdoor(
-					       "The sky is getting cloudy.\n\r");
+		case 0:
+			break;
+		case 1:
+			announce_to_outdoors("The sky is getting cloudy.\n\r");
 			weather_info.sky = SKY_CLOUDY;
 			break;
-		}
-	case 2:
-		{
-			send_to_outdoor(
-					       "It starts to rain.\n\r");
+		case 2:
+			announce_to_outdoors("It starts to rain.\n\r");
 			weather_info.sky = SKY_RAINING;
 			break;
-		}
-	case 3:
-		{
-			send_to_outdoor(
-					       "The clouds disappear.\n\r");
+		case 3:
+			announce_to_outdoors("The clouds disappear.\n\r");
 			weather_info.sky = SKY_CLOUDLESS;
 			break;
-		}
-	case 4:
-		{
-			send_to_outdoor(
-					       "Lightning starts to show in the sky.\n\r");
+		case 4:
+			announce_to_outdoors("Lightning starts to show in the sky.\n\r");
 			weather_info.sky = SKY_LIGHTNING;
 			break;
-		}
-	case 5:
-		{
-			send_to_outdoor(
-					       "The rain stopped.\n\r");
+		case 5:
+			announce_to_outdoors("The rain stopped.\n\r");
 			weather_info.sky = SKY_CLOUDY;
 			break;
-		}
-	case 6:
-		{
-			send_to_outdoor(
-					       "The lightning has stopped.\n\r");
+		case 6:
+			announce_to_outdoors("The lightning has stopped.\n\r");
 			weather_info.sky = SKY_RAINING;
 			break;
-		}
-	default:
-		break;
+		default:
+			break;
 	}
 }

@@ -120,22 +120,28 @@ void do_transform(struct char_data *ch, char *argument, int cmd)
 	stash_char(ch);
 }
 
+/* send_to_room_except 대체 및 출력 방식 등 수정, by Komo */
 void do_echo(struct char_data *ch, char *argument, int cmd)
 {
-	int i;
-	static char buf[MAX_STRING_LENGTH];
+	struct char_data *k;
+	char buf[MAX_STRING_LENGTH];
 
-	if (IS_NPC(ch))
-		return;
+	if (IS_NPC(ch)) return;
 
-	for (i = 0; *(argument + i) == ' '; i++) ;
+	for (; *argument == ' '; argument++) ;
 
-	if (!*(argument + i))
-		send_to_char("That must be a mistake...\n\r", ch);
-	else {
-		sprintf(buf, "%s\n\r", argument + i);
-		send_to_room_except(buf, ch->in_room, ch);
-		send_to_char("Ok.\n\r", ch);
+	if (!*argument) {
+		send_to_char("&c[ECHO]&n &YYour divine voice needs words to reach the mortals.&n\n\r", ch);
+        send_to_char("       &WUsage: echo <message>&n\n\r", ch);
+	} else {
+		snprintf(buf, sizeof(buf), "%s\n\r", argument);
+		for (k = world[ch->in_room].people; k; k = k->next_in_room) {
+            if (k != ch) {
+                send_to_char(buf, k);
+            }
+        }
+		snprintf(buf, sizeof(buf), "&c[ECHO]&n %s\n\r", argument);
+        send_to_char(buf, ch);
 	}
 }
 void do_trans(struct char_data *ch, char *argument, int cmd)
