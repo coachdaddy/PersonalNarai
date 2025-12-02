@@ -317,7 +317,7 @@ void spell_sunburst(byte level, struct char_data *ch,
 	int dam;
 	void spell_blindness(byte level, struct char_data *ch,
 			     struct char_data *victim, struct obj_data *obj);
-	char buf[MAX_STRING_LENGTH];
+	// char buf[MAX_STRING_LENGTH];
 
 	static int dam_each[] =
 	{0,
