@@ -22,9 +22,6 @@
 
 #include "mob_bal.c"
 
-#define KJHRENT      66666	/* kjh number to tell new rent format */
-
-#define NEW_ZONE_SYSTEM
 
 /**************************************************************************
 *  declarations of most of the 'global' variables                         *
@@ -345,7 +342,8 @@ void build_player_index(void)
 }
 
 /* generate index table for object or monster file */
-struct index_data *generate_indices(FILE * fl, int *top)
+struct index_data *
+ generate_indices(FILE * fl, int *top)
 {
 	int i = 0;
 	struct index_data *index = NULL;
@@ -387,129 +385,218 @@ struct index_data *generate_indices(FILE * fl, int *top)
 /* load the rooms */
 /* new version of boot_world */
 /* modified by ares */
-
-/* room data parsing helper,   by Komo */
-void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
-{
-    int virtual_nr, flag, tmp;
-    char *temp;
-    char chk[256]; /* 크기를 50 -> 256으로 변경 */
-    struct extra_descr_data *new_descr;
-
-    do {
-        fscanf(fl, " #%d\n", &virtual_nr);
-
-        temp = fread_string(fl);
-        if ((flag = (*temp != '$'))) {
-            allocate_room(*room_nr);
-
-            world[*room_nr].number = virtual_nr;
-            world[*room_nr].name = temp;
-            world[*room_nr].description = fread_string(fl);
-            
-            world[*room_nr].zone = zone_rnum;
-
-            int ignore_zone;
-            fscanf(fl, " %d ", &ignore_zone);
-
-            /* 방 플래그 및 지형 타입 */
-            fscanf(fl, " %d ", &tmp);
-            world[*room_nr].room_flags = tmp;
-            fscanf(fl, " %d ", &tmp);
-            world[*room_nr].sector_type = tmp;
-
-            /* 초기화 */
-            world[*room_nr].funct = 0;
-            world[*room_nr].contents = 0;
-            world[*room_nr].people = 0;
-            world[*room_nr].light = 0;
-            for (tmp = 0; tmp <= 5; tmp++) world[*room_nr].dir_option[tmp] = 0;
-            world[*room_nr].ex_description = 0;
-
-            while (1) {
-                fscanf(fl, " %255s \n", chk); 
-
-                if (*chk == 'D')        /* direction field */
-                    setup_dir(fl, *room_nr, atoi(chk + 1));
-                else if (*chk == 'E') { /* extra description field */
-                    CREATE(new_descr, struct extra_descr_data, 1);
-                    new_descr->keyword = fread_string(fl);
-                    new_descr->description = fread_string(fl);
-                    new_descr->next = world[*room_nr].ex_description;
-                    world[*room_nr].ex_description = new_descr;
-                } else if (*chk == 'S') /* end of current room */
-                    break;
-            }
-            
-            (*room_nr)++;
-        }
-    } while (flag);
-
-    if (temp) free(temp);
-}
-
-/* re-written with helper function load_rooms(),    251121 by Komo */
 void boot_world(void)
 {
-    FILE *map_files, *fl;
-    int room_nr = 0;
-    char vnum_buf[256];
-    char file_name_from_list[256];
-    char buf[MAX_STRING_LENGTH]; // 로그용 버퍼
-    int zone_num_input;
-    int z_rnum;
+	FILE *fl;
+	FILE *all_files;
+	int room_nr = 0, zone = 0, virtual_nr, flag, tmp;
+	char *temp, chk[50];
+	struct extra_descr_data *new_descr;
+	char file_name[100];
+	int len;
 
-    world = 0;
-    character_list = 0;
-    object_list = 0;
+	world = 0;
+	character_list = 0;
+	object_list = 0;
 
-    log("boot_world: Loading world files...");
+	if (!(all_files = fopen(ALL_WORLD_FILE, "r"))) {
+		perror("fopen");
+		log("boot_world: could not open world file.");
+		exit(0);
+	}
 
-    if (!(map_files = fopen(ALL_WORLD_FILE, "r"))) {
-        perror("boot_world: Error opening ALL_WORLD_FILE");
-        exit(0);
-    }
+	while (1) {
+		fgets(file_name, 99, all_files);
 
-    while (1) {
-        if (fscanf(map_files, "%255s", vnum_buf) != 1) break;
-        if (*vnum_buf == '$') break;
-        
-        zone_num_input = atoi(vnum_buf);
+		if (file_name[0] == '$')
+			break;	/* end of file */
 
-        if (fscanf(map_files, "%255s", file_name_from_list) != 1) break;
+		len = strlen(file_name) - 1;
+		if (file_name[len] == '\n' || file_name[len] == '\r')
+			file_name[len] = 0;
+		if (!(fl = fopen(file_name, "r"))) {
+			perror("boot_zones");
+			perror(file_name);
+			exit(0);
+		}
 
-        /* 존 찾기 */
-        z_rnum = real_zone_by_number(zone_num_input);
+		do {
+			fscanf(fl, " #%d\n", &virtual_nr);
+			temp = fread_string(fl);
+			if ((flag = (*temp != '$'))) {	/* a new record to be read */
+				allocate_room(room_nr);
+				world[room_nr].number = virtual_nr;
+				world[room_nr].name = temp;
+				world[room_nr].description = fread_string(fl);
 
-        if (z_rnum == -1) {
-            snprintf(buf, sizeof(buf), "boot_world: Warning - World file '%s' uses undefined zone number %d.", 
-                    file_name_from_list, zone_num_input);
-            log(buf);
-            z_rnum = 0; 
-        } else {
-            CREATE(zone_table[z_rnum].wld_filename, char, strlen(file_name_from_list) + 1);
-            strcpy(zone_table[z_rnum].wld_filename, file_name_from_list);
-        }
+				if (top_of_zone_table >= 0) {
+					fscanf(fl, " %*d ");
+					/* OBS: Assumes ordering of input rooms */
+					if (world[room_nr].number <=
+					    (zone ? zone_table[zone - 1].top : -1)) {
+						fprintf(stderr,
+							"Room nr %d is below zone %d.\n",
+							room_nr, zone);
+						fprintf(stderr,
+							"DEBUG: %d, %s\n",
+							world[room_nr].number,
+							world[room_nr].name);
+						exit(0);
+					}
+					while (world[room_nr].number >
+					       zone_table[zone].top)
+						if (zone > top_of_zone_table) {
+							fprintf(stderr,
+								"Room %d is outside of any zone.\n",
+								virtual_nr);
+							exit(0);
+						}
+					world[room_nr].zone = zone;
+				}
+				fscanf(fl, " %d ", &tmp);
+				world[room_nr].room_flags = tmp;
+				fscanf(fl, " %d ", &tmp);
+				world[room_nr].sector_type = tmp;
 
-        if (!(fl = fopen(file_name_from_list, "r"))) {
-            snprintf(buf, sizeof(buf), "boot_world: Error opening world file '%s'", file_name_from_list);
-            perror(buf);
-            continue;
-        }
+				world[room_nr].funct = 0;
+				world[room_nr].contents = 0;
+				world[room_nr].people = 0;
+				world[room_nr].light = 0;	/* Zero light sources */
 
-        load_rooms(fl, z_rnum, &room_nr);
-        fclose(fl);
-    }
+				for (tmp = 0; tmp <= 5; tmp++)
+					world[room_nr].dir_option[tmp] = 0;
 
-    fclose(map_files);
-    top_of_world = --room_nr; 
-    
-    snprintf(buf, sizeof(buf), "boot_world: Total %d rooms loaded.", top_of_world + 1);
-    log(buf);
+				world[room_nr].ex_description = 0;
+
+				while (1) {
+					fscanf(fl, " %s \n", chk);
+					if (*chk == 'D')	/* direction field */
+						setup_dir(fl, room_nr,
+									    atoi(chk
+									    + 1));
+					else if (*chk == 'E') {		/* extra description field */
+						CREATE(new_descr, struct
+						       extra_descr_data, 1);
+						new_descr->keyword =
+						    fread_string(fl);
+						new_descr->description =
+						    fread_string(fl);
+						new_descr->next =
+						    world[room_nr].ex_description;
+						world[room_nr].ex_description
+						    = new_descr;
+					} else if (*chk == 'S')		/* end of current room */
+						break;
+				}
+				room_nr++;
+			}
+		}
+		while (flag);
+
+		free(temp);	/* cleanup the area containing the terminal $  */
+		fclose(fl);
+		zone++;
+	}
+
+	fclose(all_files);
+	top_of_world = --room_nr;
 }
 
 #undef ALL_WORLD_FILE
 
+/* load the rooms */
+/*
+  void boot_world(void)
+{
+  FILE *fl;
+  int room_nr = 0, zone = 0, dir_nr, virtual_nr, flag, tmp;
+  char *temp, chk[50];
+  struct extra_descr_data *new_descr;
+
+  world = 0;
+  character_list = 0;
+  object_list = 0;
+  
+  if (!(fl = fopen(WORLD_FILE, "r")))
+  {
+    perror("fopen");
+    log("boot_world: could not open world file.");
+    exit(0);
+  }
+
+  do
+  {
+    fscanf(fl, " #%d\n", &virtual_nr);
+    temp = fread_string(fl);
+    if (flag = (*temp != '$')) 
+    {
+      allocate_room(room_nr);
+      world[room_nr].number = virtual_nr;
+      world[room_nr].name = temp;
+      world[room_nr].description = fread_string(fl);
+
+      if (top_of_zone_table >= 0)
+      {
+        fscanf(fl, " %*d ");
+        if (world[room_nr].number <= (zone ? zone_table[zone-1].top : -1))
+        {
+          fprintf(stderr, "Room nr %d is below zone %d.\n",
+            room_nr, zone);
+          exit(0);
+        }
+        while (world[room_nr].number > zone_table[zone].top)
+          if (++zone > top_of_zone_table)
+          {
+            fprintf(stderr, "Room %d is outside of any zone.\n",
+              virtual_nr);
+            exit(0);
+          }
+        world[room_nr].zone = zone;
+      }
+      fscanf(fl, " %d ", &tmp);
+      world[room_nr].room_flags = tmp;
+      fscanf(fl, " %d ", &tmp);
+      world[room_nr].sector_type = tmp;
+
+      world[room_nr].funct = 0;
+      world[room_nr].contents = 0;
+      world[room_nr].people = 0;
+      world[room_nr].light = 0; 
+
+      for (tmp = 0; tmp <= 5; tmp++)
+        world[room_nr].dir_option[tmp] = 0;
+
+      world[room_nr].ex_description = 0;
+
+      for (;;)
+      {
+        fscanf(fl, " %s \n", chk);
+
+        if (*chk == 'D') 
+          setup_dir(fl, room_nr, atoi(chk + 1));
+        else if (*chk == 'E')  
+        {
+          CREATE(new_descr, struct extra_descr_data, 1);
+          new_descr->keyword = fread_string(fl);
+          new_descr->description = fread_string(fl);
+          new_descr->next = world[room_nr].ex_description;
+          world[room_nr].ex_description = new_descr;
+        }
+        else if (*chk == 'S') 
+          break;
+      }
+            
+      room_nr++;
+      }
+  }
+  while (flag);
+
+  free(temp); 
+
+  fclose(fl);
+  top_of_world = --room_nr;
+}
+*/
 
 void allocate_room(int new_top)
 {
@@ -526,6 +613,101 @@ void allocate_room(int new_top)
 
 	world = new_world;
 }
+
+/* 특정 방(rnum)의 문자열과 데이터를 메모리 해제하는 함수, 251121 by Komo */
+void clean_memory_for_room(int rnum)
+{
+    int i;
+    struct extra_descr_data *ex_desc, *next_ex_desc;
+
+    if (world[rnum].name) free(world[rnum].name);
+    if (world[rnum].description) free(world[rnum].description);
+
+    for (ex_desc = world[rnum].ex_description; ex_desc; ex_desc = next_ex_desc) {
+        next_ex_desc = ex_desc->next;
+        if (ex_desc->keyword) free(ex_desc->keyword);
+        if (ex_desc->description) free(ex_desc->description);
+        free(ex_desc);
+    }
+    world[rnum].ex_description = NULL;
+
+    for (i = 0; i < 6; i++) {
+        if (world[rnum].dir_option[i]) {
+            if (world[rnum].dir_option[i]->general_description) free(world[rnum].dir_option[i]->general_description);
+            if (world[rnum].dir_option[i]->keyword) free(world[rnum].dir_option[i]->keyword);
+            free(world[rnum].dir_option[i]);
+            world[rnum].dir_option[i] = NULL;
+        }
+    }
+}
+
+/* .wld 파일을 열어 기존 방들의 내용을 업데이트함 251121 by Komo */
+void reload_world_file(FILE *fl, int zone_rnum)
+{
+    int virtual_nr, flag, tmp, rnum;
+    char *temp, chk[256];
+    struct extra_descr_data *new_descr;
+    
+    do {
+        fscanf(fl, " #%d\n", &virtual_nr);
+        
+        temp = fread_string(fl); // 방 이름 읽기
+        if ((flag = (*temp != '$'))) { // $가 아니면 유효한 방
+            rnum = real_room(virtual_nr);
+
+            if (rnum != -1) {
+                clean_memory_for_room(rnum);
+
+                world[rnum].name = temp;
+                world[rnum].description = fread_string(fl);
+                world[rnum].zone = zone_rnum; // 존 번호 재확인
+
+                int ignore; fscanf(fl, " %d ", &ignore);
+
+                fscanf(fl, " %d ", &tmp); world[rnum].room_flags = tmp;
+                fscanf(fl, " %d ", &tmp); world[rnum].sector_type = tmp;
+                
+                // 출구 및 엑스트라 파싱
+                while (1) {
+                    fscanf(fl, " %255s \n", chk);
+                    if (*chk == 'D')        setup_dir(fl, rnum, atoi(chk + 1));
+                    else if (*chk == 'E') {
+                        CREATE(new_descr, struct extra_descr_data, 1);
+                        new_descr->keyword = fread_string(fl);
+                        new_descr->description = fread_string(fl);
+                        new_descr->next = world[rnum].ex_description;
+                        world[rnum].ex_description = new_descr;
+                    } else if (*chk == 'S') break;
+                }
+
+            } else {
+                /* 존재하지 않는 방 (새로 추가된 방?): Skip */
+                if (temp) free(temp);
+                char *trash = fread_string(fl); free(trash);
+                
+                int ignore; fscanf(fl, " %d ", &ignore); // 존
+                fscanf(fl, " %d ", &ignore); // 플래그
+                fscanf(fl, " %d ", &ignore); // 섹터
+                
+                while (1) {
+                    fscanf(fl, " %255s \n", chk);
+                    if (*chk == 'D') { // 출구 데이터 건너뛰기
+                        trash = fread_string(fl); free(trash);
+                        trash = fread_string(fl); free(trash);
+                        fscanf(fl, " %d ", &ignore);
+                        fscanf(fl, " %d ", &ignore);
+                    } else if (*chk == 'E') { // 엑스트라 건너뛰기
+                        trash = fread_string(fl); free(trash);
+                        trash = fread_string(fl); free(trash);
+                    } else if (*chk == 'S') break;
+                }
+            }
+        } else {
+            if (temp) free(temp); // $를 만났을 때 temp 해제
+        }
+    } while (flag);
+}
+
 
 /* read direction data */
 void setup_dir(FILE * fl, int room, int dir)
@@ -615,8 +797,6 @@ void renum_zone_table(void)
 
 /* new version of boot_zone : by ares */
 /* read lib/zone/.zon files */
-
-
 void load_zones(int zon)
 {
 	FILE *fl;
@@ -1640,7 +1820,6 @@ struct obj_data *
 	return (obj);
 }
 
-#define ZO_DEAD  999
 
 /* update zone ages, queue for reset if necessary, and dequeue when possible */
 void zone_update(void)
@@ -1723,22 +1902,19 @@ struct char_data *
 }
 
 #define ZCMD zone_table[zone].cmd[cmd_no]
-
 void reset_zone(int zone)
 {
-	int cmd_no;
-	char last_cmd = 1;
-	struct char_data *mob = NULL;
-	struct obj_data *obj, *obj_to;
-	char buf[256];
+    int cmd_no;
+    char last_cmd = 1;
+    struct char_data *mob = NULL;
+    struct obj_data *obj, *obj_to;
+    char buf[256];
 
-	/* item regen !!! */
-	/*
-	   if (regen == 1) then regen all items.
-	 */
-	int regen;
-	int real_load;
-	int zone_lifespan = zone_table[zone].lifespan; // .zon 파일에 정의된 리셋 주기(분)
+    /* item regen !!! */
+    /* if (regen == 1) then regen all items. */
+    int regen;
+    int real_load;
+    int zone_lifespan = zone_table[zone].lifespan; // .zon 파일에 정의된 리셋 주기(분)
     int regen_chance_denominator; // 확률 계산의 분모
 
     if (zone_lifespan <= 0) { /* 0으로 나누기 방지 */
@@ -1752,197 +1928,143 @@ void reset_zone(int zone)
         regen = (number(0, regen_chance_denominator) == 0);
     }
 
-	real_load = 0;
-	for (cmd_no = 0;; cmd_no++) {
-		if (ZCMD.command == 'S')
-			break;
-		if (last_cmd || !ZCMD.if_flag)
-			switch (ZCMD.command) {
-			case 'M':	/* read a mobile */
-				if (mob_index[ZCMD.arg1].number < ZCMD.arg2) {
-					mob = read_mobile(ZCMD.arg1, REAL);
-					char_to_room(mob, ZCMD.arg3);
-					last_cmd = 'M';
-					if (regen)
-						mob->regened = 1;
-					real_load = 1;
-				} else {
-					mob = get_mobile_index(ZCMD.arg1);
-					if (mob == NULL)
-						last_cmd = 0;
-					else {
-						if (mob->regened)
-							last_cmd = 0;
-						else {
-							last_cmd = 'M';
-							if (regen)
-								mob->regened = 1;
-							real_load = 0;
-						}
-					}
-				}
-				break;
+    real_load = 0;
+    for (cmd_no = 0;; cmd_no++) {
+        if (ZCMD.command == 'S')
+            break;
 
-			case 'O':	/* read an object */
-				/*
-				   if (obj_index[ZCMD.arg1].number < ZCMD.arg2)
-				 */
-				if (ZCMD.arg3 >= 0) {
-					if (!get_obj_in_list_num(ZCMD.arg1,
-								 world[ZCMD.arg3].contents)) {
-						obj = read_object(ZCMD.arg1, REAL);
-						if ((obj->obj_flags.type_flag
-						     == ITEM_KEY) ||
-						    (!IS_SET(obj->obj_flags.extra_flags,
-						    ITEM_EQ_LVL_LIMIT)) ||
-						    (regen == 1))
-							/*
-							   (   number(1,100) <= regen_percent ) )
-							 */
-						{
-							obj_to_room(obj, ZCMD.arg3);
-							last_cmd = 'O';
-						} else
-							extract_obj(obj);
-					}
-				} else {
-					obj = read_object(ZCMD.arg1, REAL);
-					if ((obj->obj_flags.type_flag ==
-					    ITEM_KEY) ||
-					    (!IS_SET(obj->obj_flags.extra_flags,
-					    ITEM_EQ_LVL_LIMIT)) ||
-					    (regen == 1))
-						/*
-						   ( number(1,100) <= regen_percent ) )
-						 */
-					{
+        if (last_cmd || !ZCMD.if_flag) {
+            switch (ZCMD.command) {
+                case 'M':		/* read a mobile */
+                    if (mob_index[ZCMD.arg1].number < ZCMD.arg2) {
+                        mob = read_mobile(ZCMD.arg1, REAL);
+                        char_to_room(mob, ZCMD.arg3);
+                        last_cmd = 'M';
+                        if (regen)
+                            mob->regened = 1;
+                        real_load = 1;
+                    } else {
+                        mob = get_mobile_index (ZCMD.arg1);
+                        if (mob == NULL) 
+                            last_cmd = 0;
+                        else {
+                            if (mob->regened)
+                                last_cmd = 0;
+                            else {
+                                last_cmd = 'M';
+                                if (regen)
+                                    mob->regened = 1;
+                                real_load = 0;
+                            }
+                        }
+                    }
+                    break;
 
-						obj->in_room = NOWHERE;
-						last_cmd = 'O';
-					} else
-						extract_obj(obj);
-				}
-				break;
+                case 'O':		/* read an object */
+                    if (ZCMD.arg3 >= 0) {
+                        if (!get_obj_in_list_num (ZCMD.arg1, world[ZCMD.arg3].contents)) {
+                            obj = read_object(ZCMD.arg1, REAL);
+                            if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET(obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) || (regen == 1)) {
+                                obj_to_room(obj, ZCMD.arg3);
+                                last_cmd = 'O';
+                            } else
+                                extract_obj(obj);
+                        }
+                    } else {
+                        obj = read_object(ZCMD.arg1, REAL);
+                        if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET(obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) || (regen == 1)) {
+                            obj->in_room = NOWHERE;
+                            last_cmd = 'O';
+                        } else
+                            extract_obj(obj);
+                    }
+                    break;
 
-			case 'P':	/* object to object */
-				/*
-				   if (obj_index[ZCMD.arg1].number < ZCMD.arg2 &&
-				 */
-				if (
-					   (last_cmd == 'O' || last_cmd == 'P' ||
-					    last_cmd == 'E' || last_cmd == 'G')) {
-					obj = read_object(ZCMD.arg1, REAL);
-					if ((obj->obj_flags.type_flag ==
-					    ITEM_KEY) ||
-					    (!IS_SET(obj->obj_flags.extra_flags,
-					    ITEM_EQ_LVL_LIMIT)) ||
-					    (regen == 1))
-						/*
-						   (   number(1,100) <= regen_percent ) )
-						 */
-					{
-						obj_to = get_obj_num(ZCMD.arg3);
-						if (obj_to) {
-							obj_to_obj(obj, obj_to);
-							last_cmd = 'P';
-						} else
-							extract_obj(obj);
-					} else
-						extract_obj(obj);
-				}
-				break;
+                case 'P':		/* object to object */
+                    if ( (last_cmd == 'O' || last_cmd == 'P' || last_cmd == 'E' || last_cmd == 'G')) {
+                        obj = read_object(ZCMD.arg1, REAL);
+                        if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET(obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) || (regen == 1)) {
+                            obj_to = get_obj_num(ZCMD.arg3);
+                            if (obj_to) {
+                                obj_to_obj(obj, obj_to);
+                                last_cmd = 'P';
+                            } else
+                                extract_obj(obj);
+                        } else
+                            extract_obj(obj);
+                    }
+                    break;
 
-			case 'G':	/* obj_to_char */
-				/*
-				   if (obj_index[ZCMD.arg1].number < ZCMD.arg2 &&
-				 */
-				if ( (last_cmd == 'M' || last_cmd == 'G' || last_cmd == 'E')) {
-					obj = read_object (ZCMD.arg1, REAL);
+                case 'G':    /* obj_to_char */
+                    if ( (last_cmd == 'M' || last_cmd == 'G' || last_cmd == 'E')) {
+                        obj = read_object (ZCMD.arg1, REAL);
 
-					if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT))) {
-						if (mob && real_load) {
-							obj_to_char(obj, mob);
-							last_cmd = 'G';
-						} else
-							extract_obj (obj);
-					} else if (IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) {
-						if (mob && real_load) {
-							obj_to_char(obj, mob);
-							last_cmd = 'G';
-						} else
-							extract_obj (obj);
-					} else
-						extract_obj (obj);
-				}
-				break;
+                        if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT))) {
+                            if (mob && real_load) {
+                                obj_to_char(obj, mob);
+                                last_cmd = 'G';
+                            } else
+                                extract_obj (obj);
+                        } else if (IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) {
+                            if (mob && real_load) {
+                                obj_to_char(obj, mob);
+                                last_cmd = 'G';
+                            } else
+                                extract_obj (obj);
+                        } else
+                            extract_obj (obj);
+                    }
+                    break;
 
-			case 'E':	/* object to equipment list */
-				/*
-				   if (obj_index[ZCMD.arg1].number < ZCMD.arg2 &&
-				 */
-				if (
-					   (last_cmd == 'M' || last_cmd == 'G'
-					    || last_cmd == 'E')) {
-					obj = read_object(ZCMD.arg1, REAL);
-					if (obj->obj_flags.type_flag == ITEM_KEY)
-						/*
-						   (   !IS_SET(obj->obj_flags.extra_flags,ITEM_EQ_LVL_LIMIT) ) )
-						   (   number(1,100) <= regen_percent ) )
-						 */
-					{
-						if (mob && real_load) {
-							equip_char(mob, obj, ZCMD.arg3);
-							last_cmd = 'E';
-						} else
-							extract_obj(obj);
-					} else if (regen == 1) {
-						if (mob) {
-							equip_char(mob, obj, ZCMD.arg3);
-							last_cmd = 'E';
-						} else
-							extract_obj(obj);
-					} else
-						extract_obj(obj);
-				}
-				break;
+                case 'E':		/* object to equipment list */
+                    if ( (last_cmd == 'M' || last_cmd == 'G' || last_cmd == 'E')) {
+                        obj = read_object(ZCMD.arg1, REAL);
+                        if (obj->obj_flags.type_flag == ITEM_KEY) {
+                            if (mob && real_load) {
+                                equip_char(mob, obj, ZCMD.arg3);
+                                last_cmd = 'E';
+                            } else
+                                extract_obj(obj);
+                        } else if (regen == 1) {
+                            if (mob) {
+                                equip_char(mob, obj, ZCMD.arg3);
+                                last_cmd = 'E';
+                            } else
+                                extract_obj(obj);
+                        } else
+                            extract_obj(obj);
+                    }
+                    break;
 
-			case 'D':	/* set state of door */
-				switch (ZCMD.arg3) {
-				case 0:
-					REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						   EX_LOCKED);
-					REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						   EX_CLOSED);
-					break;
-				case 1:
-					SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						EX_CLOSED);
-					REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						   EX_LOCKED);
-					break;
-				case 2:
-					SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						EX_LOCKED);
-					SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						EX_CLOSED);
-					break;
-				}
-				last_cmd = 'D';
-				break;
+                case 'D':		/* set state of door */
+                    switch (ZCMD.arg3) {
+                        case 0:
+                            REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_LOCKED);
+                            REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_CLOSED);
+                            break;
+                        case 1:
+                            SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_CLOSED);
+                            REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_LOCKED);
+                            break;
+                        case 2:
+                            SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_LOCKED);
+                            SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_CLOSED);
+                            break;
+                    }
+                    last_cmd = 'D';
+                    break;
 
-			default:
-				sprintf(buf,
-					"Undefd cmd in reset table; zone %d cmd %d.\n\r",
-					zone, cmd_no);
-				log(buf);
-				exit(0);
-				break;
-		} else
-			last_cmd = 0;
+                default:
+                    snprintf(buf, sizeof(buf), "Undefd cmd in reset table; zone %d cmd %d.\n\r", zone, cmd_no);
+                    log(buf);
+                    exit(0);
+                    break;
+            }
+        } else
+            last_cmd = 0;
+    }
 
-	}
-
-	zone_table[zone].age = 0;
+    zone_table[zone].age = 0;
 }
 
 #undef ZCMD
@@ -3357,57 +3479,46 @@ void wipe_stash(char *filename)	/* delete id.x and id.x.y */
 
 void do_checkrent(struct char_data *ch, char *argument, int cmd)
 {
-    char stashfile[MAX_STRING_LENGTH], name[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
-    char str[256];
-    FILE *fl;
-    int i, j, n;
-    int written; // snprintf가 쓴 글자 수 저장용
+	char stashfile[256], name[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
+	char str[255];
+	FILE *fl;
+	int i, j, n;
 
-    one_argument(argument, name);
-    if (!*name) {
-        send_to_char("Check whose rent file?\n\r", ch);
-        return;
-    }
-
-    for (i = 0; name[i]; ++i)
-        if (isupper(name[i])) 
-            name[i] = tolower(name[i]);
-
-    snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x.y", STASH, name[0], name);
-    if (!(fl = fopen(stashfile, "r"))) {
-        snprintf(buf, sizeof(buf), "%s has nothing in rent.\n\r", name);
-        send_to_char(buf, ch);
-        return;
-    }
-    buf[0] = '\0';
-    fscanf(fl, "%d", &n);
-
-    for (i = j = 0;;) { // i: 현재 버퍼 인덱스, j: 한 줄에 출력한 아이템 개수
-        if (fscanf(fl, "%d", &n) <= 0)
-            break;
-        if (n < 1000 || n > 99999)
-            continue;
-        
-        ++j;
-
-        if (sizeof(buf) - i <= 1) break;
-
-        written = snprintf(buf + i, sizeof(buf) - i, "%5d%c", n, (j == 10) ? '\n' : ' ');
-        if (written > 0)
-            i += written;
-
-        if (j == 10)
-            j = 0;
-        
-        if (!fgets(str, sizeof(str), fl)) break;
-        if (!fgets(str, sizeof(str), fl)) break;
-        if (!fgets(str, sizeof(str), fl)) break;
-        if (!fgets(str, sizeof(str), fl)) break;
-    }
-    fclose(fl);
-    strlcat(buf, "\n\r", sizeof(buf));
-    send_to_char(buf, ch);
-    return;
+	one_argument(argument, name);
+	if (!*name)
+		return;
+	for (i = 0; name[i]; ++i)
+		if (isupper(name[i]))
+			name[i] = tolower(name[i]);
+	sprintf(stashfile, "%s/%c/%s.x.y", STASH, name[0], name);
+	if (!(fl = fopen(stashfile, "r"))) {
+		sprintf(buf, "%s has nothing in rent.\n\r", name);
+		send_to_char(buf, ch);
+		return;
+	}
+	buf[0] = 0;
+	fscanf(fl, "%d", &n);
+	for (i = j = 0;;) {
+		if (fscanf(fl, "%d", &n) <= 0)
+			break;
+		if (n < 1000)
+			continue;
+		if (n > 99999)
+			continue;
+		++j;
+		sprintf(buf + i, "%5d%c", n, (j == 10) ? '\n' : ' ');
+		if (j == 10)
+			j = 0;
+		i += 5;
+		fgets(str, 255, fl);
+		fgets(str, 255, fl);
+		fgets(str, 255, fl);
+		fgets(str, 255, fl);
+	}
+	fclose(fl);
+	strcat(buf, "\n\r");
+	send_to_char(buf, ch);
+	return;
 }
 void do_extractrent(struct char_data *ch, char *argument, int cmd)
 {

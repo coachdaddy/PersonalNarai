@@ -86,40 +86,12 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	extern char *spells[];
 	extern struct spell_info_type spell_info[MAX_SPL_LIST];
 	extern struct int_app_type int_app[26];
-	extern int level_quest[];
 
-	/*for(i=0;i<MAX_STRING_LENGTH*MAX_SKILLS;i++) buf3[i]=NULL; */
 	strcpy(buf3, "");
-	if ((cmd != 95) && (cmd != 164) && (cmd != 170))
+
+	if ((cmd != 164) && (cmd != 170)) // cmd 164, 170 : practice
 		return (FALSE);
 
-	if (cmd == 95) {	/* advance */
-		if (!IS_NPC(ch)) {
-			for (i = 0; titles[GET_CLASS(ch) - 1][i].exp <=
-			     GET_EXP(ch);
-			     i++) {
-				if (i >= IMO) {
-					send_to_char_han("Immortality cannot be gained here.\n\r",
-							 "여기서는 신이 될 수 없습니다.\n\r", ch);
-					return (TRUE);
-				}
-				if ((i > GET_LEVEL(ch)) &&
-				    (GET_QUEST_SOLVED(ch) >=
-				     level_quest[(int)GET_LEVEL
-						 (ch)])) {
-					send_to_char_han("You raise a level\n\r",
-							 "레벨을 올렸습니다\n\r", ch);
-					GET_LEVEL(ch) = i;
-					advance_level(ch, 1);
-					set_title(ch);
-					return (TRUE);
-				}
-			}
-			send_to_char_han("You need more experience.\n\r",
-					 "경험이 더 필요합니다.\n\r", ch);
-			return (TRUE);
-		}
-	}
 	lev = GET_LEVEL(ch);
 	cla = GET_CLASS(ch) - 1;
 	for (; *arg == ' '; arg++) ;
@@ -128,27 +100,28 @@ int guild(struct char_data *ch, int cmd, char *arg)
 				 "당신은 다음과 같은 기술을 익힐 수 있습니다:\n\r", ch);
 
 		for (i = 0; *spells[i] != '\n'; i++) {
-			if (*spells[i] &&
-			    (spell_info[i + 1].min_level[cla] <= lev)) {
-				sprintf(tmp, "%-20s %-4s\n\r", spells[i], how_good
-					(ch->skills[i + 1].learned,
-									       ch->skills[i
-									       +
-					 1].skilled));
+			if (*spells[i] && (spell_info[i + 1].min_level[cla] <= lev)) {
+				sprintf(tmp, "%-20s %-4s\n\r", spells[i], 
+								how_good (ch->skills[i + 1].learned, ch->skills[i + 1].skilled));
 				strcat(buf3, tmp);
 			}
 		}
+
 		sprintf(buf, "You have %d practices left.\n\r",
 			ch->specials.spells_to_learn);
-		sprintf(buf2,
-			"지금 %d 번 기술을 연마(practice)할 수 있습니다. \n\r",
+		sprintf(buf2, "지금 %d 번 기술을 연마(practice)할 수 있습니다. \n\r",
 			ch->specials.spells_to_learn);
+
 		send_to_char_han(buf, buf2, ch);
 		page_string(ch->desc, buf3, 0);
 		return (TRUE);
 	}
 
 	number = old_search_block(arg, 0, strlen(arg), spells, FALSE);
+
+	int pskill = -1;
+	pskill = spell_info[number].prev;
+
 	if (number == -1) {
 		send_to_char_han("You do not know of this spell...\n\r",
 				 "그런 기술은 모르는데요 ...\n\r", ch);
@@ -158,14 +131,6 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	if (lev < spell_info[number].min_level[cla]) {
 		send_to_char_han("Your level is too low.\n\r",
 				 "아직은 레벨이 낮아 안됩니다...\n\r", ch);
-		return (TRUE);
-	}
-
-	int pskill = spell_info[number].prev;
-
-	if ( pskill != -1 && ch->skills[pskill].learned < 30) {
-		send_to_char_han("You need to learn lower skill first.\n\r",
-				 "아직은 낮은 기술을 배우지 않았습니다....\n\r", ch);
 		return (TRUE);
 	}
 
@@ -180,9 +145,25 @@ int guild(struct char_data *ch, int cmd, char *arg)
 				 "그 분야는 배울 수 있는만큼 배웠습니다.\n\r", ch);
 		return (TRUE);
 	}
-	send_to_char_han("You Practice for a while...\n\r",
-			 "기술이 늘고 있습니다...\n\r", ch);
+
+	if (pskill > 0 && ch->skills[pskill].learned < 30) {
+		sprintf(buf, "First, You you need to learn %s .\n\r",
+			spells[pskill]);
+		sprintf(buf2, "먼저 %s 기술을 배워야 합니다. \n\r",
+			spells[pskill]);
+
+		send_to_char_han(buf, buf2, ch);
+		DEBUG_LOG("Player %s try to learn skill %d .", GET_NAME(ch), pskill );
+		return (TRUE);
+	}
+
+	send_to_char_han("You Practice for a while...\n\r", "기술이 늘고 있습니다...\n\r", ch);
+
+	// inherite portion skilled of previsous skills
+	// GET_SKILLED(ch,number) += GET_SKILLED(ch,pskill) / 10;
+
 	ch->specials.spells_to_learn--;
+
 	percent = ch->skills[number].learned + 1 +
 	    ((int)int_app[GET_INT(ch)].learn
 	     * (int)spell_info[number].max_skill[cla]) / FUDGE;
@@ -612,7 +593,7 @@ int thief(struct char_data *ch, int cmd, char *arg)
 		     cons->next_in_room) {
 			if ((!IS_NPC(cons)) && (GET_LEVEL(cons) < IMO) &&
 			    (GET_LEVEL(cons) >= GET_LEVEL(ch)) && (number(1,
-								   3) == 1)) {
+									  3) == 1)) {
 				npc_steal(ch, cons);
 				return TRUE;
 			}
@@ -839,7 +820,7 @@ int thief(struct char_data *ch, int cmd, char *arg)
 		     cons->next_in_room) {
 			if ((!IS_NPC(cons)) && (GET_LEVEL(cons) < IMO) &&
 			    (GET_LEVEL(cons) >= GET_LEVEL(ch)) && (number(1,
-								   3) == 1))
+									  3) == 1))
 				npc_steal(ch, cons);
 		}
 	}

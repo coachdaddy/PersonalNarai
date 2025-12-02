@@ -287,27 +287,21 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 
 	zone = find_zone(QM[num].virtual);
 
-	if(strcspn( QM[num].name, "\n\r")) 
-	{
-		char buf[100];
-		strncpy(buf, QM[num].name, strlen(QM[num].name));
-		buf[strlen(QM[num].name)-1] = '\0';
-		strncpy(QM[num].name, buf, strlen(buf));
-
-		log("QUEST : zone name has newline");
-	}
-
 	if (!zone) {
 		snprintf(buf1, sizeof(buf1), "&CQUEST&n : &YWhere &U%s&Y is, I don't know, either.&n\n\r",
 			QM[num].name);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &U%s&Y? 어디 있는 걸까? 모르겠는데...&n\n\r",
 			QM[num].name);
 		log("QUEST : INVALID mobile (or zone not found).");
-	} else {
+	} else { 
+		char qbuf[100];
+		strncpy(qbuf, QM[num].name, strlen(QM[num].name));
+		choppy(qbuf);
+
 		snprintf(buf1, sizeof(buf1), "&CQUEST&n : &U%s&Y is in &#%s&Y probably.&n\n\r",
-			QM[num].name, zone);
+			qbuf, zone);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &Y아마도 &U%s&Y는 &#%s&Y에 있을 걸요.&n\n\r",
-			QM[num].name, zone);
+			qbuf, zone);
 	}
 
 	send_to_char_han(buf1, buf2, ch);
@@ -863,7 +857,7 @@ void do_begin(struct char_data *ch)
     struct char_data *mob, *existing_mob;
     int mob_rnum, mob_vnum = 0;
     bool mob_already_exists = FALSE; // 몬스터 존재 여부
-    int target_rnum;
+    int qm_index;
 
     if (IS_NPC(ch))
         return;
@@ -884,19 +878,19 @@ void do_begin(struct char_data *ch)
         return;
     }
 
-    target_rnum = ch->quest.data; // 퀘스트 목표의 real number
+    qm_index = ch->quest.data; // 퀘스트 목표의 QM index
 
     // r_num 유효성 검사
-    if (target_rnum < 0) {
+    if  (qm_index < 0|| qm_index >= topQM) {
         send_to_char_han("&cCHALLENGE&n : &yThe information on Qeust Monster can't be found (Invalid Index). Contact the GM or Wizard.&n\n\r",
                          "&CQUEST&n : &y퀘스트 몬스터 정보를 찾을 수 없습니다 (잘못된 인덱스). 관리자에게 문의해주세요.&n\n\r", ch);
         return;
     }
 
-    mob_vnum = mob_index[target_rnum].virtual; // real number로 VNUM 획득
-    if (mob_vnum <= 0) { // 혹시 모를 방어 코드
-        send_to_char_han("&cCHALLENGE&n : &yThe information on Qeust Monster can't be found (Invalid VNUM). Contact the GM or Wizard.&n\n\r",
-                         "&CQUEST&n : &y퀘스트 몬스터 정보를 찾을 수 없습니다 (잘못된 VNUM). 관리자에게 문의해주세요.&n\n\r", ch);
+    mob_vnum = QM[qm_index].virtual; // QM index로 vnum 획득
+    if (mob_vnum <= 0) { // vnum 유효성 검사
+        send_to_char_han("&cCHALLENGE&n : &yThe information on Qeust Monster can't be found. Contact the GM or Wizard.&n\n\r",
+                         "&cCHALLENGE&n : &y퀘스트 몬스터 정보를 찾을 수 없습니다. 관리자에게 문의해주세요.&n\n\r", ch);
         return;
     }
 
@@ -924,7 +918,6 @@ void do_begin(struct char_data *ch)
         return;
     }
 
-    mob_rnum = target_rnum; // mob_rnum은 이미 유효한 real number
     mob = read_mobile(mob_rnum, REAL);
 
     if (IS_SET(mob->specials.act, ACT_WIMPY)) {
@@ -1011,4 +1004,53 @@ void do_rejoin(struct char_data *ch)
             }
         }
     }
+}
+
+
+void do_challenge_abort(struct char_data *ch, char *argument, int cmd)
+{
+    struct char_data *mob, *next_mob;
+    int challenge_room_rnum;
+    int mob_vnum;
+
+    if (IS_NPC(ch)) return;
+
+    /* 예외 처리 : 전투 중인지 확인 */
+    if (ch->specials.fighting) {
+        send_to_char_han("&cCHALLENGE&n : &yThink about quitting AFTER the battle! You don't even know if you'll survive yet!&n\n\r",
+                         "&cCHALLENGE&n : &y도전 포기를 하는 건 당장의 전투를 마무리한 뒤 생각해보시지! 죽지도 살지도 모르는 주제에!&n\n\r", ch);
+        return;
+    }
+
+    /* 도전 중이 아닌 경우 */
+    if (ch->specials.challenge_room_vnum <= 0) {
+        send_to_char_han("&cCHALLENGE&n : &yYou are not currently in a challenge.&n\n\r", 
+                         "&cCHALLENGE&n : &y현재 진행 중인 도전이 없습니다.&n\n\r", ch);
+        return;
+    }
+
+    challenge_room_rnum = real_room(ch->specials.challenge_room_vnum);
+    mob_vnum = ch->specials.challenge_quest_mob_vnum;
+
+    /* 도전의 방에 남아있는 퀘스트 몬스터 제거 */
+    if (challenge_room_rnum != NOWHERE && world[challenge_room_rnum].people) {
+        for (mob = world[challenge_room_rnum].people; mob; mob = next_mob) {
+            next_mob = mob->next_in_room;
+            
+            if (IS_NPC(mob) && mob_index[mob->nr].virtual == mob_vnum) {
+                if (mob->in_room == ch->in_room) {
+                    act("&cCHALLENGE&n : &y$n fades away as the challenge is aborted.&n", TRUE, mob, 0, 0, TO_ROOM);
+                }
+                extract_char(mob);
+            }
+        }
+    }
+
+    /* 도전 상태 변수 초기화 */
+    ch->specials.challenge_room_vnum = 0;
+    ch->specials.return_room_vnum = 0;
+    ch->specials.challenge_quest_mob_vnum = 0;
+
+    send_to_char_han("&cCHALLENGE&n : &yYou have aborted the challenge. Challenge state reset.&n\n\r",
+                     "&cCHALLENGE&n : &y도전을 포기했습니다. 상태가 초기화되었습니다.&n\n\r", ch);
 }

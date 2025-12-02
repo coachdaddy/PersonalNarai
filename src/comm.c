@@ -996,20 +996,16 @@ int process_input(struct descriptor_data *t)
 					i++;
 				if (*(t->buf + i) && !ISNEWL(*(t->buf + i)))
 					i++;
-			} else if (!isascii(*(t->buf + i)) && !ISNEWL(*(t->buf
-									+ i + 1))) {
-				*(tmp + k++) = *(t->buf + i++);
-				*(tmp + k++) = *(t->buf + i++);
 			}
-			/* hangul routine */
-			/* strange stuff, i can't understand! */
-			else if (isascii(*(t->buf + i)) && isprint(*(t->buf + i))) {
-				if ((*(tmp + k) = *(t->buf + i)) == '$')
-					*(tmp + ++k) = '$';
-				k++;
-				i++;
-			} else
-				i++;
+			/* hangul routine - deleted, 251130 by Komo */
+            /* strange stuff, i can't understand! */
+            else if ((isascii(*(t->buf + i)) && isprint(*(t->buf + i))) || !isascii(*(t->buf + i))) {
+                if ((*(tmp + k) = *(t->buf + i)) == '$')
+                    *(tmp + ++k) = '$';
+                k++;
+                i++;
+            } else
+                i++;
 		} else {
 			*(tmp + k) = 0;
 			if (tmp[0] == '!') {
@@ -1249,10 +1245,10 @@ void act(char *str, int hide_invisible, struct char_data *ch, struct obj_data *o
                 if (*strp == '$') {
                     switch (*(++strp)) {
                         case 'n':
-                            i = PERS(ch, to);
+                            i = get_char_name(ch, to);
                             break;
                         case 'N':
-                            i = PERS((struct char_data *)vict_obj, to);
+                            i = get_char_name((struct char_data *)vict_obj, to);
                             break;
                         case 'm':
                             i = HMHR(ch);
@@ -1368,10 +1364,10 @@ void acthan(char *streng, char *strhan, int hide_invisible, struct char_data *ch
                     strp++;
                     switch (*strp) {
                         case 'n':
-                            i = PERS(ch, to);
+                            i = get_char_name(ch, to);
                             break;
                         case 'N':
-                            i = PERS((struct char_data *)vict_obj, to);
+                            i = get_char_name((struct char_data *)vict_obj, to);
                             break;
                         case 'm':
                             i = HMHR(ch);

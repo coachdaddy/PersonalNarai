@@ -40,23 +40,59 @@ void free_obj(struct obj_data *o);
 int number(int from, int to);
 int search_block(char *arg, char **list, bool exact);
 
+
+/* 두 캐릭터가 같은 그룹인지 확인하는 함수 */
+/* 같으면 1 (true), 다르면 0 (false)을 반환 */
+int is_same_group(struct char_data *ch, struct char_data *victim)
+{
+    struct char_data *ch_leader;
+    struct char_data *victim_leader;
+
+    if (!ch || !victim)
+        return 0;
+
+    ch_leader = (ch->master ? ch->master : ch);
+
+    victim_leader = (victim->master ? victim->master : victim);
+
+    if (ch_leader == victim_leader)
+        return 1;
+
+    return 0;
+}
+
+
 char *fname(char *namelist)
 {
-	static char holder[30];
-	register char *point;
+    static char holder[2][30]; // 버퍼 2개 사용, 251130 by Komo
+    static int toggle = 0;
+    register char *point;
 
-	for (point = holder; isalpha(*namelist); namelist++, point++) {
-		*point = *namelist;
-	}
+    toggle = 1 - toggle;
+    point = holder[toggle];
 
-	*point = '\0';
+    if (!namelist) {
+        *point = '\0';
+        return point;
+    }
 
-	return (holder);
+    char *copy_ptr = point; // 루프용 포인터 따로 사용
+    for (; isalpha(*namelist); namelist++, copy_ptr++) {
+        *copy_ptr = *namelist;
+    }
+
+    *copy_ptr = '\0';
+
+    return (point);
 }
 
 int isname(char *str, char *namelist)
 {
 	register char *curname, *curstr;
+
+	// NULL 체크, 251130 by Komo
+    if (!str || !*str || !namelist || !*namelist)
+        return 0;
 
 	while (*str == ' ')
 		str++;
@@ -389,15 +425,12 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
 /* Call affect_remove with every spell of spelltype "skill" */
 void affect_from_char(struct char_data *ch, byte skill)
 {
-	struct affected_type *hjp, *next_aff;
+	struct affected_type *hjp;
 
-    // ASAN : hjp->next를 미리 저장해두고 루프
-    for (hjp = ch->affected; hjp; hjp = next_aff) {
-        next_aff = hjp->next; // 다음 것 미리 확보
-        
-        if (hjp->type == skill)
-            affect_remove(ch, hjp);
-    }
+	for (hjp = ch->affected; hjp; hjp = hjp->next)
+		if (hjp->type == skill)
+			affect_remove(ch, hjp);
+
 }
 
 /* Return if a char is affected by a spell (SPELL_XXX), NULL indicates 
@@ -1022,10 +1055,10 @@ void extract_char(struct char_data *ch, int drop_items)
     if (!ch) return;
     if (ch->in_room == NOWHERE) {
         log("SYSERR: NOWHERE extracting char. (handler.c, extract_char)");
-        return; /* exit(1);  <-- 기존 코드. 서버를 죽이는 것보단 리턴시킴 */
+        return; /* exit(1);  <-- 기존 코드. 리턴시킴 */
     }
 
-    // 안전한 로그 출력토록 수정 (이름이 없거나 깨졌을 경우 대비), 251130 by Komo
+    // 안전한 로그 출력토록 수정, 251130 by Komo
     if (ch->player.name)
         snprintf(for_debug, sizeof(for_debug), "extract_char(%s)", ch->player.name);
     else
@@ -1054,14 +1087,14 @@ void extract_char(struct char_data *ch, int drop_items)
 
     //아이템 드랍 로직 수정, 251130 by Komo
     if (drop_items && ch->carrying) { 
-        for (i = ch->carrying; i; i = i->next_content) {
+        for (i = ch->carrying; i; i = i->next_content) { // 인벤토리 모든 아이템의 위치 정보를 '현재 방'으로 변경
             i->carried_by = 0;
             i->in_room = ch->in_room;
         }
 
         struct obj_data *last_obj;
         for (last_obj = ch->carrying; last_obj->next_content; last_obj = last_obj->next_content)
-            ;
+            ; // carrying 끝으로. 루프만 돌아서 끝으로 이동
 
         last_obj->next_content = world[ch->in_room].contents;
         world[ch->in_room].contents = ch->carrying;
@@ -1120,11 +1153,8 @@ void extract_char(struct char_data *ch, int drop_items)
 
     if (ch && ch->desc) {
         /* remove all affected by spell */
-        struct affected_type *next_af; // 임시 변수 선언
-        for (af = ch->affected; af != NULL; af = next_af) {
-            next_af = af->next; // 지우기 전에 다음 주소 미리 저장
+        for (af = ch->affected; af != NULL; af = af->next)
             affect_remove(ch, af);
-        }
         ch->desc->connected = CON_SLCT;
         SEND_TO_Q(MENU, ch->desc);
     }

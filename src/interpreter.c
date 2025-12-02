@@ -257,14 +257,19 @@ void do_request(struct char_data *ch, char *arg, int cmd);	/* by atre */
 void do_hint(struct char_data *ch, char *arg, int cmd);		/* by atre */
 
 // Challenge Room Quest System
-void do_challenge(struct char_data *ch); // by komo, 251017
-void do_begin(struct char_data *ch);     // by komo, 251017
-void do_rejoin(struct char_data *ch);    // by komo, 251022
+void do_challenge(struct char_data *ch, char *argument, int cmd); // 251017 by Komo
+void do_begin(struct char_data *ch, char *argument, int cmd);     // 251017 by Komo
+void do_rejoin(struct char_data *ch, char *argument, int cmd);    // 251022 by Komo
+void do_challenge_abort(struct char_data *ch, char *argument, int cmd); // 251129 by Komo
 
 // color processing function
 void process_color_string(const char *input, char *output, int max_out_len); // src/utility.c, Komo
 void do_colortest(struct char_data *ch, char *argument, int cmd); // src/utility.c, Komo
 
+// Live Reloading System, 251120
+void do_zreload(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251120 by Komo
+void do_wreload(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251121 by Komo
+void do_zonelist(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251121 by Komo
 
 #ifdef UNUSED_CODE
 char *command[] =
@@ -893,7 +898,11 @@ char *command[] = {
 	"begin",     // by komo, 310
 	"rejoin",    // by komo, 311
 	"colortest", /* by komo, 312 */
-	"\n"
+	"zreload",   /* by komo, 313 */
+    "wreload",   /* by komo, 314 */
+    "zonelist",  /* by komo, 315 */
+    "giveup",   /* by komo, 316 */
+    "\n"
 };
 
 char *fill[] =
@@ -2012,6 +2021,10 @@ void assign_command_pointers(void)
     COMMANDO(310, POSITION_STANDING, do_begin, 1, 1, 1, 1);
     COMMANDO(311, POSITION_STANDING, do_rejoin, 1, 1, 1, 1);
     COMMANDO(312, POSITION_DEAD, do_colortest, 1, 1, 1, 1); /* 색상 출력 미리보기, 251022 */
+	COMMANDO(313, POSITION_DEAD, do_zreload, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* zone reload, 251120 */
+    COMMANDO(314, POSITION_DEAD, do_wreload, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* world reload, 251121 */
+    COMMANDO(315, POSITION_DEAD, do_zonelist, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* zonelist, 251121 */
+    COMMANDO(316, POSITION_RESTING, do_challenge_abort, 1, 1, 1, 1); /* 도전 포기, 251129 by Komo */
 }
 
 void query_status(struct descriptor_data *d)
