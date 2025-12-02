@@ -631,7 +631,8 @@ Let's reborn with your power!!!! Your spells and status can be saved.
 There is a sign here.
 Watch out.   
 You should type this. <say CLASS>,in which CLASS can be 'W' 'M' 'C' 'T'. 
-E.G> remort W <<---You will be reborn with Warrior character!!!!
+For information, type 'say ?'
+Ex> say W <<---You will be reborn with Warrior character!!!!
 ~
 52 136 1
 D0
