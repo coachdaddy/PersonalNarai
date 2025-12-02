@@ -8136,374 +8136,6 @@ The dongulkeeper is guarding.
 8234 648 -1000
 W 40 3 11 13 17
 50000 12 8 F
-#19000
-wang~
-Wang Comicky~
-멍텅하게 생긴 W.C.가 당신을 보고 있습니다.
-~
-찐따같이 생긴 W.C.가 당신을 보지만 두려워 마세요.그는 강하지 않으니깐요.
-하지만 사실은 당신 보다는 훨씬 괜찮아 보입니다. 너 이놈이 죽을라구...
-~
-10 33556632 700
-C 43 13 12 7 15
-1000 18 8 M
-#19001
-cap~
-Cap Comicky~
-상상을 초월하 생긴 C.C.가 당신을 보고 있습니다.
-~
-찐따같이 생긴 C.C.가 당신을 보니깐두려워하 세요.그는 강하지 않으니깐요.
-하지만 사실은 당신 보다는 훨씬 약해 보입니다. 너 이놈이 죽을라구...
-~
-10 33556632 700
-C 41 9 12 7 18
-1000 18 8 M
-#19002
-Mac~
-Mac Comicky~
-멍텅하게 생긴 M.C.가 당신을 보고 있습니다.
-~
-무서워서 두려움에 떨다보면 1234 를 볼수 있을런지.킬킬킬.
-~
-10 33556632 700
-C 41 9 12 7 14
-1000 14 8 M
-#19003
-id student~
-ID Student~
-An Industrial Design Student is working hard before the professor.
-~
-~
-72 0 0
-W 13 5 15 7 17
-1000 16 8 M
-#19004
-biri student~
-Biri student~
-A Biri Student plays with his Bibi friends.
-~
-~
-104 24 0
-W 18 6 12 8 8
-1000 15 8 M
-#19005
-bibi Student~
-Bibi Student~
-A Bibi student issue an command to Biri.
-~
-~
-72 24 0
-W 18 6 13 8 9
-1000 15 8 M
-#19006
-Boss Student~
-Boss Student~
-A Boss Student of Black circle sleeps before the Professor.
-~
-~
-104 0 0
-W 14 6 14 9 9
-100 14 8 M
-#19007
-takari~
-Takari~
-A Takari of Boss looks at Boss with eye asleep.
-~
-~
-72 0 0
-W 15 5 18 7 13
-100 14 8 M
-#19008
-female student~
-Female Student~
-A Female student winks you passionably.
-~
-~
-72 0 0
-C 10 10 18 11 19
-100 18 8 F
-#19009
-jokyo prof~
-Jokyo Prof~
-a Jokyo Prof teachs some boring text book.
-~
-~
-72 0 0
-W 20 5 16 7 12
-100 11 8 M
-#19010
-professor lee~
-Professor Lee~
-An Id Professor Lee teachs Id students.
-~
-~
-72 648 -1000
-W 38 5 11 13 13
-50000 15 8 M
-#19011
-auto keeper~
-Auto keeper~
-An auto keeper keeps the auto door with some sharp weapon.
-~
-~
-4170 10 0
-W 10 14 5 10 7
-2000 13 8 M
-#19012
-door keeper~
-Door keeper~
-An door keeper keeps the door.
-~
-~
-4170 10 0
-W 18 5 6 10 17
-2000 13 8 M
-#19013
-second zuzius~
-Second zuzius~
-A cute zuzius crys in the room looking for her girl friend.
-~
-~
-72 190 -1000
-W 20 4 11 18 13
-50000 16 8 M
-#19014
-takari surin~
-Takari surin~
-A sexy surin kisses zuzius passionalbly.
-~
-~
-65784 65776 0
-T 25 14 14 19 16
-2000 18 8 F
-#19015
-third zuzius~
-Third zuzius~
-A ugly zuzius grins you evily.
-You can feel some fear comes to you.
-~
-~
-72 190 -1000
-W 33 5 13 14 13
-50000 16 8 M
-#19016
-poor nimpus~
-Poor nimpus~
-You can see poor boy named nimpus.
-Some one says his IQ is lower than 2 digit.
-~
-~
-72 190 -1000
-W 33 5 13 19 13
-50000 14 8 M
-#19017
-queen designer~
-Queen Designer~
-The queen of industrial design block glares you.
-~
-~
-4138 33556632 500
-W 40 5 17 16 13
-100000 13 8 F
-#19018
-lover of id queen~
-Lover of id queen~
-He loves id queen so guarding id queen.  
-~
-~
-1572874 17827992 500
-C 38 5 11 11 17
-0 16 8 M
-#19019
-electrical queen~
-Electrical Queen~
-The Queen of Electrics guards king beside him.
-~
-~
-1572874 17827992 500
-C 38 9 10 14 13
-10000 16 8 M
-#19020
-ee student~
-EE student~
-An Electronic & Electrical Student is studying hard.
-~
-~
-72 0 0
-W 20 6 15 4 5
-1000 13 8 M
-#19021
-massmon~
-Massmon~
-You can see a mass monster which looks like a ball.
-~
-~
-65626 3260 500
-T 25 3 17 15 14
-10000 13 8 M
-#19022
-velomon~
-Velomon~
-You can see a Velomon which looks like a watch.
-~
-~
-1572874 17827992 500
-C 27 5 19 19 18
-10000 18 8 F
-#19023
-accelemon~
-Accelemon~
-You can see an Accelemon which looks like an unicorn.
-~
-~
-65626 3260 500
-T 27 3 14 18 17
-10000 18 8 F
-#19024
-super model~
-Super model~
-You are falling in love with her at first look at her.
-~
-~
-138 2236 1000
-T 26 4 16 15 17
-10000 17 8 M
-#19025
-cashmon~
-Cashmon~
-You can see cash monster which looks like an cash machine.
-~
-~
-65594 3260 500
-T 33 5 17 18 17
-1234567 18 8 F
-#19026
-chief student~
-Chief student~
-Chief looks like an poolish boy.
-~
-~
-104 0 0
-W 20 3 14 18 16
-10000 12 8 M
-#19027
-satteleton~
-Satteleton~
-You can see a body in the aura of black chips.
-~
-~
-65626 3260 1000
-T 31 5 19 8 13
-10000 11 8 M
-#19028
-controller~
-Controller~
-You can see some phase lag controller.
-~
-~
-65626 3260 0
-T 32 6 18 8 13
-10000 12 8 M
-#19029
-proffesor kim~
-Proffesor Kim~
-You can see proffesor kim who smiles you.
-~
-~
-65594 0 0
-T 35 4 12 8 19
-10000 16 8 F
-#19030
-doctor park~
-Doctor Park~
-Doctor park stands there.
-~
-~
-65594 0 0
-T 36 6 16 7 14
-10000 12 8 F
-#19031
-ph doctor~
-Ph Doctor~
-You can see a doctor like an einstein.
-~
-~
-65594 0 0
-T 37 4 16 7 14
-10000 13 8 M
-#19032
-computer~
-Computer~
-A computer keeps the key with digital eyes.
-~
-~
-90 220 0
-T 38 6 17 5 14
-1000 16 8 M
-#19033
-wave~
-Wave~
-A wave of micro looks at you.
-~
-~
-90 220 0
-T 38 4 16 19 15
-1000 18 8 M
-#19034
-phonemon~
-Phonemon~
-Phonemon is standing here~
-~
-90 220 0
-T 38 6 17 18 14
-1000 17 8 M
-#19035
-breadboard~
-Breadboard~
-A breadboard attacks you.
-~
-~
-90 220 0
-T 37 4 19 15 18
-1000 18 8 M
-#19036
-phase lag~
-Phase Lag~
-A Phase Lag kicks you and wanna your corpse.
-~
-~
-90 220 0
-T 38 6 15 17 13
-1000 13 8 M
-#19037
-partner male~
-Partner Male~
-You can see the male part of Campus Couple.
-You feel you wanna kill them.
-~
-~
-65720 220 0
-T 18 4 15 15 18
-1000 16 8 M
-#19038
-partner female~
-Partner Female~
-You can see the female part of Capus Couple.
-You feel you wanna her.
-~
-~
-65720 220 0
-T 17 6 12 15 14
-1000 16 8 F
-#19039
-Electrical king~
-Electrical King~
-The King of Electrics looks at you.
-~
-~
-4138 33556632 400
-W 41 4 15 17 15
-10000 16 8 M
 #19999
 super musashi~
 SUPER Musashi~
@@ -8532,18 +8164,18 @@ statue satan 악마상~
 악마상(STATUE of SATAN)이 놓여 있습니다.
 ~
             _,.-----.,_
-         ,-------------^.
+         ,-~           ~-.
        ,^___           ___^.
-      /^"   ^"   .   "^   "^\
+      /~"   ~"   .   "~   "~\
      Y  ,--._    I    _.--.  Y
-     | Y     ^-. | ,-^     Y |
+     | Y     ~-. | ,-~     Y |
      | |        }:{        | |
      j l       / | \       ! l
-  .---  (__,.--" .^. "--.,__)  ---.
+  .-~  (__,.--" .^. "--.,__)  ~-.
  (           / / | \ \           )
-  \.____,   ^  \/"\/  ^   .____,/
+  \.____,   ~  \/"\/  ~   .____,/
    ^.____                 ____.^
-      | |T ^\  !   !  /^ T| |
+      | |T ~\  !   !  /~ T| |
       | |l   _ _ _ _ _   !| |
       | l \/V V V V V V\/ j |
       l  \ \|_|_|_|_|_|/ /  !
@@ -8552,6 +8184,7 @@ statue satan 악마상~
          \               /
           \.           ,/
             "^-.___,-^"
+
 ~
 525386 67174458 -999
 C 40 5 8 8 9
@@ -9025,6 +8658,374 @@ Ami Pupil~
 360 83886136 -650
 W 42 13 7 8 19
 5 15 8 F      
+#30000
+wang~
+Wang Comicky~
+멍텅하게 생긴 W.C.가 당신을 보고 있습니다.
+~
+찐따같이 생긴 W.C.가 당신을 보지만 두려워 마세요.그는 강하지 않으니깐요.
+하지만 사실은 당신 보다는 훨씬 괜찮아 보입니다. 너 이놈이 죽을라구...
+~
+10 33556632 700
+C 43 13 12 7 15
+1000 18 8 M
+#30001
+cap~
+Cap Comicky~
+상상을 초월하 생긴 C.C.가 당신을 보고 있습니다.
+~
+찐따같이 생긴 C.C.가 당신을 보니깐두려워하 세요.그는 강하지 않으니깐요.
+하지만 사실은 당신 보다는 훨씬 약해 보입니다. 너 이놈이 죽을라구...
+~
+10 33556632 700
+C 41 9 12 7 18
+1000 18 8 M
+#30002
+Mac~
+Mac Comicky~
+멍텅하게 생긴 M.C.가 당신을 보고 있습니다.
+~
+무서워서 두려움에 떨다보면 1234 를 볼수 있을런지.킬킬킬.
+~
+10 33556632 700
+C 41 9 12 7 14
+1000 14 8 M
+#30003
+id student~
+ID Student~
+An Industrial Design Student is working hard before the professor.
+~
+~
+72 0 0
+W 13 5 15 7 17
+1000 16 8 M
+#30004
+biri student~
+Biri student~
+A Biri Student plays with his Bibi friends.
+~
+~
+104 24 0
+W 18 6 12 8 8
+1000 15 8 M
+#30005
+bibi Student~
+Bibi Student~
+A Bibi student issue an command to Biri.
+~
+~
+72 24 0
+W 18 6 13 8 9
+1000 15 8 M
+#30006
+Boss Student~
+Boss Student~
+A Boss Student of Black circle sleeps before the Professor.
+~
+~
+104 0 0
+W 14 6 14 9 9
+100 14 8 M
+#30007
+takari~
+Takari~
+A Takari of Boss looks at Boss with eye asleep.
+~
+~
+72 0 0
+W 15 5 18 7 13
+100 14 8 M
+#30008
+female student~
+Female Student~
+A Female student winks you passionably.
+~
+~
+72 0 0
+C 10 10 18 11 19
+100 18 8 F
+#30009
+jokyo prof~
+Jokyo Prof~
+a Jokyo Prof teachs some boring text book.
+~
+~
+72 0 0
+W 20 5 16 7 12
+100 11 8 M
+#30010
+professor lee~
+Professor Lee~
+An Id Professor Lee teachs Id students.
+~
+~
+72 648 -1000
+W 38 5 11 13 13
+50000 15 8 M
+#30011
+auto keeper~
+Auto keeper~
+An auto keeper keeps the auto door with some sharp weapon.
+~
+~
+4170 10 0
+W 10 14 5 10 7
+2000 13 8 M
+#30012
+door keeper~
+Door keeper~
+An door keeper keeps the door.
+~
+~
+4170 10 0
+W 18 5 6 10 17
+2000 13 8 M
+#30013
+second zuzius~
+Second zuzius~
+A cute zuzius crys in the room looking for her girl friend.
+~
+~
+72 190 -1000
+W 20 4 11 18 13
+50000 16 8 M
+#30014
+takari surin~
+Takari surin~
+A sexy surin kisses zuzius passionalbly.
+~
+~
+65784 65776 0
+T 25 14 14 19 16
+2000 18 8 F
+#30015
+third zuzius~
+Third zuzius~
+A ugly zuzius grins you evily.
+You can feel some fear comes to you.
+~
+~
+72 190 -1000
+W 33 5 13 14 13
+50000 16 8 M
+#30016
+poor nimpus~
+Poor nimpus~
+You can see poor boy named nimpus.
+Some one says his IQ is lower than 2 digit.
+~
+~
+72 190 -1000
+W 33 5 13 19 13
+50000 14 8 M
+#30017
+queen designer~
+Queen Designer~
+The queen of industrial design block glares you.
+~
+~
+4138 33556632 500
+W 40 5 17 16 13
+100000 13 8 F
+#30018
+lover of id queen~
+Lover of id queen~
+He loves id queen so guarding id queen.  
+~
+~
+1572874 17827992 500
+C 38 5 11 11 17
+0 16 8 M
+#30019
+electrical queen~
+Electrical Queen~
+The Queen of Electrics guards king beside him.
+~
+~
+1572874 17827992 500
+C 38 9 10 14 13
+10000 16 8 M
+#30020
+ee student~
+EE student~
+An Electronic & Electrical Student is studying hard.
+~
+~
+72 0 0
+W 20 6 15 4 5
+1000 13 8 M
+#30021
+massmon~
+Massmon~
+You can see a mass monster which looks like a ball.
+~
+~
+65626 3260 500
+T 25 3 17 15 14
+10000 13 8 M
+#30022
+velomon~
+Velomon~
+You can see a Velomon which looks like a watch.
+~
+~
+1572874 17827992 500
+C 27 5 19 19 18
+10000 18 8 F
+#30023
+accelemon~
+Accelemon~
+You can see an Accelemon which looks like an unicorn.
+~
+~
+65626 3260 500
+T 27 3 14 18 17
+10000 18 8 F
+#30024
+super model~
+Super model~
+You are falling in love with her at first look at her.
+~
+~
+138 2236 1000
+T 26 4 16 15 17
+10000 17 8 M
+#30025
+cashmon~
+Cashmon~
+You can see cash monster which looks like an cash machine.
+~
+~
+65594 3260 500
+T 33 5 17 18 17
+1234567 18 8 F
+#30026
+chief student~
+Chief student~
+Chief looks like an poolish boy.
+~
+~
+104 0 0
+W 20 3 14 18 16
+10000 12 8 M
+#30027
+satteleton~
+Satteleton~
+You can see a body in the aura of black chips.
+~
+~
+65626 3260 1000
+T 31 5 19 8 13
+10000 11 8 M
+#30028
+controller~
+Controller~
+You can see some phase lag controller.
+~
+~
+65626 3260 0
+T 32 6 18 8 13
+10000 12 8 M
+#30029
+proffesor kim~
+Proffesor Kim~
+You can see proffesor kim who smiles you.
+~
+~
+65594 0 0
+T 35 4 12 8 19
+10000 16 8 F
+#30030
+doctor park~
+Doctor Park~
+Doctor park stands there.
+~
+~
+65594 0 0
+T 36 6 16 7 14
+10000 12 8 F
+#30031
+ph doctor~
+Ph Doctor~
+You can see a doctor like an einstein.
+~
+~
+65594 0 0
+T 37 4 16 7 14
+10000 13 8 M
+#30032
+computer~
+Computer~
+A computer keeps the key with digital eyes.
+~
+~
+90 220 0
+T 38 6 17 5 14
+1000 16 8 M
+#30033
+wave~
+Wave~
+A wave of micro looks at you.
+~
+~
+90 220 0
+T 38 4 16 19 15
+1000 18 8 M
+#30034
+phonemon~
+Phonemon~
+Phonemon is standing here~
+~
+90 220 0
+T 38 6 17 18 14
+1000 17 8 M
+#30035
+breadboard~
+Breadboard~
+A breadboard attacks you.
+~
+~
+90 220 0
+T 37 4 19 15 18
+1000 18 8 M
+#30036
+phase lag~
+Phase Lag~
+A Phase Lag kicks you and wanna your corpse.
+~
+~
+90 220 0
+T 38 6 15 17 13
+1000 13 8 M
+#30037
+partner male~
+Partner Male~
+You can see the male part of Campus Couple.
+You feel you wanna kill them.
+~
+~
+65720 220 0
+T 18 4 15 15 18
+1000 16 8 M
+#30038
+partner female~
+Partner Female~
+You can see the female part of Capus Couple.
+You feel you wanna her.
+~
+~
+65720 220 0
+T 17 6 12 15 14
+1000 16 8 F
+#30039
+Electrical king~
+Electrical King~
+The King of Electrics looks at you.
+~
+~
+4138 33556632 400
+W 41 4 15 17 15
+10000 16 8 M
 #99999
 $
 

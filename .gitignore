@@ -8,3 +8,4 @@ src/obj/*
 src/tags
 log-*
 run-mud.sh
+.vscode/

@@ -115,13 +115,7 @@ void spell_far_look(byte level, struct char_data *ch,
 		send_to_char("You fail miserably.\n\r", ch);
 		return;
 	}
-/*	if (IS_AFFECTED(victim, AFF_SHADOW_FIGURE)) {
-		if (ch->in_room != real_room(ROOM_GUILD_POLICE_LOCKER) &&
-			ch->in_room != real_room(ROOM_GUILD_OUTLAW_LOCKER)) {
-			send_to_char("You tried, but you can see only shadow.\n\r", ch);
-			return;
-		}
-	} */
+
 	if (!IS_NPC(victim)) {
 		send_to_char("You sense an uncertain feeling of being ", victim);
 		send_to_char("watched, and you feel somewhat sick.\n\r", victim);
@@ -1151,9 +1145,6 @@ void spell_self_heal(byte level, struct char_data *ch,
 	INCREASE_SKILLED2(ch, victim, SPELL_SELF_HEAL);
 	spell_cure_blind(level, ch, victim, obj);
 
-	/*
-	   hit = 1000 + (GET_LEVEL(victim) << 4);
-	 */
 	hit = dice(level, level + GET_SKILLED(ch, SPELL_SELF_HEAL));
 
 	if (hit + GET_HIT(victim) >= GET_PLAYER_MAX_HIT(victim))
@@ -1194,9 +1185,6 @@ void spell_heal(byte level, struct char_data *ch,
 	INCREASE_SKILLED2(ch, victim, SPELL_HEAL);
 	spell_cure_blind(level, ch, victim, obj);
 
-	/*
-	   hit = dice(level, 50);
-	 */
 	hit = dice((level << 1), level + GET_SKILLED(ch, SPELL_HEAL));
 
 	if (hit + GET_HIT(victim) >= GET_PLAYER_MAX_HIT(victim))
@@ -1228,9 +1216,6 @@ void spell_full_heal(byte level, struct char_data *ch,
 	INCREASE_SKILLED2(ch, victim, SPELL_FULL_HEAL);
 	spell_cure_blind(level, ch, victim, obj);
 
-	/*
-	   hit = dice(level, 100);
-	 */
 	hit = dice((level << 2), (level << 1) + GET_SKILLED(ch, SPELL_FULL_HEAL));
 
 	if (hit + GET_HIT(victim) >= GET_PLAYER_MAX_HIT(victim))

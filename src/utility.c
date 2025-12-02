@@ -597,4 +597,5 @@ void utf8_safe_strncpy(char *dest, const char *src, size_t n) {
         len--;
         backtrack++;
     }
+	dest[len] = '\0';
 }

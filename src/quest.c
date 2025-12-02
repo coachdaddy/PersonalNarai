@@ -287,27 +287,21 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 
 	zone = find_zone(QM[num].virtual);
 
-	if(strcspn( QM[num].name, "\n\r")) 
-	{
-		char buf[100];
-		strncpy(buf, QM[num].name, strlen(QM[num].name));
-		buf[strlen(QM[num].name)-1] = '\0';
-		strncpy(QM[num].name, buf, strlen(buf));
-
-		log("QUEST : zone name has newline");
-	}
-
 	if (!zone) {
 		snprintf(buf1, sizeof(buf1), "&CQUEST&n : &YWhere &U%s&Y is, I don't know, either.&n\n\r",
 			QM[num].name);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &U%s&Y? 어디 있는 걸까? 모르겠는데...&n\n\r",
 			QM[num].name);
 		log("QUEST : INVALID mobile (or zone not found).");
-	} else {
+	} else { 
+		char qbuf[100];
+		strncpy(qbuf, QM[num].name, strlen(QM[num].name));
+		choppy(qbuf);
+
 		snprintf(buf1, sizeof(buf1), "&CQUEST&n : &U%s&Y is in &#%s&Y probably.&n\n\r",
-			QM[num].name, zone);
+			qbuf, zone);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &Y아마도 &U%s&Y는 &#%s&Y에 있을 걸요.&n\n\r",
-			QM[num].name, zone);
+			qbuf, zone);
 	}
 
 	send_to_char_han(buf1, buf2, ch);
