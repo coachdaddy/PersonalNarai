@@ -212,10 +212,10 @@ int show_board(struct char_data *ch, struct board_data *cb, char *arg)
 	if (!cb->m_num)
 		strcat(buf, "The board is empty.\n\r");
 	else {
-		sprintf(tmp, "There are %d messages on the board.\n\r", cb->m_num);
+		snprintf(tmp, sizeof(tmp), "There are %d messages on the board.\n\r", cb->m_num);
 		strcat(buf, tmp);
 		for (i = 0; i < cb->m_num; i++) {
-			sprintf(tmp, "%-2d : %s ( %s )\n\r",
+			snprintf(tmp, sizeof(tmp), "%-2d : %s ( %s )\n\r",
 				i + 1, cb->head[i], cb->writer[i]);
 			strcat(buf, tmp);
 		}
@@ -290,7 +290,7 @@ int read_board(struct char_data *ch, struct board_data *cb, char *arg)
 		return TRUE;
 	}
 
-	sprintf(buffer, "message %d : %s by %s\n\r\n\r%s",
+	snprintf(buffer, sizeof(buffer), "message %d : %s by %s\n\r\n\r%s",
 		msg, cb->head[msg - 1], cb->writer[msg - 1], cb->msgs[msg - 1]);
 	page_string(ch->desc, buffer, 1);
 	return TRUE;
@@ -354,11 +354,11 @@ int post_board(struct char_data *ch, struct board_data *cb, char *arg)
 	paper = get_obj_in_list_vis(ch, papername, ch->carrying);
 
 	if (!paper) {
-		sprintf(buf, "You can't find %s in your inventory.\n\r", papername);
+		snprintf(buf, sizeof(buf), "You can't find %s in your inventory.\n\r", papername);
 	} else if (paper->obj_flags.type_flag != ITEM_NOTE) {
-		sprintf(buf, "You can't post %s on board.\n\r", papername);
+		snprintf(buf, sizeof(buf), "You can't post %s on board.\n\r", papername);
 	} else if (paper->action_description == 0) {
-		sprintf(buf, "%s is empty.\n\r", papername);
+		snprintf(buf, sizeof(buf), "%s is empty.\n\r", papername);
 	} else {
 		if (cb->m_num == MAX_MSGS) {
 			send_to_char("Sorry...board is full.\n\r", ch);
@@ -366,7 +366,7 @@ int post_board(struct char_data *ch, struct board_data *cb, char *arg)
 		}
 		cb->head[cb->m_num] = (char *)malloc(strlen(header) + 1);
 		if (cb->head[cb->m_num] == 0) {
-			sprintf(buf, "Your %s is fallen from board.\n\r", papername);
+			snprintf(buf, sizeof(buf), "Your %s is fallen from board.\n\r", papername);
 			send_to_char(buf, ch);
 			return TRUE;
 		}
@@ -376,7 +376,7 @@ int post_board(struct char_data *ch, struct board_data *cb, char *arg)
 		paper->action_description = 0;
 		cb->m_num++;
 		extract_obj(paper);
-		sprintf(buf, "Ok. You posted %s on board.\n\r", papername);
+		snprintf(buf, sizeof(buf), "Ok. You posted %s on board.\n\r", papername);
 		send_to_char(buf, ch);
 		save_board(cb);
 	}

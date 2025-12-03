@@ -60,7 +60,7 @@ void get(struct char_data *ch, struct obj_data *obj_object,
 	if ((obj_object->obj_flags.type_flag == ITEM_MONEY) &&
 	    (obj_object->obj_flags.value[0] >= 1)) {
 		obj_from_char(obj_object);
-		sprintf(buffer, "There was %d coins.\n\r",
+		snprintf(buffer, sizeof(buffer), "There was %d coins.\n\r",
 			obj_object->obj_flags.value[0]);
 		send_to_char(buffer, ch);
 		GET_GOLD(ch) += obj_object->obj_flags.value[0];
@@ -142,14 +142,14 @@ void do_get(struct char_data *ch, char *argument, int cmd)
 								fail = TRUE;
 							}
 						} else {
-							sprintf(buffer,
+							snprintf(buffer, sizeof(buffer),
 								"%s : You can't carry that much weight.\n\r",
 								fname(obj_object->name));
 							send_to_char(buffer, ch);
 							fail = TRUE;
 						}
 					} else {
-						sprintf(buffer,
+						snprintf(buffer, sizeof(buffer),
 							"%s : You can't carry that many items.\n\r",
 							fname(obj_object->name));
 						send_to_char(buffer, ch);
@@ -186,21 +186,21 @@ void do_get(struct char_data *ch, char *argument, int cmd)
 							fail = TRUE;
 						}
 					} else {
-						sprintf(buffer,
+						snprintf(buffer, sizeof(buffer),
 							"%s : You can't carry that much weight.\n\r",
 							fname(obj_object->name));
 						send_to_char(buffer, ch);
 						fail = TRUE;
 					}
 				} else {
-					sprintf(buffer,
+					snprintf(buffer, sizeof(buffer),
 						"%s : You can't carry that many items.\n\r",
 						fname(obj_object->name));
 					send_to_char(buffer, ch);
 					fail = TRUE;
 				}
 			} else {
-				sprintf(buffer,
+				snprintf(buffer, sizeof(buffer),
 					"You do not see a %s here.\n\r", arg1);
 				send_to_char(buffer, ch);
 				fail = TRUE;
@@ -261,7 +261,7 @@ void do_get(struct char_data *ch, char *argument, int cmd)
 											    = TRUE;
 										}
 									} else {
-										sprintf(buffer,
+										snprintf(buffer, sizeof(buffer),
 											"%s : You can't carry that much weight.\n\r",
 											fname(obj_object->name));
 										send_to_char(buffer, ch);
@@ -269,7 +269,7 @@ void do_get(struct char_data *ch, char *argument, int cmd)
 										    = TRUE;
 									}
 								} else {
-									sprintf(buffer,
+									snprintf(buffer, sizeof(buffer),
 										"%s : You can't carry that many items.\n\r",
 										fname(obj_object->name));
 									send_to_char(buffer, ch);
@@ -278,21 +278,21 @@ void do_get(struct char_data *ch, char *argument, int cmd)
 							}
 						}
 					if (!found && !fail) {
-						sprintf(buffer,
+						snprintf(buffer, sizeof(buffer),
 							"You do not see anything in the %s.\n\r",
 							fname(sub_object->name));
 						send_to_char(buffer, ch);
 						fail = TRUE;
 					}
 				} else {
-					sprintf(buffer,
+					snprintf(buffer, sizeof(buffer),
 						"The %s is not a container.\n\r",
 						fname(sub_object->name));
 					send_to_char(buffer, ch);
 					fail = TRUE;
 				}
 			} else {
-				sprintf(buffer,
+				snprintf(buffer, sizeof(buffer),
 					"You do not see or have the %s.\n\r", arg2);
 				send_to_char(buffer, ch);
 				fail = TRUE;
@@ -349,21 +349,21 @@ void do_get(struct char_data *ch, char *argument, int cmd)
 										    = TRUE;
 									}
 								} else {
-									sprintf(buffer,
+									snprintf(buffer, sizeof(buffer),
 										"%s : You can't carry that much weight.\n\r",
 										fname(obj_object->name));
 									send_to_char(buffer, ch);
 									fail = TRUE;
 								}
 							} else {
-								sprintf(buffer,
+								snprintf(buffer, sizeof(buffer),
 									"%s : You can't carry that many items.\n\r",
 									fname(obj_object->name));
 								send_to_char(buffer, ch);
 								fail = TRUE;
 							}
 						} else {
-							sprintf(buffer,
+							snprintf(buffer, sizeof(buffer),
 								"The %s does not contain the %s.\n\r",
 								fname(sub_object->name), arg1);
 							send_to_char(buffer, ch);
@@ -371,14 +371,14 @@ void do_get(struct char_data *ch, char *argument, int cmd)
 						}
 					}
 				} else {
-					sprintf(buffer,
+					snprintf(buffer, sizeof(buffer),
 						"The %s is not a container.\n\r",
 						fname(sub_object->name));
 					send_to_char(buffer, ch);
 					fail = TRUE;
 				}
 			} else {
-				sprintf(buffer,
+				snprintf(buffer, sizeof(buffer),
 					"You do not see or have the %s.\n\r", arg2);
 				send_to_char(buffer, ch);
 				fail = TRUE;
@@ -434,7 +434,7 @@ void do_drop(struct char_data *ch, char *argument, int cmd)
 				next_obj = tmp_object->next_content;
 				if (!IS_SET(tmp_object->obj_flags.extra_flags, ITEM_NODROP)) {
 					if (CAN_SEE_OBJ(ch, tmp_object)) {
-						sprintf(buffer,
+						snprintf(buffer, sizeof(buffer),
 							"You drop the %s.\n\r",
 							fname(tmp_object->name));
 						send_to_char(buffer, ch);
@@ -448,7 +448,7 @@ void do_drop(struct char_data *ch, char *argument, int cmd)
 					test = TRUE;
 				} else {
 					if (CAN_SEE_OBJ(ch, tmp_object)) {
-						sprintf(buffer,
+						snprintf(buffer, sizeof(buffer),
 							"You can't drop the %s, it must be CURSED!\n\r",
 							fname(tmp_object->name));
 						send_to_char(buffer, ch);
@@ -463,7 +463,7 @@ void do_drop(struct char_data *ch, char *argument, int cmd)
 			tmp_object = get_obj_in_list_vis(ch, arg, ch->carrying);
 			if (tmp_object) {
 				if (!IS_SET(tmp_object->obj_flags.extra_flags, ITEM_NODROP)) {
-					sprintf(buffer,
+					snprintf(buffer, sizeof(buffer),
 						"You drop the %s.\n\r", fname(tmp_object->name));
 					send_to_char(buffer, ch);
 					act("$n drops $p.", 1, ch, tmp_object,
@@ -598,22 +598,22 @@ void do_put(struct char_data *ch, char *argument, int cmd)
 						} else
 							send_to_char("It seems to be closed.\n\r", ch);
 					} else {
-						sprintf(buffer,
+						snprintf(buffer, sizeof(buffer),
 							"The %s is not a container.\n\r",
 							fname(sub_object->name));
 						send_to_char(buffer, ch);
 					}
 				} else {
-					sprintf(buffer,
+					snprintf(buffer, sizeof(buffer),
 						"You dont have the %s.\n\r", arg2);
 					send_to_char(buffer, ch);
 				}
 			} else {
-				sprintf(buffer, "You dont have the %s.\n\r", arg1);
+				snprintf(buffer, sizeof(buffer), "You dont have the %s.\n\r", arg1);
 				send_to_char(buffer, ch);
 			}
 		} else {
-			sprintf(buffer, "Put %s in what?\n\r", arg1);
+			snprintf(buffer, sizeof(buffer), "Put %s in what?\n\r", arg1);
 			send_to_char(buffer, ch);
 		}
 	} else {
@@ -657,14 +657,14 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 			return;
 		}
 		send_to_char("Ok.\n\r", ch);
-		sprintf(buf, "%s gives you %d gold coins.\n\r", PERS(ch,
+		snprintf(buf, sizeof(buf), "%s gives you %d gold coins.\n\r", get_char_name(ch,
 			vict), amount);
 		send_to_char(buf, vict);
 		act("$n gives some gold to $N.", 1, ch, 0, vict, TO_NOTVICT);
 		if (IS_NPC(ch) || (GET_LEVEL(ch) < (IMO + 1)))
 			GET_GOLD(ch) -= amount;
 		else {
-			sprintf(buf, "%s gives %d coins to %s.", GET_NAME(ch), amount,
+			snprintf(buf, sizeof(buf), "%s gives %d coins to %s.", GET_NAME(ch), amount,
 				GET_NAME(vict));
 			log(buf);
 		}
@@ -706,7 +706,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 	act("$n gives you $p.", 0, ch, obj, vict, TO_VICT);
 	send_to_char("Ok.\n\r", ch);
 	if (GET_LEVEL(ch) >= IMO) {
-		sprintf(buf, "%s gives %d to %s."
+		snprintf(buf, sizeof(buf), "%s gives %d to %s."
 			,GET_NAME(ch), obj_index[obj->item_number].virtual,
 			GET_NAME(vict));
 		log(buf);
@@ -740,7 +740,7 @@ void do_reload(struct char_data *ch, char *argument, int cmd)
 					if ((1 +
 					    obj_index[gun->item_number].virtual) !=
 					    (obj_index[ammo->item_number].virtual)) {
-						sprintf(buffer,
+						snprintf(buffer, sizeof(buffer),
 							"%s cannot be used as ammo for %s\n\r",
 							arg2, arg1);
 						send_to_char(buffer, ch);
@@ -755,16 +755,16 @@ void do_reload(struct char_data *ch, char *argument, int cmd)
 					act("$n reloads $p", TRUE, ch, gun, 0, TO_ROOM);
 					send_to_char("You reload.\n\r", ch);
 				} else {
-					sprintf(buffer,
+					snprintf(buffer, sizeof(buffer),
 						"You dont have the %s.\n\r", arg2);
 					send_to_char(buffer, ch);
 				}
 			} else {
-				sprintf(buffer, "You dont have the %s.\n\r", arg1);
+				snprintf(buffer, sizeof(buffer), "You dont have the %s.\n\r", arg1);
 				send_to_char(buffer, ch);
 			}
 		} else {
-			sprintf(buffer, "Reload %s with what?\n\r", arg1);
+			snprintf(buffer, sizeof(buffer), "Reload %s with what?\n\r", arg1);
 			send_to_char(buffer, ch);
 		}
 	} else {

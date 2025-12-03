@@ -165,7 +165,7 @@ int son_ogong_func(struct char_data *ch, int cmd, char *arg)
 	}
 
 /*
-sprintf(buf, "son_special : %s(%d)\n", GET_NAME(ch), cmd);
+snprintf(buf, sizeof(buf), "son_special : %s(%d)\n", GET_NAME(ch), cmd);
 log(buf);
 */
 	return 0;

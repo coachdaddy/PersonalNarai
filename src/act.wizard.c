@@ -25,6 +25,9 @@
 
 /*   external vars  */
 
+extern int top_of_zone_table;
+extern struct zone_data *zone_table;
+
 extern struct room_data *world;
 extern struct char_data *character_list;
 extern struct descriptor_data *descriptor_list;
@@ -82,10 +85,10 @@ void do_emote(struct char_data *ch, char *argument, int cmd)
 	if (!*(argument + i))
 		send_to_char("Yes.. But what?\n\r", ch);
 	else {
-		sprintf(buf, "$n %s", argument + i);
+		snprintf(buf, sizeof(buf), "$n %s", argument + i);
 		act(buf, FALSE, ch, 0, 0, TO_ROOM);
 
-		sprintf(buf, "You %s.\n\r", argument + i);
+		snprintf(buf, sizeof(buf), "You %s.\n\r", argument + i);
 		send_to_char(buf, ch);
 	}
 }
@@ -120,22 +123,28 @@ void do_transform(struct char_data *ch, char *argument, int cmd)
 	stash_char(ch);
 }
 
+/* send_to_room_except 대체 및 출력 방식 등 수정, by Komo */
 void do_echo(struct char_data *ch, char *argument, int cmd)
 {
-	int i;
-	static char buf[MAX_STRING_LENGTH];
+	struct char_data *k;
+	char buf[MAX_STRING_LENGTH];
 
-	if (IS_NPC(ch))
-		return;
+	if (IS_NPC(ch)) return;
 
-	for (i = 0; *(argument + i) == ' '; i++) ;
+	for (; *argument == ' '; argument++) ;
 
-	if (!*(argument + i))
-		send_to_char("That must be a mistake...\n\r", ch);
-	else {
-		sprintf(buf, "%s\n\r", argument + i);
-		send_to_room_except(buf, ch->in_room, ch);
-		send_to_char("Ok.\n\r", ch);
+	if (!*argument) {
+		send_to_char("&c[ECHO]&n &YYour divine voice needs words to reach the mortals.&n\n\r", ch);
+        send_to_char("       &WUsage: echo <message>&n\n\r", ch);
+	} else {
+		snprintf(buf, sizeof(buf), "%s\n\r", argument);
+		for (k = world[ch->in_room].people; k; k = k->next_in_room) {
+            if (k != ch) {
+                send_to_char(buf, k);
+            }
+        }
+		snprintf(buf, sizeof(buf), "&c[ECHO]&n %s\n\r", argument);
+        send_to_char(buf, ch);
 	}
 }
 void do_trans(struct char_data *ch, char *argument, int cmd)
@@ -321,7 +330,7 @@ void do_demote(struct char_data *ch, char *argument, int cmd)
 	void init_char(struct char_data *ch);
 	void do_start(struct char_data *ch);
 
-	sprintf(buf, "%s demoted %s", GET_NAME(ch), argument);
+	snprintf(buf, sizeof(buf), "%s demoted %s", GET_NAME(ch), argument);
 	log(buf);
 
 	if (IS_NPC(ch))
@@ -401,13 +410,13 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 		/* stats on room */
 		if ((cmd != 232) && (cmd != 233) && (!str_cmp("room", arg1))) {
 			rm = &world[ch->in_room];
-			sprintf(page_buffer, "Room: %s, Zone: %d. V-Num: %d, ",
+			snprintf(page_buffer, sizeof(page_buffer), "Room: %s, Zone: %d. V-Num: %d, ",
 				rm->name, rm->zone, rm->number);
-			sprintf(buf, "R-num: %d, Light: %d.\n\r",
+			snprintf(buf, sizeof(buf), "R-num: %d, Light: %d.\n\r",
 				ch->in_room, rm->light);
 			strcat(page_buffer, buf);
 			sprinttype(rm->sector_type, sector_types, buf2);
-			sprintf(buf, "Sector type : %s\n\r", buf2);
+			snprintf(buf, sizeof(buf), "Sector type : %s\n\r", buf2);
 			strcat(page_buffer, buf);
 			strcpy(buf, "Special procedure : ");
 			strcat(buf, (rm->funct) ? "Exists\n\r" : "No\n\r");
@@ -452,7 +461,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 			strcat(page_buffer, "Exits:\n\r");
 			for (i = 0; i <= 5; i++) {
 				if (rm->dir_option[i]) {
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"Direction %s. Keyword : %s\n\r",
 						dirs[i], rm->dir_option[i]->keyword);
 					strcat(page_buffer, buf);
@@ -464,10 +473,10 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 					strcat(page_buffer, buf);
 					sprintbit(rm->dir_option[i]->exit_info,
 						  exit_bits, buf2);
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"Exit flag: %s\n\rKey #: %d\n\r",
 						buf2, rm->dir_option[i]->key);
-					sprintf(buf2, "To room(R-Num): %d\n\r",
+					snprintf(buf2, sizeof(buf2), "To room(R-Num): %d\n\r",
 						rm->dir_option[i]->to_room);
 					strcat(buf, buf2);
 					strcat(page_buffer, buf);
@@ -482,15 +491,15 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 		if ((cmd != 232) && (cmd != 233) && (j = get_obj_vis(ch, arg1))) {
 			virtual = (j->item_number >= 0) ?
 			    obj_index[j->item_number].virtual : 0;
-			sprintf(page_buffer,
+			snprintf(page_buffer, sizeof(page_buffer),
 				"Object name: [%s], R-num: [%d], ",
 				j->name, j->item_number);
-			sprintf(buf, "V-number: [%d]\n\rItem type: ", virtual);
+			snprintf(buf, sizeof(buf), "V-number: [%d]\n\rItem type: ", virtual);
 			strcat(page_buffer, buf);
 			sprinttype(GET_ITEM_TYPE(j), item_types, buf2);
 			strcat(page_buffer, buf2);
 			strcat(page_buffer, "\n\r");
-			sprintf(buf, "Short desc: %s\n\rLong desc:\n\r%s\n\r",
+			snprintf(buf, sizeof(buf), "Short desc: %s\n\rLong desc:\n\r%s\n\r",
 				((j->short_description) ? j->short_description
 				 : "None"),
 				((j->description) ? j->description : "None"));
@@ -515,10 +524,10 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 			sprintbit(j->obj_flags.extra_flags, extra_bits, buf);
 			strcat(buf, "\n\r\n\r");
 			strcat(page_buffer, buf);
-			sprintf(buf, "Weight: %d, Value: %d, Timer: %d\n\r",
+			snprintf(buf, sizeof(buf), "Weight: %d, Value: %d, Timer: %d\n\r",
 				j->obj_flags.weight, j->obj_flags.cost, j->obj_flags.timer);
 			strcat(page_buffer, buf);
-			sprintf(buf, "Values 0-3 : [%d] [%d] [%d] [%d]\n\r",
+			snprintf(buf, sizeof(buf), "Values 0-3 : [%d] [%d] [%d] [%d]\n\r",
 				j->obj_flags.value[0], j->obj_flags.value[1],
 				j->obj_flags.value[2], j->obj_flags.value[3]);
 			strcat(page_buffer, buf);
@@ -526,7 +535,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 			for (i = 0; i < MAX_OBJ_AFFECT; ++i) {
 				sprinttype(j->affected[i].location,
 					   apply_types, buf2);
-				sprintf(buf, "  Affects: %s by %d\n\r",
+				snprintf(buf, sizeof(buf), "  Affects: %s by %d\n\r",
 					buf2, j->affected[i].modifier);
 				strcat(page_buffer, buf);
 			}
@@ -546,14 +555,14 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 			k = get_char_vis(ch, arg1);
 
 		if (k) {
-			sprintf(page_buffer, "Sex: %d,", k->player.sex);
-			sprintf(buf, " %s, Name: %s\n\r",
+			snprintf(page_buffer, sizeof(page_buffer), "Sex: %d,", k->player.sex);
+			snprintf(buf, sizeof(buf), " %s, Name: %s\n\r",
 				(!IS_NPC(k) ? "PC" : (!IS_MOB(k) ? "NPC" :
 						      "MOB")),
 				GET_NAME(k));
 			strcat(page_buffer, buf);
 			if (IS_NPC(k)) {
-				sprintf(buf, "V-Number [%d]\n\r",
+				snprintf(buf, sizeof(buf), "V-Number [%d]\n\r",
 					mob_index[k->nr].virtual);
 				strcat(page_buffer, buf);
 				strcpy(buf, "Short desc: ");
@@ -576,7 +585,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 			strcpy(buf, "Class: ");
 			sprinttype(k->player.class, pc_class_types, buf2);
 			strcat(buf, buf2);
-			sprintf(buf2, "  Level [%d] Alignment[%d]\n\r", k->player.level,
+			snprintf(buf2, sizeof(buf2), "  Level [%d] Alignment[%d]\n\r", k->player.level,
 				k->specials.alignment);
 			strcat(buf, buf2);
 			strcat(page_buffer, buf);
@@ -588,34 +597,34 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 			strncat(buf, (char *)ctime((time_t *)&t), 24);
 			t = k->player.time.played;
 			i = t % 86400;
-			sprintf(buf2, "\n\rPlayed: %d days, %d:%02d\n\r",
+			snprintf(buf2, sizeof(buf2), "\n\rPlayed: %d days, %d:%02d\n\r",
 				t / 86400, i / 3600, (i + 30) % 60);
 			strcat(buf, buf2);
 			strcat(page_buffer, buf);
-			sprintf(buf, "Age: %d Y, %d M, %d D, %d H.",
+			snprintf(buf, sizeof(buf), "Age: %d Y, %d M, %d D, %d H.",
 				age(k).year, age(k).month, age(k).day, age(k).hours);
-			sprintf(buf2, "  Ht: %d cm, Wt: %d lbs\n\r",
+			snprintf(buf2, sizeof(buf2), "  Ht: %d cm, Wt: %d lbs\n\r",
 				GET_HEIGHT(k), GET_WEIGHT(k));
 			strcat(buf, buf2);
 			strcat(page_buffer, buf);
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Str:[%d/%d]  Int:[%d]  Wis:[%d]  Dex:[%d]  Con:[%d]\n\r",
 				GET_STR(k), GET_ADD(k), GET_INT(k),
 				GET_WIS(k), GET_DEX(k), GET_CON(k));
 			strcat(page_buffer, buf);
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Mana: %ld/%ld+%d, Hits: %ld/%ld+%d, Moves: %ld/%ld+%d\n\r",
 				GET_MANA(k), mana_limit(k), mana_gain(k),
 				GET_HIT(k), hit_limit(k), hit_gain(k),
 				GET_MOVE(k), move_limit(k), move_gain(k));
 			strcat(page_buffer, buf);
 
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"AC: %d/10, Hitroll: %d, Damroll: %d, Regen: %d\n\r",
 				GET_AC(k), k->points.hitroll,
 				k->points.damroll, k->regeneration);
 			strcat(page_buffer, buf);
-			sprintf(buf, "Gold: %lld, Bank: %lld, Exp: %lld\n\r",
+			snprintf(buf, sizeof(buf), "Gold: %lld, Bank: %lld, Exp: %lld\n\r",
 				GET_GOLD(k), k->bank, GET_EXP(k));
 			strcat(page_buffer, buf);
 
@@ -627,7 +636,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 				strcat(page_buffer, buf);
 			}
 
-			sprintf(buf, "Remortal : ");
+			snprintf(buf, sizeof(buf), "Remortal : ");
 			if (k->player.remortal & REMORTAL_MAGIC_USER)
 				strcat(buf, "M");
 			if (k->player.remortal & REMORTAL_CLERIC)
@@ -639,20 +648,20 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 			strcat(buf, "\n\r");
 			strcat(page_buffer, buf);
 
-			sprintf(buf, "Bare Hand Damage %dd%d.\n\r",
+			snprintf(buf, sizeof(buf), "Bare Hand Damage %dd%d.\n\r",
 				k->specials.damnodice, k->specials.damsizedice);
 			strcat(page_buffer, buf);
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Carried weight: %d   Carried items: %d\n\r",
 				IS_CARRYING_W(k), IS_CARRYING_N(k));
 			strcat(page_buffer, buf);
 			for (i = 0, j = k->carrying; j; j = j->next_content,
 			     i++) ;
-			sprintf(buf, "Items in inv: %d, ", i);
+			snprintf(buf, sizeof(buf), "Items in inv: %d, ", i);
 			for (i = 0, i2 = 0; i < MAX_WEAR; i++)
 				if (k->equipment[i])
 					i2++;
-			sprintf(buf2, "Items in equ: %d\n\r", i2);
+			snprintf(buf2, sizeof(buf2), "Items in equ: %d\n\r", i2);
 			strcat(buf, buf2);
 			strcat(page_buffer, buf);
 			if (k->desc) {
@@ -660,7 +669,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 					   connected_types, buf2);
 				strcpy(buf, "Connected: ");
 				strcat(buf, buf2);
-				sprintf(buf2, " %s (%d)\n\r", k->desc->host, k->desc->descriptor);
+				snprintf(buf2, sizeof(buf2), " %s (%d)\n\r", k->desc->host, k->desc->descriptor);
 				strcat(buf, buf2);
 				strcat(page_buffer, buf);
 			}
@@ -676,21 +685,21 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 			strcat(page_buffer, buf);
 
 			if (!IS_NPC(k)) {
-				sprintf(buf,
+				snprintf(buf, sizeof(buf),
 					"Thirst: %d, Hunger: %d, Drunk: %d\n\r",
 					k->specials.conditions[THIRST],
 					k->specials.conditions[FULL],
 					k->specials.conditions[DRUNK]);
-				sprintf(buf2, "Practices: %d\n\r", k->specials.spells_to_learn);
+				snprintf(buf2, sizeof(buf2), "Practices: %d\n\r", k->specials.spells_to_learn);
 				strcat(buf, buf2);
 				strcat(page_buffer, buf);
 			}
-			sprintf(buf, "Master is '%s'\n\r",
+			snprintf(buf, sizeof(buf), "Master is '%s'\n\r",
 				((k->master) ? GET_NAME(k->master) : "NOBODY"));
 			strcat(page_buffer, buf);
 			strcat(page_buffer, "Followers are:\n\r");
 			for (fol = k->followers; fol; fol = fol->next) {
-				sprintf(buf, "  %s", GET_NAME(fol->follower));
+				snprintf(buf, sizeof(buf), "  %s", GET_NAME(fol->follower));
 				strcat(page_buffer, buf);
 			}
 			/* Showing the bitvector */
@@ -701,7 +710,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 			if (k->affected) {
 				strcat(page_buffer, "Affecting Spells:\n\r");
 				for (aff = k->affected; aff; aff = aff->next) {
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"%s: %s by %d, %d hrs, bits: ",
 						spells[aff->type - 1],
 						apply_types[(int)aff->location],
@@ -869,7 +878,7 @@ void do_force(struct char_data *ch, char *argument, int cmd)
 				send_to_char("Oh no you don't!!\n\r", ch);
 			} else {
 				if (GET_LEVEL(ch) < (IMO + 3))
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"$n has forced you to '%s'.", to_force);
 				else
 					buf[0] = 0;
@@ -924,7 +933,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
 		    0, 0, TO_ROOM);
 		act("$n has created $N!", FALSE, ch, 0, mob, TO_ROOM);
 		send_to_char("Done.\n\r", ch);
-		sprintf(buf, "%s loaded char %d", ch->player.name, number);
+		snprintf(buf, sizeof(buf), "%s loaded char %d", ch->player.name, number);
 		log(buf);
 	} else if (is_abbrev(type, "obj")) {
 		if ((r_num = real_object(number)) < 0) {
@@ -941,7 +950,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
 		} else
 			obj_to_room(obj, ch->in_room);
 		send_to_char("Ok.\n\r", ch);
-		sprintf(buf, "%s loaded object %d", ch->player.name, number);
+		snprintf(buf, sizeof(buf), "%s loaded object %d", ch->player.name, number);
 		log(buf);
 	} else
 		send_to_char("That'll have to be either 'char' or 'obj'.\n\r", ch);
@@ -962,7 +971,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 		if ((vict = get_char_room_vis(ch, name))) {
 			if (!IS_NPC(vict)) {
 				if (GET_LEVEL(ch) < GET_LEVEL(vict)) {
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"%s tried to purge you.\n\r", ch->player.name);
 					send_to_char(buf, vict);
 					return;
@@ -1214,7 +1223,7 @@ void do_reroll(struct char_data *ch, char *argument, int cmd)
 		send_to_char("No-one by that name in the world.\n\r", ch);
 	else {
 		roll_abilities(victim);
-		sprintf(buf, "Rerolled: %d/%d %d %d %d %d\n", victim->abilities.str,
+		snprintf(buf, sizeof(buf), "Rerolled: %d/%d %d %d %d %d\n", victim->abilities.str,
 			victim->abilities.str_add,
 			victim->abilities.intel,
 			victim->abilities.wis,
@@ -1312,7 +1321,7 @@ void do_wiznet(struct char_data *ch, char *argument, int cmd)
 
 	if (IS_NPC(ch))
 		return;
-	sprintf(buf, "%s: %s\n\r", ch->player.name, argument);
+	snprintf(buf, sizeof(buf), "%s: %s\n\r", ch->player.name, argument);
 	for (i = descriptor_list; i; i = i->next)
 		if (!i->connected) {
 			if (i->original)
@@ -1324,6 +1333,7 @@ void do_wiznet(struct char_data *ch, char *argument, int cmd)
 		}
 	send_to_char("Ok.\n\r", ch);
 }
+
 FILE *chatlogfp = NULL;
 void do_chat(struct char_data *ch, char *argument, int cmd)
 {
@@ -1369,7 +1379,7 @@ void do_chat(struct char_data *ch, char *argument, int cmd)
 		}
 		return;
 	}
-	sprintf(buf, "%s> %s\n\r", ch->player.name, argument);
+	snprintf(buf, sizeof(buf), "%s> %s\n\r", ch->player.name, argument);
 	for (i = descriptor_list; i; i = i->next)
 		if (!i->connected) {
 			if (i->original)
@@ -1379,6 +1389,7 @@ void do_chat(struct char_data *ch, char *argument, int cmd)
 				send_to_char(buf, victim);
 		}
 }
+
 void do_noaffect(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *vict;
@@ -1408,13 +1419,14 @@ void do_noaffect(struct char_data *ch, char *argument, int cmd)
 	}
 	send_to_char("Ok.\n\r", ch);
 }
+
 void do_wall(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_STRING_LENGTH];
 
 	if (IS_NPC(ch) || (!*argument) || GET_LEVEL(ch) > (IMO + 3))
 		return;
-	sprintf(buf, "%s\n\r", argument + 1);
+	snprintf(buf, sizeof(buf), "%s\n\r", argument + 1);
 	send_to_all(buf);
 	send_to_char("Ok.\n\r", ch);
 }
@@ -1442,7 +1454,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 		return;
 	half_chop(argument, buf, buf2);
 	if (!*buf) {
-		sprintf(mess,
+		snprintf(mess, sizeof(mess),
 			" nokill=%d\n\rnosteal=%d\n\rfreeze=%d\n\rnoshout=%d\n\rnochat=%d\n\rbaddomain=%s\n\rnodisarm=%d\n\rregen percent=%d\n\rregen time percent=%d\n\rregen time=%d\n\rreboot time=%ld\n\r",
 			nokillflag, nostealflag, nonewplayers, noshoutflag,
 			nochatflag, baddomain[0],
@@ -1455,7 +1467,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				nokillflag = atoi(buf3);
-			sprintf(mess, "No-kill flag is %d.\n\r", nokillflag);
+			snprintf(mess, sizeof(mess), "No-kill flag is %d.\n\r", nokillflag);
 			send_to_char(mess, ch);
 			return;
 		}
@@ -1463,7 +1475,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				strcpy(baddomain[0], buf3);
-			sprintf(mess, "Bad Domain is %s.\n\n", baddomain[0]);
+			snprintf(mess, sizeof(mess), "Bad Domain is %s.\n\n", baddomain[0]);
 			send_to_char(mess, ch);
 			return;
 		}
@@ -1471,7 +1483,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				nostealflag = atoi(buf3);
-			sprintf(mess, "No-steal flag is %d.\n\r", nostealflag);
+			snprintf(mess, sizeof(mess), "No-steal flag is %d.\n\r", nostealflag);
 			send_to_char(mess, ch);
 			return;
 		}
@@ -1479,7 +1491,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				nodisarmflag = atoi(buf3);
-			sprintf(mess, "No-disarm flag is %d.\n\r", nodisarmflag);
+			snprintf(mess, sizeof(mess), "No-disarm flag is %d.\n\r", nodisarmflag);
 			send_to_char(mess, ch);
 			return;
 		}
@@ -1487,7 +1499,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				nonewplayers = atoi(buf3);
-			sprintf(mess, "Freeze flag is %d.\n\r", nonewplayers);
+			snprintf(mess, sizeof(mess), "Freeze flag is %d.\n\r", nonewplayers);
 			send_to_char(mess, ch);
 			return;
 		}
@@ -1495,7 +1507,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				noshoutflag = atoi(buf3);
-			sprintf(mess, "NoShout flag is %d.\n\r", noshoutflag);
+			snprintf(mess, sizeof(mess), "NoShout flag is %d.\n\r", noshoutflag);
 			send_to_char(mess, ch);
 			return;
 		}
@@ -1503,7 +1515,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				nochatflag = atoi(buf3);
-			sprintf(mess, "Nochat flag is %d.\n\r", nochatflag);
+			snprintf(mess, sizeof(mess), "Nochat flag is %d.\n\r", nochatflag);
 			send_to_char(mess, ch);
 			return;
 		}
@@ -1511,7 +1523,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				regen_percent = atoi(buf3);
-			sprintf(mess, "Regeneration Percentage is %d.\n\n", regen_percent);
+			snprintf(mess, sizeof(mess), "Regeneration Percentage is %d.\n\n", regen_percent);
 			send_to_char(mess, ch);
 			return;
 		}
@@ -1519,7 +1531,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				regen_time = atoi(buf3);
-			sprintf(mess,
+			snprintf(mess, sizeof(mess),
 				"Equipment-Regeneration-Time is %d.\n\n", regen_time);
 			send_to_char(mess, ch);
 			return;
@@ -1528,7 +1540,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				regen_time_percent = atoi(buf3);
-			sprintf(mess,
+			snprintf(mess, sizeof(mess),
 				"Regeneration Time is %d / 100 of original.\n\n",
 				regen_time_percent);
 			send_to_char(mess, ch);
@@ -1538,7 +1550,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 			one_argument(buf2, buf3);
 			if (*buf3)
 				reboot_time = atoi(buf3);
-			sprintf(mess,
+			snprintf(mess, sizeof(mess),
 				"Reboot Time is %ld seconds after current boot time .\n\n",
 				reboot_time);
 			send_to_char(mess, ch);
@@ -1914,7 +1926,7 @@ void do_sys(struct char_data *ch, char *argument, int cmd)
 	static int nits, nics, nids;
 
 	getrusage(0, &xru);
-	sprintf(buffer,
+	snprintf(buffer, sizeof(buffer),
 		"sys time: %d secs\n\rusr time: %d secs\n\rrun time: %d secs\n\r",
 		(int)xru.ru_stime.tv_sec, (int)xru.ru_utime.tv_sec, (int)(time
 									  (0)
@@ -1931,7 +1943,179 @@ void do_sys(struct char_data *ch, char *argument, int cmd)
 		for (d = descriptor_list; d; d = d->next)
 			++nids;
 	}
-	sprintf(buffer, " objects: %d\n\r   chars: %d\n\r players: %d\n\r",
+	snprintf(buffer, sizeof(buffer), " objects: %d\n\r   chars: %d\n\r players: %d\n\r",
 		nits, nics, nids);
 	send_to_char(buffer, ch);
+}
+
+int compare_to_descending_order(const void *a, const void *b) {
+    return (*(ubyte *)b - *(ubyte *)a);
+}
+
+/*
+ * zreload 명령어: 특정 존 파일을 다시 로드
+ * by Komo
+ */
+void do_zreload(struct char_data *ch, char *argument, int cmd)
+{
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
+    int target_zone_num;
+    int i, zone_rnum = -1;
+
+    one_argument(argument, arg);
+
+    // 인자 확인
+    if (!*arg) {
+        send_to_char("&c[ZRELOAD]&n &W사용법: zreload <존 번호>&n\r\n"
+                     "&c[ZRELOAD]&n &W예시: zreload 30 (미드가르드), zreload 300 (카이스트)&n\r\n", ch);
+        return;
+    }
+
+    // 숫자 확인
+    if (!isdigit(*arg)) {
+        send_to_char("&c[ZRELOAD]&n 존 번호는 숫자여야 합니다.\r\n", ch);
+        return;
+    }
+
+    target_zone_num = atoi(arg);
+
+    for (i = 0; i <= top_of_zone_table; i++) {
+        if (zone_table[i].number == target_zone_num) {
+            zone_rnum = i; // 찾았다!
+            break;
+        }
+    }
+
+    if (zone_rnum == -1) { // 찾지 못한 경우
+        snprintf(buf, sizeof(buf), "&c[ZRELOAD]&n 존 번호 %d번을 찾을 수 없습니다. '%s' 목록을 확인하세요.\r\n", target_zone_num, ALL_ZONE_FILE);
+        send_to_char(buf, ch);
+        return;
+    }
+
+    snprintf(buf, sizeof(buf), "[ZRELOAD] (GC) %s reloaded Zone %d (%s).", 
+            GET_NAME(ch), target_zone_num, zone_table[zone_rnum].filename);
+    log(buf);
+
+    load_zones(zone_rnum);
+
+    snprintf(buf, sizeof(buf), "&c[ZRELOAD]&n 존 %d번 '%s' (%s) Reload 완료.\r\n", 
+            zone_table[zone_rnum].number, zone_table[zone_rnum].name, zone_table[zone_rnum].filename);
+    send_to_char(buf, ch);
+}
+
+
+/*
+ * wreload 명령어: 특정 wld 파일을 다시 로드
+ * --- by Komo
+ */
+void do_wreload(struct char_data *ch, char *argument, int cmd)
+{
+    char arg[MAX_INPUT_LENGTH];
+    char buf[MAX_STRING_LENGTH];
+    int target_zone_num, zone_rnum;
+    FILE *fl;
+
+    one_argument(argument, arg);
+
+    if (!*arg) {
+        send_to_char("&c[WRELOAD]&n 존 번호를 기준으로 특정 wld 파일을 다시 읽어옵니다.\r\n", ch);
+		send_to_char("&c[WRELOAD]&n &W사용법: wreload <존 번호>&n\r\n", ch);
+        return;
+    }
+
+    if (!isdigit(*arg)) {
+        send_to_char("&c[WRELOAD]&n 존 번호는 숫자여야 합니다.\r\n", ch);
+        return;
+    }
+
+    target_zone_num = atoi(arg);
+    zone_rnum = real_zone_by_number(target_zone_num);
+
+    if (zone_rnum == -1) {
+        send_to_char("&c[WRELOAD]&n 존재하지 않는 존 번호입니다.\r\n", ch);
+        return;
+    }
+
+    /* .wld 파일이 정의되어 있는지 확인 */
+    if (!zone_table[zone_rnum].wld_filename) {
+        send_to_char("&c[WRELOAD]&n 이 존에는 연결된 World 파일(.wld)이 없습니다.\r\n", ch);
+        return;
+    }
+
+    /* 파일 열기 */
+    if (!(fl = fopen(zone_table[zone_rnum].wld_filename, "r"))) {
+        snprintf(buf, sizeof(buf), "&c[WRELOAD]&n 파일 열기 실패: %s\r\n", zone_table[zone_rnum].wld_filename);
+        send_to_char(buf, ch);
+        return;
+    }
+
+    /* 핵심 로직 호출 */
+    reload_world_file(fl, zone_rnum);
+    fclose(fl);
+
+    /* 로그 및 메시지 */
+    snprintf(buf, sizeof(buf), "[WRELOAD] (GC) %s reloaded World file for Zone %d.", GET_NAME(ch), target_zone_num);
+    log(buf);
+    
+    snprintf(buf, sizeof(buf), "&c[WRELOAD]&n 존 %d번 월드 데이터(%s) 업데이트 완료.\r\n"
+				 "&c[WRELOAD]&n 동기화를 위해 zreload 실행을 권장합니다.\r\n"
+                 "&c[WRELOAD]&n 주의: 새로 추가된 방은 반영되지 않으며, 기존 방의 정보만 갱신되었습니다.\r\n", 
+            target_zone_num, zone_table[zone_rnum].wld_filename);
+    send_to_char(buf, ch);
+}
+
+
+void do_zonelist(struct char_data *ch, char *argument, int cmd)
+{
+    int i;
+    char *buf;            /* 동적 할당할 큰 버퍼 포인터 */
+    char wld_status[64];
+    char zon_name_fmt[64];
+    char zon_file_display[64];
+    
+    size_t len = 0;       /* 현재 버퍼에 채워진 길이 */
+    size_t buf_size = 65536; /* 64KB */
+
+    CREATE(buf, char, buf_size);
+
+    /* 헤더 출력 */
+    len += snprintf(buf + len, buf_size - len,
+        " IDX    VNUM    TOP   %-30s %-25s %-25s\r\n"
+        "---------------------------------------------------------------------------------------------------------\r\n",
+        "Zone Name", "Zone File", "World File");
+
+    for (i = 0; i <= top_of_zone_table; i++) {
+        
+        sprintf(zon_name_fmt, "%-30.30s", zone_table[i].name ? zone_table[i].name : "<No Name>");
+
+        if (zone_table[i].wld_filename && *zone_table[i].wld_filename) {
+            char *fname = strrchr(zone_table[i].wld_filename, '/');
+            sprintf(wld_status, "%-25.25s", fname ? fname + 1 : zone_table[i].wld_filename);
+        } else {
+            sprintf(wld_status, "%-25s", "---");
+        }
+
+        char *zname = strrchr(zone_table[i].filename, '/');
+        sprintf(zon_file_display, "%-25.25s", zname ? zname + 1 : zone_table[i].filename);
+
+        len += snprintf(buf + len, buf_size - len, 
+            "[%3d] [%5d] [%5d] %s %s %s\r\n",
+            i,
+            zone_table[i].number,
+            zone_table[i].top,
+            zon_name_fmt,
+            zon_file_display,
+            wld_status
+        );
+
+        if (len >= buf_size - 256) {
+            strcat(buf, "** LIST TRUNCATED (Buffer really full) **\r\n");
+            break;
+        }
+    }
+
+    page_string(ch->desc, buf, 1);
+
+    free(buf);
 }

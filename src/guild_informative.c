@@ -67,7 +67,7 @@ void do_cant(struct char_data *ch, char *argument, int cmd)
 				    && GET_LEVEL
 				    (victim) < IMO) {
 					j++;
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"<%2d> %s <%5ld,%5ld,%5ld> %s \n\r",
 						GET_LEVEL(victim),
 						GET_NAME(victim),
@@ -78,11 +78,11 @@ void do_cant(struct char_data *ch, char *argument, int cmd)
 					send_to_char(buf, ch);
 				}
 			}
-		sprintf(buf, "You can see %d member(s) of %s guild.\n\r",
+		snprintf(buf, sizeof(buf), "You can see %d member(s) of %s guild.\n\r",
 			j, guild_names[(int)ch->player.guild]);
 		send_to_char(buf, ch);
 	} else {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			"(%s) %s >>> %s\n\r",
 			guild_names[(int)ch->player.guild],
 			ch->player.name,
@@ -119,7 +119,7 @@ void do_query(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 	if (victim->player.guild >= 0 && victim->player.guild <= MAX_GUILD_LIST) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			"%s(%d) is a member of %s guild\n\r",
 			GET_NAME(victim),
 			GET_LEVEL(victim),
@@ -129,48 +129,48 @@ void do_query(struct char_data *ch, char *argument, int cmd)
 
 	/* modified by ares */
 	if (GET_LEVEL(ch) >= GET_LEVEL(victim))
-		sprintf(buf, "%s's hit is %ld.\n\r", GET_NAME(victim),
+		snprintf(buf, sizeof(buf), "%s's hit is %ld.\n\r", GET_NAME(victim),
 			GET_HIT(victim));
 	else if (GET_HIT(victim) > GET_HIT(ch))
-		sprintf(buf, "%s's hit is higher than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's hit is higher than you.\n\r", GET_NAME(victim));
 	else
-		sprintf(buf, "%s's hit is lower than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's hit is lower than you.\n\r", GET_NAME(victim));
 	send_to_char(buf, ch);
 
 	if (GET_LEVEL(ch) >= GET_LEVEL(victim))
-		sprintf(buf, "%s's mana is %ld.\n\r", GET_NAME(victim),
+		snprintf(buf, sizeof(buf), "%s's mana is %ld.\n\r", GET_NAME(victim),
 			GET_MANA(victim));
 	else if (GET_MANA(victim) > GET_MANA(ch))
-		sprintf(buf, "%s's mana is higher than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's mana is higher than you.\n\r", GET_NAME(victim));
 	else
-		sprintf(buf, "%s's mana is lower than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's mana is lower than you.\n\r", GET_NAME(victim));
 	send_to_char(buf, ch);
 
 	if (GET_LEVEL(ch) >= GET_LEVEL(victim))
-		sprintf(buf, "%s's move is %ld.\n\r", GET_NAME(victim),
+		snprintf(buf, sizeof(buf), "%s's move is %ld.\n\r", GET_NAME(victim),
 			GET_MOVE(victim));
 	else if (GET_MOVE(victim) > GET_MOVE(ch))
-		sprintf(buf, "%s's move is higher than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's move is higher than you.\n\r", GET_NAME(victim));
 	else
-		sprintf(buf, "%s's move is lower than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's move is lower than you.\n\r", GET_NAME(victim));
 	send_to_char(buf, ch);
 
 	if (GET_LEVEL(ch) >= GET_LEVEL(victim))
-		sprintf(buf, "%s's hitroll is %d.\n\r", GET_NAME(victim),
+		snprintf(buf, sizeof(buf), "%s's hitroll is %d.\n\r", GET_NAME(victim),
 			GET_HITROLL(victim));
 	else if (GET_HITROLL(victim) > GET_HITROLL(ch))
-		sprintf(buf, "%s's hitroll is higher than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's hitroll is higher than you.\n\r", GET_NAME(victim));
 	else
-		sprintf(buf, "%s's hitroll is lower than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's hitroll is lower than you.\n\r", GET_NAME(victim));
 	send_to_char(buf, ch);
 
 	if (GET_LEVEL(ch) >= GET_LEVEL(victim))
-		sprintf(buf, "%s's damroll is %d.\n\r", GET_NAME(victim),
+		snprintf(buf, sizeof(buf), "%s's damroll is %d.\n\r", GET_NAME(victim),
 			GET_DAMROLL(victim));
 	else if (GET_DAMROLL(victim) > GET_DAMROLL(ch))
-		sprintf(buf, "%s's damroll is higher than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's damroll is higher than you.\n\r", GET_NAME(victim));
 	else
-		sprintf(buf, "%s's damroll is lower than you.\n\r", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), "%s's damroll is lower than you.\n\r", GET_NAME(victim));
 	send_to_char(buf, ch);
 
 	act("$n QUERYS $N.", TRUE, ch, 0, victim, TO_ROOM);

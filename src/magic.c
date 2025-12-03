@@ -292,6 +292,7 @@ void spell_sunburst(byte level, struct char_data *ch,
 	int dam;
 	void spell_blindness(byte level, struct char_data *ch,
 			     struct char_data *victim, struct obj_data *obj);
+	// char buf[MAX_STRING_LENGTH];
 
 	static int dam_each[] =
 	{0,
@@ -670,8 +671,8 @@ void spell_identify(byte level, struct char_data *ch,
 		send_to_char_han("You feel informed:\n\r",
 				 "이런 정보를 알 수 있습니다:\n\r", ch);
 
-		sprintf(buf, "Object '%s', Item type: ", obj->name);
-		sprintf(bufh, "물건 '%s', 종류: ", obj->name);
+		snprintf(buf, sizeof(buf), "Object '%s', Item type: ", obj->name);
+		snprintf(bufh, sizeof(bufh), "물건 '%s', 종류: ", obj->name);
 		sprinttype(GET_ITEM_TYPE(obj), item_types, buf2);
 		strcat(buf, buf2);
 		strcat(buf, "\n\r");
@@ -692,18 +693,18 @@ void spell_identify(byte level, struct char_data *ch,
 		strcat(buf, "\n\r");
 		send_to_char(buf, ch);
 
-		sprintf(buf, "Weight: %d, Value: %d\n\r",
+		snprintf(buf, sizeof(buf), "Weight: %d, Value: %d\n\r",
 			obj->obj_flags.weight, obj->obj_flags.cost);
-		sprintf(bufh, "무게: %d, 값: %d\n\r",
+		snprintf(bufh, sizeof(bufh), "무게: %d, 값: %d\n\r",
 			obj->obj_flags.weight, obj->obj_flags.cost);
 		send_to_char_han(buf, bufh, ch);
 
 		switch (GET_ITEM_TYPE(obj)) {
 		case ITEM_SCROLL:
 		case ITEM_POTION:
-			sprintf(buf, "Level %d spells of:\n\r",
+			snprintf(buf, sizeof(buf), "Level %d spells of:\n\r",
 				obj->obj_flags.value[0]);
-			sprintf(bufh, "%d 레벨에 해당하는 마법:\n\r",
+			snprintf(bufh, sizeof(bufh), "%d 레벨에 해당하는 마법:\n\r",
 				obj->obj_flags.value[0]);
 			send_to_char_han(buf, bufh, ch);
 			if (obj->obj_flags.value[1] >= 1) {
@@ -727,14 +728,14 @@ void spell_identify(byte level, struct char_data *ch,
 			break;
 		case ITEM_WAND:
 		case ITEM_STAFF:
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Has %d charges, with %d charges left.\n\r",
 				obj->obj_flags.value[1], obj->obj_flags.value[2]);
 			send_to_char(buf, ch);
 
-			sprintf(buf, "Level %d spell of:\n\r",
+			snprintf(buf, sizeof(buf), "Level %d spell of:\n\r",
 				obj->obj_flags.value[0]);
-			sprintf(bufh, "%d 레벨에 해당하는 마법:\n\r",
+			snprintf(bufh, sizeof(bufh), "%d 레벨에 해당하는 마법:\n\r",
 				obj->obj_flags.value[0]);
 			send_to_char_han(buf, bufh, ch);
 
@@ -747,83 +748,83 @@ void spell_identify(byte level, struct char_data *ch,
 			break;
 		case ITEM_WEAPON:
 		case ITEM_FIREWEAPON:
-			sprintf(buf, "Damage Dice is '%dD%d'\n\r",
+			snprintf(buf, sizeof(buf), "Damage Dice is '%dD%d'\n\r",
 				obj->obj_flags.value[1], obj->obj_flags.value[2]);
-			sprintf(bufh, "Damage Dice 는 '%dD%d'\n\r",
+			snprintf(bufh, sizeof(bufh), "Damage Dice 는 '%dD%d'\n\r",
 				obj->obj_flags.value[1], obj->obj_flags.value[2]);
 			send_to_char_han(buf, bufh, ch);
 			if (obj->obj_flags.gpd) {
-				sprintf(buf, "This is magic weapon.\n\r");
+				snprintf(buf, sizeof(buf), "This is magic weapon.\n\r");
 				switch (obj->obj_flags.value[0]) {
 				case WEAPON_SMASH:
-					sprintf(buf, "smash\n\r");
+					snprintf(buf, sizeof(buf), "smash\n\r");
 					break;
 				case WEAPON_FLAME:
-					sprintf(buf, "flame\n\r");
+					snprintf(buf, sizeof(buf), "flame\n\r");
 					break;
 				case WEAPON_ICE:
-					sprintf(buf, "ice beam\n\r");
+					snprintf(buf, sizeof(buf), "ice beam\n\r");
 					break;
 				case WEAPON_BOMBARD:
-					sprintf(buf, "bombard\n\r");
+					snprintf(buf, sizeof(buf), "bombard\n\r");
 					break;
 				case WEAPON_SHOT:
-					sprintf(buf, "shot\n\r");
+					snprintf(buf, sizeof(buf), "shot\n\r");
 					break;
 				case WEAPON_DRAGON_SLAYER:
-					sprintf(buf, "dragon slayer\n\r");
+					snprintf(buf, sizeof(buf), "dragon slayer\n\r");
 					break;
 				case WEAPON_ANTI_EVIL_WEAPON:
-					sprintf(buf, "anti evil\n\r");
+					snprintf(buf, sizeof(buf), "anti evil\n\r");
 					break;
 				case WEAPON_ANTI_GOOD_WEAPON:
-					sprintf(buf, "anti good\n\r");
+					snprintf(buf, sizeof(buf), "anti good\n\r");
 					break;
 				case WEAPON_GIANT_SLAYER:
-					sprintf(buf, "giant slayer\n\r");
+					snprintf(buf, sizeof(buf), "giant slayer\n\r");
 					break;
 				case WEAPON_BEHEAD:
-					sprintf(buf, "behead\n\r");
+					snprintf(buf, sizeof(buf), "behead\n\r");
 					break;
 				case WEAPON_LIGHTNING:
-					sprintf(buf, "lightning\n\r");
+					snprintf(buf, sizeof(buf), "lightning\n\r");
 					break;
 				case WEAPON_CALL_LIGHTNING:
-					sprintf(buf, "call lightning\n\r");
+					snprintf(buf, sizeof(buf), "call lightning\n\r");
 					break;
 				case WEAPON_FIREBALL:
-					sprintf(buf, "fireball\n\r");
+					snprintf(buf, sizeof(buf), "fireball\n\r");
 					break;
 				case WEAPON_FIRE_BREATH:
-					sprintf(buf, "fire breath\n\r");
+					snprintf(buf, sizeof(buf), "fire breath\n\r");
 					break;
 				case WEAPON_FROST_BREATH:
-					sprintf(buf, "frost breath\n\r");
+					snprintf(buf, sizeof(buf), "frost breath\n\r");
 					break;
 				case WEAPON_ENERGY_DRAIN:
-					sprintf(buf, "energy drain\n\r");
+					snprintf(buf, sizeof(buf), "energy drain\n\r");
 					break;
 				case WEAPON_DISINTEGRATE:
-					sprintf(buf, "disintegrate\n\r");
+					snprintf(buf, sizeof(buf), "disintegrate\n\r");
 					break;
 					/*
 					   case WEAPON_GOD:
-					   sprintf(buf,"god blessed\n\r"); break;
+					   snprintf(buf, sizeof(buf),"god blessed\n\r"); break;
 					 */
 				case WEAPON_ANY_MAGIC:
-					sprintf(buf, "random magic\n\r");
+					snprintf(buf, sizeof(buf), "random magic\n\r");
 					break;
 				default:
-					sprintf(buf, "unknown magic\n\r");
+					snprintf(buf, sizeof(buf), "unknown magic\n\r");
 				}
 				send_to_char(buf, ch);
 			}
 			break;
 		case ITEM_ARMOR:
 			if (ac_applicable(obj)) {
-				sprintf(buf, "AC-apply is %d\n\r",
+				snprintf(buf, sizeof(buf), "AC-apply is %d\n\r",
 					obj->obj_flags.value[0]);
-				sprintf(bufh, "무장: %d\n\r",
+				snprintf(bufh, sizeof(bufh), "무장: %d\n\r",
 					obj->obj_flags.value[0]);
 				send_to_char_han(buf, bufh, ch);
 			}
@@ -842,9 +843,9 @@ void spell_identify(byte level, struct char_data *ch,
 
 				sprinttype(obj->affected[i].location,
 					   apply_types, buf2);
-				sprintf(buf, "    Affects : %s By %d\n\r", buf2,
+				snprintf(buf, sizeof(buf), "    Affects : %s By %d\n\r", buf2,
 					obj->affected[i].modifier);
-				sprintf(bufh,
+				snprintf(bufh, sizeof(bufh),
 					"    기능 : %d 만큼의 %s\n\r",
 					obj->affected[i].modifier, buf2);
 				send_to_char_han(buf, bufh, ch);
@@ -852,23 +853,23 @@ void spell_identify(byte level, struct char_data *ch,
 		}
 	} else {		/* victim */
 		if (!IS_NPC(victim)) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"%d Years,  %d Months,  %d Days,  %d Hours old.\n\r",
 				age(victim).year, age(victim).month,
 				age(victim).day, age(victim).hours);
-			sprintf(bufh,
+			snprintf(bufh, sizeof(bufh),
 				"나이 %d 년 %d 달 %d 일 %d 시간 입니다.\n\r",
 				age(victim).year, age(victim).month,
 				age(victim).day, age(victim).hours);
 			send_to_char_han(buf, bufh, ch);
 
-			sprintf(buf, "Height %dcm  Weight %dpounds \n\r",
+			snprintf(buf, sizeof(buf), "Height %dcm  Weight %dpounds \n\r",
 				GET_HEIGHT(victim), GET_WEIGHT(victim));
-			sprintf(bufh, "키 %dcm  몸무게 %d Kg\n\r",
+			snprintf(bufh, sizeof(bufh), "키 %dcm  몸무게 %d Kg\n\r",
 				GET_HEIGHT(victim), GET_WEIGHT(victim));
 			send_to_char_han(buf, bufh, ch);
 			if (GET_LEVEL(victim) > 5) {
-				sprintf(buf,
+				snprintf(buf, sizeof(buf),
 					"Str %d/%d,  Int %d,  Wis %d,  Dex %d,  Con %d\n\r",
 					GET_STR(victim), GET_ADD(victim),
 					GET_INT(victim),

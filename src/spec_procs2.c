@@ -301,7 +301,7 @@ int perhaps(struct char_data *ch, int cmd, char *arg)
 			   SPELL_TYPE_SPELL, ch, NULL);
 
 		char *msg = blessings[number(0, 2)];
-		sprintf(buf, msg, GET_NAME(ch));
+		snprintf(buf, sizeof(buf), msg, GET_NAME(ch));
 		do_say(perhaps, buf, 0);
 		return 0;
 	}
@@ -1145,7 +1145,7 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 			/* can't buy PC */
 			if (!IS_NPC(pet))
 				continue;
-			sprintf(buf, "%8lld - %s\n\r", 10 * GET_EXP(pet), pet->player.short_descr);
+			snprintf(buf, sizeof(buf), "%8lld - %s\n\r", 10 * GET_EXP(pet), pet->player.short_descr);
 			send_to_char(buf, ch);
 		}
 		return (TRUE);
@@ -1178,11 +1178,11 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 		GET_EXP(pet) = 0;
 		SET_BIT(pet->specials.affected_by, AFF_CHARM);
 		if (*pet_name) {
-			sprintf(buf, "%s %s", pet->player.name, pet_name);
+			snprintf(buf, sizeof(buf), "%s %s", pet->player.name, pet_name);
 			free(pet->player.name);
 			pet->player.name = strdup(buf);
 
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"%sA small sign on a chain around the neck says 'My Name is %s'\n\r",
 				pet->player.description, pet_name);
 			free(pet->player.description);
@@ -1232,20 +1232,20 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 	cost[6] = 4000000 + GET_SEX(ch) * 1000000;
 
 	if (cmd == 59) {	/* List */
-		sprintf(buf, "1 - Hit points restoration (%d coins)\n\r", cost[1]);
+		snprintf(buf, sizeof(buf), "1 - Hit points restoration (%d coins)\n\r", cost[1]);
 		send_to_char(buf, ch);
-		sprintf(buf, "2 - Mana restoration (%d coins)\n\r", cost[2]);
+		snprintf(buf, sizeof(buf), "2 - Mana restoration (%d coins)\n\r", cost[2]);
 		send_to_char(buf, ch);
-		sprintf(buf, "3 - Move restoration (%d coins)\n\r", cost[3]);
+		snprintf(buf, sizeof(buf), "3 - Move restoration (%d coins)\n\r", cost[3]);
 		send_to_char(buf, ch);
-		sprintf(buf, "4 - Poison cured (%d coins)\n\r", cost[4]);
+		snprintf(buf, sizeof(buf), "4 - Poison cured (%d coins)\n\r", cost[4]);
 		send_to_char(buf, ch);
-		sprintf(buf, "5 - Change Your name (%d coins)\n\r", cost[5]);
+		snprintf(buf, sizeof(buf), "5 - Change Your name (%d coins)\n\r", cost[5]);
 		send_to_char(buf, ch);
-		sprintf(buf, "6 - Change Your Sex(toggle) (%d coins)\n\r",
+		snprintf(buf, sizeof(buf), "6 - Change Your Sex(toggle) (%d coins)\n\r",
 			cost[6]);
 		send_to_char(buf, ch);
-		sprintf(buf, "To change name, TYPE \"buy 5 <NAME>\"\n\r");
+		snprintf(buf, sizeof(buf), "To change name, TYPE \"buy 5 <NAME>\"\n\r");
 		send_to_char(buf, ch);
 		return (TRUE);
 	} else if (cmd == 56) {	/* Buy */
@@ -1396,22 +1396,22 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 				temp[i] = tolower(temp[i]);
 
 			/* now rename .x file */
-			sprintf(stash_file1, "stash/%c/%s.x", stash_name[0], stash_name);
-			sprintf(stash_file2, "stash/%c/%s.x", temp[0], temp);
+			snprintf(stash_file1, sizeof(stash_file1), "stash/%c/%s.x", stash_name[0], stash_name);
+			snprintf(stash_file2, sizeof(stash_file2), "stash/%c/%s.x", temp[0], temp);
 			rename(stash_file1, stash_file2);
 			/* now rename .x.y file */
-			sprintf(stash_file1, "stash/%c/%s.x.y", stash_name[0], stash_name);
-			sprintf(stash_file2, "stash/%c/%s.x.y", temp[0], temp);
+			snprintf(stash_file1, sizeof(stash_file1), "stash/%c/%s.x.y", stash_name[0], stash_name);
+			snprintf(stash_file2, sizeof(stash_file2), "stash/%c/%s.x.y", temp[0], temp);
 			rename(stash_file1, stash_file2);
 			/* now rename .x.tmp file */
-			sprintf(stash_file1, "stash/%c/%s.x.tmp",
+			snprintf(stash_file1, sizeof(stash_file1), "stash/%c/%s.x.tmp",
 				stash_name[0], stash_name);
-			sprintf(stash_file2, "stash/%c/%s.x.tmp", temp[0], temp);
+			snprintf(stash_file2, sizeof(stash_file2), "stash/%c/%s.x.tmp", temp[0], temp);
 			rename(stash_file1, stash_file2);
 			/* now rename .lock file */
-			sprintf(stash_file1, "stash/%c/%s.lock",
+			snprintf(stash_file1, sizeof(stash_file1), "stash/%c/%s.lock",
 				stash_name[0], stash_name);
-			sprintf(stash_file2, "stash/%c/%s.lock", temp[0], temp);
+			snprintf(stash_file2, sizeof(stash_file2), "stash/%c/%s.lock", temp[0], temp);
 			rename(stash_file1, stash_file2);
 
 			GET_GOLD(ch) -= cost[5];
@@ -1639,7 +1639,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 						ch->quest.solved -= 15;
 					else
 						ch->quest.solved -= 7;
-					sprintf(buf2,
+					snprintf(buf2, sizeof(buf2),
 						"Your AC changed from %d to %d!!!\r\n", k,
 						GET_AC(ch));
 					send_to_char(buf2, ch);
@@ -1652,7 +1652,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 						ch->quest.solved -= 10;
 					else
 						ch->quest.solved -= 6;
-					sprintf(buf2,
+					snprintf(buf2, sizeof(buf2),
 						"Your HITROLL changed from %d to %d!!!\r\n", k,
 						GET_HITROLL(ch));
 					send_to_char(buf2, ch);
@@ -1668,7 +1668,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 						ch->quest.solved -= 15;
 					else
 						ch->quest.solved -= 8;
-					sprintf(buf2,
+					snprintf(buf2, sizeof(buf2),
 						"You DAMROLL changed from %d to %d!!!\r\n",
 						k, GET_DAMROLL(ch));
 					send_to_char(buf2, ch);
@@ -1688,281 +1688,228 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 	return (FALSE);
 }
 
+/* re-written, 251130 by Komo */
 int remortal(struct char_data *ch, int cmd, char *arg)
 {
-	char buf1[100], buf2[100];
-	char class;
-	char buf[255];
-	char classes[4][20] =
-	{
-		"지존 마법사",
-		"지존 힐러",
-		"지존 도둑으",
-		"지존 워리어"
-	};
-	int all_done;
+    char buf[255];
+    char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH];
+    const char *class_names[] = { "None", "Magic User", "Cleric", "Thief", "Warrior" };
+    
+    int target_class_bit = 0;
+    int target_class_num = 0;
+    int rcnt = 0;
+    int required_level = 0;
+    int all_done = 0;
+	int is_repeat = 0; /* 중복 리모탈 여부 플래그 */
 
-	/* not say */
-	if (cmd != 17)
-		return 0;
+    if (cmd != 17) return 0; /* say 명령어가 아니면 무시 */
 
-	/*
-	   defined in structs.h
-	   #define REMORTAL_MAGIC_USER     1
-	   #define REMORTAL_CLERIC         2
-	   #define REMORTAL_THIEF          4
-	   #define REMORTAL_WARRIOR        8
-	 */
-	all_done = (ch->player.remortal == (1 + 2 + 4 + 8));
+    /* 현재 리모탈 완료 횟수 계산 */
+    if (ch->player.remortal & REMORTAL_MAGIC_USER) rcnt++;
+    if (ch->player.remortal & REMORTAL_CLERIC)     rcnt++;
+    if (ch->player.remortal & REMORTAL_THIEF)      rcnt++;
+    if (ch->player.remortal & REMORTAL_WARRIOR)    rcnt++;
 
-	if (all_done) {
-		if (ch->points.exp < 1000000000) {
-			send_to_char("You need more experience to remortal.!!!\n\r", ch);
-			return 0;
+    all_done = (ch->player.remortal == 15); /* 올리모 상태 체크, 비트 1+2+4+8 = 15 */
+
+    /* 입력값 파싱 및 타겟 확인 */
+    half_chop(arg, arg1, arg2); /* arg2에 'YES' 같은 뒤쪽 문자가 담김 */
+    if (!*arg1) return 0; /* 인자 없으면 무시 */
+
+    switch (toupper(arg1[0])) {
+        case '?':
+            send_to_char("=== Your Remortal Status ===\n\r", ch);
+            if (ch->player.remortal & REMORTAL_MAGIC_USER) send_to_char("[PASS] Magic User\n\r", ch);
+            else send_to_char("[    ] Magic User\n\r", ch);
+            
+            if (ch->player.remortal & REMORTAL_CLERIC)     send_to_char("[PASS] Cleric\n\r", ch);
+            else send_to_char("[    ] Cleric\n\r", ch);
+            
+            if (ch->player.remortal & REMORTAL_THIEF)      send_to_char("[PASS] Thief\n\r", ch);
+            else send_to_char("[    ] Thief\n\r", ch);
+            
+            if (ch->player.remortal & REMORTAL_WARRIOR)    send_to_char("[PASS] Warrior\n\r", ch);
+            else send_to_char("[    ] Warrior\n\r", ch);
+            
+            if (!all_done) {
+                if (rcnt == 0) 		required_level = 40;
+                else if (rcnt == 1) required_level = 50;
+                else if (rcnt >= 2) required_level = 60;
+                snprintf(buf, sizeof(buf), "Next Remortal Requirement: Level %d\n\r", required_level);
+                send_to_char(buf, ch);
+            } else {
+                send_to_char("&c[REMORTAL]&n You are a Grand Master. You can change class freely with 1G EXP.\n\r", ch);
+            }
+            return TRUE;
+
+        case 'M': 
+            target_class_bit = REMORTAL_MAGIC_USER; 
+            target_class_num = 1; 
+            break;
+        case 'C': 
+            target_class_bit = REMORTAL_CLERIC; 
+            target_class_num = 2; 
+            break;
+        case 'T': 
+            target_class_bit = REMORTAL_THIEF; 
+            target_class_num = 3; 
+            break;
+        case 'W': 
+            target_class_bit = REMORTAL_WARRIOR; 
+            target_class_num = 4; 
+            break;
+        default:
+			send_to_char("&c[REMORTAL]&n The ancient spirits do not respond to such gibberish.\n\r", ch);
+            return TRUE;
+    }
+
+	/* --- 레벨 제한 체크 --- */
+    if (rcnt == 0)      required_level = 40;
+    else if (rcnt == 1) required_level = 50;
+    else                required_level = 60;
+
+    if (GET_LEVEL(ch) < required_level) {
+        snprintf(buf, sizeof(buf), "You must be at least level %d to perform your #%d remortal.\n\r", required_level, rcnt + 1);
+        send_to_char(buf, ch);
+        return TRUE;
+    }
+
+    /* --- 올리모 전용 처리 로직 --- */
+    if (all_done) {
+        if (GET_EXP(ch) < 1000000000) { 
+            send_to_char("&c[REMORTAL]&n You need 1,000,000,000 experience to change class as a Grand Master.\n\r", ch);
+            return 0;
+        }
+
+        if (GET_CLASS(ch) == target_class_num) {
+            send_to_char("&c[REMORTAL]&n You are already that class!\n\r", ch);
+            return 0;
+        }
+
+        /* 처리 수행 */
+        GET_EXP(ch) -= 1000000000;
+        GET_CLASS(ch) = target_class_num;
+        
+        snprintf(buf, sizeof(buf), "&c[REMORTAL]&n&Y %s has changed class to %s with Grand Master's authority!&n\n\r", 
+                GET_NAME(ch), class_names[target_class_num]);
+        send_to_all(buf);
+        
+        send_to_char("&c[REMORTAL]&n&Y You assume a new form, retaining your mighty power.\n\r&n", ch);
+        save_char(ch, ch->in_room);
+        
+        return TRUE;
+    }
+
+    /* ======================================================== */
+    /* 아래는 일반 리모탈(not all-remo) 로직             */
+    /* ======================================================== */
+
+    /* --- 중복 직업 체크 및 재확인(Y/N) --- */
+    if (ch->player.remortal & target_class_bit) {
+        /* 두 번째 단어(arg2) 확인 */
+        if (!*arg2 || strcasecmp(arg2, "YES") != 0) {
+            snprintf(buf, sizeof(buf), "&R[WARNING]&n : You have already completed the &W%s&n path.\n\r", class_names[target_class_num]);
+            send_to_char(buf, ch);
+            
+            send_to_char_han("&RIf you proceed, your Level/Exp will RESET, but you will gain NO STAT BONUSES.&n\n\r",
+            				"&R이미 완료한 직업입니다. 진행 시 레벨은 초기화되지만 보너스 스탯은 얻을 수 없습니다.&n\n\r", ch);
+            
+            snprintf(buf, sizeof(buf), "To confirm, please type: &Ysay %c YES&n\n\r", toupper(arg1[0]));
+            send_to_char(buf, ch);
+            return TRUE; /* 경고만 하고 종료 */
+        }
+        
+        /* YES를 입력하고 왔다면 진행 (플래그 ON) */
+        is_repeat = 1;
+    }
+
+    /* --- 스탯 보너스 지급 (중복일 경우 스킵) --- */
+    if (!is_repeat) {
+        switch (target_class_num) {
+            case 1: /* Mage: Int */
+                if (ch->abilities.intel < 18) ch->abilities.intel++;
+                else send_to_char("Your Intelligence is already god-like.\n\r", ch);
+                break;
+            case 2: /* Cleric: Wis */
+                if (ch->abilities.wis < 18) ch->abilities.wis++;
+                else send_to_char("Your Wisdom is already god-like.\n\r", ch);
+                break;
+            case 3: /* Thief: Dex */
+                if (ch->abilities.dex < 18) ch->abilities.dex++;
+                else send_to_char("Your Dexterity is already god-like.\n\r", ch);
+                break;
+            case 4: /* Warrior: Str */
+                 if (ch->abilities.str == 18) {
+                    if (ch->abilities.str_add < 100) {
+                        ch->abilities.str_add = MIN(ch->abilities.str_add + 10, 100);
+                    } else {
+                        send_to_char("Your Strength is already god-like.\n\r", ch);
+                    }
+                } else {
+                    ch->abilities.str++;
+                }
+                break;
+        }
+        /* 첫 리모탈인 경우에만 비트 설정 */
+        ch->player.remortal |= target_class_bit;
+        
+        /* 축하 메시지 출력 (중복 아닐 때만) */
+        if (rcnt == 0) {
+			send_to_char("\n\r&C[SYSTEM]&n : &WA blinding white light surrounds your body...&n\n\r", ch);
+			send_to_char("&YYou shed your mortal coil and rise again, stronger than before!&n\n\r", ch);
+			send_to_char("&GCongratulations on your First Rebirth!&n\n\r", ch);
 		}
-	}
-
-	int rcnt = 0;
-
-	if (ch->player.remortal & REMORTAL_MAGIC_USER)
-		rcnt++;
-	if (ch->player.remortal & REMORTAL_CLERIC)
-		rcnt++;
-	if (ch->player.remortal & REMORTAL_THIEF)
-		rcnt++;
-	if (ch->player.remortal & REMORTAL_WARRIOR)
-		rcnt++;
-
-	if ((rcnt > 1) && ch->player.level == 40) {
-		send_to_char("You need to make level 50 for remortal.!!!\n\r", ch);
-		return 0;
-	}
-
-	if ((rcnt > 2) && ch->player.level == 50) {
-		send_to_char("You need to make level 60 for remortal.!!!\n\r", ch);
-		return 0;
-	}
-
-	half_chop(arg, buf1, buf2);
-	class = buf1[0];
-
-	switch (class) {
-	case '?':
-		/* show remortal */
-		if (ch->player.remortal & REMORTAL_MAGIC_USER)
-			send_to_char("You did a magic user.!!!\n\r", ch);
-		if (ch->player.remortal & REMORTAL_CLERIC)
-			send_to_char("You did a cleric.!!!\n\r", ch);
-		if (ch->player.remortal & REMORTAL_THIEF)
-			send_to_char("You did a thief.!!!\n\r", ch);
-		if (ch->player.remortal & REMORTAL_WARRIOR)
-			send_to_char("You did a warrior.!!!\n\r", ch);
-		return TRUE;
-
-	case 'W':
-	case 'w':
-		if ((ch->player.level == 40 && rcnt == 1)) {
-			if (ch->abilities.str == 18) {
-				if (ch->abilities.str_add < 100) {
-					ch->abilities.str_add += 10;
-					ch->abilities.str_add =
-					    MIN(ch->abilities.str_add, 100);
-				} else {
-					break;
-				}
-			} else {
-				ch->abilities.str++;
-			}
-
-			class = 4;
-			ch->player.remortal |= REMORTAL_WARRIOR;
+		else if (rcnt == 1) {
+			send_to_char("\n\r&C[SYSTEM]&n : &WThe heavens rumble as your soul burns with renewed vigor!&n\n\r", ch);
+			send_to_char("&YYou have weathered the storm and emerged purer, ready to conquer new heights.&n\n\r", ch);
+			send_to_char("&GCongratulations on your Second Rebirth!&n\n\r", ch);
 		}
+		else if (rcnt >= 2) {
+			send_to_char("\n\r&R*** A LEGEND IS BORN ***&n\n\r", ch);
+			send_to_char("&YYou have reached the pinnacle of mortal evolution!&n\n\r", ch);
+			send_to_char("&YThe path to the &WGrand Master&Y is now open before you.&n\n\r", ch);
+			send_to_char("&GCongratulations on your Final Rebirth!&n\n\r", ch);
+    	}
+    } else {
+        /* 중복 리모탈 시 안내 메시지 */
+        send_to_char("\n\r&C[SYSTEM]&n : &WYou chose to walk the same path again...&n\n\r", ch);
+        send_to_char("&YYour body is reborn, but your soul remembers its past power.&n\n\r", ch);
+    }
+    
+    /* --- 직업 변경 및 초기화 (올리모 전 공통) --- */
+    snprintf(buf, sizeof(buf), "&c[REMORTAL]&n&Y %s has been reborn as a %s!&n\n\r", GET_NAME(ch), class_names[target_class_num]);
+    send_to_all(buf);
 
-		if ((ch->player.level == 50 && rcnt == 2)) {
-			if (ch->abilities.str == 18) {
-				if (ch->abilities.str_add < 100) {
-					ch->abilities.str_add += 10;
-					ch->abilities.str_add =
-					    MIN(ch->abilities.str_add, 100);
-				} else {
-					break;
-				}
-			} else {
-				ch->abilities.str++;
-			}
+    GET_CLASS(ch) = target_class_num;
+    
+    GET_EXP(ch) = 1;
+    GET_LEVEL(ch) = 1; 
+    
+    GET_HIT(ch) = GET_PLAYER_MAX_HIT(ch) = 10;
+    GET_MANA(ch) = GET_PLAYER_MAX_MANA(ch) = 10;
+    GET_MOVE(ch) = GET_PLAYER_MAX_MOVE(ch) = 10;
 
-			class = 4;
-			ch->player.remortal |= REMORTAL_WARRIOR;
-		}
+    GET_AC(ch) += 35;
+    GET_HITROLL(ch) -= 35;
+    GET_DAMROLL(ch) -= 35;
 
-		if ((ch->player.level == 60 && rcnt == 3)) {
-			if (ch->abilities.str == 18) {
-				if (ch->abilities.str_add < 100) {
-					ch->abilities.str_add += 10;
-					ch->abilities.str_add =
-					    MIN(ch->abilities.str_add, 100);
-				} else {
-					break;
-				}
-			} else {
-				ch->abilities.str++;
-			}
+    ch->quest.type = 0;
+    ch->quest.data = 0;
+    ch->quest.solved = 0;
 
-			class = 4;
-			ch->player.remortal |= REMORTAL_WARRIOR;
-		}
+    /* do_start 대체 로직 */
+    GET_COND(ch, THIRST) = 24;
+    GET_COND(ch, FULL) = 24;
+    GET_COND(ch, DRUNK) = 0;
+    ch->specials.spells_to_learn = 8;
+    set_title(ch);
 
-		if ((ch->player.level == 60 && rcnt == 4)) {
-			if (ch->abilities.str == 18) {
-				if (ch->abilities.str_add < 100) {
-					ch->abilities.str_add += 10;
-					ch->abilities.str_add =
-					    MIN(ch->abilities.str_add, 100);
-				} else {
-					break;
-				}
-			} else {
-				ch->abilities.str++;
-			}
-			class = 4;
-			ch->player.remortal |= REMORTAL_WARRIOR;
-		}
-		break;
+    /* 최종 저장 */
+    save_char(ch, ch->in_room);
 
-	case 'C':
-	case 'c':
-		if ((ch->player.level == 40 && rcnt == 1)) {
-			if (ch->abilities.wis < 18)
-				ch->abilities.wis++;
-			ch->player.remortal |= REMORTAL_CLERIC;
-			class = 2;
-		}
-		if ((ch->player.level == 50 && rcnt == 2)) {
-			if (ch->abilities.wis < 18)
-				ch->abilities.wis++;
-			ch->player.remortal |= REMORTAL_CLERIC;
-			class = 2;
-		}
-		if ((ch->player.level == 60 && rcnt == 3)) {
-			if (ch->abilities.wis < 18)
-				ch->abilities.wis++;
-			ch->player.remortal |= REMORTAL_CLERIC;
-			class = 2;
-		}
-		if ((ch->player.level == 60 && rcnt == 4)) {
-			if (ch->abilities.wis < 18)
-				ch->abilities.wis++;
-			ch->player.remortal |= REMORTAL_CLERIC;
-			class = 2;
-		}
-		break;
+    do_look(ch, "", 15);
 
-	case 'M':
-	case 'm':
-		if ((ch->player.level == 40 && rcnt == 1)) {
-			if (ch->abilities.intel < 18)
-				ch->abilities.intel++;
-			class = 1;
-			ch->player.remortal |= REMORTAL_MAGIC_USER;
-		}
-
-		if ((ch->player.level == 50 && rcnt == 2)) {
-			if (ch->abilities.intel < 18)
-				ch->abilities.intel++;
-			class = 1;
-			ch->player.remortal |= REMORTAL_MAGIC_USER;
-		}
-
-		if ((ch->player.level == 60 && rcnt == 3)) {
-			if (ch->abilities.intel < 18)
-				ch->abilities.intel++;
-			class = 1;
-			ch->player.remortal |= REMORTAL_MAGIC_USER;
-		}
-
-		if ((ch->player.level == 60 && rcnt == 4)) {
-			if (ch->abilities.intel < 18)
-				ch->abilities.intel++;
-			class = 1;
-			ch->player.remortal |= REMORTAL_MAGIC_USER;
-		}
-		break;
-
-	case 'T':
-	case 't':
-		if ((ch->player.level == 40 && rcnt == 1)) {
-			if (ch->abilities.dex < 18)
-				ch->abilities.dex++;
-			class = 3;
-			ch->player.remortal |= REMORTAL_THIEF;
-		}
-		if ((ch->player.level == 50 && rcnt == 2)) {
-			if (ch->abilities.dex < 18)
-				ch->abilities.dex++;
-			class = 3;
-			ch->player.remortal |= REMORTAL_THIEF;
-		}
-		if ((ch->player.level == 60 && rcnt == 3)) {
-			if (ch->abilities.dex < 18)
-				ch->abilities.dex++;
-			class = 3;
-			ch->player.remortal |= REMORTAL_THIEF;
-		}
-		if ((ch->player.level == 60 && rcnt == 4)) {
-			if (ch->abilities.dex < 18)
-				ch->abilities.dex++;
-			class = 3;
-			ch->player.remortal |= REMORTAL_THIEF;
-		}
-		break;
-
-	default:
-		return TRUE;
-	}
-
-	if ((rcnt == 1) && ch->player.level == 40) {
-		send_to_char("Your First Rebirth.!!!\n\r", ch);
-	}
-
-	if ((rcnt == 2) && ch->player.level == 50) {
-		send_to_char("Your Second Rebirth.!!!\n\r", ch);
-	}
-
-	if ((rcnt == 3) && ch->player.level == 60) {
-		send_to_char("Your Third Rebirth.!!!\n\r", ch);
-	}
-
-	sprintf(buf, "%s님이 %s로 직업을 바꾸셨습니다.\n\r", GET_NAME(ch),
-		classes[class - 1]);
-	send_to_all(buf);
-
-	GET_CLASS(ch) = class;
-
-	/* initialize other data */
-
-	if (!all_done) {
-		GET_EXP(ch) = 0;
-		GET_LEVEL(ch) = 0;
-
-		GET_HIT(ch) = GET_PLAYER_MAX_HIT(ch) = 0;
-		GET_MANA(ch) = GET_PLAYER_MAX_MANA(ch) = 0;
-		GET_MOVE(ch) = GET_PLAYER_MAX_MOVE(ch) = 0;
-
-		GET_AC(ch) += 35;
-		GET_HITROLL(ch) -= 35;
-		GET_DAMROLL(ch) -= 35;
-
-		/* init-quest */
-		ch->quest.type = 0;
-		ch->quest.data = 0;
-		ch->quest.solved = 0;
-
-		do_start(ch);
-	} else {		// All remortal
-		GET_EXP(ch) -= 1000000000;
-	}
-
-	return TRUE;
+    return TRUE;
 }
 
 int jale_room(struct char_data *ch, int cmd, char *arg)
@@ -2057,8 +2004,7 @@ int safe_house(struct char_data *ch, int cmd, char *arg)
 	case 298:		/* spin bird kick */
 /* by Moon */
 		send_to_char("You cannot do that here.\n\r", ch);
-		sprintf(buf, "%s attempts to misbehave here.\n\r", ch->player.name);
-		send_to_room_except(buf, ch->in_room, ch);
+		act("$n attempts to misbehave here.", FALSE, ch, 0, 0, TO_ROOM); // send_to_room_except 대체
 		return TRUE;
 	default:
 		return FALSE;
@@ -2170,7 +2116,7 @@ int bank(struct char_data *ch, int cmd, char *arg)
 		send_to_char("withdraw <amount>\n\r\n\r", ch);
 		return (TRUE);
 	} else if (cmd == 227) {	/* Balance */
-		sprintf(buf, "You have %lld coins in the bank.\n\r",
+		snprintf(buf, sizeof(buf), "You have %lld coins in the bank.\n\r",
 			(LONGLONG) ch->bank);
 		send_to_char(buf, ch);
 		return (TRUE);
@@ -2246,7 +2192,7 @@ int kickbasher(struct char_data *ch, int cmd, char *arg)
 	char buf[80];
 
 	if ((vict = ch->specials.fighting))
-		sprintf(buf, "%s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), "%s", GET_NAME(vict));
 	if (cmd)
 		return (FALSE);
 	if ((vict = ch->specials.fighting)) {

@@ -536,169 +536,140 @@ void check_idling(struct char_data *ch)
 /* Update both PC's & NPC's and objects*/
 void point_update(void)
 {
-	void update_char_objects(struct char_data *ch);		/* handler.c */
-	void extract_obj(struct obj_data *obj);		/* handler.c */
-	struct char_data *i, *next_dude;
-	struct obj_data *j, *next_thing, *jj, *next_thing2;
-	char buf[100];
-	extern int level_quest[];
+    void update_char_objects(struct char_data * ch); /* handler.c */
+    void extract_obj(struct obj_data * obj);         /* handler.c */
+    struct char_data *i, *next_dude;
+    struct obj_data *j, *next_thing, *jj, *next_thing2;
+    char buf[100];
+    extern int level_quest[];
 
-	/* characters */
-	for (i = character_list; i; i = next_dude) {
-		next_dude = i->next;
-		if (GET_POS(i) > POSITION_STUNNED) {
-			GET_HIT(i) = MIN(GET_HIT(i) + hit_gain(i), hit_limit(i));
-			GET_MANA(i) = MIN(GET_MANA(i) + mana_gain(i),
-					  mana_limit(i));
-			GET_MOVE(i) = MIN(GET_MOVE(i) + move_gain(i),
-					  move_limit(i));
-		} else if (GET_POS(i) == POSITION_STUNNED) {
-			GET_HIT(i) = MIN(GET_HIT(i) + hit_gain(i), hit_limit(i));
-			GET_MANA(i) = MIN(GET_MANA(i) + mana_gain(i),
-					  mana_limit(i));
-			GET_MOVE(i) = MIN(GET_MOVE(i) + move_gain(i),
-					  move_limit(i));
-			update_pos(i);
-		} else if (GET_POS(i) == POSITION_INCAP)
-			damage(i, i, 1, TYPE_SUFFERING);
-		else if (!IS_NPC(i) && (GET_POS(i) == POSITION_MORTALLYW))
-			damage(i, i, 2, TYPE_SUFFERING);
-		if (!IS_NPC(i)) {
-			update_char_objects(i);
-			if (GET_LEVEL(i) < IMO)
-				check_idling(i);
-		}
-		gain_condition(i, FULL, -1);
-		gain_condition(i, DRUNK, -1);
-		gain_condition(i, THIRST, -1);
+    /* characters */
+    for (i = character_list; i; i = next_dude) {
+        next_dude = i->next;
+        if (GET_POS(i) > POSITION_STUNNED) {
+            GET_HIT(i) = MIN(GET_HIT(i) + hit_gain(i), hit_limit(i));
+            GET_MANA(i) = MIN(GET_MANA(i) + mana_gain(i), mana_limit(i));
+            GET_MOVE(i) = MIN(GET_MOVE(i) + move_gain(i), move_limit(i));
+        } else if (GET_POS(i) == POSITION_STUNNED) {
+            GET_HIT(i) = MIN(GET_HIT(i) + hit_gain(i), hit_limit(i));
+            GET_MANA(i) = MIN(GET_MANA(i) + mana_gain(i), mana_limit(i));
+            GET_MOVE(i) = MIN(GET_MOVE(i) + move_gain(i), move_limit(i));
+            update_pos(i);
+        } else if (GET_POS(i) == POSITION_INCAP)
+            damage(i, i, 1, TYPE_SUFFERING);
+        else if (!IS_NPC(i) && (GET_POS(i) == POSITION_MORTALLYW))
+            damage(i, i, 2, TYPE_SUFFERING);
 
-		/* auto level up by Perhaps */
+        if (!IS_NPC(i)) {
+            update_char_objects(i);
+            if (GET_LEVEL(i) < IMO)
+                check_idling(i);
+        }
+        gain_condition(i, FULL, -1);
+        gain_condition(i, DRUNK, -1);
+        gain_condition(i, THIRST, -1);
 
-		byte check_remortal = 0;
-		check_remortal = GET_REMORTAL(i);
-		int rcnt = 0;
-		if (check_remortal & REMORTAL_MAGIC_USER)
-			rcnt++;
-		if (check_remortal & REMORTAL_CLERIC)
-			rcnt++;
-		if (check_remortal & REMORTAL_THIEF)
-			rcnt++;
-		if (check_remortal & REMORTAL_WARRIOR)
-			rcnt++;
+        /* auto level up by Perhaps */
 
-		int flag = 1;
-		if ((titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp +
-		    1000) <
-		    GET_EXP(i) && !IS_NPC(i)
-		    && (GET_LEVEL(i) < 40) && (GET_QUEST_SOLVED(i) >=
-					       level_quest[(int)
-							   GET_LEVEL(i)])
-		    && (flag == 1)) {
-			GET_LEVEL(i)++;
-			advance_level(i, 1);
-			sprintf(buf,
-				"\n\r %s LEVEL UP !! ---==Congratulations==--- \n", i->player.name);
-			send_to_all(buf);
-			flag = 0;
-		}
+        byte check_remortal = 0;
+        check_remortal = GET_REMORTAL(i);
+        int rcnt = 0;
+        if (check_remortal & REMORTAL_MAGIC_USER)
+            rcnt++;
+        if (check_remortal & REMORTAL_CLERIC)
+            rcnt++;
+        if (check_remortal & REMORTAL_THIEF)
+            rcnt++;
+        if (check_remortal & REMORTAL_WARRIOR)
+            rcnt++;
 
-		if ((titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp +
-		    1000) <
-		    GET_EXP(i) && !IS_NPC(i)
-		    && (GET_LEVEL(i) >= 40 && GET_LEVEL(i) < IMO)
-		    && (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) {
-			if (rcnt >= 2 && GET_LEVEL(i) < 50 && flag == 1) {
-				GET_LEVEL(i)++;
-				advance_level(i, 1);
-				sprintf(buf,
-					"\n\r %s MAKE LEVEL !! ---==Congratulations==--- \n", i->player.name);
-				send_to_all(buf);
-				flag = 0;
-			}
+        int flag = 1;
+        if ((titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
+                !IS_NPC(i) && (GET_LEVEL(i) < 40) && (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)]) && (flag == 1)) {
+            GET_LEVEL(i)++;
+            advance_level(i, 1);
+            snprintf(buf, sizeof(buf), "\n\r %s LEVEL UP !! ---==Congratulations==--- \n", i->player.name);
+            send_to_all(buf);
+            if (i->in_room != NOWHERE)
+                save_char(i, world[i->in_room].number);
+            else
+                save_char(i, 3001); // 방 정보 없으면 mid
+            flag = 0;
+        }
 
-			if (rcnt >= 3 && GET_LEVEL(i) < 60 && flag == 1) {
-				GET_LEVEL(i)++;
-				advance_level(i, 1);
-				sprintf(buf,
-					"\n\r %s Rank UP !! ---==Congratulations==--- \n", i->player.name);
-				send_to_all(buf);
-				flag = 0;
-			}
+        if ((titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
+                !IS_NPC(i) && (GET_LEVEL(i) >= 40 && GET_LEVEL(i) < IMO) && (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) {
+            if (rcnt >= 1 && GET_LEVEL(i) < 50 && flag == 1) {
+                GET_LEVEL(i)++;
+                advance_level(i, 1);
+                snprintf(buf, sizeof(buf), "\n\r %s MAKE LEVEL !! ---==Congratulations==--- \n", i->player.name);
+                send_to_all(buf);
+                if (i->in_room != NOWHERE)
+                    save_char(i, world[i->in_room].number);
+                else
+                    save_char(i, 3001); // 방 정보 없으면 mid
+                flag = 0;
+            }
 
-		}
+            if (rcnt >= 2 && GET_LEVEL(i) < 60 && flag == 1) {
+                GET_LEVEL(i)++;
+                advance_level(i, 1);
+                snprintf(buf, sizeof(buf), "\n\r %s Rank UP !! ---==Congratulations==--- \n", i->player.name);
+                send_to_all(buf);
+                if (i->in_room != NOWHERE)
+                    save_char(i, world[i->in_room].number);
+                else
+                    save_char(i, 3001); // 방 정보 없으면 mid
+                flag = 0;
+            }
+        }
+    } /* for */
 
-		/* auto level down by Perhaps */
-		/* remove level-down */
-		/*
-		   if( (
-		   titles[GET_CLASS(i)-1][GET_LEVEL(i)].exp > GET_EXP(i) 
-		   &&!IS_NPC(i)
-		   &&(GET_LEVEL(i)>5)&&(GET_LEVEL(i)<=40)
-		   ) && (GET_GUILD(i)==0) ) {
-		   advance_level(i, 0);
-		   GET_LEVEL(i)--;
-		   sprintf(buf,"\n\r %s LEVEL DOWNED!! <--==Congratulations?!?!==--> \n",i->player.name);
-		   send_to_all(buf);
-		   }
-		 */
+    /* objects */
+    for (j = object_list; j; j = next_thing) {
+        next_thing = j->next; /* Next in object list */
 
-	}			/* for */
+        /* If this is a corpse */
+        if ((GET_ITEM_TYPE(j) == ITEM_CONTAINER) && (j->obj_flags.value[3])) {
+            /* timer count down */
+            if (j->obj_flags.timer > 0)
+                j->obj_flags.timer--;
 
-	/* objects */
-	for (j = object_list; j; j = next_thing) {
-		next_thing = j->next;	/* Next in object list */
+            if (!j->obj_flags.timer) {
+                if (j->carried_by)
+                    act("$p decay in your hands.", FALSE, j->carried_by, j, 0, TO_CHAR);
+                else if ((j->in_room != NOWHERE) && (world[j->in_room].people)) {
+                    act("A quivering hoard of maggots consume $p.",
+                        TRUE, world[j->in_room].people, j, 0, TO_ROOM);
+                    act("A quivering hoard of maggots consume $p.",
+                        TRUE, world[j->in_room].people, j, 0, TO_CHAR);
+                }
 
-		/* If this is a corpse */
-		if ((GET_ITEM_TYPE(j) == ITEM_CONTAINER) &&
-		    (j->obj_flags.value[3])) {
-			/* timer count down */
-			if (j->obj_flags.timer > 0)
-				j->obj_flags.timer--;
+                for (jj = j->contains; jj; jj = next_thing2) {
+                    next_thing2 = jj->next_content; /* Next in inventory */
+                    obj_from_obj(jj);
 
-			if (!j->obj_flags.timer) {
-
-				if (j->carried_by)
-					act("$p decay in your hands.", FALSE,
-					    j->carried_by, j, 0, TO_CHAR);
-				else if ((j->in_room != NOWHERE) &&
-					 (world[j->in_room].people)) {
-					act("A quivering hoard of maggots consume $p.",
-					    TRUE, world[j->in_room].people, j,
-					    0, TO_ROOM);
-					act("A quivering hoard of maggots consume $p.",
-					    TRUE, world[j->in_room].people, j,
-					    0, TO_CHAR);
-				}
-
-				for (jj = j->contains; jj; jj = next_thing2) {
-					next_thing2 = jj->next_content;		/* Next in inventory */
-					obj_from_obj(jj);
-
-					/* keep items in PC's corpse, changed by jhpark */
-					if ((GET_ITEM_TYPE(j) ==
-					    ITEM_CONTAINER) &&
-					    (j->obj_flags.value[3] == 2)) {
-						if (j->in_obj)
-							obj_to_obj(jj, j->in_obj);
-						else if (j->carried_by)
-							obj_to_room(jj, j->carried_by->in_room);
-						else if (j->in_room != NOWHERE)
-							obj_to_room(jj, j->in_room);
-					} else {
-						if ((GET_ITEM_TYPE(jj) ==
-						    ITEM_CONTAINER) &&
-						    (jj->obj_flags.value[3])) {
-							if (j->in_obj)
-								obj_to_obj(jj, j->in_obj);
-							else if (j->carried_by)
-								obj_to_room(jj, j->carried_by->in_room);
-							else if (j->in_room != NOWHERE)
-								obj_to_room(jj, j->in_room);
-						}
-					}
-				}
-				extract_obj(j);
-			}
-		}
-	}
+                    /* keep items in PC's corpse, changed by jhpark */
+                    if ((GET_ITEM_TYPE(j) == ITEM_CONTAINER) && (j->obj_flags.value[3] == 2)) {
+                        if (j->in_obj)
+                            obj_to_obj(jj, j->in_obj);
+                        else if (j->carried_by)
+                            obj_to_room(jj, j->carried_by->in_room);
+                        else if (j->in_room != NOWHERE)
+                            obj_to_room(jj, j->in_room);
+                    } else {
+                        if ((GET_ITEM_TYPE(jj) == ITEM_CONTAINER) && (jj->obj_flags.value[3])) {
+                            if (j->in_obj)
+                                obj_to_obj(jj, j->in_obj);
+                            else if (j->carried_by)
+                                obj_to_room(jj, j->carried_by->in_room);
+                            else if (j->in_room != NOWHERE)
+                                obj_to_room(jj, j->in_room);
+                        }
+                    }
+                }
+                extract_obj(j);
+            }
+        }
+    }
 }

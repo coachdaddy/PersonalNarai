@@ -22,11 +22,6 @@
 
 #include "mob_bal.c"
 
-#define KJHRENT      66666	/* kjh number to tell new rent format */
-#define SYPARKRENT   900176	/* sypark student id :) */
-#define KNIFE_RENT   77777	/* Equiped Rent by Knife */
-
-#define NEW_ZONE_SYSTEM
 
 /**************************************************************************
 *  declarations of most of the 'global' variables                         *
@@ -274,7 +269,7 @@ void reset_time(void)
 		}
 	}
 
-	sprintf(buf, "   Current Gametime: %dH %dD %dM %dY.",
+	snprintf(buf, sizeof(buf), "   Current Gametime: %dH %dD %dM %dY.",
 		time_info.hours, time_info.day,
 		time_info.month, time_info.year);
 	log(buf);
@@ -390,9 +385,6 @@ struct index_data *
 /* load the rooms */
 /* new version of boot_world */
 /* modified by ares */
-
-#define ALL_WORLD_FILE "world/world_files"
-
 void boot_world(void)
 {
 	FILE *fl;
@@ -403,15 +395,30 @@ void boot_world(void)
 	char file_name[100];
 	int len;
 
+    char debug_log_buffer[512]; // 디버깅용
+    char current_working_dir[256]; // 디버깅용
+
 	world = 0;
 	character_list = 0;
 	object_list = 0;
 
-	if (!(all_files = fopen(ALL_WORLD_FILE, "r"))) {
-		perror("fopen");
-		log("boot_world: could not open world file.");
-		exit(0);
-	}
+    // 디버깅 로그, 함수 시작 및 CWD 확인 ---
+    log("boot_world: Function started.");
+    if (getcwd(current_working_dir, sizeof(current_working_dir)) != NULL) {
+        snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_world: Current working directory: [%s]", current_working_dir);
+        log(debug_log_buffer);
+    } else {
+        log("boot_world: Error getting current working directory.");
+    }
+
+    if (!(all_files = fopen(ALL_WORLD_FILE , "r"))) { // ALL_WORLD_FILE 은 "world/world_files.new" 
+        perror("boot_world(ALL_WORLD_FILE ALL_WORLD_FILE )");
+        snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_world: CRITICAL - Failed to open ALL_WORLD_FILE : %s", ALL_WORLD_FILE );
+        log(debug_log_buffer);
+        exit(0);
+    }
+    snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_world: Successfully opened ALL_WORLD_FILE: %s", ALL_WORLD_FILE);
+    log(debug_log_buffer);
 
 	while (1) {
 		fgets(file_name, 99, all_files);
@@ -422,6 +429,7 @@ void boot_world(void)
 		len = strlen(file_name) - 1;
 		if (file_name[len] == '\n' || file_name[len] == '\r')
 			file_name[len] = 0;
+
 		if (!(fl = fopen(file_name, "r"))) {
 			perror("boot_zones");
 			perror(file_name);
@@ -442,21 +450,14 @@ void boot_world(void)
 					/* OBS: Assumes ordering of input rooms */
 					if (world[room_nr].number <=
 					    (zone ? zone_table[zone - 1].top : -1)) {
-						fprintf(stderr,
-							"Room nr %d is below zone %d.\n",
-							room_nr, zone);
-						fprintf(stderr,
-							"DEBUG: %d, %s\n",
-							world[room_nr].number,
-							world[room_nr].name);
+						fprintf(stderr, "Room nr %d is below zone %d.\n", room_nr, zone);
+						fprintf(stderr, "DEBUG: %d, %s\n", world[room_nr].number, world[room_nr].name);
 						exit(0);
 					}
 					while (world[room_nr].number >
 					       zone_table[zone].top)
 						if (zone > top_of_zone_table) {
-							fprintf(stderr,
-								"Room %d is outside of any zone.\n",
-								virtual_nr);
+							fprintf(stderr, "Room %d is outside of any zone.\n", virtual_nr);
 							exit(0);
 						}
 					world[room_nr].zone = zone;
@@ -622,6 +623,101 @@ void allocate_room(int new_top)
 	world = new_world;
 }
 
+/* 특정 방(rnum)의 문자열과 데이터를 메모리 해제하는 함수, 251121 by Komo */
+void clean_memory_for_room(int rnum)
+{
+    int i;
+    struct extra_descr_data *ex_desc, *next_ex_desc;
+
+    if (world[rnum].name) free(world[rnum].name);
+    if (world[rnum].description) free(world[rnum].description);
+
+    for (ex_desc = world[rnum].ex_description; ex_desc; ex_desc = next_ex_desc) {
+        next_ex_desc = ex_desc->next;
+        if (ex_desc->keyword) free(ex_desc->keyword);
+        if (ex_desc->description) free(ex_desc->description);
+        free(ex_desc);
+    }
+    world[rnum].ex_description = NULL;
+
+    for (i = 0; i < 6; i++) {
+        if (world[rnum].dir_option[i]) {
+            if (world[rnum].dir_option[i]->general_description) free(world[rnum].dir_option[i]->general_description);
+            if (world[rnum].dir_option[i]->keyword) free(world[rnum].dir_option[i]->keyword);
+            free(world[rnum].dir_option[i]);
+            world[rnum].dir_option[i] = NULL;
+        }
+    }
+}
+
+/* .wld 파일을 열어 기존 방들의 내용을 업데이트함 251121 by Komo */
+void reload_world_file(FILE *fl, int zone_rnum)
+{
+    int virtual_nr, flag, tmp, rnum;
+    char *temp, chk[256];
+    struct extra_descr_data *new_descr;
+    
+    do {
+        fscanf(fl, " #%d\n", &virtual_nr);
+        
+        temp = fread_string(fl); // 방 이름 읽기
+        if ((flag = (*temp != '$'))) { // $가 아니면 유효한 방
+            rnum = real_room(virtual_nr);
+
+            if (rnum != -1) {
+                clean_memory_for_room(rnum);
+
+                world[rnum].name = temp;
+                world[rnum].description = fread_string(fl);
+                world[rnum].zone = zone_rnum; // 존 번호 재확인
+
+                int ignore; fscanf(fl, " %d ", &ignore);
+
+                fscanf(fl, " %d ", &tmp); world[rnum].room_flags = tmp;
+                fscanf(fl, " %d ", &tmp); world[rnum].sector_type = tmp;
+                
+                // 출구 및 엑스트라 파싱
+                while (1) {
+                    fscanf(fl, " %255s \n", chk);
+                    if (*chk == 'D')        setup_dir(fl, rnum, atoi(chk + 1));
+                    else if (*chk == 'E') {
+                        CREATE(new_descr, struct extra_descr_data, 1);
+                        new_descr->keyword = fread_string(fl);
+                        new_descr->description = fread_string(fl);
+                        new_descr->next = world[rnum].ex_description;
+                        world[rnum].ex_description = new_descr;
+                    } else if (*chk == 'S') break;
+                }
+
+            } else {
+                /* 존재하지 않는 방 (새로 추가된 방?): Skip */
+                if (temp) free(temp);
+                char *trash = fread_string(fl); free(trash);
+                
+                int ignore; fscanf(fl, " %d ", &ignore); // 존
+                fscanf(fl, " %d ", &ignore); // 플래그
+                fscanf(fl, " %d ", &ignore); // 섹터
+                
+                while (1) {
+                    fscanf(fl, " %255s \n", chk);
+                    if (*chk == 'D') { // 출구 데이터 건너뛰기
+                        trash = fread_string(fl); free(trash);
+                        trash = fread_string(fl); free(trash);
+                        fscanf(fl, " %d ", &ignore);
+                        fscanf(fl, " %d ", &ignore);
+                    } else if (*chk == 'E') { // 엑스트라 건너뛰기
+                        trash = fread_string(fl); free(trash);
+                        trash = fread_string(fl); free(trash);
+                    } else if (*chk == 'S') break;
+                }
+            }
+        } else {
+            if (temp) free(temp); // $를 만났을 때 temp 해제
+        }
+    } while (flag);
+}
+
+
 /* read direction data */
 void setup_dir(FILE * fl, int room, int dir)
 {
@@ -708,187 +804,175 @@ void renum_zone_table(void)
 			}
 }
 
+/* 헬퍼 함수: 열린 파일에서 존 데이터를 읽어 메모리에 적재 */
+void parse_zone_file(FILE *fl, int zon)
+{
+    int cmd_no = 0, expand = 1;
+    char buf[255];
+
+    // 기본 헤더 정보 - Top, Lifespan, Reset Mode
+    fscanf(fl, " %d ", &zone_table[zon].top);
+    fscanf(fl, " %d ", &zone_table[zon].lifespan);
+    fscanf(fl, " %d ", &zone_table[zon].reset_mode);
+
+    // 명령어 테이블 읽기 - 기존 루프 로직 그대로
+    zone_table[zon].cmd = NULL;
+
+    cmd_no = 0;
+    for (expand = 1;;) {
+        if (expand) {
+            if (!cmd_no)
+                CREATE(zone_table[zon].cmd, struct reset_com, 1);
+            else if (!(zone_table[zon].cmd = (struct reset_com *) realloc(zone_table[zon].cmd,
+                            (cmd_no + 1) * sizeof(struct reset_com)))) {
+                perror("reset command load");
+                exit(0);
+            }
+        }
+        expand = 1;
+        fscanf(fl, " ");    /* skip blanks */
+        fscanf(fl, "%c", &zone_table[zon].cmd[cmd_no].command);
+
+        // S 명령어를 만나면 루프 종료
+        if (zone_table[zon].cmd[cmd_no].command == 'S') {
+            break;
+        }
+
+        // * 문자는 주석 처리
+        if (zone_table[zon].cmd[cmd_no].command == '*') {
+            expand = 0;
+            fgets(buf, 80, fl); /* skip command */
+            continue;
+        }
+
+        fscanf(fl, " %d %d %d", (int *) &zone_table[zon].cmd[cmd_no].if_flag,
+                &zone_table[zon].cmd[cmd_no].arg1, &zone_table[zon].cmd[cmd_no].arg2);
+
+        if (zone_table[zon].cmd[cmd_no].command == 'M' || zone_table[zon].cmd[cmd_no].command == 'O' ||
+                zone_table[zon].cmd[cmd_no].command == 'E' || zone_table[zon].cmd[cmd_no].command == 'P' ||
+                zone_table[zon].cmd[cmd_no].command == 'D')
+            fscanf(fl, " %d", &zone_table[zon].cmd[cmd_no].arg3);
+
+        fgets(buf, 80, fl); /* read comment */
+        cmd_no++;
+    }
+}
+
 /* new version of boot_zone : by ares */
 /* read lib/zone/.zon files */
-
-#define ALL_ZONE_FILE "zone/zone_files"
-
+/* refactoring using Helper function, by Komo */
 void load_zones(int zon)
 {
-	FILE *fl;
-	char buf[255], *check;
-	int cmd_no = 0, expand;
+    FILE *fl;
+    char buf[255], *check;
 
-	if (zon > top_of_zone_table)
-		return;
-	fl = fopen(zone_table[zon].filename, "r");
-	if (!fl) {
-		sprintf(buf, "Error in reading zone file '%s'",
-			zone_table[zon].filename);
-		log(buf);
-		return;
-	}
-	free(zone_table[zon].name);
-	free(zone_table[zon].cmd);
-	check = fread_string(fl);
-	zone_table[zon].name = check;
-	fscanf(fl, " %d ", &zone_table[zon].top);
-	fscanf(fl, " %d ", &zone_table[zon].lifespan);
-	fscanf(fl, " %d ", &zone_table[zon].reset_mode);
+    if (zon > top_of_zone_table)
+        return;
 
-	/* read the command table */
-	cmd_no = 0;
-	for (expand = 1;;) {
-		if (expand) {
-			if (!cmd_no)
-				CREATE(zone_table[zon].cmd, struct reset_com, 1);
-			else if (!(zone_table[zon].cmd =
-				   (struct reset_com *)realloc(zone_table[zon].cmd,
-							       (cmd_no + 1) * sizeof
-							       (struct reset_com)))) {
-				perror("reset command load");
-				perror(zone_table[zon].filename);
-				exit(0);
-			}
-		}
-		expand = 1;
-		fscanf(fl, " ");	/* skip blanks */
-		fscanf(fl, "%c", &zone_table[zon].cmd[cmd_no].command);
+    fl = fopen(zone_table[zon].filename, "r");
+    if (!fl) {
+        snprintf(buf, sizeof(buf), "Error in reading zone file '%s'", zone_table[zon].filename);
+        log(buf);
+        return;
+    }
 
-		/* end of each zone file */
-		if (zone_table[zon].cmd[cmd_no].command == 'S') {
-			fclose(fl);
-			break;
-		}
+    // 기존 데이터 메모리 해제
+    if (zone_table[zon].name) free(zone_table[zon].name);
+    if (zone_table[zon].cmd)  free(zone_table[zon].cmd);
 
-		if (zone_table[zon].cmd[cmd_no].command == '*') {
-			expand = 0;
-			fgets(buf, 80, fl);	/* skip command */
-			continue;
-		}
+    check = fread_string(fl);
+    zone_table[zon].name = check;
 
-		fscanf(fl, " %d %d %d",
-		       (int *)&zone_table[zon].cmd[cmd_no].if_flag,
-		       &zone_table[zon].cmd[cmd_no].arg1,
-		       &zone_table[zon].cmd[cmd_no].arg2);
+    // 헬퍼 함수 호출
+    parse_zone_file(fl, zon);
 
-		if (zone_table[zon].cmd[cmd_no].command == 'M' ||
-		    zone_table[zon].cmd[cmd_no].command == 'O' ||
-		    zone_table[zon].cmd[cmd_no].command == 'E' ||
-		    zone_table[zon].cmd[cmd_no].command == 'P' ||
-		    zone_table[zon].cmd[cmd_no].command == 'D')
-			fscanf(fl, " %d", &zone_table[zon].cmd[cmd_no].arg3);
-
-		fgets(buf, 80, fl);	/* read comment */
-
-		cmd_no++;
-	}
+    fclose(fl);
 }
 
 void boot_zones(void)
 {
-	FILE *all_files;
-	FILE *fl;
-	int zon = 0, cmd_no = 0, expand;
-	char *check, buf[81];
-	char file_name[100];
-	int len;
+    FILE *all_files, *fl;
+    int zon = 0;
+    char *check, file_name_from_list[100]; // 원래 변수명은 file_name이었음
+    
+    char debug_log_buffer[512]; // 디버깅용
+    char current_working_dir[256]; // 디버깅용
 
-	if (!(all_files = fopen(ALL_ZONE_FILE, "r"))) {
-		perror("boot_zones (zone_files)");
-		exit(0);
-	}
+    // 디버깅 로그, 함수 시작 및 CWD 확인 ---
+    log("boot_zones: Function started.");
+    if (getcwd(current_working_dir, sizeof(current_working_dir)) != NULL) {
+        snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: Current working directory: [%s]", current_working_dir);
+        log(debug_log_buffer);
+    } else {
+        log("boot_zones: Error getting current working directory.");
+    }
 
-	while (1) {
-		fgets(file_name, 99, all_files);
+    if (!(all_files = fopen(ALL_ZONE_FILE, "r"))) { // ALL_ZONE_FILE은 "zone/zone_files.new"
+        perror("boot_zones(ALL_ZONE_FILE)");
+        snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: CRITICAL - Failed to open ALL_ZONE_FILE: %s", ALL_ZONE_FILE);
+        log(debug_log_buffer);
+        exit(0);
+    }
+    snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: Successfully opened ALL_ZONE_FILE: %s", ALL_ZONE_FILE);
+    log(debug_log_buffer);
 
-		if (file_name[0] == '$')
-			break;	/* end of file */
+    while (1) {
+        char vnum_buf[256]; // 존 번호를 임시로 읽을 버퍼
+        int vnum_input;     // 정수로 변환된 존 번호
 
-		len = strlen(file_name) - 1;
-		if (file_name[len] == '\n' || file_name[len] == '\r')
-			file_name[len] = 0;
-		if (!(fl = fopen(file_name, "r"))) {
-			perror("boot_zones");
-			perror(file_name);
-			exit(0);
-		}
+        /* 첫 번째 존 번호 또는 '$' 읽기 */
+        if (fscanf(all_files, "%s", vnum_buf) != 1) {
+            log("boot_zones: Error reading zone file list (Unexpected EOF).");
+            break;
+        }
 
-		check = fread_string(fl);
+        /* '$' 문자를 만나면 루프 종료 */
+        if (*vnum_buf == '$') {
+            log("boot_zones: Done reading zone file list.");
+            break;
+        }
 
-		/* alloc a new zone */
-		if (!zon)
-			CREATE(zone_table, struct zone_data, 1);
-		else if (!(zone_table = (struct zone_data *)realloc(zone_table,
-								    (zon + 1) *
-								    sizeof(struct
-									   zone_data)))) {
-			perror("boot_zones realloc");
-			perror(file_name);
-			exit(0);
-		}
+        /* 읽은 문자열을 숫자로 변환 */
+        vnum_input = atoi(vnum_buf);
 
-		zone_table[zon].name = check;
-		CREATE(zone_table[zon].filename, char, strlen(file_name) + 1);	// +1 is correct size.
-		strcpy(zone_table[zon].filename, file_name);
-		fscanf(fl, " %d ", &zone_table[zon].top);
-		fscanf(fl, " %d ", &zone_table[zon].lifespan);
-		fscanf(fl, " %d ", &zone_table[zon].reset_mode);
+        /* 두 번째 토큰 - 파일 경로 읽기 */
+        if (fscanf(all_files, "%s", file_name_from_list) != 1) {
+            log("boot_zones: Error reading filename after zone number.");
+            break;
+        }
 
-		/* read the command table */
-		cmd_no = 0;
-		for (expand = 1;;) {
-			if (expand) {
-				if (!cmd_no)
-					CREATE(zone_table[zon].cmd, struct
-					       reset_com, 1);
-				else if (!(zone_table[zon].cmd =
-					   (struct reset_com
-								       *)realloc(zone_table[zon].cmd,
-								       (cmd_no
-									+ 1) * sizeof
-								       (struct reset_com)))) {
-					perror("reset command load");
-					perror(file_name);
-					exit(0);
-				}
-			}
-			expand = 1;
-			fscanf(fl, " ");	/* skip blanks */
-			fscanf(fl, "%c", &zone_table[zon].cmd[cmd_no].command);
+        /* 개별 존 파일 열기 */
+        if (!(fl = fopen(file_name_from_list, "r"))) {
+            char error_buf[256];
+            snprintf(error_buf, sizeof(error_buf), "boot_zones: Error opening zone file '%s'", file_name_from_list);
+            perror(error_buf);
+            continue; // 파일을 못 열었어도 다음 존을 계속 읽기 위해 루프를 유지
+        }
 
-			/* end of each zone file */
-			if (zone_table[zon].cmd[cmd_no].command == 'S') {
-				fclose(fl);
-				break;
-			}
+        check = fread_string(fl);
 
-			if (zone_table[zon].cmd[cmd_no].command == '*') {
-				expand = 0;
-				fgets(buf, 80, fl);	/* skip command */
-				continue;
-			}
+        if (!zon)
+            CREATE(zone_table, struct zone_data, 1);
+        else if (!(zone_table = (struct zone_data *) realloc(zone_table, (zon + 1) * sizeof(struct zone_data)))) {
+            perror("boot_zones realloc");
+            exit(0);
+        }
 
-			fscanf(fl, " %d %d %d",
-			       (int *)&zone_table[zon].cmd[cmd_no].if_flag,
-			       &zone_table[zon].cmd[cmd_no].arg1,
-			       &zone_table[zon].cmd[cmd_no].arg2);
+        zone_table[zon].name = check;
+        zone_table[zon].number = vnum_input; // 존 번호 저장
+        
+        CREATE(zone_table[zon].filename, char, strlen(file_name_from_list) + 1);
+        strcpy(zone_table[zon].filename, file_name_from_list);
 
-			if (zone_table[zon].cmd[cmd_no].command == 'M' ||
-			    zone_table[zon].cmd[cmd_no].command == 'O' ||
-			    zone_table[zon].cmd[cmd_no].command == 'E' ||
-			    zone_table[zon].cmd[cmd_no].command == 'P' ||
-			    zone_table[zon].cmd[cmd_no].command == 'D')
-				fscanf(fl, " %d", &zone_table[zon].cmd[cmd_no].arg3);
+        /* 헬퍼 함수 호출하여 나머지 데이터 파싱 */
+        parse_zone_file(fl, zon);
 
-			fgets(buf, 80, fl);	/* read comment */
-
-			cmd_no++;
-		}
-		zon++;
-	}
-	top_of_zone_table = --zon;
-	fclose(all_files);
+        fclose(fl);
+        zon++;
+    }
+    top_of_zone_table = --zon;
+    fclose(all_files);
+    log("boot_zones: Function finished.");
 }
 #undef ALL_ZONE_FILE
 
@@ -1007,7 +1091,7 @@ struct char_data *
 	i = nr;
 	if (type == VIRTUAL)
 		if ((nr = real_mobile(nr)) < 0) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Mobile (V) %d does not exist in database.", i);
 			log(buf);
 			return (0);
@@ -1316,7 +1400,7 @@ struct char_data *
 	i = nr;
 	if (type == VIRTUAL)
 		if ((nr = real_mobile(nr)) < 0) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Mobile (V) %d does not exist in database.", i);
 			return (0);
 		}
@@ -1653,7 +1737,7 @@ struct obj_data *
 	i = nr;
 	if (type == VIRTUAL)
 		if ((nr = real_object(nr)) < 0) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Object (V) %d does not exist in database.", i);
 			return (0);
 		}
@@ -1736,7 +1820,6 @@ struct obj_data *
 	return (obj);
 }
 
-#define ZO_DEAD  999
 
 /* update zone ages, queue for reset if necessary, and dequeue when possible */
 void zone_update(void)
@@ -1819,22 +1902,19 @@ struct char_data *
 }
 
 #define ZCMD zone_table[zone].cmd[cmd_no]
-
 void reset_zone(int zone)
 {
-	int cmd_no;
-	char last_cmd = 1;
-	struct char_data *mob = NULL;
-	struct obj_data *obj, *obj_to;
-	char buf[256];
+    int cmd_no;
+    char last_cmd = 1;
+    struct char_data *mob = NULL;
+    struct obj_data *obj, *obj_to;
+    char buf[256];
 
-	/* item regen !!! */
-	/*
-	   if (regen == 1) then regen all items.
-	 */
-	int regen;
-	int real_load;
-	int zone_lifespan = zone_table[zone].lifespan; // .zon 파일에 정의된 리셋 주기(분)
+    /* item regen !!! */
+    /* if (regen == 1) then regen all items. */
+    int regen;
+    int real_load;
+    int zone_lifespan = zone_table[zone].lifespan; // .zon 파일에 정의된 리셋 주기(분)
     int regen_chance_denominator; // 확률 계산의 분모
 
     if (zone_lifespan <= 0) { /* 0으로 나누기 방지 */
@@ -1848,197 +1928,143 @@ void reset_zone(int zone)
         regen = (number(0, regen_chance_denominator) == 0);
     }
 
-	real_load = 0;
-	for (cmd_no = 0;; cmd_no++) {
-		if (ZCMD.command == 'S')
-			break;
-		if (last_cmd || !ZCMD.if_flag)
-			switch (ZCMD.command) {
-			case 'M':	/* read a mobile */
-				if (mob_index[ZCMD.arg1].number < ZCMD.arg2) {
-					mob = read_mobile(ZCMD.arg1, REAL);
-					char_to_room(mob, ZCMD.arg3);
-					last_cmd = 'M';
-					if (regen)
-						mob->regened = 1;
-					real_load = 1;
-				} else {
-					mob = get_mobile_index(ZCMD.arg1);
-					if (mob == NULL)
-						last_cmd = 0;
-					else {
-						if (mob->regened)
-							last_cmd = 0;
-						else {
-							last_cmd = 'M';
-							if (regen)
-								mob->regened = 1;
-							real_load = 0;
-						}
-					}
-				}
-				break;
+    real_load = 0;
+    for (cmd_no = 0;; cmd_no++) {
+        if (ZCMD.command == 'S')
+            break;
 
-			case 'O':	/* read an object */
-				/*
-				   if (obj_index[ZCMD.arg1].number < ZCMD.arg2)
-				 */
-				if (ZCMD.arg3 >= 0) {
-					if (!get_obj_in_list_num(ZCMD.arg1,
-								 world[ZCMD.arg3].contents)) {
-						obj = read_object(ZCMD.arg1, REAL);
-						if ((obj->obj_flags.type_flag
-						     == ITEM_KEY) ||
-						    (!IS_SET(obj->obj_flags.extra_flags,
-						    ITEM_EQ_LVL_LIMIT)) ||
-						    (regen == 1))
-							/*
-							   (   number(1,100) <= regen_percent ) )
-							 */
-						{
-							obj_to_room(obj, ZCMD.arg3);
-							last_cmd = 'O';
-						} else
-							extract_obj(obj);
-					}
-				} else {
-					obj = read_object(ZCMD.arg1, REAL);
-					if ((obj->obj_flags.type_flag ==
-					    ITEM_KEY) ||
-					    (!IS_SET(obj->obj_flags.extra_flags,
-					    ITEM_EQ_LVL_LIMIT)) ||
-					    (regen == 1))
-						/*
-						   ( number(1,100) <= regen_percent ) )
-						 */
-					{
+        if (last_cmd || !ZCMD.if_flag) {
+            switch (ZCMD.command) {
+                case 'M':		/* read a mobile */
+                    if (mob_index[ZCMD.arg1].number < ZCMD.arg2) {
+                        mob = read_mobile(ZCMD.arg1, REAL);
+                        char_to_room(mob, ZCMD.arg3);
+                        last_cmd = 'M';
+                        if (regen)
+                            mob->regened = 1;
+                        real_load = 1;
+                    } else {
+                        mob = get_mobile_index (ZCMD.arg1);
+                        if (mob == NULL) 
+                            last_cmd = 0;
+                        else {
+                            if (mob->regened)
+                                last_cmd = 0;
+                            else {
+                                last_cmd = 'M';
+                                if (regen)
+                                    mob->regened = 1;
+                                real_load = 0;
+                            }
+                        }
+                    }
+                    break;
 
-						obj->in_room = NOWHERE;
-						last_cmd = 'O';
-					} else
-						extract_obj(obj);
-				}
-				break;
+                case 'O':		/* read an object */
+                    if (ZCMD.arg3 >= 0) {
+                        if (!get_obj_in_list_num (ZCMD.arg1, world[ZCMD.arg3].contents)) {
+                            obj = read_object(ZCMD.arg1, REAL);
+                            if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET(obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) || (regen == 1)) {
+                                obj_to_room(obj, ZCMD.arg3);
+                                last_cmd = 'O';
+                            } else
+                                extract_obj(obj);
+                        }
+                    } else {
+                        obj = read_object(ZCMD.arg1, REAL);
+                        if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET(obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) || (regen == 1)) {
+                            obj->in_room = NOWHERE;
+                            last_cmd = 'O';
+                        } else
+                            extract_obj(obj);
+                    }
+                    break;
 
-			case 'P':	/* object to object */
-				/*
-				   if (obj_index[ZCMD.arg1].number < ZCMD.arg2 &&
-				 */
-				if (
-					   (last_cmd == 'O' || last_cmd == 'P' ||
-					    last_cmd == 'E' || last_cmd == 'G')) {
-					obj = read_object(ZCMD.arg1, REAL);
-					if ((obj->obj_flags.type_flag ==
-					    ITEM_KEY) ||
-					    (!IS_SET(obj->obj_flags.extra_flags,
-					    ITEM_EQ_LVL_LIMIT)) ||
-					    (regen == 1))
-						/*
-						   (   number(1,100) <= regen_percent ) )
-						 */
-					{
-						obj_to = get_obj_num(ZCMD.arg3);
-						if (obj_to) {
-							obj_to_obj(obj, obj_to);
-							last_cmd = 'P';
-						} else
-							extract_obj(obj);
-					} else
-						extract_obj(obj);
-				}
-				break;
+                case 'P':		/* object to object */
+                    if ( (last_cmd == 'O' || last_cmd == 'P' || last_cmd == 'E' || last_cmd == 'G')) {
+                        obj = read_object(ZCMD.arg1, REAL);
+                        if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET(obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) || (regen == 1)) {
+                            obj_to = get_obj_num(ZCMD.arg3);
+                            if (obj_to) {
+                                obj_to_obj(obj, obj_to);
+                                last_cmd = 'P';
+                            } else
+                                extract_obj(obj);
+                        } else
+                            extract_obj(obj);
+                    }
+                    break;
 
-			case 'G':	/* obj_to_char */
-				/*
-				   if (obj_index[ZCMD.arg1].number < ZCMD.arg2 &&
-				 */
-				if ( (last_cmd == 'M' || last_cmd == 'G' || last_cmd == 'E')) {
-					obj = read_object (ZCMD.arg1, REAL);
+                case 'G':    /* obj_to_char */
+                    if ( (last_cmd == 'M' || last_cmd == 'G' || last_cmd == 'E')) {
+                        obj = read_object (ZCMD.arg1, REAL);
 
-					if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT))) {
-						if (mob && real_load) {
-							obj_to_char(obj, mob);
-							last_cmd = 'G';
-						} else
-							extract_obj (obj);
-					} else if (IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) {
-						if (mob && real_load) {
-							obj_to_char(obj, mob);
-							last_cmd = 'G';
-						} else
-							extract_obj (obj);
-					} else
-						extract_obj (obj);
-				}
-				break;
+                        if ((obj->obj_flags.type_flag == ITEM_KEY) || (!IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT))) {
+                            if (mob && real_load) {
+                                obj_to_char(obj, mob);
+                                last_cmd = 'G';
+                            } else
+                                extract_obj (obj);
+                        } else if (IS_SET (obj->obj_flags.extra_flags, ITEM_EQ_LVL_LIMIT)) {
+                            if (mob && real_load) {
+                                obj_to_char(obj, mob);
+                                last_cmd = 'G';
+                            } else
+                                extract_obj (obj);
+                        } else
+                            extract_obj (obj);
+                    }
+                    break;
 
-			case 'E':	/* object to equipment list */
-				/*
-				   if (obj_index[ZCMD.arg1].number < ZCMD.arg2 &&
-				 */
-				if (
-					   (last_cmd == 'M' || last_cmd == 'G'
-					    || last_cmd == 'E')) {
-					obj = read_object(ZCMD.arg1, REAL);
-					if (obj->obj_flags.type_flag == ITEM_KEY)
-						/*
-						   (   !IS_SET(obj->obj_flags.extra_flags,ITEM_EQ_LVL_LIMIT) ) )
-						   (   number(1,100) <= regen_percent ) )
-						 */
-					{
-						if (mob && real_load) {
-							equip_char(mob, obj, ZCMD.arg3);
-							last_cmd = 'E';
-						} else
-							extract_obj(obj);
-					} else if (regen == 1) {
-						if (mob) {
-							equip_char(mob, obj, ZCMD.arg3);
-							last_cmd = 'E';
-						} else
-							extract_obj(obj);
-					} else
-						extract_obj(obj);
-				}
-				break;
+                case 'E':		/* object to equipment list */
+                    if ( (last_cmd == 'M' || last_cmd == 'G' || last_cmd == 'E')) {
+                        obj = read_object(ZCMD.arg1, REAL);
+                        if (obj->obj_flags.type_flag == ITEM_KEY) {
+                            if (mob && real_load) {
+                                equip_char(mob, obj, ZCMD.arg3);
+                                last_cmd = 'E';
+                            } else
+                                extract_obj(obj);
+                        } else if (regen == 1) {
+                            if (mob) {
+                                equip_char(mob, obj, ZCMD.arg3);
+                                last_cmd = 'E';
+                            } else
+                                extract_obj(obj);
+                        } else
+                            extract_obj(obj);
+                    }
+                    break;
 
-			case 'D':	/* set state of door */
-				switch (ZCMD.arg3) {
-				case 0:
-					REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						   EX_LOCKED);
-					REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						   EX_CLOSED);
-					break;
-				case 1:
-					SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						EX_CLOSED);
-					REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						   EX_LOCKED);
-					break;
-				case 2:
-					SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						EX_LOCKED);
-					SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						EX_CLOSED);
-					break;
-				}
-				last_cmd = 'D';
-				break;
+                case 'D':		/* set state of door */
+                    switch (ZCMD.arg3) {
+                        case 0:
+                            REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_LOCKED);
+                            REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_CLOSED);
+                            break;
+                        case 1:
+                            SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_CLOSED);
+                            REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_LOCKED);
+                            break;
+                        case 2:
+                            SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_LOCKED);
+                            SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info, EX_CLOSED);
+                            break;
+                    }
+                    last_cmd = 'D';
+                    break;
 
-			default:
-				sprintf(buf,
-					"Undefd cmd in reset table; zone %d cmd %d.\n\r",
-					zone, cmd_no);
-				log(buf);
-				exit(0);
-				break;
-		} else
-			last_cmd = 0;
+                default:
+                    snprintf(buf, sizeof(buf), "Undefd cmd in reset table; zone %d cmd %d.\n\r", zone, cmd_no);
+                    log(buf);
+                    exit(0);
+                    break;
+            }
+        } else
+            last_cmd = 0;
+    }
 
-	}
-
-	zone_table[zone].age = 0;
+    zone_table[zone].age = 0;
 }
 
 #undef ZCMD
@@ -2136,7 +2162,7 @@ void reset_zone(int zone)
 				break;
 
 			default:
-				sprintf(buf,
+				snprintf(buf, sizeof(buf),
 					"Undefd cmd in reset table; zone %d cmd %d.\n\r",
 					zone, cmd_no);
 				log(buf);
@@ -2990,22 +3016,24 @@ int real_object(int virtual)
 			bot = mid + 1;
 	}
 }
-/* move file.x to file.x.y */
-/* 
-void move_stashfile(char *victim)	
-{
-	char sf1[256], sf2[256], name[100];
-	int i;
 
-	strcpy(name, victim);
-	for (i = 0; name[i]; ++i)
-		if (isupper(name[i]))
-			name[i] = tolower(name[i]);
-	sprintf(sf1, "%s/%c/%s.x", STASH, name[0], name);
-	sprintf(sf2, "%s/%c/%s.x.y", STASH, name[0], name);
-	rename(sf1, sf2);
-}
+/*
+ * 존의 고유 번호(VNUM)를 입력받아 zone_table 배열의 인덱스(RNUM)를 반환
+ * 찾지 못하면 -1을 반환. by Komo
  */
+int real_zone_by_number(int virtual)
+{
+    int i;
+
+    // 존 테이블 전체를 순회
+    for (i = 0; i <= top_of_zone_table; i++) {
+        if (zone_table[i].number == virtual)
+            return i;
+    }
+
+    return -1;
+}
+
 
 // re-work by komoyon@gmail.com, 251016
 /* * 안전하게 stash 파일 이동 - 성공 시 0, 실패 시 -1 반환
@@ -3022,7 +3050,7 @@ int move_stashfile_safe (const char *victim)
     }
 
     if (strlen(victim) >= sizeof(name)) {
-        sprintf(log_buf, "move_stashfile_safe error: victim name '%s' is too long.", victim);
+        snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: victim name '%s' is too long.", victim);
         log(log_buf);
         return -1;
     }
@@ -3032,7 +3060,7 @@ int move_stashfile_safe (const char *victim)
     /* 경로 조작 방지 */
     for (i = 0; name[i]; ++i) {
         if (!isalnum((unsigned char)name[i])) {
-            sprintf(log_buf, "move_stashfile_safe error: victim name '%s' contains invalid characters.", victim);
+            snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: victim name '%s' contains invalid characters.", victim);
             log(log_buf);
             return -1;
         }
@@ -3044,13 +3072,13 @@ int move_stashfile_safe (const char *victim)
 
     /* 오류 처리 */
     if (rename(sf1, sf2) != 0) {
-        sprintf(log_buf, "move_stashfile_safe error: Failed to rename '%s' to '%s'", sf1, sf2);
+        snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: Failed to rename '%s' to '%s'", sf1, sf2);
         log(log_buf);
         perror("move_stashfile_safe system error");
         return -1; // 실패 반환
     }
 
-    sprintf(log_buf, "move_stashfile_safe: Successfully renamed '%s' to '%s'", sf1, sf2);
+    snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe: Successfully renamed '%s' to '%s'", sf1, sf2);
     log(log_buf);
     
     return 0; // 성공 반환
@@ -3221,16 +3249,16 @@ void unstash_char(struct char_data *ch, char *filename)
 		if (isupper(name[i]))
 			name[i] = tolower(name[i]);
 	sigsetmask(mask);
-	sprintf(stashfile, "%s/%c/%s.x.y", STASH, name[0], name);
+	snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x.y", STASH, name[0], name);
 	if (!(fl = fopen(stashfile, "r"))) {
-		sprintf(stashfile, "%s/%c/%s.x", STASH, name[0], name);
+		snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x", STASH, name[0], name);
 		if (!(fl = fopen(stashfile, "r"))) {
 			sigsetmask(0);
 			return;
 		}
 	}
 
-	sprintf(buf, "Unstash : %s\n", stashfile);
+	snprintf(buf, sizeof(buf), "Unstash : %s\n", stashfile);
 	log(buf);
 
 	fscanf(fl, "%d", &n);
@@ -3443,9 +3471,9 @@ void wipe_stash(char *filename)	/* delete id.x and id.x.y */
 		name[i] = isupper(filename[i]) ?
 		    tolower(filename[i]) : filename[i];
 	name[i] = 0;
-	sprintf(stashfile, "%s/%c/%s.x", STASH, name[0], name);
+	snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x", STASH, name[0], name);
 	unlink(stashfile);
-	sprintf(stashfile, "%s/%c/%s.x.y", STASH, name[0], name);
+	snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x.y", STASH, name[0], name);
 	unlink(stashfile);
 }
 
@@ -3462,9 +3490,9 @@ void do_checkrent(struct char_data *ch, char *argument, int cmd)
 	for (i = 0; name[i]; ++i)
 		if (isupper(name[i]))
 			name[i] = tolower(name[i]);
-	sprintf(stashfile, "%s/%c/%s.x.y", STASH, name[0], name);
+	snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x.y", STASH, name[0], name);
 	if (!(fl = fopen(stashfile, "r"))) {
-		sprintf(buf, "%s has nothing in rent.\n\r", name);
+		snprintf(buf, sizeof(buf), "%s has nothing in rent.\n\r", name);
 		send_to_char(buf, ch);
 		return;
 	}
@@ -3501,7 +3529,7 @@ void do_extractrent(struct char_data *ch, char *argument, int cmd)
 		return;
 	unstash_char(ch, name);
 	send_to_char("OK.\n\r", ch);
-	sprintf(buf, "%s grabbed rent for %s", GET_NAME(ch), name);
+	snprintf(buf, sizeof(buf), "%s grabbed rent for %s", GET_NAME(ch), name);
 	log(buf);
 }
 void do_replacerent(struct char_data *ch, char *argument, int cmd)
@@ -3514,7 +3542,7 @@ void do_replacerent(struct char_data *ch, char *argument, int cmd)
 	stash_char(ch);
 	move_stashfile_safe(name);
 	send_to_char("OK.\n\r", ch);
-	sprintf(buf, "%s replaced rent for %s", GET_NAME(ch), name);
+	snprintf(buf, sizeof(buf), "%s replaced rent for %s", GET_NAME(ch), name);
 	log(buf);
 }
 

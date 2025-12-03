@@ -110,13 +110,13 @@ int taxi(struct char_data *ch, int cmd, char *arg)
 		}
 		send_to_char(msg_for_taxi[taxi_num], ch);
 		send_to_char("Sit down on your seat,and wait for a while\n\r", ch);
-		sprintf(buf, "The taxi with %s starts to leave for %s.", GET_NAME
+		snprintf(buf, sizeof(buf), "The taxi with %s starts to leave for %s.", GET_NAME
 			(ch), where_to_taxi[taxi_num]);
 		act(buf, TRUE, ch, 0, 0, TO_ROOM);
 		char_from_room(ch);
-		sprintf(buf, "OK. Here is %s.\n\r", where_to_taxi[taxi_num]);
+		snprintf(buf, sizeof(buf), "OK. Here is %s.\n\r", where_to_taxi[taxi_num]);
 		send_to_char(buf, ch);
-		sprintf(buf, "The charge is %d.\n\r", charge_taxi[taxi_num]);
+		snprintf(buf, sizeof(buf), "The charge is %d.\n\r", charge_taxi[taxi_num]);
 		send_to_char(buf, ch);
 		if (GET_GOLD(ch) < charge_taxi[taxi_num]) {
 			send_to_char("The taxi driver slaps you!!!\n\r", ch);
@@ -200,7 +200,7 @@ int guild_entry(struct char_data *ch, int cmd, char *arg)
 			return TRUE;
 		}
 		ch->player.guild = guild_number;
-		sprintf(buf, "%s JOINED %s guild\n\r",
+		snprintf(buf, sizeof(buf), "%s JOINED %s guild\n\r",
 			GET_NAME(ch),
 			guild_names[(int)guild_number]);
 		send_to_all(buf);
@@ -215,7 +215,7 @@ int guild_entry(struct char_data *ch, int cmd, char *arg)
 			    ("You can't leave this guild as you are not a member!!", ch);
 			return TRUE;
 		}
-		sprintf(buf, "%s LEFT %s guild\n\r",
+		snprintf(buf, sizeof(buf), "%s LEFT %s guild\n\r",
 			GET_NAME(ch),
 			guild_names[(int)ch->player.guild]);
 		send_to_all(buf);
@@ -227,9 +227,9 @@ int guild_entry(struct char_data *ch, int cmd, char *arg)
 		return TRUE;
 	} else if (cmd == 1) {	/* north */
 		if ((guild_number != ch->player.guild) && GET_LEVEL(ch) < IMO) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"The guild guard humiliates you,and block your way.\n\r");
-			sprintf(buf2,
+			snprintf(buf2, sizeof(buf2),
 				"The guard humilates $n,and blocks $s way.");
 			send_to_char(buf, ch);
 			act(buf2, FALSE, ch, 0, 0, TO_ROOM);
@@ -237,7 +237,7 @@ int guild_entry(struct char_data *ch, int cmd, char *arg)
 		}
 	} else if (cmd == 84) {	/* to prevent cast 'phase' */
 		if ((guild_number != ch->player.guild) && GET_LEVEL(ch) < IMO) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"The guild guard screams, SHUT UP~~!!\n\r");
 			send_to_char(buf, ch);
 			return TRUE;
@@ -291,7 +291,7 @@ int locker_room(struct char_data *ch, int cmd, char *arg)
 		return FALSE;
 #define COST	10000
 		if (GET_GOLD(ch) < GET_LEVEL(ch) * GET_LEVEL(ch) * COST) {
-			sprintf(buf, "You need %d coins to SAVE your items.",
+			snprintf(buf, sizeof(buf), "You need %d coins to SAVE your items.",
 				GET_LEVEL(ch) * GET_LEVEL(ch) * COST);
 			send_to_char(buf, ch);
 			return TRUE;
@@ -337,7 +337,7 @@ int locker_room(struct char_data *ch, int cmd, char *arg)
 			send_to_char("All Lockers already used by other persons!\n\r", ch);
 			send_to_char("The following persons used locker!!\n\r", ch);
 			for (i = 0; i < LIMIT_LOAD; i++) {
-				sprintf(buf, "%s\n\r", load_names[i]);
+				snprintf(buf, sizeof(buf), "%s\n\r", load_names[i]);
 				send_to_char(buf, ch);
 			}
 			return TRUE;
@@ -407,7 +407,7 @@ int guild_practice_yard(struct char_data *ch, int cmd, char *arg)
 							      ((GET_GUILD_SKILL(ch, number)
 							      / 10) + 1) *
 			    GET_LEVEL(ch);
-			sprintf(buf, "You train %s.\n\r", police_skills[number]);
+			snprintf(buf, sizeof(buf), "You train %s.\n\r", police_skills[number]);
 			send_to_char(buf, ch);
 			break;
 		case OUTLAW:
@@ -415,7 +415,7 @@ int guild_practice_yard(struct char_data *ch, int cmd, char *arg)
 							      ((GET_GUILD_SKILL(ch, number)
 							      / 10) + 1) *
 			    GET_LEVEL(ch);
-			sprintf(buf, "You train %s.\n\r", outlaw_skills[number]);
+			snprintf(buf, sizeof(buf), "You train %s.\n\r", outlaw_skills[number]);
 			send_to_char(buf, ch);
 			break;
 		case ASSASSIN:
@@ -423,7 +423,7 @@ int guild_practice_yard(struct char_data *ch, int cmd, char *arg)
 									       number) /
 							       10) + 1) *
 			    GET_LEVEL(ch);
-			sprintf(buf, "You train %s.\n\r", assasin_skills[number]);
+			snprintf(buf, sizeof(buf), "You train %s.\n\r", assasin_skills[number]);
 			send_to_char(buf, ch);
 			break;
 		default:
@@ -436,7 +436,7 @@ int guild_practice_yard(struct char_data *ch, int cmd, char *arg)
 							  number) +
 							  10, 90);
 		} else {
-			sprintf(buf, "You need %d exp.\n\r", cost);
+			snprintf(buf, sizeof(buf), "You need %d exp.\n\r", cost);
 			send_to_char(buf, ch);
 		}
 		return TRUE;
@@ -449,7 +449,7 @@ int guild_practice_yard(struct char_data *ch, int cmd, char *arg)
 		case POLICE:
 			for (i = 0; i < guild_skill_nums[guild_number - 1];
 			     i++) {
-				sprintf(buf, "%d: %s %d (now %d%%)\n\r",
+				snprintf(buf, sizeof(buf), "%d: %s %d (now %d%%)\n\r",
 					i + 1,
 					police_skills[i],
 					police_skill_costs[i] *
@@ -464,7 +464,7 @@ int guild_practice_yard(struct char_data *ch, int cmd, char *arg)
 		case OUTLAW:
 			for (i = 0; i < guild_skill_nums[guild_number - 1];
 			     i++) {
-				sprintf(buf, "%d: %s %d (now %d%%)\n\r", i +
+				snprintf(buf, sizeof(buf), "%d: %s %d (now %d%%)\n\r", i +
 					1, outlaw_skills[i],
 					outlaw_skill_costs[i] *
 								 ((GET_GUILD_SKILL(ch,
@@ -478,7 +478,7 @@ int guild_practice_yard(struct char_data *ch, int cmd, char *arg)
 		case ASSASSIN:
 			for (i = 0; i < guild_skill_nums[guild_number - 1];
 			     i++) {
-				sprintf(buf, "%d: %s %d (now %d%%)\n\r", i + 1,
+				snprintf(buf, sizeof(buf), "%d: %s %d (now %d%%)\n\r", i + 1,
 					assasin_skills[i],
 					assasin_skill_costs[i] *
 								  ((GET_GUILD_SKILL(ch,

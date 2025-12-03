@@ -1297,16 +1297,16 @@ void spell_locate_object(byte level, struct char_data *ch,
 	for (i = object_list; i && j; i = i->next) {
 		if (isname(name, i->name)) {
 			if (i->carried_by) {
-				sprintf(buf, "%s carried by %s.\n\r",
+				snprintf(buf, sizeof(buf), "%s carried by %s.\n\r",
 					i->short_description,
-								   PERS(i->carried_by, ch));
+								   get_char_name(i->carried_by, ch));
 				send_to_char(buf, ch);
 			} else if (i->in_obj) {
-				sprintf(buf, "%s in %s.\n\r", i->short_description,
+				snprintf(buf, sizeof(buf), "%s in %s.\n\r", i->short_description,
 					i->in_obj->short_description);
 				send_to_char(buf, ch);
 			} else {
-				sprintf(buf, "%s in %s.\n\r", i->short_description,
+				snprintf(buf, sizeof(buf), "%s in %s.\n\r", i->short_description,
 					((i->in_room == NOWHERE) ?
 					 "uncertain." :
 					 world[i->in_room].name));
@@ -1820,7 +1820,7 @@ void spell_charm_person(byte level, struct char_data *ch,
 	af.bitvector = AFF_CHARM;
 	affect_to_char(victim, &af);
 
-	sprintf(buf, "%s CHARMED BY %s is here.\n\r",
+	snprintf(buf, sizeof(buf), "%s CHARMED BY %s is here.\n\r",
 		victim->player.short_descr, GET_NAME(ch));
 	if (victim->player.long_descr) {
 		free(victim->player.long_descr);
@@ -1829,7 +1829,7 @@ void spell_charm_person(byte level, struct char_data *ch,
 	CREATE(victim->player.long_descr, char, strlen(buf) + 1);
 	strcpy(victim->player.long_descr, buf);
 
-	sprintf(buf, "%s CHARMED BY %s",
+	snprintf(buf, sizeof(buf), "%s CHARMED BY %s",
 		victim->player.short_descr, GET_NAME(ch));
 	if (victim->player.short_descr) {
 		free(victim->player.short_descr);
@@ -1931,7 +1931,7 @@ void spell_clone(byte level, struct char_data *ch,
 		GET_EXP(mob) = 0;
 		GET_GOLD(mob) = 0;
 		char_to_room(mob, ch->in_room);
-		sprintf(buf, "%s has been cloned!\n\r",
+		snprintf(buf, sizeof(buf), "%s has been cloned!\n\r",
 			victim->player.short_descr);
 		send_to_room(buf, ch->in_room);
 	} else {

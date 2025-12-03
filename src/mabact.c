@@ -54,13 +54,13 @@ int check_stat(struct char_data *ch)
 			if (number(1, 100) < success) {		/* heal */
 				switch (GET_CLASS(ch)) {
 				case CLASS_CLERIC:
-					sprintf(buf, " 'full heal' %s",
+					snprintf(buf, sizeof(buf), " 'full heal' %s",
 						GET_NAME(ch));
 					break;
 				case CLASS_MAGIC_USER:
 				case CLASS_WARRIOR:
 				case CLASS_THIEF:
-					sprintf(buf, " 'self heal' %s",
+					snprintf(buf, sizeof(buf), " 'self heal' %s",
 						GET_NAME(ch));
 					break;
 				}
@@ -135,7 +135,7 @@ void mobile_activity(void)
 			/* Examine call for special procedure */
 			if (IS_SET(ch->specials.act, ACT_SPEC) && !no_specials) {
 				if (!mob_index[ch->nr].func) {
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"Attempting to call a non-existing MOB func.\n (mobact.c) %s",
 						ch->player.short_descr);
 					log(buf);

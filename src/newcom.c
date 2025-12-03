@@ -162,7 +162,7 @@ void do_resetzone(struct char_data *ch, char *argument, int cmd)
 		argument++;
 	if (strcmp(argument, "ALL") == 0) {
 		for (i = 0; i <= top_of_zone_table; i++) {
-			sprintf(buf2, "Zone %s is now updating..\n\r",
+			snprintf(buf2, sizeof(buf2), "Zone %s is now updating..\n\r",
 				zone_table[i].name);
 			send_to_char(buf2, ch);
 			reset_zone(i);
@@ -172,7 +172,7 @@ void do_resetzone(struct char_data *ch, char *argument, int cmd)
 
 	if (strcmp(argument, "THIS") == 0) {
 		i = world[ch->in_room].zone;
-		sprintf(buf2, "Zone %s is now updating..\n\r",
+		snprintf(buf2, sizeof(buf2), "Zone %s is now updating..\n\r",
 			zone_table[i].name);
 		send_to_char(buf2, ch);
 		reset_zone(i);
@@ -181,7 +181,7 @@ void do_resetzone(struct char_data *ch, char *argument, int cmd)
 
 	for (i = 0; i <= top_of_zone_table; i++)
 		if (strncmp(zone_table[i].name, argument, strlen(argument)) == 0) {
-			sprintf(buf2, "Zone %s is now updating..\n\r",
+			snprintf(buf2, sizeof(buf2), "Zone %s is now updating..\n\r",
 				zone_table[i].name);
 			send_to_char(buf2, ch);
 			reset_zone(i);
@@ -205,7 +205,7 @@ void do_reloadzone(struct char_data *ch, char *argument, int cmd)
 		argument++;
 	if (strcmp(argument, "ALL") == 0) {
 		for (i = 0; i <= top_of_zone_table; i++) {
-			sprintf(buf2, "Zone %s is now reloading..\n\r",
+			snprintf(buf2, sizeof(buf2), "Zone %s is now reloading..\n\r",
 				zone_table[i].name);
 			send_to_char(buf2, ch);
 			log(buf2);
@@ -216,7 +216,7 @@ void do_reloadzone(struct char_data *ch, char *argument, int cmd)
 
 	if (strcmp(argument, "THIS") == 0) {
 		i = world[ch->in_room].zone;
-		sprintf(buf2, "Zone %s is now reloading..\n\r",
+		snprintf(buf2, sizeof(buf2), "Zone %s is now reloading..\n\r",
 			zone_table[i].name);
 		send_to_char(buf2, ch);
 		log(buf2);
@@ -226,7 +226,7 @@ void do_reloadzone(struct char_data *ch, char *argument, int cmd)
 
 	for (i = 0; i <= top_of_zone_table; i++)
 		if (strncmp(zone_table[i].name, argument, strlen(argument)) == 0) {
-			sprintf(buf2, "Zone %s is now reloading..\n\r",
+			snprintf(buf2, sizeof(buf2), "Zone %s is now reloading..\n\r",
 				zone_table[i].name);
 			send_to_char(buf2, ch);
 			log(buf2);

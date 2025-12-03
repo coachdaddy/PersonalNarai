@@ -53,12 +53,20 @@ void gbisland_move_seashore(struct char_data *ch)
 	int vnum_seashore;
 	struct obj_data *obj, *next_obj;
 
-	need_movement = movement_loss[world[ch->in_room].sector_type];
+	int sect_type = world[ch->in_room].sector_type;
 
-	if (GET_MOVE(ch) < need_movement && !IS_NPC(ch) && GET_LEVEL(ch) < IMO) {
-		send_to_char("You are too exhausted.\n\r", ch);
-		return;
-	}
+    // 범위 검사
+    if (sect_type < 0 || sect_type >= 9) {
+        log("SYSERR: Invalid sector type in gbisland..."); // 필요하면 로그 남기기
+        sect_type = 0; 
+    }
+
+    need_movement = movement_loss[sect_type];
+
+    if (GET_MOVE(ch) < need_movement && !IS_NPC(ch) && GET_LEVEL(ch) < IMO) {
+        send_to_char("You are too exhausted.\n\r", ch);
+        return;
+    }
 
 	send_to_char("\n\r", ch);
 	send_to_char("갑자기 하늘이 먹구름으로 가득찹니다.\n\r", ch);
@@ -177,7 +185,7 @@ void gbisland_false_move(struct char_data *ch, int dir)
 	was_in = ch->in_room;
 
 	if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-		sprintf(tmp, "$n leaves %s.", dirs[dir - 1]);
+		snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir - 1]);
 		act(tmp, TRUE, ch, 0, 0, TO_ROOM);
 	}
 
@@ -189,7 +197,7 @@ void gbisland_false_move(struct char_data *ch, int dir)
 				    ch, TO_CHAR);
 
 				if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-					sprintf(tmp, "$n leaves %s.", dirs[dir
+					snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir
 									   - 1]);
 					act(tmp, TRUE, k->follower, 0, 0, TO_ROOM);
 				}
@@ -226,7 +234,7 @@ void gbisland_go_out_barrier(struct char_data *ch)
 	dir = number(1, 4);
 
 	if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-		sprintf(tmp, "$n leaves %s.", dirs[dir - 1]);
+		snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir - 1]);
 		act(tmp, TRUE, ch, 0, 0, TO_ROOM);
 	}
 
@@ -246,7 +254,7 @@ void gbisland_go_out_barrier(struct char_data *ch)
 				send_to_char("\n\r", k->follower);
 
 				if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-					sprintf(tmp, "$n leaves %s.", dirs[dir
+					snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir
 									   - 1]);
 					act(tmp, TRUE, k->follower, 0, 0, TO_ROOM);
 				}
@@ -277,7 +285,7 @@ void gbisland_go_back(struct char_data *ch)
 	do_say(ch, "신의 은총이 함께하길...", 0);
 
 	if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-		sprintf(tmp, "$n leaves %s.", dirs[dir - 1]);
+		snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir - 1]);
 		act(tmp, TRUE, ch, 0, 0, TO_ROOM);
 	}
 
@@ -351,7 +359,7 @@ int gbisland_saint_mirror(struct char_data *ch, int cmd, char *arg)
 			dir = (char)(path[index + 1]) - '0' + 1;
 			switch (path[index]) {
 			case 'O':
-				sprintf(tmp, "door %s", dirs[dir - 1]);
+				snprintf(tmp, sizeof(tmp), "door %s", dirs[dir - 1]);
 				do_open(ch, tmp, 0);
 				index += 2;
 				break;
