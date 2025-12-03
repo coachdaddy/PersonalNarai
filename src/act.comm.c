@@ -151,6 +151,7 @@ void do_shout(struct char_data *ch, char *argument, int cmd)
     }
 }
 
+/*
 void do_chat(struct char_data *ch, char *argument, int cmd)
 {
     struct descriptor_data *d;
@@ -192,6 +193,7 @@ void do_chat(struct char_data *ch, char *argument, int cmd)
         }
     }
 }
+*/
 
 void do_lastchat(struct char_data *ch, char *argument, int cmd)
 {

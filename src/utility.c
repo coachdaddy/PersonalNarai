@@ -16,6 +16,7 @@
 #include "colors.h"
 
 extern struct time_data time_info;
+extern struct room_data *world;
 
 /* defined in spell_parser.c */
 extern char *spells[];
