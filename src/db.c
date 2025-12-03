@@ -871,108 +871,88 @@ void load_zones(int zon)
 
 void boot_zones(void)
 {
-	FILE *all_files;
-	FILE *fl;
-	int zon = 0, cmd_no = 0, expand;
-	char *check, buf[81];
-	char file_name[100];
-	int len;
+    FILE *all_files, *fl;
+    int zon = 0;
+    char *check, file_name_from_list[100]; // 원래 변수명은 file_name이었음
+    
+    char debug_log_buffer[512]; // 디버깅용
+    char current_working_dir[256]; // 디버깅용
 
-	if (!(all_files = fopen(ALL_ZONE_FILE, "r"))) {
-		perror("boot_zones (zone_files)");
-		exit(0);
-	}
+    // 디버깅 로그, 함수 시작 및 CWD 확인 ---
+    log("boot_zones: Function started.");
+    if (getcwd(current_working_dir, sizeof(current_working_dir)) != NULL) {
+        snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: Current working directory: [%s]", current_working_dir);
+        log(debug_log_buffer);
+    } else {
+        log("boot_zones: Error getting current working directory.");
+    }
 
-	while (1) {
-		fgets(file_name, 99, all_files);
+    if (!(all_files = fopen(ALL_ZONE_FILE, "r"))) { // ALL_ZONE_FILE은 "zone/zone_files.new"
+        perror("boot_zones(ALL_ZONE_FILE)");
+        snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: CRITICAL - Failed to open ALL_ZONE_FILE: %s", ALL_ZONE_FILE);
+        log(debug_log_buffer);
+        exit(0);
+    }
+    snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: Successfully opened ALL_ZONE_FILE: %s", ALL_ZONE_FILE);
+    log(debug_log_buffer);
 
-		if (file_name[0] == '$')
-			break;	/* end of file */
+    while (1) {
+        char vnum_buf[256]; // 존 번호를 임시로 읽을 버퍼
+        int vnum_input;     // 정수로 변환된 존 번호
 
-		len = strlen(file_name) - 1;
-		if (file_name[len] == '\n' || file_name[len] == '\r')
-			file_name[len] = 0;
-		if (!(fl = fopen(file_name, "r"))) {
-			perror("boot_zones");
-			perror(file_name);
-			exit(0);
-		}
+        /* 첫 번째 존 번호 또는 '$' 읽기 */
+        if (fscanf(all_files, "%s", vnum_buf) != 1) {
+            log("boot_zones: Error reading zone file list (Unexpected EOF).");
+            break;
+        }
 
-		check = fread_string(fl);
+        /* '$' 문자를 만나면 루프 종료 */
+        if (*vnum_buf == '$') {
+            log("boot_zones: Done reading zone file list.");
+            break;
+        }
 
-		/* alloc a new zone */
-		if (!zon)
-			CREATE(zone_table, struct zone_data, 1);
-		else if (!(zone_table = (struct zone_data *)realloc(zone_table,
-								    (zon + 1) *
-								    sizeof(struct
-									   zone_data)))) {
-			perror("boot_zones realloc");
-			perror(file_name);
-			exit(0);
-		}
+        /* 읽은 문자열을 숫자로 변환 */
+        vnum_input = atoi(vnum_buf);
 
-		zone_table[zon].name = check;
-		CREATE(zone_table[zon].filename, char, strlen(file_name) + 1);	// +1 is correct size.
-		strcpy(zone_table[zon].filename, file_name);
-		fscanf(fl, " %d ", &zone_table[zon].top);
-		fscanf(fl, " %d ", &zone_table[zon].lifespan);
-		fscanf(fl, " %d ", &zone_table[zon].reset_mode);
+        /* 두 번째 토큰 - 파일 경로 읽기 */
+        if (fscanf(all_files, "%s", file_name_from_list) != 1) {
+            log("boot_zones: Error reading filename after zone number.");
+            break;
+        }
 
-		/* read the command table */
-		cmd_no = 0;
-		for (expand = 1;;) {
-			if (expand) {
-				if (!cmd_no)
-					CREATE(zone_table[zon].cmd, struct
-					       reset_com, 1);
-				else if (!(zone_table[zon].cmd =
-					   (struct reset_com
-								       *)realloc(zone_table[zon].cmd,
-								       (cmd_no
-									+ 1) * sizeof
-								       (struct reset_com)))) {
-					perror("reset command load");
-					perror(file_name);
-					exit(0);
-				}
-			}
-			expand = 1;
-			fscanf(fl, " ");	/* skip blanks */
-			fscanf(fl, "%c", &zone_table[zon].cmd[cmd_no].command);
+        /* 개별 존 파일 열기 */
+        if (!(fl = fopen(file_name_from_list, "r"))) {
+            char error_buf[256];
+            snprintf(error_buf, sizeof(error_buf), "boot_zones: Error opening zone file '%s'", file_name_from_list);
+            perror(error_buf);
+            continue; // 파일을 못 열었어도 다음 존을 계속 읽기 위해 루프를 유지
+        }
 
-			/* end of each zone file */
-			if (zone_table[zon].cmd[cmd_no].command == 'S') {
-				fclose(fl);
-				break;
-			}
+        check = fread_string(fl);
 
-			if (zone_table[zon].cmd[cmd_no].command == '*') {
-				expand = 0;
-				fgets(buf, 80, fl);	/* skip command */
-				continue;
-			}
+        if (!zon)
+            CREATE(zone_table, struct zone_data, 1);
+        else if (!(zone_table = (struct zone_data *) realloc(zone_table, (zon + 1) * sizeof(struct zone_data)))) {
+            perror("boot_zones realloc");
+            exit(0);
+        }
 
-			fscanf(fl, " %d %d %d",
-			       (int *)&zone_table[zon].cmd[cmd_no].if_flag,
-			       &zone_table[zon].cmd[cmd_no].arg1,
-			       &zone_table[zon].cmd[cmd_no].arg2);
+        zone_table[zon].name = check;
+        zone_table[zon].number = vnum_input; // 존 번호 저장
+        
+        CREATE(zone_table[zon].filename, char, strlen(file_name_from_list) + 1);
+        strcpy(zone_table[zon].filename, file_name_from_list);
 
-			if (zone_table[zon].cmd[cmd_no].command == 'M' ||
-			    zone_table[zon].cmd[cmd_no].command == 'O' ||
-			    zone_table[zon].cmd[cmd_no].command == 'E' ||
-			    zone_table[zon].cmd[cmd_no].command == 'P' ||
-			    zone_table[zon].cmd[cmd_no].command == 'D')
-				fscanf(fl, " %d", &zone_table[zon].cmd[cmd_no].arg3);
+        /* 헬퍼 함수 호출하여 나머지 데이터 파싱 */
+        parse_zone_file(fl, zon);
 
-			fgets(buf, 80, fl);	/* read comment */
-
-			cmd_no++;
-		}
-		zon++;
-	}
-	top_of_zone_table = --zon;
-	fclose(all_files);
+        fclose(fl);
+        zon++;
+    }
+    top_of_zone_table = --zon;
+    fclose(all_files);
+    log("boot_zones: Function finished.");
 }
 #undef ALL_ZONE_FILE
 
