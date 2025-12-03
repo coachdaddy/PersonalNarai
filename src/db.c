@@ -395,15 +395,30 @@ void boot_world(void)
 	char file_name[100];
 	int len;
 
+    char debug_log_buffer[512]; // 디버깅용
+    char current_working_dir[256]; // 디버깅용
+
 	world = 0;
 	character_list = 0;
 	object_list = 0;
 
-	if (!(all_files = fopen(ALL_WORLD_FILE, "r"))) {
-		perror("fopen");
-		log("boot_world: could not open world file.");
-		exit(0);
-	}
+    // 디버깅 로그, 함수 시작 및 CWD 확인 ---
+    log("boot_world: Function started.");
+    if (getcwd(current_working_dir, sizeof(current_working_dir)) != NULL) {
+        snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_world: Current working directory: [%s]", current_working_dir);
+        log(debug_log_buffer);
+    } else {
+        log("boot_world: Error getting current working directory.");
+    }
+
+    if (!(all_files = fopen(ALL_WORLD_FILE , "r"))) { // ALL_WORLD_FILE 은 "world/world_files.new" 
+        perror("boot_world(ALL_WORLD_FILE ALL_WORLD_FILE )");
+        snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_world: CRITICAL - Failed to open ALL_WORLD_FILE : %s", ALL_WORLD_FILE );
+        log(debug_log_buffer);
+        exit(0);
+    }
+    snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_world: Successfully opened ALL_WORLD_FILE: %s", ALL_WORLD_FILE);
+    log(debug_log_buffer);
 
 	while (1) {
 		fgets(file_name, 99, all_files);
@@ -414,6 +429,7 @@ void boot_world(void)
 		len = strlen(file_name) - 1;
 		if (file_name[len] == '\n' || file_name[len] == '\r')
 			file_name[len] = 0;
+
 		if (!(fl = fopen(file_name, "r"))) {
 			perror("boot_zones");
 			perror(file_name);
@@ -434,21 +450,14 @@ void boot_world(void)
 					/* OBS: Assumes ordering of input rooms */
 					if (world[room_nr].number <=
 					    (zone ? zone_table[zone - 1].top : -1)) {
-						fprintf(stderr,
-							"Room nr %d is below zone %d.\n",
-							room_nr, zone);
-						fprintf(stderr,
-							"DEBUG: %d, %s\n",
-							world[room_nr].number,
-							world[room_nr].name);
+						fprintf(stderr, "Room nr %d is below zone %d.\n", room_nr, zone);
+						fprintf(stderr, "DEBUG: %d, %s\n", world[room_nr].number, world[room_nr].name);
 						exit(0);
 					}
 					while (world[room_nr].number >
 					       zone_table[zone].top)
 						if (zone > top_of_zone_table) {
-							fprintf(stderr,
-								"Room %d is outside of any zone.\n",
-								virtual_nr);
+							fprintf(stderr, "Room %d is outside of any zone.\n", virtual_nr);
 							exit(0);
 						}
 					world[room_nr].zone = zone;
