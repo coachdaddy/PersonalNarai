@@ -159,7 +159,7 @@ void do_move(struct char_data *ch, char *argument, int cmd)
 
 		if (IS_SET(EXIT(ch, cmd)->exit_info, EX_CLOSED)) {
 			if (EXIT(ch, cmd)->keyword) {
-				sprintf(tmp, "The %s seems to be closed.\n\r",
+				snprintf(tmp, sizeof(tmp), "The %s seems to be closed.\n\r",
 					fname(EXIT(ch, cmd)->keyword));
 				send_to_char(tmp, ch);
 			} else {
@@ -234,7 +234,7 @@ int find_door(struct char_data *ch, char *type, char *dir)
 				if (isname(type, EXIT(ch, door)->keyword))
 					return (door);
 				else {
-					sprintf(buf, "I see no %s there.\n\r", type);
+					snprintf(buf, sizeof(buf), "I see no %s there.\n\r", type);
 					send_to_char(buf, ch);
 					return (-1);
 			} else
@@ -253,7 +253,7 @@ int find_door(struct char_data *ch, char *type, char *dir)
 					if (isname(type, EXIT(ch, door)->keyword))
 						return (door);
 
-		sprintf(buf, "I see no %s here.\n\r", type);
+		snprintf(buf, sizeof(buf), "I see no %s here.\n\r", type);
 		send_to_char(buf, ch);
 		return (-1);
 	}
@@ -315,7 +315,7 @@ void do_open(struct char_data *ch, char *argument, int cmd)
 					if (back->to_room == ch->in_room) {
 						REMOVE_BIT(back->exit_info, EX_CLOSED);
 						if (back->keyword) {
-							sprintf(buf,
+							snprintf(buf, sizeof(buf),
 								"The %s is opened from the other side.\n\r",
 								fname(back->keyword));
 							send_to_room(buf,
@@ -382,7 +382,7 @@ void do_close(struct char_data *ch, char *argument, int cmd)
 					if (back->to_room == ch->in_room) {
 						SET_BIT(back->exit_info, EX_CLOSED);
 						if (back->keyword) {
-							sprintf(buf,
+							snprintf(buf, sizeof(buf),
 								"The %s closes quietly.\n\r", back->keyword);
 							send_to_room(buf,
 									       EXIT(ch,
@@ -643,7 +643,7 @@ void do_enter(struct char_data *ch, char *argument, int cmd)
 						do_move(ch, "", ++door);
 						return;
 					}
-		sprintf(tmp, "There is no %s here.\n\r", buf);
+		snprintf(tmp, sizeof(tmp), "There is no %s here.\n\r", buf);
 		send_to_char(tmp, ch);
 	} else if (IS_SET(world[ch->in_room].room_flags, INDOORS))
 		send_to_char("You are already indoors.\n\r", ch);

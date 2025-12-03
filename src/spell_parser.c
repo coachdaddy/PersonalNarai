@@ -671,8 +671,8 @@ void say_spell(struct char_data *ch, int si)
 					++offs;
 			}
 	}
-	sprintf(buf2, "$n utters the words, '%s'", buf);
-	sprintf(buf, "$n utters the words, '%s'", spells[si - 1]);
+	snprintf(buf2, sizeof(buf2), "$n utters the words, '%s'", buf);
+	snprintf(buf, sizeof(buf), "$n utters the words, '%s'", spells[si - 1]);
 	for (temp_char = world[ch->in_room].people;
 	     temp_char;
 	     temp_char = temp_char->next_in_room)

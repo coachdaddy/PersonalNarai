@@ -987,7 +987,7 @@ void no_echo_telnet(struct descriptor_data *d)
 {
 	char buf[5];
 
-	sprintf(buf, "%c%c%c", IAC, WILL, TELOPT_ECHO);
+	snprintf(buf, sizeof(buf), "%c%c%c", IAC, WILL, TELOPT_ECHO);
 	write(d->descriptor, buf, 3);
 }
 
@@ -995,7 +995,7 @@ void echo_telnet(struct descriptor_data *d)
 {
 	char buf[5];
 
-	sprintf(buf, "%c%c%c", IAC, WONT, TELOPT_ECHO);
+	snprintf(buf, sizeof(buf), "%c%c%c", IAC, WONT, TELOPT_ECHO);
 	write(d->descriptor, buf, 3);
 }
 
@@ -1178,7 +1178,7 @@ int command_interpreter(struct char_data *ch, char *argument)
 		}
 
 		if (IS_SET(ch->specials.act, PLR_XYZZY)) {
-			sprintf(buf, "%s: %s", ch->player.name, argument);
+			snprintf(buf, sizeof(buf), "%s: %s", ch->player.name, argument);
 			log(buf);
 		}
 		return (1);
@@ -2033,7 +2033,7 @@ void query_status(struct descriptor_data *d)
 	struct char_data *ch;
 
 	ch = d->character;
-	sprintf(buf, "You status is STR:%d/%d WIS:%d INT:%d DEX:%d CON:%d\n",
+	snprintf(buf, sizeof(buf), "You status is STR:%d/%d WIS:%d INT:%d DEX:%d CON:%d\n",
 		ch->abilities.str, ch->abilities.str_add,
 		ch->abilities.wis, ch->abilities.intel,
 		ch->abilities.dex, ch->abilities.con);
@@ -2156,7 +2156,7 @@ void nanny(struct descriptor_data *d, char *arg)
 				       strlen(tmp_name) + 1);
 				CAP(tmp_name);
 				strcpy(GET_NAME(d->character), tmp_name);
-				sprintf(buf,
+				snprintf(buf, sizeof(buf),
 					"Did I get that right, %s (Y/N)? ", tmp_name);
 				SEND_TO_Q(buf, d);
 				STATE(d) = CON_NMECNF;
@@ -2175,7 +2175,7 @@ void nanny(struct descriptor_data *d, char *arg)
 			}
 			SEND_TO_Q("New character.\n\r", d);
 			no_echo = 1;
-			sprintf(buf, "Give me a password for %s : ",
+			snprintf(buf, sizeof(buf), "Give me a password for %s : ",
 				GET_NAME(d->character));
 			SEND_TO_Q(buf, d);
 			STATE(d) = CON_PWDGET;
@@ -2215,7 +2215,7 @@ void nanny(struct descriptor_data *d, char *arg)
 					tmp_ch->specials.timer = 0;
 					STATE(d) = CON_PLYNG;
 					act("&u$n has reconnected.&n", TRUE, tmp_ch, 0, 0, TO_ROOM);
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"%s(%d)[%s] has reconnected.",
 						GET_NAME(d->character),
 						GET_LEVEL(d->character), d->host);
@@ -2223,7 +2223,7 @@ void nanny(struct descriptor_data *d, char *arg)
 					return;
 				}
 			}
-			sprintf(buf, "%s(%d)[%s] has connected.",
+			snprintf(buf, sizeof(buf), "%s(%d)[%s] has connected.",
 				GET_NAME(d->character),
 				GET_LEVEL(d->character), d->host);
 			log(buf);
@@ -2324,7 +2324,7 @@ void nanny(struct descriptor_data *d, char *arg)
 			break;
 		}		/* End Switch */
 		if (STATE(d) != CON_QCLASS) {
-			sprintf(buf, "%s [%s] new player.", GET_NAME(d->character),
+			snprintf(buf, sizeof(buf), "%s [%s] new player.", GET_NAME(d->character),
 				d->host);
 			log(buf);
 			SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);

@@ -322,7 +322,7 @@ int slot_machine(struct char_data *ch, int cmd, char *arg)
 	same += (num[1] == num[2]);
 	same += (num[2] == num[0]);
 
-	sprintf(buf, "Your dices are %d, %d, %d.", num[0], num[1], num[2]);
+	snprintf(buf, sizeof(buf), "Your dices are %d, %d, %d.", num[0], num[1], num[2]);
 	act(buf, FALSE, ch, 0, 0, TO_CHAR);
 
 	if (same == 0) {
@@ -332,7 +332,7 @@ int slot_machine(struct char_data *ch, int cmd, char *arg)
 		act("Good!!! You win this turn!!!", FALSE, ch, 0, 0, TO_CHAR);
 		GET_GOLD(ch) += 2000000;
 	} else {
-		sprintf(buf, "Excellent!!! %s made JACKPOT!!!\n\r", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), "Excellent!!! %s made JACKPOT!!!\n\r", GET_NAME(ch));
 		act(buf, FALSE, ch, 0, 0, TO_ROOM);
 		act(buf, FALSE, ch, 0, 0, TO_CHAR);
 		/*

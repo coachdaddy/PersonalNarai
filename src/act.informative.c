@@ -484,7 +484,7 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 						   keyword_no)->exit_info,
 					    EX_CLOSED) &&
 					    (EXIT(ch, keyword_no)->keyword)) {
-						sprintf(buffer,
+						snprintf(buffer, sizeof(buffer),
 							"The %s is closed.\n\r",
 							fname(EXIT(ch,
 							      keyword_no)->keyword));
@@ -494,7 +494,7 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 							   keyword_no)->exit_info,
 						    EX_ISDOOR) &&
 						    EXIT(ch, keyword_no)->keyword) {
-							sprintf(buffer,
+							snprintf(buffer, sizeof(buffer),
 								"The %s is open.\n\r",
 								fname(EXIT(ch,
 								      keyword_no)->keyword));
@@ -535,7 +535,7 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 									((tmp_object->obj_flags.value[1]
 									 * 3) /
 									tmp_object->obj_flags.value[0]);
-								sprintf(buffer,
+								snprintf(buffer, sizeof(buffer),
 									"It's %sfull of a %s liquid.\n\r",
 									fullness[temp],
 									color_liquid[tmp_object->obj_flags.value[2]]);
@@ -713,7 +713,7 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 			{
 				if (GET_LEVEL(ch) >= IMO) {
 					extern char *room_bits[];
-					sprintf(buffer, "%s  [%5d] [ ",
+					snprintf(buffer, sizeof(buffer), "%s  [%5d] [ ",
 						world[ch->in_room].name,
 						world[ch->in_room].number);
 					sprintbit((long)world[ch->in_room].room_flags,
@@ -721,12 +721,12 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 					strlcat(buffer, buf, sizeof(buffer));
 					strlcat(buffer, "]\n\r", sizeof(buffer));
 				} else
-					sprintf(buffer, "%s\n\r",
+					snprintf(buffer, sizeof(buffer), "%s\n\r",
 						world[ch->in_room].name);
 				send_to_char(buffer, ch);
 				if (!IS_SET(ch->specials.act, PLR_BRIEF))
 					send_to_char(world[ch->in_room].description, ch);
-				sprintf(buffer, "[ EXITS : ");
+				snprintf(buffer, sizeof(buffer), "[ EXITS : ");
 				/*
 				if (EXIT(ch, 0))
 					strcat(buffer, "N ");
@@ -796,7 +796,7 @@ void do_examine(struct char_data *ch, char *argument, int cmd)
 	struct char_data *tmp_char;
 	struct obj_data *tmp_object;
 
-	sprintf(buf, "at %s", argument);
+	snprintf(buf, sizeof(buf), "at %s", argument);
 	do_look(ch, buf, 15);
 
 	one_argument(argument, name);
@@ -816,11 +816,11 @@ void do_examine(struct char_data *ch, char *argument, int cmd)
 		    (GET_ITEM_TYPE(tmp_object) == ITEM_CONTAINER)) {
 			send_to_char_han("When you look inside, you see:\n\r",
 					 "안을 들여다 보니 이런 것이 있군요.", ch);
-			sprintf(buf, "in %s", argument);
+			snprintf(buf, sizeof(buf), "in %s", argument);
 			do_look(ch, buf, 15);
 		} else {
 			if (GET_ITEM_TYPE(tmp_object) == ITEM_FIREWEAPON) {
-				sprintf(buf, "There are %d shots left.\n\r",
+				snprintf(buf, sizeof(buf), "There are %d shots left.\n\r",
 					tmp_object->obj_flags.value[0]);
 				send_to_char(buf, ch);
 			}
@@ -973,8 +973,8 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 	extern byte saving_throws[4][5][IMO + 10];
 	extern struct title_type titles[4][IMO + 4];
 
-	sprintf(buf, "You are %d years old.\n\r", GET_AGE(ch));
-	sprintf(buf2, "당신은 %d 살 입니다.\n\r", GET_AGE(ch));
+	snprintf(buf, sizeof(buf), "You are %d years old.\n\r", GET_AGE(ch));
+	snprintf(buf2, sizeof(buf2), "당신은 %d 살 입니다.\n\r", GET_AGE(ch));
 	send_to_char_han(buf, buf2, ch);
 
 	/* alignment message */
@@ -1006,8 +1006,8 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 	else
 		send_to_char_han(align_msg[12], align_msg_han[12], ch);
 
-	sprintf(buf, "Your ac is %d.\n\r", ch->points.armor);
-	sprintf(buf2, "당신의 무장정도는 %d 입니다.\n\r", ch->points.armor);
+	snprintf(buf, sizeof(buf), "Your ac is %d.\n\r", ch->points.armor);
+	snprintf(buf2, sizeof(buf2), "당신의 무장정도는 %d 입니다.\n\r", ch->points.armor);
 	send_to_char_han(buf, buf2, ch);
 
 /*  tmp = ch->points.armor/10;
@@ -1047,12 +1047,12 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 	if (GET_COND(ch, DRUNK) > 10)
 		send_to_char_han("You are intoxicated.\n\r",
 				 "당신은 취해 있습니다.\n\r", ch);
-	sprintf(buf,
+	snprintf(buf, sizeof(buf),
 		"You have %ld(%ld) hit, %ld(%ld) mana and %ld(%ld) movement points.\n\r",
 		GET_HIT(ch), GET_PLAYER_MAX_HIT(ch),
 		GET_MANA(ch), GET_PLAYER_MAX_MANA(ch),
 		GET_MOVE(ch), GET_PLAYER_MAX_MOVE(ch));
-	sprintf(buf2,
+	snprintf(buf2, sizeof(buf2),
 		"당신은 %ld(%ld) hit, %ld(%ld) mana 와 %ld(%ld) movement 를 가지고 있습니다.\n\r",
 		GET_HIT(ch), GET_PLAYER_MAX_HIT(ch),
 		GET_MANA(ch), GET_PLAYER_MAX_MANA(ch),
@@ -1060,31 +1060,31 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 	send_to_char_han(buf, buf2, ch);
 
 	if (GET_LEVEL(ch) > 12) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			"Your stat: str %d/%d wis %d int %d dex %d con %d.\n\r",
 			GET_STR(ch), GET_ADD(ch), GET_WIS(ch), GET_INT(ch),
 			GET_DEX(ch), GET_CON(ch));
-		sprintf(buf2,
+		snprintf(buf2, sizeof(buf2),
 			"당신의 체질: str %d/%d wis %d int %d dex %d con %d.\n\r",
 			GET_STR(ch), GET_ADD(ch), GET_WIS(ch), GET_INT(ch),
 			GET_DEX(ch), GET_CON(ch));
 		send_to_char_han(buf, buf2, ch);
 
-		sprintf(buf, "Your hitroll is %d , and damroll is %d.\n\r",
+		snprintf(buf, sizeof(buf), "Your hitroll is %d , and damroll is %d.\n\r",
 			GET_HITROLL(ch), GET_DAMROLL(ch));
-		sprintf(buf2,
+		snprintf(buf2, sizeof(buf2),
 			"당신의 hitroll 은 %d , damroll 은 %d입니다.\n\r",
 			GET_HITROLL(ch), GET_DAMROLL(ch));
 		send_to_char_han(buf, buf2, ch);	/* changed by shin won dong */
 
 		/* bare hand dice */
-		sprintf(buf, "Your Bare Hand Dice is %dD%d.\n\r",
+		snprintf(buf, sizeof(buf), "Your Bare Hand Dice is %dD%d.\n\r",
 			ch->specials.damnodice, ch->specials.damsizedice);
-		sprintf(buf2, "당신의 맨손 위력은 %dD%d입니다.\n\r",
+		snprintf(buf2, sizeof(buf2), "당신의 맨손 위력은 %dD%d입니다.\n\r",
 			ch->specials.damnodice, ch->specials.damsizedice);
 		send_to_char_han(buf, buf2, ch);	/* changed by shin won dong */
 
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			"You save para : %d, hit skill : %d, breath : %d, spell : %d.\n\r",
 			IS_NPC(ch) ?
 			ch->specials.apply_saving_throw[SAVING_PARA] :
@@ -1108,7 +1108,7 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 			ch->specials.apply_saving_throw[SAVING_SPELL] +
 			saving_throws[GET_CLASS(ch) - 1][SAVING_SPELL][GET_LEVEL
 								       (ch) - 1]);
-		sprintf(buf2,
+		snprintf(buf2, sizeof(buf2),
 			"당신의 안전도는 para : %d, hit skill : %d, breath : %d, spell : %d입니다.\n\r",
 			IS_NPC(ch) ?
 			ch->specials.apply_saving_throw[SAVING_PARA] :
@@ -1134,30 +1134,30 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 								       (ch) - 1]);
 		send_to_char_han(buf, buf2, ch);
 
-		sprintf(buf, "Your regeneration is %d.\n\r", GET_REGENERATION(ch));
-		sprintf(buf2, "당신의 회복 정도는 %d 입니다.\n\r",
+		snprintf(buf, sizeof(buf), "Your regeneration is %d.\n\r", GET_REGENERATION(ch));
+		snprintf(buf2, sizeof(buf2), "당신의 회복 정도는 %d 입니다.\n\r",
 			GET_REGENERATION(ch));
 		send_to_char_han(buf, buf2, ch);
 	}
 
-	sprintf(buf, "You have scored %lld exp, and have %lld gold coins.\n\r",
+	snprintf(buf, sizeof(buf), "You have scored %lld exp, and have %lld gold coins.\n\r",
 		GET_EXP(ch), GET_GOLD(ch));
-	sprintf(buf2,
+	snprintf(buf2, sizeof(buf2),
 		"당신은 %lld 의 경험치와 %lld 원의 돈을 가지고 있습니다.\n\r",
 		GET_EXP(ch), GET_GOLD(ch));
 	send_to_char_han(buf, buf2, ch);
 
 	playing_time = real_time_passed((time(0) - ch->player.time.logon) +
 					ch->player.time.played, 0);
-	sprintf(buf, "You have been playing for %d days and %d hours.\n\r",
+	snprintf(buf, sizeof(buf), "You have been playing for %d days and %d hours.\n\r",
 		playing_time.day, playing_time.hours);
-	sprintf(buf2,
+	snprintf(buf2, sizeof(buf2),
 		"당신은 이 안에서 %d 일 %d 시간동안 있었습니다.\n\r",
 		playing_time.day, playing_time.hours);
 	send_to_char_han(buf, buf2, ch);
-	sprintf(buf, "This ranks you as %s %s (level %d).\n\r",
+	snprintf(buf, sizeof(buf), "This ranks you as %s %s (level %d).\n\r",
 		GET_NAME(ch), GET_TITLE(ch), GET_LEVEL(ch));
-	sprintf(buf2, "당신은 %s %s (레벨 %d) 입니다.\n\r",
+	snprintf(buf2, sizeof(buf2), "당신은 %s %s (레벨 %d) 입니다.\n\r",
 		GET_NAME(ch), GET_TITLE(ch), GET_LEVEL(ch));
 	send_to_char_han(buf, buf2, ch);
 	if (GET_LEVEL(ch) < IMO) {
@@ -1167,11 +1167,11 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 			strcpy(buf2,
 			       "레벨을 올릴만큼 충분한 경험치가 쌓였습니다.\n\r");
 		} else {
-			sprintf(buf, "You need %lld experience to advance\n\r",
+			snprintf(buf, sizeof(buf), "You need %lld experience to advance\n\r",
 				titles[GET_CLASS(ch) - 1][GET_LEVEL(ch) +
 				1].exp -
 				GET_EXP(ch));
-			sprintf(buf2,
+			snprintf(buf2, sizeof(buf2),
 				"다음 레벨까지 %lld 만큼의 경험치가 필요합니다.\n\r",
 				titles[GET_CLASS(ch) - 1][GET_LEVEL(ch) +
 				1].exp -
@@ -1229,27 +1229,27 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 		send_to_char_han("Affecting Spells:\n\r",
 				 "걸려있는 마법들:\n\r", ch);
 		for (aff = ch->affected; aff; aff = aff->next) {
-			sprintf(buf, "%s: %d hrs\n\r", spells[aff->type - 1], aff->duration);
-			sprintf(buf2, "%s: %d 시간\n\r", spells[aff->type -
+			snprintf(buf, sizeof(buf), "%s: %d hrs\n\r", spells[aff->type - 1], aff->duration);
+			snprintf(buf2, sizeof(buf2), "%s: %d 시간\n\r", spells[aff->type -
 				1], aff->duration);
 			send_to_char_han(buf, buf2, ch);
 		}
 	}
 
-	sprintf(buf, "\n\rYou have killed #%d player(s)", ch->player.pk_num);
-	sprintf(buf2, "\n\r당신은 지금까지 %d명을 죽였습니다.", ch->player.pk_num);
+	snprintf(buf, sizeof(buf), "\n\rYou have killed #%d player(s)", ch->player.pk_num);
+	snprintf(buf2, sizeof(buf2), "\n\r당신은 지금까지 %d명을 죽였습니다.", ch->player.pk_num);
 	send_to_char_han(buf, buf2, ch);
-	sprintf(buf, "\n\rYou have been killed #%d time(s)", ch->player.pked_num);
-	sprintf(buf2, "\n\r당신은 지금까지 %d번 죽었습니다.", ch->player.pked_num);
+	snprintf(buf, sizeof(buf), "\n\rYou have been killed #%d time(s)", ch->player.pked_num);
+	snprintf(buf2, sizeof(buf2), "\n\r당신은 지금까지 %d번 죽었습니다.", ch->player.pked_num);
 	send_to_char_han(buf, buf2, ch);
-	sprintf(buf, "\n\rYou have made  #%ld QUEST(s)", ch->quest.solved);
-	sprintf(buf2,
+	snprintf(buf, sizeof(buf), "\n\rYou have made  #%ld QUEST(s)", ch->quest.solved);
+	snprintf(buf2, sizeof(buf2),
 		"\n\r당신은 지금까지 %ld번 QUEST를 풀었습니다.", ch->quest.solved);
 	send_to_char_han(buf, buf2, ch);
 	if (ch->player.guild >= 1 && ch->player.guild <= MAX_GUILD_LIST) {
-		sprintf(buf, "\n\rYou are a member of %s guild.\n\r",
+		snprintf(buf, sizeof(buf), "\n\rYou are a member of %s guild.\n\r",
 			guild_names[(int)ch->player.guild]);
-		sprintf(buf2,
+		snprintf(buf2, sizeof(buf2),
 			"\n\r당신은 %s 길드의 회원입니다. \n\r",
 			guild_names[(int)ch->player.guild]);
 		send_to_char_han(buf, buf2, ch);
@@ -1265,7 +1265,7 @@ void do_attribute(struct char_data *ch, char *argument, int cmd)
 	struct affected_type *aff;
 	extern char *spells[];
 
-	sprintf(buf,
+	snprintf(buf, sizeof(buf),
 		"You are %d years and %d months, %d cms, and you weigh %d lbs.\n\r",
 		GET_AGE(ch), age(ch).month,
 		ch->player.height,
@@ -1273,23 +1273,23 @@ void do_attribute(struct char_data *ch, char *argument, int cmd)
 
 	send_to_char(buf, ch);
 
-	sprintf(buf, "You are carrying %d lbs of equipment.\n\r",
+	snprintf(buf, sizeof(buf), "You are carrying %d lbs of equipment.\n\r",
 		IS_CARRYING_W(ch));
 	send_to_char(buf, ch);
 
-/*sprintf(buf,"Your armor is %d (-100 to 100).\n\r",ch->points.armor);
+/*snprintf(buf, sizeof(buf),"Your armor is %d (-100 to 100).\n\r",ch->points.armor);
   send_to_char(buf,ch); */
 
 	/* if ((GET_LEVEL(ch) > 15) || (GET_CLASS(ch))) {    cyb */
 	if ((GET_LEVEL(ch) > 15)) {
 		if ((GET_STR(ch) == 18) && (GET_CLASS(ch))) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"You have %d/%d STR, %d INT, %d WIS, %d DEX, %d CON\n\r",
 				GET_STR(ch), GET_ADD(ch), GET_INT(ch), GET_WIS(ch),
 				GET_DEX(ch), GET_CON(ch));
 			send_to_char(buf, ch);
 		} else {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"You have %d STR, %d INT, %d WIS, %d DEX, %d CON\n\r",
 				GET_STR(ch), GET_INT(ch), GET_WIS(ch), GET_DEX(ch),
 				GET_CON(ch));
@@ -1297,7 +1297,7 @@ void do_attribute(struct char_data *ch, char *argument, int cmd)
 		}
 	}
 
-	sprintf(buf,
+	snprintf(buf, sizeof(buf),
 		"Your hitroll and damroll are %d and %d respectively.\n\r",
 		GET_HITROLL(ch), GET_DAMROLL(ch));
 	send_to_char(buf, ch);
@@ -1314,7 +1314,7 @@ void do_attribute(struct char_data *ch, char *argument, int cmd)
 			case SPELL_CURSE:
 				break;
 			default:
-				sprintf(buf, "Spell : '%s'\n\r",
+				snprintf(buf, sizeof(buf), "Spell : '%s'\n\r",
 									spells[aff->type
 									- 1]);
 				send_to_char(buf, ch);
@@ -1334,7 +1334,7 @@ void do_time(struct char_data *ch, char *argument, int cmd)
 	extern char *weekdays[];
 	extern char *month_name[];
 
-	sprintf(buf, "It is %d o'clock %s, on ",
+	snprintf(buf, sizeof(buf), "It is %d o'clock %s, on ",
 		((time_info.hours % 12 == 0) ? 12 : ((time_info.hours) % 12)),
 		((time_info.hours >= 12) ? "pm" : "am"));
 
@@ -1404,11 +1404,11 @@ void do_weather(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 	if (OUTSIDE(ch)) {
-		sprintf(buf, "The sky is %s and %s.\n\r", sky_look[weather_info.sky],
+		snprintf(buf, sizeof(buf), "The sky is %s and %s.\n\r", sky_look[weather_info.sky],
 			(weather_info.change >= 0 ?
 			 "you feel a warm wind from south" :
 			 "your foot tells you bad weather is due"));
-		sprintf(buf2, "%s %s.\n\r", sky_look_han[weather_info.sky],
+		snprintf(buf2, sizeof(buf2), "%s %s.\n\r", sky_look_han[weather_info.sky],
 			(weather_info.change >= 0 ?
 			 "서편하늘부터 구름이 개이고 있습니다" :
 			 "더 궂은 날이 되것 같습니다"));
@@ -1481,13 +1481,13 @@ void do_spells(struct char_data *ch, char *argument, int cmd)
 
 	if (IS_NPC(ch))
 		return;
-	sprintf(buf,
+	snprintf(buf, sizeof(buf),
 		"NUM     SPELL NAME       MU CL TH WA    MU  CL  TH  WA    MIN_MANA\n\r");
 	if (!*argument) {
 		for (i = 0; *spells[i] != '\n'; i++) {
 			if (*spells[i] == 0)
 				continue;
-			sprintf(tmp,
+			snprintf(tmp, sizeof(tmp),
 				"%3d %-20s%3d%3d%3d%3d  %4d%4d%4d%4d%8d\n\r",
 				i,
 				spells[i], spell_info[i + 1].min_level[0],
@@ -1510,7 +1510,7 @@ void do_spells(struct char_data *ch, char *argument, int cmd)
 			return;
 		}
 		send_to_char(buf, ch);
-		sprintf(tmp, "%3d %-20s%3d%3d%3d%3d  %4d%4d%4d%4d%8d\n\r",
+		snprintf(tmp, sizeof(tmp), "%3d %-20s%3d%3d%3d%3d  %4d%4d%4d%4d%8d\n\r",
 			no - 1,
 			spells[no - 1], spell_info[no].min_level[0],
 			spell_info[no].min_level[1],
@@ -1606,7 +1606,7 @@ void do_who(struct char_data *ch, char *argument, int cmd)
 
 	is_korean = IS_SET(ch->specials.act, PLR_KOREAN);
 
-	sprintf(page_buffer, "%s", is_korean ? "사람들\n\r-------\n\r" :
+	snprintf(page_buffer, sizeof(page_buffer), "%s", is_korean ? "사람들\n\r-------\n\r" :
 		"Players\n\r-------\n\r");
 
 	for (d = descriptor_list; d; d = d->next) {
@@ -1664,12 +1664,12 @@ void do_who(struct char_data *ch, char *argument, int cmd)
 				}
 				if (d->original) {
 					if (is_korean)
-						sprintf(buf,
+						snprintf(buf, sizeof(buf),
 							"< %c %2d > %s %s", class,
 							GET_LEVEL(d->original),
 							GET_NAME(d->original), d->original->player.title);
 					else
-						sprintf(buf,
+						snprintf(buf, sizeof(buf),
 							"< %c %2d > %s %s", class,
 							GET_LEVEL(d->original),
 							GET_NAME(d->original), d->original->player.title);
@@ -1693,12 +1693,12 @@ void do_who(struct char_data *ch, char *argument, int cmd)
 				}
 				if (d->character) {
 					if (is_korean)
-						sprintf(buf,
+						snprintf(buf, sizeof(buf),
 							"< %c %2d > %s %s", class,
 							GET_LEVEL(d->character),
 							GET_NAME(d->character), d->character->player.title);
 					else
-						sprintf(buf,
+						snprintf(buf, sizeof(buf),
 							"< %c %2d > %s %s", class,
 							GET_LEVEL(d->character),
 							GET_NAME(d->character), d->character->player.title);
@@ -1706,12 +1706,12 @@ void do_who(struct char_data *ch, char *argument, int cmd)
 						strcat(buf, " (CRIMINAL)");
 				}
 				if (GET_LEVEL(ch) < IMO) {
-					sprintf(buf2, " PK#(%d)\n\r",
+					snprintf(buf2, sizeof(buf2), " PK#(%d)\n\r",
 						d->character->player.pk_num);
 					strcat(buf, buf2);
 				} else if (d->character->player.guild >= 0 &&
 					   d->character->player.guild <= MAX_GUILD_LIST) {
-					sprintf(buf2, " PK#(%d) %s\n\r",
+					snprintf(buf2, sizeof(buf2), " PK#(%d) %s\n\r",
 						d->character->player.pk_num,
 						guild_names[(int)d->character->player.guild]);
 					strcat(buf, buf2);
@@ -1729,7 +1729,7 @@ void do_who(struct char_data *ch, char *argument, int cmd)
 			num_player++;
 		}
 	}
-	sprintf(buf, is_korean ?
+	snprintf(buf, sizeof(buf), is_korean ?
 		"\n\r%d 명이 있습니다.\n\r" :
 		"\n\rYou can see %d players.\n\r", num_player);
 	strcat(page_buffer, buf);
@@ -1909,7 +1909,7 @@ void do_where(struct char_data *ch, char *argument, int cmd)
 					if (CAN_SEE(ch, d->character) &&
 					    world[d->character->in_room].zone ==
 					    world[ch->in_room].zone) {
-						sprintf(buf,
+						snprintf(buf, sizeof(buf),
 							"%-20s - %s [%d] \n\r",
 							d->character->player.name,
 							world[d->character->in_room].name,
@@ -1934,14 +1934,14 @@ void do_where(struct char_data *ch, char *argument, int cmd)
 				    (d->character->in_room != NOWHERE))
 					if (CAN_SEE(ch, d->character)) {
 						if (d->original)	/* If switched */
-							sprintf(buf,
+							snprintf(buf, sizeof(buf),
 								"%-20s - %s [%d] In body of %s\n\r",
 								d->original->player.name,
 								world[d->character->in_room].name,
 								world[d->character->in_room].number,
 								fname(d->character->player.name));
 						else
-							sprintf(buf,
+							snprintf(buf, sizeof(buf),
 								"%-20s - %s [%d]\n\r",
 								d->character->player.name,
 								world[d->character->in_room].name,
@@ -1960,13 +1960,13 @@ void do_where(struct char_data *ch, char *argument, int cmd)
 							(world[i->in_room].zone ==
 							 world[ch->in_room].zone))) {
 				if (IS_NPC(i))
-					sprintf(buf, "%2d: %-30s- %s ", ++n, i->player.short_descr,
+					snprintf(buf, sizeof(buf), "%2d: %-30s- %s ", ++n, i->player.short_descr,
 						world[i->in_room].name);
 				else
-					sprintf(buf, "%2d: %-30s- %s ", ++n, i->player.name,
+					snprintf(buf, sizeof(buf), "%2d: %-30s- %s ", ++n, i->player.name,
 						world[i->in_room].name);
 				if (GET_LEVEL(ch) >= IMO)
-					sprintf(buf2, "[%d]\n\r",
+					snprintf(buf2, sizeof(buf2), "[%d]\n\r",
 						world[i->in_room].number);
 				else
 					strcpy(buf2, "\n\r");
@@ -1984,7 +1984,7 @@ void do_where(struct char_data *ch, char *argument, int cmd)
 			for (j = 0; j < MAX_WEAR; ++j)
 				if (i->equipment[j])
 					if (isname(name, i->equipment[j]->name)) {
-						sprintf(buf,
+						snprintf(buf, sizeof(buf),
 							"%2d: %s worn by %s\n\r",
 							++n,
 							i->equipment[j]->short_description,
@@ -1994,16 +1994,16 @@ void do_where(struct char_data *ch, char *argument, int cmd)
 		for (k = object_list; k; k = k->next)
 			if (isname(name, k->name)) {
 				if (k->carried_by) {
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"%2d: %s carried by %s.\n\r",
 						++n, k->short_description,
 						get_char_name(k->carried_by, ch));
 					send_to_char(buf, ch);
 				} else if (k->in_obj) {
-					sprintf(buf, "%2d: %s in %s", ++n, k->short_description,
+					snprintf(buf, sizeof(buf), "%2d: %s in %s", ++n, k->short_description,
 						k->in_obj->short_description);
 					if (k->in_obj->carried_by) {
-						sprintf(buf2,
+						snprintf(buf2, sizeof(buf2),
 							" carried by %s\n\r", get_char_name
 							(k->in_obj->carried_by, ch));
 						strcat(buf, buf2);
@@ -2011,7 +2011,7 @@ void do_where(struct char_data *ch, char *argument, int cmd)
 						strcat(buf, "\n\r");
 					send_to_char(buf, ch);
 				} else if (k->in_room != NOWHERE) {
-					sprintf(buf, "%2d: %s in %s [%d]\n\r",
+					snprintf(buf, sizeof(buf), "%2d: %s in %s [%d]\n\r",
 						++n, k->short_description,
 						world[k->in_room].name,
 						world[k->in_room].number);
@@ -2171,7 +2171,7 @@ void do_wizlock(struct char_data *ch, char *argument, int cmd)
 		}
 	} else {
 		for (i = 0; i < baddoms; ++i) {
-			sprintf(buf, "%s\n", baddomain[i]);
+			snprintf(buf, sizeof(buf), "%s\n", baddomain[i]);
 			send_to_char(buf, ch);
 		}
 	}
@@ -2279,7 +2279,7 @@ void do_data(struct char_data *ch, char *argument, int cmd)
 			case 10:
 				n = victim->player.level;
 			}
-			sprintf(buf, fmt, GET_NAME(victim), n, (i % nc) ? "|"
+			snprintf(buf, sizeof(buf), fmt, GET_NAME(victim), n, (i % nc) ? "|"
 				: "\n\r");
 			send_to_char(buf, ch);
 		}

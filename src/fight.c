@@ -233,15 +233,15 @@ void make_corpse(struct char_data *ch, int level)
 
 	corpse->item_number = NOWHERE;
 	corpse->in_room = NOWHERE;
-	sprintf(buf, "corpse %s",
+	snprintf(buf, sizeof(buf), "corpse %s",
 		(IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch)));
 	corpse->name = strdup(buf);
 
-	sprintf(buf, "Corpse of %s is lying here.",
+	snprintf(buf, sizeof(buf), "Corpse of %s is lying here.",
 		(IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch)));
 	corpse->description = strdup(buf);
 
-	sprintf(buf, "Corpse of %s",
+	snprintf(buf, sizeof(buf), "Corpse of %s",
 		(IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch)));
 	corpse->short_description = strdup(buf);
 
@@ -631,9 +631,9 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 
 	if (IS_AFFECTED(k, AFF_GROUP) && (k->in_room == ch->in_room)) {
 		share = level_exp * GET_LEVEL(k);
-		sprintf(buf, "You receive %d experience and %d gold coins.",
+		snprintf(buf, sizeof(buf), "You receive %d experience and %d gold coins.",
 			share, money);
-		sprintf(buf2,
+		snprintf(buf2, sizeof(buf2),
 			"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
 			share, money);
 		acthan(buf, buf2, FALSE, k, 0, 0, TO_CHAR);
@@ -649,10 +649,10 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 		if (IS_AFFECTED(f->follower, AFF_GROUP) &&
 		    f->follower->in_room == ch->in_room) {
 			share = level_exp * GET_LEVEL(f->follower);
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"You receive %d experience and %d gold coins.",
 				share, money);
-			sprintf(buf2,
+			snprintf(buf2, sizeof(buf2),
 				"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
 				share, money);
 			acthan(buf, buf2, FALSE, f->follower, 0, 0, TO_CHAR);

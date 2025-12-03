@@ -600,13 +600,13 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 
 			/* name */
 			free(obj->name);
-			sprintf(buf1, "%s QUEST ARMOR", wear[fnum]);
+			snprintf(buf1, sizeof(buf1), "%s QUEST ARMOR", wear[fnum]);
 			CREATE(obj->name, char, strlen(buf1) + 1);
 			strcpy(obj->name, buf1);
 
 			/* short description */
 			free(obj->short_description);
-			sprintf(buf1, "%s's QUEST %s", GET_NAME(ch), wear[fnum]);
+			snprintf(buf1, sizeof(buf1), "%s's QUEST %s", GET_NAME(ch), wear[fnum]);
 			CREATE(obj->short_description, char, strlen(buf1) + 1);
 			strcpy(obj->short_description, buf1);
 

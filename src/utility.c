@@ -216,7 +216,7 @@ void print_increased_skilled(struct char_data *ch, int sk_no)
 {
 	char buf[256];
 
-	sprintf(buf, "Your %s POWER is more skilled!\n\r", spells[sk_no - 1]);
+	snprintf(buf, sizeof(buf), "Your %s POWER is more skilled!\n\r", spells[sk_no - 1]);
 	send_to_char(buf, ch);
 }
 

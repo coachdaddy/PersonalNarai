@@ -124,7 +124,7 @@ void shopping_buy(char *arg, struct char_data *ch,
 
 	one_argument(arg, argm);
 	if (!(*argm)) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			"%s what do you want to buy??"
 			,GET_NAME(ch));
 		do_tell(keeper, buf, 19);
@@ -132,7 +132,7 @@ void shopping_buy(char *arg, struct char_data *ch,
 	};
 	if (!(temp1 =
 	      get_obj_in_list_vis(ch, argm, keeper->carrying))) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			shop_index[shop_nr].no_such_item1
 			,GET_NAME(ch));
 		do_tell(keeper, buf, 19);
@@ -140,7 +140,7 @@ void shopping_buy(char *arg, struct char_data *ch,
 	}
 
 	if (temp1->obj_flags.cost <= 0) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			shop_index[shop_nr].no_such_item1
 			,GET_NAME(ch));
 		do_tell(keeper, buf, 19);
@@ -151,7 +151,7 @@ void shopping_buy(char *arg, struct char_data *ch,
 	if (GET_GOLD(ch) < (int)(temp1->obj_flags.cost *
 				 shop_index[shop_nr].profit_buy) && GET_LEVEL
 	    (ch) < (IMO + 1)) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			shop_index[shop_nr].missing_cash2,
 			GET_NAME(ch));
 		do_tell(keeper, buf, 19);
@@ -169,14 +169,14 @@ void shopping_buy(char *arg, struct char_data *ch,
 	}
 
 	if ((IS_CARRYING_N(ch) + 1 > CAN_CARRY_N(ch))) {
-		sprintf(buf, "%s : You can't carry that many items.\n\r",
+		snprintf(buf, sizeof(buf), "%s : You can't carry that many items.\n\r",
 			fname(temp1->name));
 		send_to_char(buf, ch);
 		return;
 	}
 
 	if ((IS_CARRYING_W(ch) + temp1->obj_flags.weight) > CAN_CARRY_W(ch)) {
-		sprintf(buf, "%s : You can't carry that much weight.\n\r",
+		snprintf(buf, sizeof(buf), "%s : You can't carry that much weight.\n\r",
 			fname(temp1->name));
 		send_to_char(buf, ch);
 		return;
@@ -184,13 +184,13 @@ void shopping_buy(char *arg, struct char_data *ch,
 
 	act("$n buys $p.", FALSE, ch, temp1, 0, TO_ROOM);
 
-	sprintf(buf,
+	snprintf(buf, sizeof(buf),
 		shop_index[shop_nr].message_buy,
 		GET_NAME(ch),
 		(int)(temp1->obj_flags.cost *
 		      shop_index[shop_nr].profit_buy));
 	do_tell(keeper, buf, 19);
-	sprintf(buf, "You now have %s.\n\r",
+	snprintf(buf, sizeof(buf), "You now have %s.\n\r",
 		temp1->short_description);
 	send_to_char(buf, ch);
 	if (GET_LEVEL(ch) < (IMO + 1))
@@ -226,7 +226,7 @@ void shopping_sell(char *arg, struct char_data *ch,
 	one_argument(arg, argm);
 
 	if (!(*argm)) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			"%s What do you want to sell??"
 			,GET_NAME(ch));
 		do_tell(keeper, buf, 19);
@@ -234,7 +234,7 @@ void shopping_sell(char *arg, struct char_data *ch,
 	}
 
 	if (!(temp1 = get_obj_in_list_vis(ch, argm, ch->carrying))) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			shop_index[shop_nr].no_such_item2
 			,GET_NAME(ch));
 		do_tell(keeper, buf, 19);
@@ -242,7 +242,7 @@ void shopping_sell(char *arg, struct char_data *ch,
 	}
 
 	if (!(trade_with(temp1, shop_nr)) || (temp1->obj_flags.cost < 1)) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			shop_index[shop_nr].do_not_buy,
 			GET_NAME(ch));
 		do_tell(keeper, buf, 19);
@@ -251,7 +251,7 @@ void shopping_sell(char *arg, struct char_data *ch,
 
 	if (GET_GOLD(keeper) < (int)(temp1->obj_flags.cost *
 				     shop_index[shop_nr].profit_sell)) {
-		sprintf(buf, shop_index[shop_nr].missing_cash1
+		snprintf(buf, sizeof(buf), shop_index[shop_nr].missing_cash1
 			,GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		return;
@@ -259,11 +259,11 @@ void shopping_sell(char *arg, struct char_data *ch,
 
 	act("$n sells $p.", FALSE, ch, temp1, 0, TO_ROOM);
 
-	sprintf(buf, shop_index[shop_nr].message_sell,
+	snprintf(buf, sizeof(buf), shop_index[shop_nr].message_sell,
 		GET_NAME(ch), (int)(temp1->obj_flags.cost *
 				    shop_index[shop_nr].profit_sell));
 	do_tell(keeper, buf, 19);
-	sprintf(buf, "The shopkeeper now has %s.\n\r",
+	snprintf(buf, sizeof(buf), "The shopkeeper now has %s.\n\r",
 		temp1->short_description);
 	send_to_char(buf, ch);
 	GET_GOLD(ch) += (int)(temp1->obj_flags.cost *
@@ -297,28 +297,28 @@ void shopping_value(char *arg, struct char_data *ch,
 	one_argument(arg, argm);
 
 	if (!(*argm)) {
-		sprintf(buf, "%s What do you want me to valuate??",
+		snprintf(buf, sizeof(buf), "%s What do you want me to valuate??",
 			GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		return;
 	}
 
 	if (!(temp1 = get_obj_in_list_vis(ch, argm, ch->carrying))) {
-		sprintf(buf, shop_index[shop_nr].no_such_item2,
+		snprintf(buf, sizeof(buf), shop_index[shop_nr].no_such_item2,
 			GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		return;
 	}
 
 	if (!(trade_with(temp1, shop_nr))) {
-		sprintf(buf,
+		snprintf(buf, sizeof(buf),
 			shop_index[shop_nr].do_not_buy,
 			GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		return;
 	}
 
-	sprintf(buf, "%s I'll give you %d gold coins for that!",
+	snprintf(buf, sizeof(buf), "%s I'll give you %d gold coins for that!",
 		GET_NAME(ch), (int)(temp1->obj_flags.cost *
 				    shop_index[shop_nr].profit_sell));
 	do_tell(keeper, buf, 19);
@@ -347,7 +347,7 @@ void shopping_list(char *arg, struct char_data *ch,
 							 > 0)) {
 				found_obj = TRUE;
 				if (temp1->obj_flags.type_flag != ITEM_DRINKCON)
-					sprintf(buf2, "%s for %d gold coins.\n\r"
+					snprintf(buf2, sizeof(buf2), "%s for %d gold coins.\n\r"
 						,(temp1->short_description)
 						,(int)(temp1->obj_flags.cost *
 						       shop_index[shop_nr].profit_buy));
@@ -357,7 +357,7 @@ void shopping_list(char *arg, struct char_data *ch,
 							,drinks[temp1->obj_flags.value[2]]);
 					else
 						sprintf(buf3, "%s", (temp1->short_description));
-					sprintf(buf2,
+					snprintf(buf2, sizeof(buf2),
 						"%s for %d gold coins.\n\r", buf3,
 						(int)(temp1->obj_flags.cost *
 						      shop_index[shop_nr].profit_buy));

@@ -255,7 +255,7 @@ int get_mail(struct char_data *ch, struct mbox_data *cb, char *arg)
 
 	for (i = 0; i < cb->m_num; i++) {
 		if (isname(GET_NAME(ch), cb->receiver[i])) {
-			sprintf(buffer, "letter %s from %s\n\r\n\r%s",
+			snprintf(buffer, sizeof(buffer), "letter %s from %s\n\r\n\r%s",
 				cb->head[i], cb->sender[i], cb->msgs[i]);
 			pm_num++;
 			if ((paper_num = real_object(paper_num)) < 0) {
@@ -294,16 +294,16 @@ int post_mail(struct char_data *ch, struct mbox_data *cb, char *arg)
 	paper = get_obj_in_list_vis(ch, papername, ch->carrying);
 
 	if (!paper) {
-		sprintf(buf, "You can't find %s in your inventory.\n\r", papername);
+		snprintf(buf, sizeof(buf), "You can't find %s in your inventory.\n\r", papername);
 	} else if (paper->obj_flags.type_flag != ITEM_NOTE) {
-		sprintf(buf, "You can't post %s on mbox.\n\r", papername);
+		snprintf(buf, sizeof(buf), "You can't post %s on mbox.\n\r", papername);
 	} else if (paper->action_description == 0) {
-		sprintf(buf, "%s is empty.\n\r", papername);
+		snprintf(buf, sizeof(buf), "%s is empty.\n\r", papername);
 	} else {
-		sprintf(buf, "Ok. You posted %s on mbox.\n\r", papername);
+		snprintf(buf, sizeof(buf), "Ok. You posted %s on mbox.\n\r", papername);
 		cb->head[cb->m_num] = (char *)malloc(strlen(header) + 1);
 		if (cb->head[cb->m_num] == 0) {
-			sprintf(buf, "Your %s is fallen from mbox.\n\r", papername);
+			snprintf(buf, sizeof(buf), "Your %s is fallen from mbox.\n\r", papername);
 			send_to_char(buf, ch);
 			return (TRUE);
 		}

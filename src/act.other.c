@@ -98,7 +98,7 @@ void do_wimpy(struct char_data *ch, char *argument, int cmd)
 			if (wimpyness > GET_MAX_HIT(ch) * 25 / 100) {
 				send_to_char("All that you can do is fleeing?\n\r", ch);
 			} else {
-				sprintf(buf,
+				snprintf(buf, sizeof(buf),
 					"Set your wimpy time to %d, now.\n\r", wimpyness);
 				send_to_char(buf, ch);
 				ch->specials.wimpyness = wimpyness;
@@ -107,7 +107,7 @@ void do_wimpy(struct char_data *ch, char *argument, int cmd)
 			if (wimpyness > GET_MAX_HIT(ch) * 6 / 10) {
 				send_to_char("All that you can do is fleeing?\n\r", ch);
 			} else {
-				sprintf(buf,
+				snprintf(buf, sizeof(buf),
 					"Set your wimpy time to %d, now.\n\r", wimpyness);
 				send_to_char(buf, ch);
 				ch->specials.wimpyness = wimpyness;
@@ -131,7 +131,7 @@ void do_save(struct char_data *ch, char *argument, int cmd)
 
 	if (IS_NPC(ch) || !ch->desc)
 		return;
-	sprintf(buf, "Saving %s.\n\r", GET_NAME(ch));
+	snprintf(buf, sizeof(buf), "Saving %s.\n\r", GET_NAME(ch));
 	send_to_char(buf, ch);
 #ifdef  RETURN_TO_QUIT
 	save_char(ch, world[ch->in_room].number);
@@ -296,7 +296,7 @@ void do_steal(struct char_data *ch, char *argument, int cmd)
 				INCREASE_SKILLED(ch, victim, SKILL_STEAL);
 				GET_GOLD(ch) += gold;
 				GET_GOLD(victim) -= gold;
-				sprintf(buf,
+				snprintf(buf, sizeof(buf),
 					"Bingo! You got %d gold coins.\n\r", gold);
 				send_to_char(buf, ch);
 				if (!IS_NPC(victim))
@@ -328,7 +328,7 @@ do_practice(struct char_data *ch, char *arg, int cmd)
 		if (*victim_name) {
 			victim = get_char_vis(ch, victim_name);
 			if (victim) {
-				sprintf(tmp, "Practice of %s\n\r", victim->player.name);
+				snprintf(tmp, sizeof(tmp), "Practice of %s\n\r", victim->player.name);
 				send_to_char(tmp, ch);
 			} else {
 				send_to_char("There's no such a person or mob.\n", ch);
@@ -349,7 +349,7 @@ do_practice(struct char_data *ch, char *arg, int cmd)
 		      GET_LEVEL(victim))) {
 			if (victim->skills[i + 1].learned <= 0)
 				continue;
-			sprintf(tmp, "%-20s %-4s\t", spells[i],
+			snprintf(tmp, sizeof(tmp), "%-20s %-4s\t", spells[i],
 				how_good(victim->skills[i + 1].learned,
 					 victim->skills[i
 							+
@@ -363,7 +363,7 @@ do_practice(struct char_data *ch, char *arg, int cmd)
 			      1] >
 			      GET_LEVEL(victim)) &&
 			    victim->skills[i + 1].learned != 0) {
-				sprintf(tmp, "%-20s %-4s", spells[i],
+				snprintf(tmp, sizeof(tmp), "%-20s %-4s", spells[i],
 					how_good(victim->skills[i + 1].learned,
 						 victim->skills[i + 1].skilled));
 				strcat(buf, tmp);
@@ -422,7 +422,7 @@ void do_group(struct char_data *ch, char *argument, int cmd)
 				k = ch;
 
 			if (k && IS_AFFECTED(k, AFF_GROUP)) {
-				sprintf(buf,
+				snprintf(buf, sizeof(buf),
 					"  [ %5ld/%5ld %5ld/%5ld %5ld/%5ld ]   $N (Head of group)",
 					GET_HIT(k), GET_PLAYER_MAX_HIT(k),
 					GET_MANA(k),
@@ -433,7 +433,7 @@ void do_group(struct char_data *ch, char *argument, int cmd)
 
 			for (f = k->followers; f; f = f->next)
 				if (f->follower && IS_AFFECTED(f->follower, AFF_GROUP)) {
-					sprintf(buf,
+					snprintf(buf, sizeof(buf),
 						"  [ %5ld/%5ld %5ld/%5ld %5ld/%5ld ]   $N",
 						GET_HIT(f->follower),
 						GET_PLAYER_MAX_HIT(f->follower),
@@ -618,7 +618,7 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 	}
 
 	/* by ares */
-	sprintf(buf, "Use log : %s uses %s", ch->player.name, argument);
+	snprintf(buf, sizeof(buf), "Use log : %s uses %s", ch->player.name, argument);
 	log(buf);
 
 	stick = ch->equipment[HOLD];
@@ -1152,7 +1152,7 @@ void do_throw_object(struct char_data *ch, char *argument, int cmd)
 				do_say(ch,
 				       "윽...이렇게 비싼건....망했당..\n\r", 0);
 			}
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"$n님이 $N님에게 %s을 던집니다!!!",
 				fname(obj->name));
 			act("하이야~~~~압~~~", TRUE, ch, 0, 0, TO_ROOM);
