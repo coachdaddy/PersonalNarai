@@ -795,78 +795,89 @@ void renum_zone_table(void)
 			}
 }
 
+/* 헬퍼 함수: 열린 파일에서 존 데이터를 읽어 메모리에 적재 */
+void parse_zone_file(FILE *fl, int zon)
+{
+    int cmd_no = 0, expand = 1;
+    char buf[255];
+
+    // 기본 헤더 정보 - Top, Lifespan, Reset Mode
+    fscanf(fl, " %d ", &zone_table[zon].top);
+    fscanf(fl, " %d ", &zone_table[zon].lifespan);
+    fscanf(fl, " %d ", &zone_table[zon].reset_mode);
+
+    // 명령어 테이블 읽기 - 기존 루프 로직 그대로
+    zone_table[zon].cmd = NULL;
+
+    cmd_no = 0;
+    for (expand = 1;;) {
+        if (expand) {
+            if (!cmd_no)
+                CREATE(zone_table[zon].cmd, struct reset_com, 1);
+            else if (!(zone_table[zon].cmd = (struct reset_com *) realloc(zone_table[zon].cmd,
+                            (cmd_no + 1) * sizeof(struct reset_com)))) {
+                perror("reset command load");
+                exit(0);
+            }
+        }
+        expand = 1;
+        fscanf(fl, " ");    /* skip blanks */
+        fscanf(fl, "%c", &zone_table[zon].cmd[cmd_no].command);
+
+        // S 명령어를 만나면 루프 종료
+        if (zone_table[zon].cmd[cmd_no].command == 'S') {
+            break;
+        }
+
+        // * 문자는 주석 처리
+        if (zone_table[zon].cmd[cmd_no].command == '*') {
+            expand = 0;
+            fgets(buf, 80, fl); /* skip command */
+            continue;
+        }
+
+        fscanf(fl, " %d %d %d", (int *) &zone_table[zon].cmd[cmd_no].if_flag,
+                &zone_table[zon].cmd[cmd_no].arg1, &zone_table[zon].cmd[cmd_no].arg2);
+
+        if (zone_table[zon].cmd[cmd_no].command == 'M' || zone_table[zon].cmd[cmd_no].command == 'O' ||
+                zone_table[zon].cmd[cmd_no].command == 'E' || zone_table[zon].cmd[cmd_no].command == 'P' ||
+                zone_table[zon].cmd[cmd_no].command == 'D')
+            fscanf(fl, " %d", &zone_table[zon].cmd[cmd_no].arg3);
+
+        fgets(buf, 80, fl); /* read comment */
+        cmd_no++;
+    }
+}
+
 /* new version of boot_zone : by ares */
 /* read lib/zone/.zon files */
+/* refactoring using Helper function, by Komo */
 void load_zones(int zon)
 {
-	FILE *fl;
-	char buf[255], *check;
-	int cmd_no = 0, expand;
+    FILE *fl;
+    char buf[255], *check;
 
-	if (zon > top_of_zone_table)
-		return;
-	fl = fopen(zone_table[zon].filename, "r");
-	if (!fl) {
-		snprintf(buf, sizeof(buf), "Error in reading zone file '%s'",
-			zone_table[zon].filename);
-		log(buf);
-		return;
-	}
-	free(zone_table[zon].name);
-	free(zone_table[zon].cmd);
-	check = fread_string(fl);
-	zone_table[zon].name = check;
-	fscanf(fl, " %d ", &zone_table[zon].top);
-	fscanf(fl, " %d ", &zone_table[zon].lifespan);
-	fscanf(fl, " %d ", &zone_table[zon].reset_mode);
+    if (zon > top_of_zone_table)
+        return;
 
-	/* read the command table */
-	cmd_no = 0;
-	for (expand = 1;;) {
-		if (expand) {
-			if (!cmd_no)
-				CREATE(zone_table[zon].cmd, struct reset_com, 1);
-			else if (!(zone_table[zon].cmd =
-				   (struct reset_com *)realloc(zone_table[zon].cmd,
-							       (cmd_no + 1) * sizeof
-							       (struct reset_com)))) {
-				perror("reset command load");
-				perror(zone_table[zon].filename);
-				exit(0);
-			}
-		}
-		expand = 1;
-		fscanf(fl, " ");	/* skip blanks */
-		fscanf(fl, "%c", &zone_table[zon].cmd[cmd_no].command);
+    fl = fopen(zone_table[zon].filename, "r");
+    if (!fl) {
+        snprintf(buf, sizeof(buf), "Error in reading zone file '%s'", zone_table[zon].filename);
+        log(buf);
+        return;
+    }
 
-		/* end of each zone file */
-		if (zone_table[zon].cmd[cmd_no].command == 'S') {
-			fclose(fl);
-			break;
-		}
+    // 기존 데이터 메모리 해제
+    if (zone_table[zon].name) free(zone_table[zon].name);
+    if (zone_table[zon].cmd)  free(zone_table[zon].cmd);
 
-		if (zone_table[zon].cmd[cmd_no].command == '*') {
-			expand = 0;
-			fgets(buf, 80, fl);	/* skip command */
-			continue;
-		}
+    check = fread_string(fl);
+    zone_table[zon].name = check;
 
-		fscanf(fl, " %d %d %d",
-		       (int *)&zone_table[zon].cmd[cmd_no].if_flag,
-		       &zone_table[zon].cmd[cmd_no].arg1,
-		       &zone_table[zon].cmd[cmd_no].arg2);
+    // 헬퍼 함수 호출
+    parse_zone_file(fl, zon);
 
-		if (zone_table[zon].cmd[cmd_no].command == 'M' ||
-		    zone_table[zon].cmd[cmd_no].command == 'O' ||
-		    zone_table[zon].cmd[cmd_no].command == 'E' ||
-		    zone_table[zon].cmd[cmd_no].command == 'P' ||
-		    zone_table[zon].cmd[cmd_no].command == 'D')
-			fscanf(fl, " %d", &zone_table[zon].cmd[cmd_no].arg3);
-
-		fgets(buf, 80, fl);	/* read comment */
-
-		cmd_no++;
-	}
+    fclose(fl);
 }
 
 void boot_zones(void)
