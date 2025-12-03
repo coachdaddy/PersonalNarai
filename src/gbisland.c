@@ -185,7 +185,7 @@ void gbisland_false_move(struct char_data *ch, int dir)
 	was_in = ch->in_room;
 
 	if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-		sprintf(tmp, "$n leaves %s.", dirs[dir - 1]);
+		snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir - 1]);
 		act(tmp, TRUE, ch, 0, 0, TO_ROOM);
 	}
 
@@ -197,7 +197,7 @@ void gbisland_false_move(struct char_data *ch, int dir)
 				    ch, TO_CHAR);
 
 				if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-					sprintf(tmp, "$n leaves %s.", dirs[dir
+					snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir
 									   - 1]);
 					act(tmp, TRUE, k->follower, 0, 0, TO_ROOM);
 				}
@@ -234,7 +234,7 @@ void gbisland_go_out_barrier(struct char_data *ch)
 	dir = number(1, 4);
 
 	if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-		sprintf(tmp, "$n leaves %s.", dirs[dir - 1]);
+		snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir - 1]);
 		act(tmp, TRUE, ch, 0, 0, TO_ROOM);
 	}
 
@@ -254,7 +254,7 @@ void gbisland_go_out_barrier(struct char_data *ch)
 				send_to_char("\n\r", k->follower);
 
 				if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-					sprintf(tmp, "$n leaves %s.", dirs[dir
+					snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir
 									   - 1]);
 					act(tmp, TRUE, k->follower, 0, 0, TO_ROOM);
 				}
@@ -285,7 +285,7 @@ void gbisland_go_back(struct char_data *ch)
 	do_say(ch, "신의 은총이 함께하길...", 0);
 
 	if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-		sprintf(tmp, "$n leaves %s.", dirs[dir - 1]);
+		snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir - 1]);
 		act(tmp, TRUE, ch, 0, 0, TO_ROOM);
 	}
 
@@ -359,7 +359,7 @@ int gbisland_saint_mirror(struct char_data *ch, int cmd, char *arg)
 			dir = (char)(path[index + 1]) - '0' + 1;
 			switch (path[index]) {
 			case 'O':
-				sprintf(tmp, "door %s", dirs[dir - 1]);
+				snprintf(tmp, sizeof(tmp), "door %s", dirs[dir - 1]);
 				do_open(ch, tmp, 0);
 				index += 2;
 				break;

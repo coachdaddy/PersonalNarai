@@ -232,10 +232,10 @@ void do_tell(struct char_data *ch, char *argument, int cmd)
 			s = ch->player.short_descr;
 		else
 			s = CAN_SEE(vict, ch) ? GET_NAME(ch) : "Someone";
-		sprintf(buf, "%s tells you '%s'\n\r", s, message);
+		snprintf(buf, sizeof(buf), "%s tells you '%s'\n\r", s, message);
 		send_to_char(buf, vict);
 		sprintf(vict->specials.reply_who, "%s", GET_NAME(ch));
-		sprintf(buf, "You tell %s '%s'\n\r", GET_NAME(vict), message);
+		snprintf(buf, sizeof(buf), "You tell %s '%s'\n\r", GET_NAME(vict), message);
 		send_to_char(buf, ch);
 	} else {
 		act("$E isn't listening now.", FALSE, ch, 0, vict, TO_CHAR);
@@ -270,13 +270,13 @@ void do_send(struct char_data *ch, char *argument, int cmd)
 	else if ((!IS_SET(vict->specials.act, PLR_NOTELL)) ||
 		 ((GET_LEVEL(ch) >= IMO) && (GET_LEVEL(ch) > GET_LEVEL(vict)))) {
 		send_to_char(paint, vict);
-		sprintf(buf, "You send %s %s\n\r", GET_NAME(vict), message);
+		snprintf(buf, sizeof(buf), "You send %s %s\n\r", GET_NAME(vict), message);
 		send_to_char(buf, ch);
 		if (IS_NPC(ch))
 			s = ch->player.short_descr;
 		else
 			s = CAN_SEE(vict, ch) ? GET_NAME(ch) : "Someone";
-		sprintf(buf, "%s sends you '%s'\n\r", s, message);
+		snprintf(buf, sizeof(buf), "%s sends you '%s'\n\r", s, message);
 		send_to_char(buf, vict);
 	} else {
 		act("$E isn't listening now.", FALSE, ch, 0, vict, TO_CHAR);
@@ -333,7 +333,7 @@ void do_whisper(struct char_data *ch, char *argument, int cmd)
 				    "You can't seem to get your mouth close enough to your ear...\n\r",
 				    ch);
 	} else {
-		sprintf(buf, "$n whispers to you, '%s'", message);
+		snprintf(buf, sizeof(buf), "$n whispers to you, '%s'", message);
 		act(buf, FALSE, ch, 0, vict, TO_VICT);
 /*    send_to_char("Ok.\n\r", ch); */
 		act("$n whispers something to $N.", FALSE, ch, 0, vict, TO_NOTVICT);
@@ -360,7 +360,7 @@ void do_ask(struct char_data *ch, char *argument, int cmd)
 		act("$n quietly asks $mself a question.", FALSE, ch, 0, 0, TO_ROOM);
 		send_to_char("You think about it for a while...\n\r", ch);
 	} else {
-		sprintf(buf, "$n asks you '%s'", message);
+		snprintf(buf, sizeof(buf), "$n asks you '%s'", message);
 		act(buf, FALSE, ch, 0, vict, TO_VICT);
 /*    send_to_char("Ok.\n\r", ch); */
 		act("$n asks $N a question.", FALSE, ch, 0, vict, TO_NOTVICT);
@@ -391,12 +391,12 @@ void do_write(struct char_data *ch, char *argument, int cmd)
 	if (*penname)		/* there were two arguments */
 	{
 		if (!(paper = get_obj_in_list_vis(ch, papername, ch->carrying))) {
-			sprintf(buf, "You have no %s.\n\r", papername);
+			snprintf(buf, sizeof(buf), "You have no %s.\n\r", papername);
 			send_to_char(buf, ch);
 			return;
 		}
 		if (!(pen = get_obj_in_list_vis(ch, penname, ch->carrying))) {
-			sprintf(buf, "You have no %s.\n\r", penname);
+			snprintf(buf, sizeof(buf), "You have no %s.\n\r", penname);
 			send_to_char(buf, ch);
 			return;
 		}
@@ -404,7 +404,7 @@ void do_write(struct char_data *ch, char *argument, int cmd)
 		/* there was one arg.let's see what we can find */
 	{
 		if (!(paper = get_obj_in_list_vis(ch, papername, ch->carrying))) {
-			sprintf(buf, "There is no %s in your inventory.\n\r", papername);
+			snprintf(buf, sizeof(buf), "There is no %s in your inventory.\n\r", papername);
 			send_to_char(buf, ch);
 			return;
 		}
@@ -419,7 +419,7 @@ void do_write(struct char_data *ch, char *argument, int cmd)
 
 		/* one object was found. Now for the other one. */
 		if (!ch->equipment[HOLD]) {
-			sprintf(buf, "You can't write with a %s alone.\n\r", papername);
+			snprintf(buf, sizeof(buf), "You can't write with a %s alone.\n\r", papername);
 			send_to_char(buf, ch);
 			return;
 		}

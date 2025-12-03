@@ -72,7 +72,7 @@ char *how_good(int p1, int p2)
 {
 	static char buf[64];
 
-	sprintf(buf, "(%3d, %3d)", p1, p2);
+	snprintf(buf, sizeof(buf), "(%3d, %3d)", p1, p2);
 	return (buf);
 }
 
@@ -101,15 +101,15 @@ int guild(struct char_data *ch, int cmd, char *arg)
 
 		for (i = 0; *spells[i] != '\n'; i++) {
 			if (*spells[i] && (spell_info[i + 1].min_level[cla] <= lev)) {
-				sprintf(tmp, "%-20s %-4s\n\r", spells[i], 
+				snprintf(tmp, sizeof(tmp), "%-20s %-4s\n\r", spells[i], 
 								how_good (ch->skills[i + 1].learned, ch->skills[i + 1].skilled));
 				strcat(buf3, tmp);
 			}
 		}
 
-		sprintf(buf, "You have %d practices left.\n\r",
+		snprintf(buf, sizeof(buf), "You have %d practices left.\n\r",
 			ch->specials.spells_to_learn);
-		sprintf(buf2, "지금 %d 번 기술을 연마(practice)할 수 있습니다. \n\r",
+		snprintf(buf2, sizeof(buf2), "지금 %d 번 기술을 연마(practice)할 수 있습니다. \n\r",
 			ch->specials.spells_to_learn);
 
 		send_to_char_han(buf, buf2, ch);
@@ -147,9 +147,9 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	}
 
 	if (pskill > 0 && ch->skills[pskill].learned < 30) {
-		sprintf(buf, "First, You you need to learn %s .\n\r",
+		snprintf(buf, sizeof(buf), "First, You you need to learn %s .\n\r",
 			spells[pskill]);
-		sprintf(buf2, "먼저 %s 기술을 배워야 합니다. \n\r",
+		snprintf(buf2, sizeof(buf2), "먼저 %s 기술을 배워야 합니다. \n\r",
 			spells[pskill]);
 
 		send_to_char_han(buf, buf2, ch);
@@ -188,7 +188,7 @@ int dump(struct char_data *ch, int cmd, char *arg)
 	char *fname(char *namelist);
 
 	for (k = world[ch->in_room].contents; k; k = world[ch->in_room].contents) {
-		sprintf(buf, "The %s vanish in a puff of smoke.\n\r", fname(k->name));
+		snprintf(buf, sizeof(buf), "The %s vanish in a puff of smoke.\n\r", fname(k->name));
 		for (tmp_char = world[ch->in_room].people; tmp_char;
 		     tmp_char = tmp_char->next_in_room)
 			if (CAN_SEE_OBJ(tmp_char, k))
@@ -200,7 +200,7 @@ int dump(struct char_data *ch, int cmd, char *arg)
 	do_drop(ch, arg, cmd);
 	value = 0;
 	for (k = world[ch->in_room].contents; k; k = world[ch->in_room].contents) {
-		sprintf(buf, "The %s vanish in a puff of smoke.\n\r", fname(k->name));
+		snprintf(buf, sizeof(buf), "The %s vanish in a puff of smoke.\n\r", fname(k->name));
 		for (tmp_char = world[ch->in_room].people; tmp_char;
 		     tmp_char = tmp_char->next_in_room) {
 			if (CAN_SEE_OBJ(tmp_char, k))
@@ -417,7 +417,7 @@ void first_attack(struct char_data *ch, struct char_data *victim)
 	char buf[80], sbuf[100];
 	int num;
 
-	sprintf(buf, "%s", GET_NAME(victim));
+	snprintf(buf, sizeof(buf), "%s", GET_NAME(victim));
 
 	if (GET_LEVEL(ch) < 10) {
 		hit(ch, victim, 0);
@@ -429,17 +429,17 @@ void first_attack(struct char_data *ch, struct char_data *victim)
 	case CLASS_MAGIC_USER:
 		if (number(0, 1)) {
 			if (num > 33) {
-				sprintf(sbuf, " 'disintegrate' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'disintegrate' %s", buf);
 			} else if (num > 30) {
-				sprintf(sbuf, " 'cone of ice' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'cone of ice' %s", buf);
 			} else if (num > 26) {
-				sprintf(sbuf, " 'full fire' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'full fire' %s", buf);
 			} else if (num > 20) {
-				sprintf(sbuf, " 'throw' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'throw' %s", buf);
 			} else if (num > 15) {
-				sprintf(sbuf, " 'energy drain' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'energy drain' %s", buf);
 			} else {
-				sprintf(sbuf, " 'lightning bolt' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'lightning bolt' %s", buf);
 			}
 			do_cast(ch, sbuf, 0);
 		} else {
@@ -449,13 +449,13 @@ void first_attack(struct char_data *ch, struct char_data *victim)
 	case CLASS_CLERIC:
 		if (number(0, 1)) {
 			if (num > 35) {
-				sprintf(sbuf, " 'throw' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'throw' %s", buf);
 			} else if (num > 25) {
-				sprintf(sbuf, " 'sunburst' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'sunburst' %s", buf);
 			} else if (num > 15) {
-				sprintf(sbuf, " 'harm' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'harm' %s", buf);
 			} else {
-				sprintf(sbuf, " 'call lightning' %s", buf);
+				snprintf(sbuf, sizeof(sbuf), " 'call lightning' %s", buf);
 			}
 			do_cast(ch, sbuf, 0);
 		} else {
@@ -624,58 +624,58 @@ int cleric(struct char_data *ch, int cmd, char *arg)
 	case 3:
 	case 4:
 	case 5:
-		sprintf(buf, " 'magic missile' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'magic missile' %s", GET_NAME(victim));
 		break;
 	case 6:
 	case 7:
 	case 8:
-		sprintf(buf, " 'chill touch' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'chill touch' %s", GET_NAME(victim));
 		break;
 	case 9:
 	case 10:
-		sprintf(buf, " 'burning hands' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'burning hands' %s", GET_NAME(victim));
 		break;
 	case 11:
 	case 12:
-		sprintf(buf, " 'earthquake' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'earthquake' %s", GET_NAME(victim));
 		break;
 	case 13:
 	case 14:
-		sprintf(buf, " 'shocking grasp' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'shocking grasp' %s", GET_NAME(victim));
 		break;
 	case 15:
 	case 16:
 	case 17:
-		sprintf(buf, " 'harm' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'harm' %s", GET_NAME(victim));
 		break;
 	case 18:
 	case 19:
 	case 20:
-		sprintf(buf, " 'color spray' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'color spray' %s", GET_NAME(victim));
 		break;
 	case 21:
 	case 22:
 	case 23:
 	case 24:
-		sprintf(buf, " 'call lightning' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'call lightning' %s", GET_NAME(victim));
 		break;
 	case 25:
 	case 26:
 	case 27:
 	case 28:
-		sprintf(buf, " 'fireball' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'fireball' %s", GET_NAME(victim));
 		break;
 	case 29:
 	case 30:
 	case 31:
 	case 32:
-		sprintf(buf, " 'firestorm' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'firestorm' %s", GET_NAME(victim));
 		break;
 	case 33:
 	case 34:
 	case 35:
 	case 36:
-		sprintf(buf, " 'sunburst' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'sunburst' %s", GET_NAME(victim));
 		break;
 	case 37:
 	case 38:
@@ -684,7 +684,7 @@ int cleric(struct char_data *ch, int cmd, char *arg)
 	case 41:
 	case 42:
 	case 43:
-		sprintf(buf, " 'throw' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'throw' %s", GET_NAME(victim));
 		break;
 	}
 	do_cast(ch, buf, 84);
@@ -710,74 +710,74 @@ int magic_user(struct char_data *ch, int cmd, char *arg)
 	switch (number(1, GET_LEVEL(ch))) {
 	case 1:
 	case 2:
-		sprintf(buf, " 'magic missile' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'magic missile' %s", GET_NAME(victim));
 		break;
 	case 3:
 	case 4:
-		sprintf(buf, " 'chill touch' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'chill touch' %s", GET_NAME(victim));
 		break;
 	case 5:
 	case 6:
-		sprintf(buf, " 'energy flow' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'energy flow' %s", GET_NAME(victim));
 		break;
 	case 7:
 	case 8:
-		sprintf(buf, " 'burning hands' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'burning hands' %s", GET_NAME(victim));
 		break;
 	case 9:
 	case 10:
 	case 11:
-		sprintf(buf, " 'shocking grasp' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'shocking grasp' %s", GET_NAME(victim));
 		break;
 	case 12:
 	case 13:
-		sprintf(buf, " 'lightning bolt' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'lightning bolt' %s", GET_NAME(victim));
 		break;
 	case 14:
 	case 15:
 	case 16:
-		sprintf(buf, " 'colour spray' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'colour spray' %s", GET_NAME(victim));
 		break;
 	case 17:
 	case 18:
 	case 19:
 	case 20:
-		sprintf(buf, " 'fireball' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'fireball' %s", GET_NAME(victim));
 		break;
 	case 21:
 	case 22:
 	case 23:
-		sprintf(buf, " 'energy drain' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'energy drain' %s", GET_NAME(victim));
 		break;
 	case 24:
 	case 25:
 	case 26:
-		sprintf(buf, " 'firestorm' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'firestorm' %s", GET_NAME(victim));
 		break;
 	case 27:
 	case 28:
 	case 29:
 	case 30:
-		sprintf(buf, " 'cone of ice' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'cone of ice' %s", GET_NAME(victim));
 		break;
 	case 31:
 	case 32:
 	case 33:
 	case 34:
-		sprintf(buf, " 'throw' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'throw' %s", GET_NAME(victim));
 		break;
 	case 35:
 	case 36:
 	case 37:
 	case 38:
-		sprintf(buf, " 'disintegrate' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'disintegrate' %s", GET_NAME(victim));
 		break;
 	case 39:
 	case 40:
 	case 41:
 	case 42:
 	case 43:
-		sprintf(buf, " 'full fire' %s", GET_NAME(victim));
+		snprintf(buf, sizeof(buf), " 'full fire' %s", GET_NAME(victim));
 		break;
 	}
 	do_cast(ch, buf, 84);
@@ -846,65 +846,65 @@ int cleric(struct char_data *ch, int cmd, char *arg)
 		return FALSE;
 	switch (number(1, GET_LEVEL(ch))) {
 	case 1:
-		sprintf(buf, " 'armor' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'armor' %s", GET_NAME(ch));
 		break;
 	case 2:
-		sprintf(buf, " 'cure light' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'cure light' %s", GET_NAME(ch));
 	case 3:
 	case 4:
 	case 5:
-		sprintf(buf, " 'bless' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'bless' %s", GET_NAME(ch));
 		break;
 	case 6:
-		sprintf(buf, " 'blindness' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'blindness' %s", GET_NAME(vict));
 		break;
 	case 7:
 	case 8:
-		sprintf(buf, " 'poison' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'poison' %s", GET_NAME(ch));
 		break;
 	case 9:
-		sprintf(buf, " 'cure critic' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'cure critic' %s", GET_NAME(ch));
 		break;
 	case 10:
-		sprintf(buf, " 'dispel evil' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'dispel evil' %s", GET_NAME(ch));
 		break;
 	case 11:
-		sprintf(buf, " 'remove poison' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'remove poison' %s", GET_NAME(ch));
 		break;
 	case 12:
-		sprintf(buf, " 'remove curse' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'remove curse' %s", GET_NAME(ch));
 		break;
 	case 13:
-		sprintf(buf, " 'sancuary' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'sancuary' %s", GET_NAME(ch));
 	case 14:
-		sprintf(buf, " 'heal' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'heal' %s", GET_NAME(ch));
 		break;
 	case 15:
-		sprintf(buf, " 'call lightning' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'call lightning' %s", GET_NAME(vict));
 		break;
 	case 16:
-		sprintf(buf, " 'harm' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'harm' %s", GET_NAME(vict));
 		break;
 	case 17:
 	case 18:
-		sprintf(buf, " 'love' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'love' %s", GET_NAME(ch));
 		break;
 	case 19:
-		sprintf(buf, " 'love' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'love' %s", GET_NAME(vict));
 		break;
 	case 20:
-		sprintf(buf, " 'curse' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'curse' %s", GET_NAME(vict));
 		break;
 	case 21:
-		sprintf(buf, " 'full heal' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'full heal' %s", GET_NAME(ch));
 		break;
 	case 22:
 	case 23:
-		sprintf(buf, " 'haste' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'haste' %s", GET_NAME(ch));
 		break;
 	case 24:
 	case 25:
-		sprintf(buf, " 'sunburst' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'sunburst' %s", GET_NAME(vict));
 		break;
 	case 26:
 	case 27:
@@ -913,26 +913,26 @@ int cleric(struct char_data *ch, int cmd, char *arg)
 	case 30:
 	case 31:
 	case 32:
-		sprintf(buf, " 'full heal' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'full heal' %s", GET_NAME(vict));
 		break;
 	case 33:
 	case 34:
-		sprintf(buf, " 'full heal' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'full heal' %s", GET_NAME(ch));
 		break;
 	case 35:
-		sprintf(buf, " 'throw' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'throw' %s", GET_NAME(vict));
 		break;
 	case 36:
-		sprintf(buf, " 'full fire' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'full fire' %s", GET_NAME(vict));
 		break;
 	case 37:
 	case 38:
 	case 39:
 	case 40:
 	default:
-		sprintf(buf, " 'improved haste'");
+		snprintf(buf, sizeof(buf), " 'improved haste'");
 		do_cast(ch, buf, 84);
-		sprintf(buf, " 'mirror'");
+		snprintf(buf, sizeof(buf), " 'mirror'");
 		break;
 	}
 	do_cast(ch, buf, 84);
@@ -970,105 +970,105 @@ int magic_user(struct char_data *ch, int cmd, char *arg)
 		return FALSE;
 	switch (number(1, GET_LEVEL(ch))) {
 	case 1:
-		sprintf(buf, " 'magic missile' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'magic missile' %s", GET_NAME(vict));
 		break;
 	case 2:
 	case 3:
-		sprintf(buf, " 'chill touch' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'chill touch' %s", GET_NAME(vict));
 		break;
 	case 4:
-		sprintf(buf, " 'invisibility' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'invisibility' %s", GET_NAME(ch));
 		do_cast(ch, buf, 84);
-		sprintf(buf, " 'energy flow' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'energy flow' %s", GET_NAME(vict));
 		break;
 	case 5:
-		sprintf(buf, " 'armor' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'armor' %s", GET_NAME(ch));
 		do_cast(ch, buf, 84);
-		sprintf(buf, " 'burning hands' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'burning hands' %s", GET_NAME(vict));
 		break;
 	case 6:
 	case 7:
-		sprintf(buf, " 'shocking grasp' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'shocking grasp' %s", GET_NAME(vict));
 		break;
 	case 8:
-		sprintf(buf, " 'blindness' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'blindness' %s", GET_NAME(ch));
 		break;
 	case 9:
-		sprintf(buf, " 'lightning bolt' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'lightning bolt' %s", GET_NAME(vict));
 		do_cast(ch, buf, 84);
-		sprintf(buf, " 'damage up'");
+		snprintf(buf, sizeof(buf), " 'damage up'");
 		break;
 	case 10:
-		sprintf(buf, " 'self heal'");
+		snprintf(buf, sizeof(buf), " 'self heal'");
 		break;
 	case 11:
-		sprintf(buf, " 'colour spray' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'colour spray' %s", GET_NAME(vict));
 		break;
 	case 12:
-		sprintf(buf, " 'curse' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'curse' %s", GET_NAME(vict));
 		break;
 	case 13:
-		sprintf(buf, " 'energy drain' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'energy drain' %s", GET_NAME(vict));
 		break;
 	case 14:
-		sprintf(buf, " 'sleep' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'sleep' %s", GET_NAME(vict));
 		break;
 	case 15:
-		sprintf(buf, " 'fireball' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'fireball' %s", GET_NAME(vict));
 		do_cast(ch, buf, 84);
-		sprintf(buf, " 'mana boost' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'mana boost' %s", GET_NAME(ch));
 		break;
 	case 16:
-		sprintf(buf, " 'mana boost' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'mana boost' %s", GET_NAME(vict));
 		break;
 	case 17:
-		sprintf(buf, " 'vitalize' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'vitalize' %s", GET_NAME(ch));
 		do_cast(ch, buf, 84);
-		sprintf(buf, " 'throw' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'throw' %s", GET_NAME(vict));
 		break;
 	case 18:
 	case 19:
-		sprintf(buf, " 'crush aromr' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'crush aromr' %s", GET_NAME(vict));
 		break;
 	case 20:
 	case 21:
 	case 22:
-		sprintf(buf, " 'haste' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'haste' %s", GET_NAME(ch));
 		break;
 	case 23:
 	case 24:
 	case 25:
-		sprintf(buf, " 'improved haste'");
+		snprintf(buf, sizeof(buf), " 'improved haste'");
 		break;
 	case 26:
-		sprintf(buf, " 'full fire' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'full fire' %s", GET_NAME(vict));
 		break;
 	case 27:
 	case 28:
 	case 29:
 	case 30:
-		sprintf(buf, " 'cone of ice' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'cone of ice' %s", GET_NAME(vict));
 		break;
 	case 31:
-		sprintf(buf, " 'vitalize' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'vitalize' %s", GET_NAME(vict));
 		break;
 	case 32:
 	case 33:
-		sprintf(buf, " 'disintegrate' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'disintegrate' %s", GET_NAME(vict));
 		break;
 	case 34:
 	case 35:
-		sprintf(buf, " 'mirror image'");
+		snprintf(buf, sizeof(buf), " 'mirror image'");
 		break;
 	case 36:
 	case 37:
 	case 38:
 	case 39:
 	case 40:
-		sprintf(buf, " 'full heal' %s", GET_NAME(ch));
+		snprintf(buf, sizeof(buf), " 'full heal' %s", GET_NAME(ch));
 		break;
 	default:
-		sprintf(buf, " 'disintegrate' %s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), " 'disintegrate' %s", GET_NAME(vict));
 		break;
 	}
 	do_cast(ch, buf, 84);

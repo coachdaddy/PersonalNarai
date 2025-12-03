@@ -109,7 +109,7 @@ void do_kill(struct char_data *ch, char *argument, int cmd)
 	struct char_data *victim;
 
 	if (GET_LEVEL(ch) >= IMO && GET_LEVEL(ch) < IMO + 3) {
-		sprintf(buf, "Fight IMO:%s v.s. %s", GET_NAME(ch), argument);
+		snprintf(buf, sizeof(buf), "Fight IMO:%s v.s. %s", GET_NAME(ch), argument);
 		log(buf);
 		return;
 	}
@@ -213,7 +213,7 @@ void do_order(struct char_data *ch, char *argument, int cmd)
 			return;
 		}
 		if (victim) {
-			sprintf(buf, "$N orders you to '%s'", message);
+			snprintf(buf, sizeof(buf), "$N orders you to '%s'", message);
 			act(buf, FALSE, victim, 0, ch, TO_CHAR);
 			act("$n gives $N an order.", FALSE, ch, 0, victim, TO_ROOM);
 			if ((victim->master != ch) || (victim &&
@@ -227,7 +227,7 @@ void do_order(struct char_data *ch, char *argument, int cmd)
 				command_interpreter(victim, message);
 			}
 		} else {	/* This is order "followers" */
-			sprintf(buf, "$n issues the order '%s'.", message);
+			snprintf(buf, sizeof(buf), "$n issues the order '%s'.", message);
 			act(buf, FALSE, ch, 0, victim, TO_ROOM);
 
 			org_room = ch->in_room;

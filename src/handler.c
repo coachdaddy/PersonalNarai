@@ -258,7 +258,7 @@ void affect_modify(struct char_data *ch, byte loc, short mod, long bitv, bool ad
 
 		/* here is test for fixing bug */
 		/*
-		   sprintf(buf,"loc is %d.",loc);
+		   snprintf(buf, sizeof(buf),"loc is %d.",loc);
 		 */
 		/*
 		   log(buf);
@@ -405,7 +405,7 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
 			CREATE(ch->player.short_descr, char, strlen(buf) + 1);
 			strcpy(ch->player.short_descr, buf);
 
-			sprintf(buf, "Confused %s is standing here.\n\r",
+			snprintf(buf, sizeof(buf), "Confused %s is standing here.\n\r",
 				ch->player.short_descr);
 			if (ch->player.long_descr) {
 				free(ch->player.long_descr);
@@ -548,12 +548,12 @@ void obj_from_char(struct obj_data *object)
 		return;
 	}
 	if (!object->carried_by) {
-		sprintf(buf, "obj from char: %s has no owner", object->short_description);
+		snprintf(buf, sizeof(buf), "obj from char: %s has no owner", object->short_description);
 		log(buf);
 		return;
 	}
 	if (!object->carried_by->carrying) {
-		sprintf(buf, "obj from char: %s has no owner", object->short_description);
+		snprintf(buf, sizeof(buf), "obj from char: %s has no owner", object->short_description);
 		log(buf);
 		return;
 	}
@@ -569,7 +569,7 @@ void obj_from_char(struct obj_data *object)
 	}
 
 /*
-  sprintf(buf,"obj from char: %s %s",GET_NAME(object->carried_by),object->short_description);
+  snprintf(buf, sizeof(buf),"obj from char: %s %s",GET_NAME(object->carried_by),object->short_description);
   log(buf);
 */
 	IS_CARRYING_W(object->carried_by) -= GET_OBJ_WEIGHT(object);
@@ -584,7 +584,7 @@ int apply_ac(struct char_data *ch, int eq_pos)
 	char buf[128];
 
 	if (!(ch->equipment[eq_pos])) {
-		sprintf(buf, "XO: %s %d", ch->player.name, eq_pos);
+		snprintf(buf, sizeof(buf), "XO: %s %d", ch->player.name, eq_pos);
 		log(buf);
 		return (0);
 	}
@@ -718,23 +718,23 @@ struct obj_data *
 
 int get_number(char **name)
 {
-
 	int i;
 	char *ppos;
 	char number[MAX_INPUT_LENGTH];
 
 	number[0] = '\0';
-	if ((ppos = (char *)index((char *)(*name), '.'))) {
-		*(ppos++) = '\0';
-		strcpy(number, *name);
-		strcpy(*name, ppos);
+    if ((ppos = strchr(*name, '.'))) { // index -> strchr, 251203
+        *ppos++ = '\0';
+        strcpy(number, *name);
+        
+        memmove(*name, ppos, strlen(ppos) + 1); // strcpy -> memmove 
 
-		for (i = 0; *(number + i); i++)
-			if (!ISDIGIT(*(number + i)))
-				return (0);
+        for (i = 0; *(number + i); i++)
+            if (!isdigit(*(number + i)))
+                return (0);
 
-		return (atoi(number));
-	}
+        return (atoi(number));
+    }
 
 	return (1);
 }
@@ -1165,20 +1165,25 @@ void extract_char(struct char_data *ch, int drop_items)
    which incorporate the actual player-data.
    *********************************************************************** */
 
-struct char_data *
- get_char_room_vis(struct char_data *ch, char *name)
+struct char_data *get_char_room_vis(struct char_data *ch, char *name)
 {
 	struct char_data *i;
 	int j, number;
 	char tmpname[MAX_INPUT_LENGTH];
 	char *tmp;
 
-	strcpy(tmpname, "ALL");
-	if (name)
-		strcpy(tmpname, name);
-	tmp = tmpname;
-	if (!(number = get_number(&tmp)))
-		return (0);
+	// modified 251203
+    if (name && *name) {
+        strncpy(tmpname, name, sizeof(tmpname) - 1);
+        tmpname[sizeof(tmpname) - 1] = '\0';
+    } else {
+        strcpy(tmpname, "ALL");
+    }
+
+    tmp = tmpname;
+
+    if (!(number = get_number(&tmp)))
+        return (0);
 
 	for (i = world[ch->in_room].people, j = 1; i && (j <= number); i = i->next_in_room)
 		if (isname(tmp, GET_NAME(i)))
@@ -1190,6 +1195,7 @@ struct char_data *
 
 	return (0);
 }
+
 struct char_data *
  get_specific_vis(struct char_data *ch, char *name, int type)
 {
@@ -1367,18 +1373,18 @@ struct obj_data *
 
 		new_descr->keyword = strdup("coins gold");
 		if (amount < 10) {
-			sprintf(buf, "There is %d coins.", amount);
+			snprintf(buf, sizeof(buf), "There is %d coins.", amount);
 			new_descr->description = strdup(buf);
 		} else if (amount < 100) {
-			sprintf(buf, "There is about %d coins", 10 * (amount / 10));
+			snprintf(buf, sizeof(buf), "There is about %d coins", 10 * (amount / 10));
 			new_descr->description = strdup(buf);
 		} else if (amount < 1000) {
-			sprintf(buf, "It looks like something round %d coins",
+			snprintf(buf, sizeof(buf), "It looks like something round %d coins",
 				100 *
 				(amount / 100));
 			new_descr->description = strdup(buf);
 		} else if (amount < 100000) {
-			sprintf(buf, "You guess there is %d coins", 1000 *
+			snprintf(buf, sizeof(buf), "You guess there is %d coins", 1000 *
 									    ((amount /
 									     1000) +
 									    number(0,

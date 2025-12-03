@@ -170,7 +170,7 @@ int main(int argc, char **argv)
 	}
 
 	srandom(boottime = time(0));
-	sprintf(buf, "mud-%d.pid", port);
+	snprintf(buf, sizeof(buf), "mud-%d.pid", port);
 	if (access(buf, F_OK) == 0) {
 		log("Port busy: pid file already exists.");
 		exit(port);
@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 
 	umask(0077);
 
-	sprintf(buf, "Running game on port %d.", port);
+	snprintf(buf, sizeof(buf), "Running game on port %d.", port);
 	log(buf);
 	run_the_game(port);
 	return (0);
@@ -928,7 +928,7 @@ int write_to_descriptor(int desc, char *txt)
 				   ioctl(desc,SIOCATMARK,&x);
 				   ioctl(desc,SIOCGHIWAT,&y);
 				   ioctl(desc,SIOCGLOWAT,&z);
-				   sprintf(buf,"IOCTL: %d %d %x %x",w,x,y,z);
+				   snprintf(buf, sizeof(buf),"IOCTL: %d %d %x %x",w,x,y,z);
 				 */
 		thisround = write(desc, txt + sofar, total - sofar);
 		if (thisround < 0) {
@@ -1046,7 +1046,7 @@ int process_input(struct descriptor_data *t)
 				write_to_q("\n\r", &t->snoop.snoop_by->desc->output);
 			}
 			if (flag) {
-				sprintf(buffer,
+				snprintf(buffer, sizeof(buffer),
 					"Line too long. Truncated to:\n\r%s\n\r", tmp);
 				if (write_to_descriptor(t->descriptor, buffer)
 				    < 0)
@@ -1108,11 +1108,11 @@ void close_socket(struct descriptor_data *d)
 			stash_char(d->character);
 			// #endif
 			act("$n has lost $s link.", TRUE, d->character, 0, 0, TO_ROOM);
-			sprintf(buf, "Closing link to: %s.", GET_NAME(d->character));
+			snprintf(buf, sizeof(buf), "Closing link to: %s.", GET_NAME(d->character));
 			log(buf);
 			d->character->desc = 0;
 		} else {
-			sprintf(buf, "Losing player: %s.", GET_NAME(d->character));
+			snprintf(buf, sizeof(buf), "Losing player: %s.", GET_NAME(d->character));
 /*
 #ifdef  RETURN_TO_QUIT  
 	save_char(d->character,world[d->character->in_room].number);
@@ -1445,7 +1445,7 @@ void freaky(struct descriptor_data *d)
 {
 	char buf[128];
 
-	sprintf(buf, "%d %d %s",
+	snprintf(buf, sizeof(buf), "%d %d %s",
 		d->connected,
 		d->descriptor,
 		d->original ? d->original->player.name : d->character->player.name);

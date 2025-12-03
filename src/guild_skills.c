@@ -122,7 +122,7 @@ void do_whistle(struct char_data *ch, char *argument, int cmd)
 	if (IS_NPC(victim) || victim == ch)
 		return;
 
-	sprintf(buf,
+	snprintf(buf, sizeof(buf),
 		"%s>>>>Emergency!!! %s(%s) is in %s(%d)!!!!!\n\r",
 		GET_NAME(ch),
 		GET_NAME(victim),
@@ -233,7 +233,7 @@ void do_arrest(struct char_data *ch, char *argument, int cmd)
 		char_from_room(victim);
 		char_to_room(victim, real_room(JALE_ROOM));
 		if (!IS_NPC(victim)) {
-			sprintf(buf, "%s was sended to the JALE room!!!!\n\r",
+			snprintf(buf, sizeof(buf), "%s was sended to the JALE room!!!!\n\r",
 				GET_NAME(victim));
 			send_to_all(buf);
 			af.type = SKILL_ARREST;
@@ -243,7 +243,7 @@ void do_arrest(struct char_data *ch, char *argument, int cmd)
 			af.bitvector = AFF_ARREST;
 			affect_to_char(victim, &af);
 		} else {
-			sprintf(buf, "%s died in the JALE room!!!!\n\r",
+			snprintf(buf, sizeof(buf), "%s died in the JALE room!!!!\n\r",
 				GET_NAME(victim));
 			send_to_all(buf);
 			if (IS_AFFECTED(ch, AFF_GROUP))

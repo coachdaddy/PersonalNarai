@@ -269,7 +269,7 @@ void reset_time(void)
 		}
 	}
 
-	sprintf(buf, "   Current Gametime: %dH %dD %dM %dY.",
+	snprintf(buf, sizeof(buf), "   Current Gametime: %dH %dD %dM %dY.",
 		time_info.hours, time_info.day,
 		time_info.month, time_info.year);
 	log(buf);
@@ -807,7 +807,7 @@ void load_zones(int zon)
 		return;
 	fl = fopen(zone_table[zon].filename, "r");
 	if (!fl) {
-		sprintf(buf, "Error in reading zone file '%s'",
+		snprintf(buf, sizeof(buf), "Error in reading zone file '%s'",
 			zone_table[zon].filename);
 		log(buf);
 		return;
@@ -1091,7 +1091,7 @@ struct char_data *
 	i = nr;
 	if (type == VIRTUAL)
 		if ((nr = real_mobile(nr)) < 0) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Mobile (V) %d does not exist in database.", i);
 			log(buf);
 			return (0);
@@ -1400,7 +1400,7 @@ struct char_data *
 	i = nr;
 	if (type == VIRTUAL)
 		if ((nr = real_mobile(nr)) < 0) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Mobile (V) %d does not exist in database.", i);
 			return (0);
 		}
@@ -1737,7 +1737,7 @@ struct obj_data *
 	i = nr;
 	if (type == VIRTUAL)
 		if ((nr = real_object(nr)) < 0) {
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"Object (V) %d does not exist in database.", i);
 			return (0);
 		}
@@ -2162,7 +2162,7 @@ void reset_zone(int zone)
 				break;
 
 			default:
-				sprintf(buf,
+				snprintf(buf, sizeof(buf),
 					"Undefd cmd in reset table; zone %d cmd %d.\n\r",
 					zone, cmd_no);
 				log(buf);
@@ -3050,7 +3050,7 @@ int move_stashfile_safe (const char *victim)
     }
 
     if (strlen(victim) >= sizeof(name)) {
-        sprintf(log_buf, "move_stashfile_safe error: victim name '%s' is too long.", victim);
+        snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: victim name '%s' is too long.", victim);
         log(log_buf);
         return -1;
     }
@@ -3060,7 +3060,7 @@ int move_stashfile_safe (const char *victim)
     /* 경로 조작 방지 */
     for (i = 0; name[i]; ++i) {
         if (!isalnum((unsigned char)name[i])) {
-            sprintf(log_buf, "move_stashfile_safe error: victim name '%s' contains invalid characters.", victim);
+            snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: victim name '%s' contains invalid characters.", victim);
             log(log_buf);
             return -1;
         }
@@ -3072,13 +3072,13 @@ int move_stashfile_safe (const char *victim)
 
     /* 오류 처리 */
     if (rename(sf1, sf2) != 0) {
-        sprintf(log_buf, "move_stashfile_safe error: Failed to rename '%s' to '%s'", sf1, sf2);
+        snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: Failed to rename '%s' to '%s'", sf1, sf2);
         log(log_buf);
         perror("move_stashfile_safe system error");
         return -1; // 실패 반환
     }
 
-    sprintf(log_buf, "move_stashfile_safe: Successfully renamed '%s' to '%s'", sf1, sf2);
+    snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe: Successfully renamed '%s' to '%s'", sf1, sf2);
     log(log_buf);
     
     return 0; // 성공 반환
@@ -3249,16 +3249,16 @@ void unstash_char(struct char_data *ch, char *filename)
 		if (isupper(name[i]))
 			name[i] = tolower(name[i]);
 	sigsetmask(mask);
-	sprintf(stashfile, "%s/%c/%s.x.y", STASH, name[0], name);
+	snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x.y", STASH, name[0], name);
 	if (!(fl = fopen(stashfile, "r"))) {
-		sprintf(stashfile, "%s/%c/%s.x", STASH, name[0], name);
+		snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x", STASH, name[0], name);
 		if (!(fl = fopen(stashfile, "r"))) {
 			sigsetmask(0);
 			return;
 		}
 	}
 
-	sprintf(buf, "Unstash : %s\n", stashfile);
+	snprintf(buf, sizeof(buf), "Unstash : %s\n", stashfile);
 	log(buf);
 
 	fscanf(fl, "%d", &n);
@@ -3471,9 +3471,9 @@ void wipe_stash(char *filename)	/* delete id.x and id.x.y */
 		name[i] = isupper(filename[i]) ?
 		    tolower(filename[i]) : filename[i];
 	name[i] = 0;
-	sprintf(stashfile, "%s/%c/%s.x", STASH, name[0], name);
+	snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x", STASH, name[0], name);
 	unlink(stashfile);
-	sprintf(stashfile, "%s/%c/%s.x.y", STASH, name[0], name);
+	snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x.y", STASH, name[0], name);
 	unlink(stashfile);
 }
 
@@ -3490,9 +3490,9 @@ void do_checkrent(struct char_data *ch, char *argument, int cmd)
 	for (i = 0; name[i]; ++i)
 		if (isupper(name[i]))
 			name[i] = tolower(name[i]);
-	sprintf(stashfile, "%s/%c/%s.x.y", STASH, name[0], name);
+	snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x.y", STASH, name[0], name);
 	if (!(fl = fopen(stashfile, "r"))) {
-		sprintf(buf, "%s has nothing in rent.\n\r", name);
+		snprintf(buf, sizeof(buf), "%s has nothing in rent.\n\r", name);
 		send_to_char(buf, ch);
 		return;
 	}
@@ -3529,7 +3529,7 @@ void do_extractrent(struct char_data *ch, char *argument, int cmd)
 		return;
 	unstash_char(ch, name);
 	send_to_char("OK.\n\r", ch);
-	sprintf(buf, "%s grabbed rent for %s", GET_NAME(ch), name);
+	snprintf(buf, sizeof(buf), "%s grabbed rent for %s", GET_NAME(ch), name);
 	log(buf);
 }
 void do_replacerent(struct char_data *ch, char *argument, int cmd)
@@ -3542,7 +3542,7 @@ void do_replacerent(struct char_data *ch, char *argument, int cmd)
 	stash_char(ch);
 	move_stashfile_safe(name);
 	send_to_char("OK.\n\r", ch);
-	sprintf(buf, "%s replaced rent for %s", GET_NAME(ch), name);
+	snprintf(buf, sizeof(buf), "%s replaced rent for %s", GET_NAME(ch), name);
 	log(buf);
 }
 

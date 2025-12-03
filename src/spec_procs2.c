@@ -301,7 +301,7 @@ int perhaps(struct char_data *ch, int cmd, char *arg)
 			   SPELL_TYPE_SPELL, ch, NULL);
 
 		char *msg = blessings[number(0, 2)];
-		sprintf(buf, msg, GET_NAME(ch));
+		snprintf(buf, sizeof(buf), msg, GET_NAME(ch));
 		do_say(perhaps, buf, 0);
 		return 0;
 	}
@@ -1145,7 +1145,7 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 			/* can't buy PC */
 			if (!IS_NPC(pet))
 				continue;
-			sprintf(buf, "%8lld - %s\n\r", 10 * GET_EXP(pet), pet->player.short_descr);
+			snprintf(buf, sizeof(buf), "%8lld - %s\n\r", 10 * GET_EXP(pet), pet->player.short_descr);
 			send_to_char(buf, ch);
 		}
 		return (TRUE);
@@ -1178,11 +1178,11 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 		GET_EXP(pet) = 0;
 		SET_BIT(pet->specials.affected_by, AFF_CHARM);
 		if (*pet_name) {
-			sprintf(buf, "%s %s", pet->player.name, pet_name);
+			snprintf(buf, sizeof(buf), "%s %s", pet->player.name, pet_name);
 			free(pet->player.name);
 			pet->player.name = strdup(buf);
 
-			sprintf(buf,
+			snprintf(buf, sizeof(buf),
 				"%sA small sign on a chain around the neck says 'My Name is %s'\n\r",
 				pet->player.description, pet_name);
 			free(pet->player.description);
@@ -1232,20 +1232,20 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 	cost[6] = 4000000 + GET_SEX(ch) * 1000000;
 
 	if (cmd == 59) {	/* List */
-		sprintf(buf, "1 - Hit points restoration (%d coins)\n\r", cost[1]);
+		snprintf(buf, sizeof(buf), "1 - Hit points restoration (%d coins)\n\r", cost[1]);
 		send_to_char(buf, ch);
-		sprintf(buf, "2 - Mana restoration (%d coins)\n\r", cost[2]);
+		snprintf(buf, sizeof(buf), "2 - Mana restoration (%d coins)\n\r", cost[2]);
 		send_to_char(buf, ch);
-		sprintf(buf, "3 - Move restoration (%d coins)\n\r", cost[3]);
+		snprintf(buf, sizeof(buf), "3 - Move restoration (%d coins)\n\r", cost[3]);
 		send_to_char(buf, ch);
-		sprintf(buf, "4 - Poison cured (%d coins)\n\r", cost[4]);
+		snprintf(buf, sizeof(buf), "4 - Poison cured (%d coins)\n\r", cost[4]);
 		send_to_char(buf, ch);
-		sprintf(buf, "5 - Change Your name (%d coins)\n\r", cost[5]);
+		snprintf(buf, sizeof(buf), "5 - Change Your name (%d coins)\n\r", cost[5]);
 		send_to_char(buf, ch);
-		sprintf(buf, "6 - Change Your Sex(toggle) (%d coins)\n\r",
+		snprintf(buf, sizeof(buf), "6 - Change Your Sex(toggle) (%d coins)\n\r",
 			cost[6]);
 		send_to_char(buf, ch);
-		sprintf(buf, "To change name, TYPE \"buy 5 <NAME>\"\n\r");
+		snprintf(buf, sizeof(buf), "To change name, TYPE \"buy 5 <NAME>\"\n\r");
 		send_to_char(buf, ch);
 		return (TRUE);
 	} else if (cmd == 56) {	/* Buy */
@@ -1396,22 +1396,22 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 				temp[i] = tolower(temp[i]);
 
 			/* now rename .x file */
-			sprintf(stash_file1, "stash/%c/%s.x", stash_name[0], stash_name);
-			sprintf(stash_file2, "stash/%c/%s.x", temp[0], temp);
+			snprintf(stash_file1, sizeof(stash_file1), "stash/%c/%s.x", stash_name[0], stash_name);
+			snprintf(stash_file2, sizeof(stash_file2), "stash/%c/%s.x", temp[0], temp);
 			rename(stash_file1, stash_file2);
 			/* now rename .x.y file */
-			sprintf(stash_file1, "stash/%c/%s.x.y", stash_name[0], stash_name);
-			sprintf(stash_file2, "stash/%c/%s.x.y", temp[0], temp);
+			snprintf(stash_file1, sizeof(stash_file1), "stash/%c/%s.x.y", stash_name[0], stash_name);
+			snprintf(stash_file2, sizeof(stash_file2), "stash/%c/%s.x.y", temp[0], temp);
 			rename(stash_file1, stash_file2);
 			/* now rename .x.tmp file */
-			sprintf(stash_file1, "stash/%c/%s.x.tmp",
+			snprintf(stash_file1, sizeof(stash_file1), "stash/%c/%s.x.tmp",
 				stash_name[0], stash_name);
-			sprintf(stash_file2, "stash/%c/%s.x.tmp", temp[0], temp);
+			snprintf(stash_file2, sizeof(stash_file2), "stash/%c/%s.x.tmp", temp[0], temp);
 			rename(stash_file1, stash_file2);
 			/* now rename .lock file */
-			sprintf(stash_file1, "stash/%c/%s.lock",
+			snprintf(stash_file1, sizeof(stash_file1), "stash/%c/%s.lock",
 				stash_name[0], stash_name);
-			sprintf(stash_file2, "stash/%c/%s.lock", temp[0], temp);
+			snprintf(stash_file2, sizeof(stash_file2), "stash/%c/%s.lock", temp[0], temp);
 			rename(stash_file1, stash_file2);
 
 			GET_GOLD(ch) -= cost[5];
@@ -1639,7 +1639,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 						ch->quest.solved -= 15;
 					else
 						ch->quest.solved -= 7;
-					sprintf(buf2,
+					snprintf(buf2, sizeof(buf2),
 						"Your AC changed from %d to %d!!!\r\n", k,
 						GET_AC(ch));
 					send_to_char(buf2, ch);
@@ -1652,7 +1652,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 						ch->quest.solved -= 10;
 					else
 						ch->quest.solved -= 6;
-					sprintf(buf2,
+					snprintf(buf2, sizeof(buf2),
 						"Your HITROLL changed from %d to %d!!!\r\n", k,
 						GET_HITROLL(ch));
 					send_to_char(buf2, ch);
@@ -1668,7 +1668,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 						ch->quest.solved -= 15;
 					else
 						ch->quest.solved -= 8;
-					sprintf(buf2,
+					snprintf(buf2, sizeof(buf2),
 						"You DAMROLL changed from %d to %d!!!\r\n",
 						k, GET_DAMROLL(ch));
 					send_to_char(buf2, ch);
@@ -2116,7 +2116,7 @@ int bank(struct char_data *ch, int cmd, char *arg)
 		send_to_char("withdraw <amount>\n\r\n\r", ch);
 		return (TRUE);
 	} else if (cmd == 227) {	/* Balance */
-		sprintf(buf, "You have %lld coins in the bank.\n\r",
+		snprintf(buf, sizeof(buf), "You have %lld coins in the bank.\n\r",
 			(LONGLONG) ch->bank);
 		send_to_char(buf, ch);
 		return (TRUE);
@@ -2192,7 +2192,7 @@ int kickbasher(struct char_data *ch, int cmd, char *arg)
 	char buf[80];
 
 	if ((vict = ch->specials.fighting))
-		sprintf(buf, "%s", GET_NAME(vict));
+		snprintf(buf, sizeof(buf), "%s", GET_NAME(vict));
 	if (cmd)
 		return (FALSE);
 	if ((vict = ch->specials.fighting)) {

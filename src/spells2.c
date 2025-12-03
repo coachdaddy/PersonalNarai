@@ -1543,13 +1543,13 @@ void cast_ventriloquate(byte level, struct char_data *ch, char *arg, int type,
 	}
 	for (; *arg && (*arg == ' '); arg++) ;
 	if (tar_obj) {
-		sprintf(buf1, "The %s says '%s'\n\r", fname(tar_obj->name), arg);
-		sprintf(buf2,
+		snprintf(buf1, sizeof(buf1), "The %s says '%s'\n\r", fname(tar_obj->name), arg);
+		snprintf(buf2, sizeof(buf2),
 			"Someone makes it sound like the %s says '%s'.\n\r",
 			fname(tar_obj->name), arg);
 	} else {
-		sprintf(buf1, "%s says '%s'\n\r", GET_NAME(tar_ch), arg);
-		sprintf(buf2, "Someone makes it sound like %s says '%s'\n\r",
+		snprintf(buf1, sizeof(buf1), "%s says '%s'\n\r", GET_NAME(tar_ch), arg);
+		snprintf(buf2, sizeof(buf2), "Someone makes it sound like %s says '%s'\n\r",
 			GET_NAME(tar_ch), arg);
 	}
 

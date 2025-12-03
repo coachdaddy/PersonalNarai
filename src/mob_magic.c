@@ -87,7 +87,7 @@ void mob_punch_drop(struct char_data *ch, struct char_data *victim)
 			/* obj is removed form player */
 			tmp_object = unequip_char(victim, i);
 			if (CAN_SEE_OBJ(victim, tmp_object)) {
-				sprintf(buffer, "%s is punched out.\n\r",
+				snprintf(buffer, sizeof(buffer), "%s is punched out.\n\r",
 					fname(tmp_object->name));
 				send_to_char(buffer, victim);
 			} else {
@@ -106,7 +106,7 @@ void mob_punch_drop(struct char_data *ch, struct char_data *victim)
 		if (GET_LEVEL(ch) > number(10, 160)) {
 			/* item nodrop.. but.. can be punched also.. */
 			if (CAN_SEE_OBJ(victim, tmp_object)) {
-				sprintf(buffer, "%s is punched out.\n\r",
+				snprintf(buffer, sizeof(buffer), "%s is punched out.\n\r",
 					fname(tmp_object->name));
 				send_to_char(buffer, victim);
 			} else {
@@ -164,7 +164,7 @@ struct char_data *
 		tmp = number(0, count - 1);
 		if (tmp < 0 || tmp >= count)
 			log("number error in choose victim");
-		sprintf(buf, "choose mob: count = %d, rnd # %d, (%s)", count, tmp,
+		snprintf(buf, sizeof(buf), "choose mob: count = %d, rnd # %d, (%s)", count, tmp,
 			victims[tmp]->player.name);
 		log(buf);
 		return (victims[tmp]);

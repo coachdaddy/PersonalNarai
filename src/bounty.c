@@ -341,9 +341,9 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 		/* initialize quest */
 		num = get_quest(ch);
 
-		sprintf(buf1, "QUEST : QM proposes you should kill %s.\n",
+		snprintf(buf1, sizeof(buf1), "QUEST : QM proposes you should kill %s.\n",
 			QM[num].name);
-		sprintf(buf2,
+		snprintf(buf2, sizeof(buf2),
 			"QUEST : QM은 당신이 %s을 죽일 것을 제안합니다.\n",
 			QM[num].name);
 		send_to_char_han(buf1, buf2, ch);
@@ -396,15 +396,15 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 
 	zone = find_zone(QM[num].virtual);
 	if (!zone) {
-		sprintf(buf1, "QUEST : Where %s is, I don't know, either.\n",
+		snprintf(buf1, sizeof(buf1), "QUEST : Where %s is, I don't know, either.\n",
 			QM[num].name);
-		sprintf(buf2,
+		snprintf(buf2, sizeof(buf2),
 			"QUEST : %s? 어디 있는 걸까? 모르겠는데...\n",
 			QM[num].name);
 		log("QUEST : INVALID mobile");
 	} else {
-		sprintf(buf1, "QUEST : %s is in %s probably.\n", QM[num].name, zone);
-		sprintf(buf2, "QUEST : 아마도 %s는 %s에 있을 걸요.\n",
+		snprintf(buf1, sizeof(buf1), "QUEST : %s is in %s probably.\n", QM[num].name, zone);
+		snprintf(buf2, sizeof(buf2), "QUEST : 아마도 %s는 %s에 있을 걸요.\n",
 			QM[num].name, zone);
 	}
 
@@ -431,9 +431,9 @@ void do_quest(struct char_data *ch, char *arg, int cmd)
 		/* initialize quest */
 		num = get_quest(ch);
 
-		sprintf(buf1, "QUEST : QM proposes you should kill %s.\n",
+		snprintf(buf1, sizeof(buf1), "QUEST : QM proposes you should kill %s.\n",
 			QM[num].name);
-		sprintf(buf2,
+		snprintf(buf2, sizeof(buf2),
 			"QUEST : QM은 당신이 %s을 죽일 것을 제안합니다.\n",
 			QM[num].name);
 		send_to_char_han(buf1, buf2, ch);
@@ -453,8 +453,8 @@ void do_quest(struct char_data *ch, char *arg, int cmd)
 
 	num = ch->quest.data;
 
-	sprintf(buf1, "QUEST : QM proposes you should kill %s.\n", QM[num].name);
-	sprintf(buf2,
+	snprintf(buf1, sizeof(buf1), "QUEST : QM proposes you should kill %s.\n", QM[num].name);
+	snprintf(buf2, sizeof(buf2),
 		"QUEST : QM은 당신이 %s을 죽일 것을 제안합니다.\n",
 		QM[num].name);
 
@@ -672,13 +672,13 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 
 			/* name */
 			free(obj->name);
-			sprintf(buf1, "%s QUEST ARMOR", wear[num]);
+			snprintf(buf1, sizeof(buf1), "%s QUEST ARMOR", wear[num]);
 			CREATE(obj->name, char, strlen(buf1) + 1);
 			strcpy(obj->name, buf1);
 
 			/* short description */
 			free(obj->short_description);
-			sprintf(buf1, "%s's QUEST %s",
+			snprintf(buf1, sizeof(buf1), "%s's QUEST %s",
 				GET_NAME(ch), wear[num]);
 			CREATE(obj->short_description, char, strlen(buf1) + 1);
 			strcpy(obj->short_description, buf1);
@@ -702,14 +702,14 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 
 			/* name */
 			free(obj->name);
-			sprintf(buf1, "%s QUEST WEAPON", weapon[GET_CLASS(ch)
+			snprintf(buf1, sizeof(buf1), "%s QUEST WEAPON", weapon[GET_CLASS(ch)
 								- 1]);
 			CREATE(obj->name, char, strlen(buf1) + 1);
 			strcpy(obj->name, buf1);
 
 			/* short description */
 			free(obj->short_description);
-			sprintf(buf1, "%s's QUEST %s",
+			snprintf(buf1, sizeof(buf1), "%s's QUEST %s",
 				GET_NAME(ch), weapon[GET_CLASS(ch) - 1]);
 			CREATE(obj->short_description, char, strlen(buf1) + 1);
 			strcpy(obj->short_description, buf1);
@@ -779,9 +779,9 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 		/* initialize quest */
 		num = get_quest(ch);
 
-		sprintf(buf1, "QUEST : QM proposes you should kill %s.\n",
+		snprintf(buf1, sizeof(buf1), "QUEST : QM proposes you should kill %s.\n",
 			QM[num].name);
-		sprintf(buf2,
+		snprintf(buf2, sizeof(buf2),
 			"QUEST : QM은 당신이 %s을 죽일 것을 제안합니다.\n",
 			QM[num].name);
 		send_to_char_han(buf1, buf2, ch);
