@@ -309,13 +309,15 @@ void spell_sunburst(byte level, struct char_data *ch,
 
 	INCREASE_SKILLED2(ch, victim, SPELL_SUNBURST);
 	dam = number(dam_each[(int)level], dam_each[(int)level] << 1);
+
 	if (saves_spell(victim, SAVING_SPELL))
 		dam >>= 1;
+
 	if (number(1, 15) == 1)
+	{ 
 		spell_blindness(level, ch, victim, 0);
-	/* commented out, 251129
-	snprintf(buf, sizeof(buf), "DEBUG: sunburst: %d\n", dam);
-	log(buf); */
+		DEBUG_LOG("DEBUG: sunburst: %d ", dam);
+	}
 
 	damage(ch, victim, dam, SPELL_SUNBURST);
 }

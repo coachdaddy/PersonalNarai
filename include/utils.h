@@ -4,6 +4,8 @@
 *  Usage: Utility macros                                                  *
 ************************************************************************* */
 
+#include <stddef.h>  /* for size_t */
+
 // Makefile MFLAGS moved here.
 
 #define RETURN_TO_QUIT
