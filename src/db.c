@@ -384,64 +384,77 @@ struct index_data *
 
 /* load the rooms */
 /* herper function,    by Komo */
+/* Applied coderabbit's suggestion */
 void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
 {
     int virtual_nr, flag, tmp;
     char *temp;
     char chk[256]; /* 크기 50 -> 256으로 변경 */
+	char err_buf[512];  // log 메시지용 버퍼 추가
     struct extra_descr_data *new_descr;
 
-    do {
-        fscanf(fl, " #%d\n", &virtual_nr);
+    while (1) {
+        if (fscanf(fl, " #%d\n", &virtual_nr) != 1) {
+            snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error or EOF in load_rooms (Zone %d). Expecting #VNUM.", zone_rnum);
+            log(err_buf);
+            exit(1);
+        }
 
         temp = fread_string(fl);
-        if ((flag = (*temp != '$'))) {
-            allocate_room(*room_nr);
-
-            world[*room_nr].number = virtual_nr;
-            world[*room_nr].name = temp;
-            world[*room_nr].description = fread_string(fl);
-            
-            world[*room_nr].zone = zone_rnum;
-
-            int ignore_zone;
-            fscanf(fl, " %d ", &ignore_zone);
-
-            /* 방 플래그 및 지형 타입 */
-            fscanf(fl, " %d ", &tmp);
-            world[*room_nr].room_flags = tmp;
-            fscanf(fl, " %d ", &tmp);
-            world[*room_nr].sector_type = tmp;
-
-            /* 초기화 */
-            world[*room_nr].funct = 0;
-            world[*room_nr].contents = 0;
-            world[*room_nr].people = 0;
-            world[*room_nr].light = 0;
-            for (tmp = 0; tmp <= 5; tmp++) world[*room_nr].dir_option[tmp] = 0;
-            world[*room_nr].ex_description = 0;
-
-            /* exits, extra descr parsing */
-            while (1) {
-                fscanf(fl, " %255s \n", chk); 
-
-                if (*chk == 'D')        /* direction field */
-                    setup_dir(fl, *room_nr, atoi(chk + 1));
-                else if (*chk == 'E') { /* extra description field */
-                    CREATE(new_descr, struct extra_descr_data, 1);
-                    new_descr->keyword = fread_string(fl);
-                    new_descr->description = fread_string(fl);
-                    new_descr->next = world[*room_nr].ex_description;
-                    world[*room_nr].ex_description = new_descr;
-                } else if (*chk == 'S') /* end of current room */
-                    break;
-            }
-            
-            (*room_nr)++;
+		if (!temp) {
+            snprintf(err_buf, sizeof(err_buf), "SYSERR: fread_string returned NULL in load_rooms (Zone %d, VNUM %d).", zone_rnum, virtual_nr);
+            log(err_buf);
+            exit(1);
         }
-    } while (flag);
 
-    if (temp) free(temp);
+		if (*temp == '$') {
+            free(temp); 
+            break;
+        }
+	
+		allocate_room(*room_nr);
+
+		world[*room_nr].number = virtual_nr;
+		world[*room_nr].name = temp;
+		world[*room_nr].description = fread_string(fl);
+		world[*room_nr].zone = zone_rnum;
+
+		if (fscanf(fl, " %*d %d %d ", &world[*room_nr].room_flags, &world[*room_nr].sector_type) != 2) {
+             snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in room flags/sector (Room #%d)", virtual_nr);
+             log(err_buf);
+             exit(1);
+        }
+
+		/* 초기화 */
+		world[*room_nr].funct = 0;
+		world[*room_nr].contents = 0;
+		world[*room_nr].people = 0;
+		world[*room_nr].light = 0;
+		for (tmp = 0; tmp <= 5; tmp++) world[*room_nr].dir_option[tmp] = 0;
+		world[*room_nr].ex_description = 0;
+
+		/* exits, extra descr parsing */
+		while (1) {
+			if (fscanf(fl, " %255s \n", chk) != 1) {
+                snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in room exits/extra (Room #%d)", virtual_nr);
+                log(err_buf);
+                exit(1);
+            }
+
+			if (*chk == 'D')        /* direction field */
+				setup_dir(fl, *room_nr, atoi(chk + 1));
+			else if (*chk == 'E') { /* extra description field */
+				CREATE(new_descr, struct extra_descr_data, 1);
+				new_descr->keyword = fread_string(fl);
+				new_descr->description = fread_string(fl);
+				new_descr->next = world[*room_nr].ex_description;
+				world[*room_nr].ex_description = new_descr;
+			} else if (*chk == 'S') /* end of current room */
+				break;
+		}
+		
+		(*room_nr)++;
+	}
 }
 /* new version of boot_world */
 /* modified by ares */
