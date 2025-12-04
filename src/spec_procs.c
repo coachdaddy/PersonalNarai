@@ -152,8 +152,8 @@ int guild(struct char_data *ch, int cmd, char *arg)
 		return (TRUE);
 	}
 
-	if (pskill > 0 && ch->skills[pskill].learned < 30) {
-		snprintf(buf, sizeof(buf), "First, You you need to learn %s .\n\r",
+	if (pskill > 0 && pskill < MAX_SKILLS && ch->skills[pskill].learned < 30) {
+		snprintf(buf, sizeof(buf), "First, you need to learn %s .\n\r",
 			spells[pskill]);
 		snprintf(buf2, sizeof(buf2), "먼저 %s 기술을 배워야 합니다. \n\r",
 			spells[pskill]);
