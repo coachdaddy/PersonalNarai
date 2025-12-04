@@ -78,18 +78,21 @@ char *how_good(int p1, int p2)
 	return (buf);
 }
 
+/* ASan, 251204 */
 int guild(struct char_data *ch, int cmd, char *arg)
 {
 	char buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
-	char buf3[MAX_STRING_LENGTH * MAX_SKILLS];
-	char tmp[MAX_STRING_LENGTH];
-	int number, i, percent;
-	int lev, cla;
-	extern char *spells[];
-	extern struct spell_info_type spell_info[MAX_SPL_LIST];
-	extern struct int_app_type int_app[26];
+    char buf3[MAX_STRING_LENGTH * 2]; // 스택 보호를 위해 적당한 크기로 조정
+    char tmp[MAX_STRING_LENGTH];
+    int number, i, percent;
+    int lev, cla;
+    int pskill = -1; // moved
 
-	strcpy(buf3, "");
+    extern char *spells[];
+    extern struct spell_info_type spell_info[MAX_SPL_LIST];
+    extern struct int_app_type int_app[26];
+
+    *buf3 = '\0'; // 버퍼 초기화
 
 	if ((cmd != 164) && (cmd != 170)) // cmd 164, 170 : practice
 		return (FALSE);
@@ -99,15 +102,19 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	for (; *arg == ' '; arg++) ;
 	if (!*arg) {
 		send_to_char_han("You can practice any of these skills:\n\r",
-				 "당신은 다음과 같은 기술을 익힐 수 있습니다:\n\r", ch);
+				 		 "당신은 다음과 같은 기술을 익힐 수 있습니다:\n\r", ch);
 
 		for (i = 0; *spells[i] != '\n'; i++) {
-			if (*spells[i] && (spell_info[i + 1].min_level[cla] <= lev)) {
-				snprintf(tmp, sizeof(tmp), "%-20s %-4s\n\r", spells[i], 
-								how_good (ch->skills[i + 1].learned, ch->skills[i + 1].skilled));
-				strcat(buf3, tmp);
-			}
-		}
+            if (*spells[i] && (spell_info[i + 1].min_level[cla] <= lev)) {
+                snprintf(tmp, sizeof(tmp), "%-20s %-4s\n\r", spells[i],
+                        how_good(ch->skills[i + 1].learned, ch->skills[i + 1].skilled));
+                
+                if (strlcat(buf3, tmp, sizeof(buf3)) >= sizeof(buf3)) {
+                    strlcat(buf3, "** LIST TRUNCATED **\n\r", sizeof(buf3));
+                    break;
+                }
+            }
+        }
 
 		snprintf(buf, sizeof(buf), "You have %d practices left.\n\r",
 			ch->specials.spells_to_learn);
@@ -121,30 +128,29 @@ int guild(struct char_data *ch, int cmd, char *arg)
 
 	number = old_search_block(arg, 0, strlen(arg), spells, FALSE);
 
-	int pskill = -1;
-	pskill = spell_info[number].prev;
-
 	if (number == -1) {
 		send_to_char_han("You do not know of this spell...\n\r",
-				 "그런 기술은 모르는데요 ...\n\r", ch);
+				 		 "그런 기술은 모르는데요 ...\n\r", ch);
 		return (TRUE);
 	}
 
+	pskill = spell_info[number].prev;
+
 	if (lev < spell_info[number].min_level[cla]) {
 		send_to_char_han("Your level is too low.\n\r",
-				 "아직은 레벨이 낮아 안됩니다...\n\r", ch);
+				 		 "아직은 레벨이 낮아 안됩니다...\n\r", ch);
 		return (TRUE);
 	}
 
 	if (ch->specials.spells_to_learn <= 0) {
 		send_to_char_han("You do not seem to be able to practice now.\n\r",
-				 "지금은 더이상 배울 수 없습니다.\n\r", ch);
+				 		 "지금은 더이상 배울 수 없습니다.\n\r", ch);
 		return (TRUE);
 	}
 
 	if (ch->skills[number].learned >= spell_info[number].max_skill[cla]) {
 		send_to_char_han("You know this area as well as possible.\n\r",
-				 "그 분야는 배울 수 있는만큼 배웠습니다.\n\r", ch);
+				 		 "그 분야는 배울 수 있는만큼 배웠습니다.\n\r", ch);
 		return (TRUE);
 	}
 
@@ -161,9 +167,6 @@ int guild(struct char_data *ch, int cmd, char *arg)
 
 	send_to_char_han("You Practice for a while...\n\r", "기술이 늘고 있습니다...\n\r", ch);
 
-	// inherite portion skilled of previsous skills
-	// GET_SKILLED(ch,number) += GET_SKILLED(ch,pskill) / 10;
-
 	ch->specials.spells_to_learn--;
 
 	percent = ch->skills[number].learned + 1 +
@@ -173,7 +176,7 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	    MIN(spell_info[number].max_skill[cla], percent);
 	if (ch->skills[number].learned >= spell_info[number].max_skill[cla]) {
 		send_to_char_han("You're now as proficient as possible.\n\r",
-				 "이 분야에는 이미 배울만큼 다 배웠습니다.\n\r", ch);
+						 "이 분야에는 이미 배울만큼 다 배웠습니다.\n\r", ch);
 		return (TRUE);
 	}
 	return TRUE;
