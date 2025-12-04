@@ -387,7 +387,7 @@ struct index_data *
 /* Applied coderabbit's suggestion */
 void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
 {
-    int virtual_nr, flag, tmp;
+    int virtual_nr, tmp;
     char *temp;
     char chk[256]; /* 크기 50 -> 256으로 변경 */
 	char err_buf[512];  // log 메시지용 버퍼 추가
@@ -416,7 +416,15 @@ void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
 
 		world[*room_nr].number = virtual_nr;
 		world[*room_nr].name = temp;
+
+		// CodeRabbit 반영
 		world[*room_nr].description = fread_string(fl);
+        if (world[*room_nr].description == NULL) {
+            snprintf(err_buf, sizeof(err_buf), "SYSERR: fread_string returned NULL for Description (Room #%d)", virtual_nr);
+            log(err_buf);
+            exit(1);
+        }
+
 		world[*room_nr].zone = zone_rnum;
 
 		if (fscanf(fl, " %*d %d %d ", &world[*room_nr].room_flags, &world[*room_nr].sector_type) != 2) {
@@ -445,8 +453,24 @@ void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
 				setup_dir(fl, *room_nr, atoi(chk + 1));
 			else if (*chk == 'E') { /* extra description field */
 				CREATE(new_descr, struct extra_descr_data, 1);
-				new_descr->keyword = fread_string(fl);
-				new_descr->description = fread_string(fl);
+
+
+				// CodeRabbit 반영
+                new_descr->keyword = fread_string(fl);
+                if (!new_descr->keyword) {
+                    snprintf(err_buf, sizeof(err_buf), "SYSERR: NULL keyword in extra desc (Room #%d)", virtual_nr);
+                    log(err_buf);
+                    exit(1); // 파일 꼬였으니 과감히 종료!
+                }
+
+                // CodeRabbit 반영
+                new_descr->description = fread_string(fl);
+                if (!new_descr->description) {
+                    snprintf(err_buf, sizeof(err_buf), "SYSERR: NULL description in extra desc (Room #%d)", virtual_nr);
+                    log(err_buf);
+                    exit(1);
+                }
+
 				new_descr->next = world[*room_nr].ex_description;
 				world[*room_nr].ex_description = new_descr;
 			} else if (*chk == 'S') /* end of current room */
