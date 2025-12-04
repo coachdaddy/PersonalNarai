@@ -296,7 +296,7 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 	} else { 
 		char qbuf[100];
 		strncpy(qbuf, QM[num].name, strlen(QM[num].name));
-		choppy(qbuf);
+//		choppy(qbuf);
 
 		snprintf(buf1, sizeof(buf1), "&CQUEST&n : &U%s&Y is in &#%s&Y probably.&n\n\r",
 			qbuf, zone);

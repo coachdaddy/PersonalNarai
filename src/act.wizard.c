@@ -25,6 +25,9 @@
 
 /*   external vars  */
 
+extern int top_of_zone_table;
+extern struct zone_data *zone_table;
+
 extern struct room_data *world;
 extern struct char_data *character_list;
 extern struct descriptor_data *descriptor_list;
@@ -1330,6 +1333,7 @@ void do_wiznet(struct char_data *ch, char *argument, int cmd)
 		}
 	send_to_char("Ok.\n\r", ch);
 }
+
 FILE *chatlogfp = NULL;
 void do_chat(struct char_data *ch, char *argument, int cmd)
 {
@@ -1385,6 +1389,7 @@ void do_chat(struct char_data *ch, char *argument, int cmd)
 				send_to_char(buf, victim);
 		}
 }
+
 void do_noaffect(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *vict;
@@ -1414,6 +1419,7 @@ void do_noaffect(struct char_data *ch, char *argument, int cmd)
 	}
 	send_to_char("Ok.\n\r", ch);
 }
+
 void do_wall(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_STRING_LENGTH];
