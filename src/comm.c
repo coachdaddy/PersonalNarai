@@ -389,9 +389,24 @@ void game_loop(int s)
 					if (point->showstr_point)
 						show_string(point, comm);
 					else {
-						point->wait +=
-						    command_interpreter(point->character, comm);
-						++point->ncmds;
+						/* ASan, 251204 */
+                        int cmd_wait;
+                        struct descriptor_data *d;
+                        bool still_alive = FALSE;
+
+                        cmd_wait = command_interpreter(point->character, comm);
+
+                        for (d = descriptor_list; d; d = d->next) {
+                            if (d == point) {
+                                still_alive = TRUE;
+                                break;
+                            }
+                        }
+
+                        if (still_alive) {
+                            point->wait += cmd_wait;
+                            ++point->ncmds;
+                        }
 					}
 				} else {
 					nanny(point, comm);
