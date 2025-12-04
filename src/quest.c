@@ -23,15 +23,24 @@
 #define CHALLENGE_ROOM_END_VNUM 3089   // '도전의 방' 끝 VNUM (총 8개)
 extern struct room_data *world;
 
-int number(int from, int to);
-void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch);
+void DEBUG_LOG(const char *format, ...);
 void log(char *str);
+
+int number(int from, int to);
 void half_chop(char *string, char *arg1, char *arg2);
 struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name,
 				     struct obj_data *list);
+
 void send_to_char(char *messg, struct char_data *ch);
+void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch);
+
+void char_from_room(struct char_data *ch);
+void char_to_room(struct char_data *ch, int room);
+void extract_char(struct char_data *ch, int drop_items);
 void extract_obj(struct obj_data *obj);
 void obj_to_char(struct obj_data *o, struct char_data *ch);
+
+void do_look(struct char_data *ch, char *argument, int cmd);
 
 struct {
 	int virtual;
@@ -1041,7 +1050,7 @@ void do_challenge_abort(struct char_data *ch, char *argument, int cmd)
                 if (mob->in_room == ch->in_room) {
                     act("&cCHALLENGE&n : &y$n fades away as the challenge is aborted.&n", TRUE, mob, 0, 0, TO_ROOM);
                 }
-                extract_char(mob);
+                extract_char(mob, FALSE);
             }
         }
     }

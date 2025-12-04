@@ -33,7 +33,10 @@ extern struct index_data *mob_index;
 
 /* extern procedures */
 
+void do_look(struct char_data *ch, char *argument, int cmd);
+void DEBUG_LOG(const char *format, ...);
 void log(char *str);
+
 void hit(struct char_data *ch, struct char_data *victim, int type);
 void gain_exp(struct char_data *ch, int gain);
 void stop_fighting(struct char_data *ch);
@@ -1937,8 +1940,6 @@ int jale_room(struct char_data *ch, int cmd, char *arg)
 
 int safe_house(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[100];
-
 	if (GET_LEVEL(ch) >= (IMO + 2))
 		return FALSE;
 	switch (cmd) {

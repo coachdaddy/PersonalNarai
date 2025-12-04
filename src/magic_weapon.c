@@ -4,6 +4,10 @@
 #include "utils.h"
 #include "spells.h"
 
+
+void DEBUG_LOG(const char *format, ...);
+void log(char *str);
+
 int number(int from, int to);
 void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
 int MIN(int a, int b);

@@ -32,6 +32,8 @@ extern struct index_data *mob_index;
 
 /* extern procedures */
 
+void DEBUG_LOG(const char *format, ...);
+void log(char *str);
 void hit(struct char_data *ch, struct char_data *victim, int type);
 void gain_exp(struct char_data *ch, int gain);
 void advance_level(struct char_data *ch, int level_up);

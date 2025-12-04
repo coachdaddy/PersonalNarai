@@ -28,6 +28,8 @@ extern struct room_data *world;
 
 /* External procedures */
 
+void save_char(struct char_data *ch, sh_int load_room);
+
 int move_stashfile_safe (const char *victim);
 void update_pos(struct char_data *victim);	/* in fight.c */
 void damage(struct char_data *ch, struct char_data *victim,	/*    do      */
