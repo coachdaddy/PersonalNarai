@@ -46,6 +46,8 @@ int number(int from, int to);
 int str_cmp(char *arg1, char *arg2);
 bool circle_follow(struct char_data *ch, struct char_data *victim);
 
+void DEBUG_LOG(const char *format, ...);
+void log(char *str);
 
 int do_simple_move(struct char_data *ch, int cmd, int following)
 /* Assumes, 

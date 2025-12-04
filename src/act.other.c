@@ -41,7 +41,10 @@ bool saves_spell(struct char_data *ch, int type);
 void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
 int MIN(int a, int b);
 
+int move_stashfile_safe (const char *victim);
 
+void DEBUG_LOG(const char *format, ...);
+void log(char *str);
 
 void do_quit(struct char_data *ch, char *argument, int cmd)
 {

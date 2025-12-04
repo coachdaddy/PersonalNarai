@@ -66,7 +66,12 @@ void close_socket(struct descriptor_data *d);
 int number(int from, int to);
 int MIN(int a, int b);
 void gain_exp_regardless(struct char_data *ch, int gain);
+void load_zones(int zon);
+
+void DEBUG_LOG(const char *format, ...);
 void log(char *str);
+
+void reload_world_file(FILE *fl, int zone_rnum);
 
 char history[20][MAX_STRING_LENGTH];
 int his_start = 0, his_end = 0;

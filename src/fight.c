@@ -34,6 +34,9 @@ extern struct index_data *mob_index;
 
 /* External procedures */
 
+void DEBUG_LOG(const char *format, ...);
+void log(char *str);
+
 char *fread_string(FILE * f1);
 void stop_follower(struct char_data *ch);
 void do_flee(struct char_data *ch, char *argument, int cmd);
@@ -46,6 +49,8 @@ int MIN(int a, int b);
 void gain_exp(struct char_data *ch, int gain);
 int dice(int num, int size);
 void save_char_nocon(struct char_data *ch, sh_int load_room);
+
+void do_look(struct char_data *ch, char *argument, int cmd);
 
 /* quest */
 void check_quest_mob_die(struct char_data *ch, int mob);
@@ -388,7 +393,6 @@ void die(struct char_data *ch, int level, struct char_data *who)
     int exp;
     struct follow_type * f;
     struct char_data *killer, *group_leader;
-    char debug_buf[256]; // for debugging
 
     /* 시체 이동을 위한 변수 선언 */
     bool died_in_challenge_room = FALSE;
