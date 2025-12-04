@@ -658,35 +658,47 @@ void reload_world_file(FILE *fl, int zone_rnum)
 
 
 /* read direction data */
-void setup_dir(FILE * fl, int room, int dir)
+/* with CodeRabbit, 251204 */
+void setup_dir(FILE *fl, int room, int dir)
 {
-	int tmp;
+    int tmp;
+    char err_buf[256];
 
-	CREATE(world[room].dir_option[dir],
-	       struct room_direction_data, 1);
+    CREATE(world[room].dir_option[dir], struct room_direction_data, 1);
 
-	world[room].dir_option[dir]->general_description =
-	    fread_string(fl);
-	world[room].dir_option[dir]->keyword = fread_string(fl);
+    world[room].dir_option[dir]->general_description = fread_string(fl);
+    world[room].dir_option[dir]->keyword = fread_string(fl);
 
-	fscanf(fl, " %d ", &tmp);
-	if (tmp == 1)
-		world[room].dir_option[dir]->exit_info = EX_ISDOOR;
-	else if (tmp == 2)
-		world[room].dir_option[dir]->exit_info = EX_ISDOOR | EX_PICKPROOF;
-	else if (tmp == 3)
-		world[room].dir_option[dir]->exit_info = EX_ISDOOR | EX_NOPHASE;
-	else if (tmp == 4)
-		world[room].dir_option[dir]->exit_info = EX_ISDOOR | EX_PICKPROOF
-		    | EX_NOPHASE;
-	else
-		world[room].dir_option[dir]->exit_info = 0;
+    if (fscanf(fl, " %d ", &tmp) != 1) {
+        snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in setup_dir flags (Room #%d)", world[room].number);
+        log(err_buf);
+        exit(1);
+    }
 
-	fscanf(fl, " %d ", &tmp);
-	world[room].dir_option[dir]->key = tmp;
+    if (tmp == 1)
+        world[room].dir_option[dir]->exit_info = EX_ISDOOR;
+    else if (tmp == 2)
+        world[room].dir_option[dir]->exit_info = EX_ISDOOR | EX_PICKPROOF;
+    else if (tmp == 3)
+        world[room].dir_option[dir]->exit_info = EX_ISDOOR | EX_NOPHASE;
+    else if (tmp == 4)
+        world[room].dir_option[dir]->exit_info = EX_ISDOOR | EX_PICKPROOF | EX_NOPHASE;
+    else
+        world[room].dir_option[dir]->exit_info = 0;
 
-	fscanf(fl, " %d ", &tmp);
-	world[room].dir_option[dir]->to_room = tmp;
+    if (fscanf(fl, " %d ", &tmp) != 1) {
+        snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in setup_dir key (Room #%d)", world[room].number);
+        log(err_buf);
+        exit(1);
+    }
+    world[room].dir_option[dir]->key = tmp;
+
+    if (fscanf(fl, " %d ", &tmp) != 1) {
+        snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in setup_dir to_room (Room #%d)", world[room].number);
+        log(err_buf);
+        exit(1);
+    }
+    world[room].dir_option[dir]->to_room = tmp;
 }
 
 void renum_world(void)
