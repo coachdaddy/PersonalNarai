@@ -400,12 +400,13 @@ void die(struct char_data *ch, int level, struct char_data *who)
     int challenge_room_rnum = ch->in_room; // raw_kill 전에 현재 방(죽은 장소)을 기억
     char ch_name[30]; // raw_kill 전에 캐릭터 이름을 기억
     
-    if (!IS_NPC(ch)) {
-        strcpy(ch_name, GET_NAME(ch));
-    }
-
     if (!ch)
         return;
+
+	if (!IS_NPC(ch)) { 
+		strncpy(ch_name, GET_NAME(ch), sizeof(ch_name) - 1); 
+		ch_name[sizeof(ch_name) - 1] = '\0'; 
+	}
 
     /* chase modified this for reraise */
     if (!IS_NPC(ch) && IS_AFFECTED(ch, AFF_RERAISE)) {
@@ -698,9 +699,6 @@ char *replace_string(char *str, char *weapon)
 					for (wp_ptr = weapon; *wp_ptr; *(cp++) = *(wp_ptr++)); 
 				}
 				break;
-					/*
-				for (; *weapon; *(cp++) = *(weapon++)) ;
-				*/
 			default:
 				*(cp++) = '#';
 				break;
