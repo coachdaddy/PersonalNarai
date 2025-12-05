@@ -237,15 +237,16 @@ void make_corpse(struct char_data *ch, int level)
 
 	corpse->item_number = NOWHERE;
 	corpse->in_room = NOWHERE;
-	sprintf(buf, "corpse %s",
+
+	snprintf(buf, sizeof(buf), "corpse %s",
 		(IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch)));
 	corpse->name = strdup(buf);
 
-	sprintf(buf, "Corpse of %s is lying here.",
+	snprintf(buf, sizeof(buf), "Corpse of %s is lying here.",
 		(IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch)));
 	corpse->description = strdup(buf);
 
-	sprintf(buf, "Corpse of %s",
+	snprintf(buf, sizeof(buf), "Corpse of %s",
 		(IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch)));
 	corpse->short_description = strdup(buf);
 
@@ -383,6 +384,7 @@ void raw_kill(struct char_data *ch, int level)
 
 	death_cry(ch);
 	make_corpse(ch, level);
+	DEBUG_LOG("fight.c raw_kill(%s)", ch->player.name);
 	extract_char(ch, TRUE);
 }
 
@@ -554,6 +556,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
         }    /* Challenge Room Quest Completion Check -- END */
     }
 
+	DEBUG_LOG("Player %s level(%d) in fight.c", ch->player.name, level);
     raw_kill(ch, level);
 
     /* 도전의 방에서 사망한 플레이어 시체는 이동시켜두자... */
@@ -609,13 +612,14 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 			high_level = MAX(high_level, GET_LEVEL(f->follower));
 
 	/* calculate total member, total level */
-	for (f = k->followers; f; f = f->next)
+	for (f = k->followers; f; f = f->next) {
 		if (IS_AFFECTED(f->follower, AFF_GROUP) &&
 		    !IS_NPC(f->follower) &&
 		    (f->follower->in_room == ch->in_room)) {
 			no_members++;
 			total_level += GET_LEVEL(f->follower);
 		}
+	}
 
 	/* assert(no_members) for divide by zero */
 	no_members = MAX(1, no_members);
@@ -634,11 +638,19 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 
 	if (IS_AFFECTED(k, AFF_GROUP) && (k->in_room == ch->in_room)) {
 		share = level_exp * GET_LEVEL(k);
+		/*
 		sprintf(buf, "You receive %d experience and %d gold coins.",
 			share, money);
 		sprintf(buf2,
 			"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
 			share, money);
+			*/
+		snprintf(buf, sizeof(buf), "You receive %d experience and %d gold coins.",
+			share, money);
+		snprintf(buf2, sizeof(buf2),
+			"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
+			share, money);
+
 		acthan(buf, buf2, FALSE, k, 0, 0, TO_CHAR);
 		if (!IS_NPC(k)) {
 			gain_exp(k, share);	/* Perhaps modified for mob's exp */
@@ -652,12 +664,20 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 		if (IS_AFFECTED(f->follower, AFF_GROUP) &&
 		    f->follower->in_room == ch->in_room) {
 			share = level_exp * GET_LEVEL(f->follower);
+
+			snprintf(buf, sizeof(buf),
+				"You receive %d experience and %d gold coins.",
+				share, money);
+			snprintf(buf2, sizeof(buf2),
+				"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
+				share, money);
+/*
 			sprintf(buf,
 				"You receive %d experience and %d gold coins.",
 				share, money);
 			sprintf(buf2,
 				"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
-				share, money);
+				share, money); */
 			acthan(buf, buf2, FALSE, f->follower, 0, 0, TO_CHAR);
 			if (!IS_NPC(f->follower)) {
 				gain_exp(f->follower, share);	/* Perhaps modified */
@@ -670,20 +690,32 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 
 char *replace_string(char *str, char *weapon)
 {
-	static char buf[3][256];
+//	static char buf[3][256];
+	static char buf[3][MAX_STRING_LENGTH]; // ASAN, 251202
 	static int count = 0;
 	char *rtn;
 	char *cp;
+    char *wp_ptr; // 무기 이름 포인터 보존용 추가
 
 	cp = rtn = buf[count % 3];
 	count++;
 
 	for (; *str; str++) {
+
+        if ((cp - rtn) > (MAX_STRING_LENGTH - 50)) {
+            break; 
+        }
+
 		if (*str == '#') {
 			switch (*(++str)) {
-			case 'W':
-				for (; *weapon; *(cp++) = *(weapon++)) ;
+			case 'W': 
+				if (weapon) { 
+					for (wp_ptr = weapon; *wp_ptr; *(cp++) = *(wp_ptr++)); 
+				}
 				break;
+					/*
+				for (; *weapon; *(cp++) = *(weapon++)) ;
+				*/
 			default:
 				*(cp++) = '#';
 				break;
@@ -691,8 +723,8 @@ char *replace_string(char *str, char *weapon)
 		} else {
 			*(cp++) = *str;
 		}
-		*cp = 0;
 	}			/* For */
+    *cp = '\0'; // 루프 밖에서 한 번만
 	return (rtn);
 }
 
@@ -921,7 +953,8 @@ void dam_message(int dam, struct char_data *ch, struct char_data *victim,
 			      attack_hit_han[w_type].singular);
 	acthan(buf, buf2, FALSE, ch, wield, victim, TO_VICT);
 }
-
+// Check here
+//
 void damage(struct char_data *ch, struct char_data *victim,
 	    int dam, int attacktype)
 {
@@ -937,6 +970,9 @@ void damage(struct char_data *ch, struct char_data *victim,
 
 	if (!victim || !ch)
 		return;
+
+    if (ch == victim && attacktype != TYPE_SUFFERING)
+        return;
 
 #ifdef GHOST
 	/* connectionless PC can't damage or be damaged */
@@ -1467,8 +1503,10 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 
 	if (IS_AFFECTED(ch, AFF_LOVE))
 		dam *= 2;
+	/*
 	if (IS_AFFECTED(ch, AFF_DEATH))
 		dam *= 4;
+		*/
 
 	/* each class has dedicated weapon */
 	if (GET_CLASS(ch) == CLASS_THIEF &&
@@ -1484,8 +1522,10 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 	    w_type == TYPE_BLUDGEON && number(1, 10) > 5)
 		dam *= 2;
 
+	/*
 	if (IS_AFFECTED(ch, AFF_SHADOW_FIGURE) && number(1, 10) > 6)
 		dam *= 3 / 2;
+		*/
 
 	dam = MAX(1, dam);
 
@@ -1508,18 +1548,16 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 			if (victim->skills[SPELL_REFLECT_DAMAGE].learned >
 									      number(1, 500)) {
 				INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
-				act("You reflect damage on $N succesfully.",
-				    TRUE, ch, 0, victim, TO_CHAR);
-				act("$n reflects damage on $N succesfully.",
-				    TRUE, victim, 0, ch, TO_ROOM);
+
+				/* 메세지 출력 수정, 251201 Komo */
+                act("$N reflects your damage!", 
+					TRUE, ch, 0, victim, TO_CHAR); 
+                act("You reflect damage on $n successfully.", 
+					TRUE, ch, 0, victim, TO_VICT);
+                act("$N reflects damage on $n successfully.", 
+					TRUE, ch, 0, victim, TO_NOTVICT);
 				dam >>= 2;
 				dam = MAX(1, dam);
-				/*
-				   if (GET_GUILD(victim) == ASSASSIN && number(1,300) < 50 )
-				   dam += dice(((GET_LEVEL(ch) - 20) >> 2) + 1,
-				   GET_GUILD_SKILLS(victim,
-				   ASSASSIN_SKILL_IMPROVED_REFLECT_DAMAGE));
-				 */
 				damage(victim, ch, dam, w_type);
 			} else
 				damage(ch, victim, dam << 1, SKILL_BACKSTAB);
@@ -1531,16 +1569,13 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 			if (victim->skills[SPELL_REFLECT_DAMAGE].learned >
 									      number(1, 300)) {
 				INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
-				act("You reflect damage on $N successfully.",
-				    TRUE, ch, 0, victim, TO_CHAR);
-				act("$n reflects damage on $N successfully.",
-				    TRUE, victim, 0, ch, TO_ROOM);
+                act("$N reflects your damage!", 
+					TRUE, ch, 0, victim, TO_CHAR);
+                act("You reflect damage on $n successfully.", 
+					TRUE, ch, 0, victim, TO_VICT);
+                act("$N reflects damage on $n successfully.", 
+					TRUE, ch, 0, victim, TO_NOTVICT);
 				dam >>= 2;
-				/*
-				   if (GET_GUILD(victim) == ASSASSIN && number(1,100) < 50 )
-				   dam += GET_GUILD_SKILLS(victim,
-				   ASSASSIN_SKILL_IMPROVED_REFLECT_DAMAGE);
-				 */
 				damage(victim, ch, dam, w_type);
 			} else
 				damage(ch, victim, dam, w_type);
