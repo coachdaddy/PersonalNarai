@@ -638,13 +638,6 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 
 	if (IS_AFFECTED(k, AFF_GROUP) && (k->in_room == ch->in_room)) {
 		share = level_exp * GET_LEVEL(k);
-		/*
-		sprintf(buf, "You receive %d experience and %d gold coins.",
-			share, money);
-		sprintf(buf2,
-			"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
-			share, money);
-			*/
 		snprintf(buf, sizeof(buf), "You receive %d experience and %d gold coins.",
 			share, money);
 		snprintf(buf2, sizeof(buf2),
@@ -671,13 +664,6 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 			snprintf(buf2, sizeof(buf2),
 				"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
 				share, money);
-/*
-			sprintf(buf,
-				"You receive %d experience and %d gold coins.",
-				share, money);
-			sprintf(buf2,
-				"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
-				share, money); */
 			acthan(buf, buf2, FALSE, f->follower, 0, 0, TO_CHAR);
 			if (!IS_NPC(f->follower)) {
 				gain_exp(f->follower, share);	/* Perhaps modified */
@@ -690,7 +676,6 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 
 char *replace_string(char *str, char *weapon)
 {
-//	static char buf[3][256];
 	static char buf[3][MAX_STRING_LENGTH]; // ASAN, 251202
 	static int count = 0;
 	char *rtn;
@@ -953,8 +938,7 @@ void dam_message(int dam, struct char_data *ch, struct char_data *victim,
 			      attack_hit_han[w_type].singular);
 	acthan(buf, buf2, FALSE, ch, wield, victim, TO_VICT);
 }
-// Check here
-//
+
 void damage(struct char_data *ch, struct char_data *victim,
 	    int dam, int attacktype)
 {
@@ -1240,12 +1224,13 @@ void damage(struct char_data *ch, struct char_data *victim,
 		/* just for log */
 		if (!IS_NPC(victim)) {
 			if (!IS_AFFECTED(victim, AFF_RERAISE)) {
-				sprintf(buf, "%s killed by %s at %s", GET_NAME(victim),
+				snprintf(buf, sizeof(buf), 
+					"%s killed by %s at %s", GET_NAME(victim),
 					(IS_NPC(ch) ? ch->player.short_descr :
 					 GET_NAME(ch)),
 					world[victim->in_room].name);
 			} else {
-				sprintf(buf,
+				snprintf(buf, sizeof(buf), 
 					"%s was reraised at killing of %s at %s",
 					GET_NAME(victim),
 					(IS_NPC(ch) ? ch->player.short_descr :
