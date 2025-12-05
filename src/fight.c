@@ -42,7 +42,6 @@ void stop_follower(struct char_data *ch);
 void do_flee(struct char_data *ch, char *argument, int cmd);
 void hit(struct char_data *ch, struct char_data *victim, int type);
 void wipe_stash(char *filename);
-void log(char *str);
 int number(int from, int to);
 int MAX(int a, int b);
 int MIN(int a, int b);
@@ -238,6 +237,7 @@ void make_corpse(struct char_data *ch, int level)
 
 	corpse->item_number = NOWHERE;
 	corpse->in_room = NOWHERE;
+
 	snprintf(buf, sizeof(buf), "corpse %s",
 		(IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch)));
 	corpse->name = strdup(buf);
@@ -384,6 +384,7 @@ void raw_kill(struct char_data *ch, int level)
 
 	death_cry(ch);
 	make_corpse(ch, level);
+	DEBUG_LOG("fight.c raw_kill(%s)", ch->player.name);
 	extract_char(ch, TRUE);
 }
 
@@ -555,6 +556,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
         }    /* Challenge Room Quest Completion Check -- END */
     }
 
+	DEBUG_LOG("Player %s level(%d) in fight.c", ch->player.name, level);
     raw_kill(ch, level);
 
     /* 도전의 방에서 사망한 플레이어 시체는 이동시켜두자... */
@@ -610,13 +612,14 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 			high_level = MAX(high_level, GET_LEVEL(f->follower));
 
 	/* calculate total member, total level */
-	for (f = k->followers; f; f = f->next)
+	for (f = k->followers; f; f = f->next) {
 		if (IS_AFFECTED(f->follower, AFF_GROUP) &&
 		    !IS_NPC(f->follower) &&
 		    (f->follower->in_room == ch->in_room)) {
 			no_members++;
 			total_level += GET_LEVEL(f->follower);
 		}
+	}
 
 	/* assert(no_members) for divide by zero */
 	no_members = MAX(1, no_members);
@@ -635,11 +638,19 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 
 	if (IS_AFFECTED(k, AFF_GROUP) && (k->in_room == ch->in_room)) {
 		share = level_exp * GET_LEVEL(k);
+		/*
+		sprintf(buf, "You receive %d experience and %d gold coins.",
+			share, money);
+		sprintf(buf2,
+			"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
+			share, money);
+			*/
 		snprintf(buf, sizeof(buf), "You receive %d experience and %d gold coins.",
 			share, money);
 		snprintf(buf2, sizeof(buf2),
 			"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
 			share, money);
+
 		acthan(buf, buf2, FALSE, k, 0, 0, TO_CHAR);
 		if (!IS_NPC(k)) {
 			gain_exp(k, share);	/* Perhaps modified for mob's exp */
@@ -653,12 +664,20 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 		if (IS_AFFECTED(f->follower, AFF_GROUP) &&
 		    f->follower->in_room == ch->in_room) {
 			share = level_exp * GET_LEVEL(f->follower);
+
 			snprintf(buf, sizeof(buf),
 				"You receive %d experience and %d gold coins.",
 				share, money);
 			snprintf(buf2, sizeof(buf2),
 				"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
 				share, money);
+/*
+			sprintf(buf,
+				"You receive %d experience and %d gold coins.",
+				share, money);
+			sprintf(buf2,
+				"당신은 %d 점의 경험치와 %d의 금을 얻었습니다.",
+				share, money); */
 			acthan(buf, buf2, FALSE, f->follower, 0, 0, TO_CHAR);
 			if (!IS_NPC(f->follower)) {
 				gain_exp(f->follower, share);	/* Perhaps modified */
@@ -671,37 +690,42 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 
 char *replace_string(char *str, char *weapon)
 {
+//	static char buf[3][256];
 	static char buf[3][MAX_STRING_LENGTH]; // ASAN, 251202
-    static int count = 0;
-    char *rtn;
-    char *cp;
+	static int count = 0;
+	char *rtn;
+	char *cp;
     char *wp_ptr; // 무기 이름 포인터 보존용 추가
 
-    cp = rtn = buf[count % 3];
-    count++;
+	cp = rtn = buf[count % 3];
+	count++;
 
-    for (; *str; str++) {
+	for (; *str; str++) {
+
         if ((cp - rtn) > (MAX_STRING_LENGTH - 50)) {
             break; 
         }
-        if (*str == '#') {
-            switch (*(++str)) {
-                case 'W':
-                    if (weapon) {
-                        for (wp_ptr = weapon; *wp_ptr; *(cp++) = *(wp_ptr++))
-                            ;
-                    }
-                    break;
-                default:
-                    *(cp++) = '#';
-                    break;
-            }
-        } else {
-            *(cp++) = *str;
-        }
-    }	/* For */
+
+		if (*str == '#') {
+			switch (*(++str)) {
+			case 'W': 
+				if (weapon) { 
+					for (wp_ptr = weapon; *wp_ptr; *(cp++) = *(wp_ptr++)); 
+				}
+				break;
+					/*
+				for (; *weapon; *(cp++) = *(weapon++)) ;
+				*/
+			default:
+				*(cp++) = '#';
+				break;
+			}
+		} else {
+			*(cp++) = *str;
+		}
+	}			/* For */
     *cp = '\0'; // 루프 밖에서 한 번만
-    return(rtn);
+	return (rtn);
 }
 
 struct dam_weapon_type {
@@ -710,721 +734,853 @@ struct dam_weapon_type {
 	char *to_victim;
 };
 
-void dam_message(int dam, struct char_data *ch, struct char_data *victim, int w_type)
+void dam_message(int dam, struct char_data *ch, struct char_data *victim,
+		 int w_type)
 {
-    struct obj_data *wield;
-    char *buf, *buf2;
-    int msg_index;
+	struct obj_data *wield;
+	char *buf, *buf2;
+	int msg_index;
 
-    /* brief mode */
-    static struct dam_weapon_type brief_dam_weapons[] = {
-        {"$n -miss- $N.",		/*    0    */
-        "You -miss- $N.",
-        "$n -miss- you."},
+	/* brief mode */
+	static struct dam_weapon_type brief_dam_weapons[] =
+	{
+		{"$n -miss- $N.",	/*    0    */
+		 "You -miss- $N.",
+		 "$n -miss- you."},
 
-        {"$n -tickle- $N.",		/*  1.. 4  */
-        "You -tickle- $N.",
-        "$n -tickle- you."},
+		{"$n -tickle- $N.",	/*  1.. 4  */
+		 "You -tickle- $N.",
+		 "$n -tickle- you."},
 
-        {"$n -barely- $N.",		/*  5.. 8  */
-        "You -barely- $N.",
-        "$n -barely- you."},
+		{"$n -barely- $N.",	/*  5.. 8  */
+		 "You -barely- $N.",
+		 "$n -barely- you."},
 
-        {"$n -hit- $N.",		/*  9.. 12  */
-        "You -hit- $N.",
-        "$n -hit- you."},
+		{"$n -hit- $N.",	/*  9.. 12  */
+		 "You -hit- $N.",
+		 "$n -hit- you."},
 
-        {"$n -hard- $N.",		/*  13..20  */
-        "You -hard- $N.",
-        "$n -hard- you."},
+		{"$n -hard- $N.",	/*  13..20  */
+		 "You -hard- $N.",
+		 "$n -hard- you."},
 
-        {"$n -very hard- $N.",	/* 21..30  */
-        "You -very hard- $N.",
-        "$n -very hard- you."},
+		{"$n -very hard- $N.",	/* 21..30  */
+		 "You -very hard- $N.",
+		 "$n -very hard- you."},
 
-        {"$n -extremely hard- $N.",	/* 31..40  */
-        "You -extremely hard- $N.",
-        "$n -extremely hard- you."},
+		{"$n -extremely hard- $N.",	/* 31..40  */
+		 "You -extremely hard- $N.",
+		 "$n -extremely hard- you."},
 
-        {"$n -massacre- $N.",	/* > 40    */
-        "You -massacre- $N.",
-        "$n -massacre- you."},
+		{"$n -massacre- $N.",	/* > 40    */
+		 "You -massacre- $N.",
+		 "$n -massacre- you."},
 
-        {"$n -annihilate- $N.",	/* > 65    */
-        "You -annihilate- $N.",
-        "$n -annihilate- you."},
+		{"$n -annihilate- $N.",		/* > 65    */
+		 "You -annihilate- $N.",
+		 "$n -annihilate- you."},
 
-        {"$n -disintegrate- $N.",	/* > 110 */
-        "You -disintegrate- $N.",
-        "$n -disintegrate- you."},
+		{"$n -disintegrate- $N.",	/* > 110 */
+		 "You -disintegrate- $N.",
+		 "$n -disintegrate- you."},
 
-        {"$n -send void- $N.",	/* > 150 */
-        "You -send void- $N.",
-        "$n -send void- you."},
+		{"$n -send void- $N.",	/* > 150 */
+		 "You -send void- $N.",
+		 "$n -send void- you."},
 
-        {"$n -tickle void- $N.",	/* > 200 */
-        "You -tickle void- $N.",
-        "$n -tickle void- you."},
+		{"$n -tickle void- $N.",	/* > 200 */
+		 "You -tickle void- $N.",
+		 "$n -tickle void- you."},
 
-        /* Furfuri made massage */
+	/* Furfuri made massage */
 
-        {"$n -= laser power =- $N.",	/* > 250 */
-        "You -= laser power =- $N.",
-        "$n -= laser power =- you."},
+		{"$n -= laser power =- $N.",	/* > 250 */
+		 "You -= laser power =- $N.",
+		 "$n -= laser power =- you."},
 
-        {"$n -= NUCLEAR power =- $N.",
-        "You -= NUCLEAR power =- $N.",
-        "$n -= NUCLEAR power =- YOU."},
+		{"$n -= NUCLEAR power =- $N.",
+		 "You -= NUCLEAR power =- $N.",
+		 "$n -= NUCLEAR power =- YOU."},
 
-        {"$n -= S P A C E   P O W E R =- $N.",
-        "YOU -= S P A C E   P O W E R =- $N.",
-        "$n -= S P A C E   P O W E R =- YOU."},
+		{"$n -= S P A C E   P O W E R =- $N.",
+		 "YOU -= S P A C E   P O W E R =- $N.",
+		 "$n -= S P A C E   P O W E R =- YOU."},
 
-        {"$n ---==<< V A C U U M >>==--- $N.",
-        "YOU ---==<< V A C U U M >>==--- $N.",
-        "$n ---==<< V A C U U M >>==--- YOU."}
-    };
+		{"$n ---==<< V A C U U M >>==--- $N.",
+		 "YOU ---==<< V A C U U M >>==--- $N.",
+		 "$n ---==<< V A C U U M >>==--- YOU."}
+	};
 
-    /* brief mode */
-    static struct dam_weapon_type brief_han_weapons[] = {
-        {"$n, $N 님을 못침.",	/*    0    */
-        "당신, $N 님을 못침.",
-        "$n, 당신을 못침."},
+	/* brief mode */
+	static struct dam_weapon_type brief_han_weapons[] =
+	{
+		{"$n, $N 님을 못침.",	/*    0    */
+		 "당신, $N 님을 못침.",
+		 "$n, 당신을 못침."},
 
-        {"$n, $N 님을 간지럽게.",	/*  1.. 4  */
-        "당신, $N 님을 간지럽게.",
-        "$n, 당신을 간지럽게."},
+		{"$n, $N 님을 간지럽게.",		/*  1.. 4  */
+		 "당신, $N 님을 간지럽게.",
+		 "$n, 당신을 간지럽게."},
 
-        {"$n, $N 님을 살살.",	/*  5.. 8  */
-        "당신, 님을 살살.",
-        "$n, 당신을 살살."},
+		{"$n, $N 님을 살살.",	/*  5.. 8  */
+		 "당신, 님을 살살.",
+		 "$n, 당신을 살살."},
 
-        {"$n, $N 님을 침.",	/*  9.. 12  */
-        "당신, $N 님을 침.",
-        "$n, 당신을 침."},
+		{"$n, $N 님을 침.",	/*  9.. 12  */
+		 "당신, $N 님을 침.",
+		 "$n, 당신을 침."},
 
-        {"$n, $N 님을 세게.",	/*  13..20  */
-        "당신, $N 님을 세게.",
-        "$n, 당신을 세게."},
+		{"$n, $N 님을 세게.",	/*  13..20  */
+		 "당신, $N 님을 세게.",
+		 "$n, 당신을 세게."},
 
-        {"$n, $N 님을 매우 세게.",	/* 21..30  */
-        "당신, $N 님을 매우 세게.",
-        "$n, 당신을 매우 세게."},
+		{"$n, $N 님을 매우 세게.",	/* 21..30  */
+		 "당신, $N 님을 매우 세게.",
+		 "$n, 당신을 매우 세게."},
 
-        {"$n, $N 님을 무지막지하게.",	/* 31..40  */
-        "당신, $N 님을 무지막지하게.",
-        "$n, 당신을 무지막지하게."},
+		{"$n, $N 님을 무지막지하게.",	/* 31..40  */
+		 "당신, $N 님을 무지막지하게.",
+		 "$n, 당신을 무지막지하게."},
 
-        {"$n, $N 님을 뼈가 으스러지게.",	/* > 40    */
-        "당신, $N 님을 뼈가 으스러지게.",
-        "$n, 당신을 뼈가 으스러지게."},
+		{"$n, $N 님을 뼈가 으스러지게.",	/* > 40    */
+		 "당신, $N 님을 뼈가 으스러지게.",
+		 "$n, 당신을 뼈가 으스러지게."},
 
-        {"$n, $N 님을 몸이 산산조각이 나게.",	/* > 65    */
-        "당신, $N 님을 몸이 산산조각이 나게.",
-        "$n, 당신을 몸이 산산조각이 나게."},
+		{"$n, $N 님을 몸이 산산조각이 나게.",	/* > 65    */
+		 "당신, $N 님을 몸이 산산조각이 나게.",
+		 "$n, 당신을 몸이 산산조각이 나게."},
 
-        {"$n, $N 님을 몸이 가루가 되게.",	/* > 110    */
-        "당신, $N 님을 몸이 가루가 되게.",
-        "$n, 당신을 몸이 가루가 되게."},
+		{"$n, $N 님을 몸이 가루가 되게.",	/* > 110    */
+		 "당신, $N 님을 몸이 가루가 되게.",
+		 "$n, 당신을 몸이 가루가 되게."},
 
-        {"$n, $N 님을 눈앞에 별이 돌게.",	/* > 150 */
-        "당신, $N 님을 눈앞에 별이 돌게.",
-        "$n, 당신을 눈앞에 별이 돌게."},
+		{"$n, $N 님을 눈앞에 별이 돌게.",	/* > 150 */
+		 "당신, $N 님을 눈앞에 별이 돌게.",
+		 "$n, 당신을 눈앞에 별이 돌게."},
 
-        {"$n, $N 님을 눈앞에 병아리가 돌게.",	/* > 200 */
-        "당신, $N 님을 눈앞에 병아리가 돌게.",
-        "$n, 당신을 눈앞에 병아리가 돌게."},
+		{"$n, $N 님을 눈앞에 병아리가 돌게.",	/* > 200 */
+		 "당신, $N 님을 눈앞에 병아리가 돌게.",
+		 "$n, 당신을 눈앞에 병아리가 돌게."},
 
-        {"$n, $N 님을 소리없이.",	/* > 250 */
-        "당신, $N 님을 소리없이.",
-        "$n, 당신을 소리없이."},
+		{"$n, $N 님을 소리없이.",		/* > 250 */
+		 "당신, $N 님을 소리없이.",
+		 "$n, 당신을 소리없이."},
 
-        {"$n, $N 님을 레이져 파워로.",
-        "당신, $N 님을 레이져 파워로.",
-        "$n, 당신을 레이져 파워로."},
+		{"$n, $N 님을 레이져 파워로.",
+		 "당신, $N 님을 레이져 파워로.",
+		 "$n, 당신을 레이져 파워로."},
 
-        {"$n, $N 님을 전..우주의 힘을 빌어.",
-        "당신, $N 님을 전 ..우주의 힘을 빌어.",
-        "$n, 당신을 전 ..우주의 힘을 빌어."},
+		{"$n, $N 님을 전..우주의 힘을 빌어.",
+		 "당신, $N 님을 전 ..우주의 힘을 빌어.",
+		 "$n, 당신을 전 ..우주의 힘을 빌어."},
 
-        {"$n, $N 님을 진공상태로.",
-        "당신, $N 님을 진공상태로.",
-        "$n, 당신을 진공상태로."}
-    };
+		{"$n, $N 님을 진공상태로.",
+		 "당신, $N 님을 진공상태로.",
+		 "$n, 당신을 진공상태로."}
+	};
 
-    w_type -= TYPE_HIT;		/* Change to base of table with text */
+	w_type -= TYPE_HIT;	/* Change to base of table with text */
 
-    wield = ch->equipment[WIELD];
+	wield = ch->equipment[WIELD];
 
-    /* updated by atre */
-    if (dam == 0)
-        msg_index = 0;
-    else if (dam <= 20)
-        msg_index = 1;
-    else if (dam <= 50)
-        msg_index = 2;
-    else if (dam <= 100)
-        msg_index = 3;
-    else if (dam <= 200)
-        msg_index = 4;
-    else if (dam <= 400)
-        msg_index = 5;
-    else if (dam <= 600)
-        msg_index = 6;
-    else if (dam <= 800)
-        msg_index = 7;
-    else if (dam <= 1000)
-        msg_index = 8;
-    else if (dam <= 1200)
-        msg_index = 9;
-    else if (dam <= 1300)
-        msg_index = 10;
-    else if (dam <= 1500)
-        msg_index = 11;
-    else if (dam <= 2000)
-        msg_index = 12;
-    else if (dam <= 3000)
-        msg_index = 13;
-    else if (dam <= 5000)
-        msg_index = 14;
-    else
-        msg_index = 15;
+	/* updated by atre */
+	if (dam == 0)
+		msg_index = 0;
+	else if (dam <= 20)
+		msg_index = 1;
+	else if (dam <= 50)
+		msg_index = 2;
+	else if (dam <= 100)
+		msg_index = 3;
+	else if (dam <= 200)
+		msg_index = 4;
+	else if (dam <= 400)
+		msg_index = 5;
+	else if (dam <= 600)
+		msg_index = 6;
+	else if (dam <= 800)
+		msg_index = 7;
+	else if (dam <= 1000)
+		msg_index = 8;
+	else if (dam <= 1200)
+		msg_index = 9;
+	else if (dam <= 1300)
+		msg_index = 10;
+	else if (dam <= 1500)
+		msg_index = 11;
+	else if (dam <= 2000)
+		msg_index = 12;
+	else if (dam <= 3000)
+		msg_index = 13;
+	else if (dam <= 5000)
+		msg_index = 14;
+	else
+		msg_index = 15;
 
-    /*
-      all messages are brief...
-    */
-    if (msg_index == 3 || msg_index == 4 || msg_index == 5 || msg_index == 7) {
-        buf = replace_string(brief_dam_weapons[msg_index].to_room, attack_hit_text[w_type].plural);
-    } else {
-        buf = replace_string(brief_dam_weapons[msg_index].to_room, attack_hit_text[w_type].singular);
-    }
+	/*
+	   all messages are brief...
+	 */
+	if (msg_index == 3 || msg_index == 4 || msg_index == 5 || msg_index == 7) {
+		buf = replace_string(brief_dam_weapons[msg_index].to_room,
+				     attack_hit_text[w_type].plural);
+	} else {
+		buf = replace_string(brief_dam_weapons[msg_index].to_room,
+				     attack_hit_text[w_type].singular);
+	}
 
-    /* no miss */
-    if (msg_index > 0) {
-        buf2 = replace_string(brief_han_weapons[msg_index].to_room, attack_hit_han[w_type].singular);
-        acthan(buf, buf2, FALSE, ch, wield, victim, TO_NOTVICT);
-    }
+	/* no miss */
+	if (msg_index > 0) {
+		buf2 = replace_string(brief_han_weapons[msg_index].to_room,
+				      attack_hit_han[w_type].singular);
+		acthan(buf, buf2, FALSE, ch, wield, victim, TO_NOTVICT);
+	}
 
-    buf = replace_string(brief_dam_weapons[msg_index].to_char, attack_hit_text[w_type].singular);
-    buf2 = replace_string(brief_han_weapons[msg_index].to_char, attack_hit_han[w_type].singular);
-    acthan(buf, buf2, FALSE, ch, wield, victim, TO_CHAR);
+	buf = replace_string(brief_dam_weapons[msg_index].to_char,
+			     attack_hit_text[w_type].singular);
+	buf2 = replace_string(brief_han_weapons[msg_index].to_char,
+			      attack_hit_han[w_type].singular);
+	acthan(buf, buf2, FALSE, ch, wield, victim, TO_CHAR);
 
-    if (msg_index == 1 || msg_index == 2 || msg_index == 3 || msg_index == 5 || msg_index == 7) {
-        buf = replace_string(brief_dam_weapons[msg_index].to_victim, attack_hit_text[w_type].plural);
-    } else {
-        buf = replace_string(brief_dam_weapons[msg_index].to_victim, attack_hit_text[w_type].singular);
-    }
-    buf2 = replace_string(brief_han_weapons[msg_index].to_victim, attack_hit_han[w_type].singular);
-    acthan(buf, buf2, FALSE, ch, wield, victim, TO_VICT);
+	if (msg_index == 1 || msg_index == 2 || msg_index == 3 || msg_index == 5
+	    || msg_index == 7) {
+		buf = replace_string(brief_dam_weapons[msg_index].to_victim,
+				     attack_hit_text[w_type].plural);
+	} else {
+		buf = replace_string(brief_dam_weapons[msg_index].to_victim,
+				     attack_hit_text[w_type].singular);
+	}
+	buf2 = replace_string(brief_han_weapons[msg_index].to_victim,
+			      attack_hit_han[w_type].singular);
+	acthan(buf, buf2, FALSE, ch, wield, victim, TO_VICT);
 }
-
-void damage(struct char_data *ch, struct char_data *victim, int dam, int attacktype)
+// Check here
+//
+void damage(struct char_data *ch, struct char_data *victim,
+	    int dam, int attacktype)
 {
-    char buf[MAX_STRING_LENGTH];
-    struct message_type *messages;
-    int i, j, nr, max_hit, exp;
-    extern int nokillflag;
+	char buf[MAX_STRING_LENGTH];
+	struct message_type *messages;
+	int i, j, nr, max_hit, exp;
+	extern int nokillflag;
 
-    /* for quest */
-    struct follow_type *f;
+	/* for quest */
+	struct follow_type *f;
 
-    long int hit_limit(struct char_data *ch);
+	long int hit_limit(struct char_data *ch);
 
-    if (!victim || !ch)
-        return;
+	if (!victim || !ch)
+		return;
 
     if (ch == victim && attacktype != TYPE_SUFFERING)
         return;
 
 #ifdef GHOST
-    /* connectionless PC can't damage or be damaged */
-    if ((!IS_NPC(ch) && !ch->desc) || (!IS_NPC(victim) && !victim->desc))
-      return;
-#endif /* GHOST */
+	/* connectionless PC can't damage or be damaged */
+	if ((!IS_NPC(ch) && !ch->desc) || (!IS_NPC(victim) && !victim->desc))
+		return;
+#endif				/* GHOST */
 
-    if (nokillflag)
-        if (!IS_NPC(ch) && !IS_NPC(victim))
-            return;
+	if (nokillflag)
+		if (!IS_NPC(ch) && !IS_NPC(victim))
+			return;
 
-    /* can't hit same guild member */
-    if (ch->player.guild == victim->player.guild && (ch->player.guild || victim->player.guild)) {
-        send_to_char("Wanna hit your guild member?  CAN'T!\n\r", ch);
-        return;
-    }
+	/* can't hit same guild member */
+	if (ch->player.guild == victim->player.guild &&
+	    (ch->player.guild || victim->player.guild)) {
+		send_to_char("Wanna hit your guild member?  CAN'T!\n\r", ch);
+		return;
+	}
 
-    if (GET_POS(victim) <= POSITION_DEAD)
-        return;
+	if (GET_POS(victim) <= POSITION_DEAD)
+		return;
 
-    if (GET_LEVEL(victim) >= IMO && !IS_NPC(victim))
-        dam = 0;
+	if (GET_LEVEL(victim) >= IMO && !IS_NPC(victim))
+		dam = 0;
 
-    if (victim != ch) {
-        if (GET_POS(victim) > POSITION_STUNNED) {
-            if (!victim->specials.fighting)
-                set_fighting(victim, ch);
-            GET_POS(victim) = POSITION_FIGHTING;
-        }
+	if (victim != ch) {
+		if (GET_POS(victim) > POSITION_STUNNED) {
+			if (!victim->specials.fighting)
+				set_fighting(victim, ch);
+			GET_POS(victim) = POSITION_FIGHTING;
+		}
 
-        if (GET_POS(ch) > POSITION_STUNNED) {
-            if (!ch->specials.fighting && ch->in_room == victim->in_room)
-                set_fighting(ch, victim);
+		if (GET_POS(ch) > POSITION_STUNNED) {
+			if (!ch->specials.fighting && ch->in_room == victim->in_room)
+				set_fighting(ch, victim);
 
-            /* charmed mob can't ALWAYS kill another mob for player */
-            if (IS_NPC(ch) && IS_NPC(victim) && victim->master && !number(0, 4) && IS_AFFECTED(victim, AFF_CHARM) &&
-                        (victim->master->in_room == ch->in_room)) {
-                if (ch->specials.fighting)
-                    stop_fighting(ch);
-                if (ch->in_room == victim->master->in_room)
-                    hit(ch, victim->master, TYPE_UNDEFINED);
-                return;
-            }
-        }
-    }
+			/* forbid charmed person damage charmed person */
+			/*
+			   if (IS_AFFECTED(ch, AFF_CHARM) && IS_AFFECTED(victim,AFF_CHARM)) {
+			   if(ch->specials.fighting)
+			   stop_fighting(ch);
+			   if(victim->specials.fighting)
+			   stop_fighting(victim);
+			   return;
+			   }
+			 */
 
-    if (victim->master == ch)
-        stop_follower(victim);
-    if (IS_AFFECTED(ch, AFF_INVISIBLE))
-        appear(ch);
-    if (IS_AFFECTED(victim, AFF_SANCTUARY))
-        dam /= 2;
-    if (IS_AFFECTED(victim, AFF_LOVE))
-        dam *= 2;
+			/* charmed mob can't ALWAYS kill another mob for player */
+			if (IS_NPC(ch) && IS_NPC(victim) && victim->master &&
+			    !number(0, 4) && IS_AFFECTED(victim, AFF_CHARM) &&
+			    (victim->master->in_room == ch->in_room)) {
+				if (ch->specials.fighting)
+					stop_fighting(ch);
+				if (ch->in_room == victim->master->in_room)
+					hit(ch, victim->master, TYPE_UNDEFINED);
+				return;
+			}
+		}
+	}
 
-    dam = MAX(dam, -dam);
-    /* MAX DAMAGE */
-    dam = MIN(dam, 100000);
-    GET_HIT(victim) -= dam;	/* this is the maximum damage */
+	if (victim->master == ch)
+		stop_follower(victim);
+	if (IS_AFFECTED(ch, AFF_INVISIBLE))
+		appear(ch);
+	if (IS_AFFECTED(victim, AFF_SANCTUARY))
+		dam /= 2;
+	if (IS_AFFECTED(victim, AFF_LOVE))
+		dam *= 2;
+	/*
+	   if (IS_NPC(ch))
+	   dam *= 2;
+	 */
 
-    /* exp gained by damage */
-    if (ch != victim)
-        gain_exp(ch, GET_LEVEL(victim) * dam / 2);
+	dam = MAX(dam, -dam);
+	/* MAX DAMAGE */
+	dam = MIN(dam, 100000);
+	GET_HIT(victim) -= dam;	/* this is the maximum damage */
 
-    update_pos(victim);
-    if (attacktype >= TYPE_HIT && attacktype <= TYPE_SLASH) {
-        if (!ch->equipment[WIELD])
-            dam_message(dam, ch, victim, TYPE_HIT);
-        else
-            dam_message(dam, ch, victim, attacktype);
-    } else if (attacktype != TYPE_SHOOT) {
-        if (attacktype) {
-            for (i = 0; i < MAX_MESSAGES; i++) {
-                if (fight_messages[i].a_type == attacktype) {
-                    nr = dice(1, fight_messages[i].number_of_attacks);
-                    for (j = 1, messages = fight_messages[i].msg; j < nr && messages; j++)
-                        messages = messages->next;
+	/* exp gained by damage */
+	if (ch != victim)
+		gain_exp(ch, GET_LEVEL(victim) * dam / 2);
 
-                    if (!IS_NPC(victim) && (GET_LEVEL(victim) >= IMO)) {
-                        act(messages->god_msg.attacker_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_CHAR);
-                        act(messages->god_msg.victim_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_VICT);
-                        act(messages->god_msg.room_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_NOTVICT);
-                    } else if (dam != 0) {
-                        if (GET_POS(victim) == POSITION_DEAD) {
-                            act(messages->die_msg.attacker_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_CHAR);
-                            act(messages->die_msg.victim_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_VICT);
-                            act(messages->die_msg.room_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_NOTVICT);
-                        } else {
-                            act(messages->hit_msg.attacker_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_CHAR);
-                            act(messages->hit_msg.victim_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_VICT);
-                            act(messages->hit_msg.room_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_NOTVICT);
-                        }
-                    } else {		/* Dam == 0 */
-                        act(messages->miss_msg.attacker_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_CHAR);
-                        act(messages->miss_msg.victim_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_VICT);
-                        act(messages->miss_msg.room_msg, FALSE, ch, ch->equipment[WIELD], victim, TO_NOTVICT);
-                    }
-                    break;
-                }		/* end of if */
-            }			/* end of for */
-        }			/* end of if */
-    }				/* end of else */
+	update_pos(victim);
+	if (attacktype >= TYPE_HIT && attacktype <= TYPE_SLASH) {
+		if (!ch->equipment[WIELD])
+			dam_message(dam, ch, victim, TYPE_HIT);
+		else
+			dam_message(dam, ch, victim, attacktype);
+	} else if (attacktype != TYPE_SHOOT) {
+		if (attacktype) {
+			for (i = 0; i < MAX_MESSAGES; i++) {
+				if (fight_messages[i].a_type == attacktype) {
+					nr = dice(1, fight_messages[i].number_of_attacks);
+					for (j = 1, messages =
+					     fight_messages[i].msg;
+					     j < nr && messages; j++)
+						messages = messages->next;
 
-    switch (GET_POS(victim)) {
-        case POSITION_MORTALLYW:
-            act("$n is mortally wounded, and will die soon, if not aided.", TRUE, victim, 0, 0, TO_ROOM);
-            act("You are mortally wounded, and will die soon, if not aided.", FALSE, victim, 0, 0, TO_CHAR);
-            break;
-        case POSITION_INCAP:
-            act("$n is incapacitated and will slowly die, if not aided.", TRUE, victim, 0, 0, TO_ROOM);
-            act("You are incapacitated an will slowly die, if not aided.", FALSE, victim, 0, 0, TO_CHAR);
-            break;
-        case POSITION_STUNNED:
-            act("$n is stunned, but could regain consciousness again.", TRUE, victim, 0, 0, TO_ROOM);
-            act("You're stunned, but could regain consciousness again.", FALSE, victim, 0, 0, TO_CHAR);
-            break;
-        case POSITION_DEAD:
-            act("&r$n is dead! R.I.P.&n", TRUE, victim, 0, 0, TO_ROOM);
-            act("&rYou are dead!  Sorry...&n", FALSE, victim, 0, 0, TO_CHAR);
-            break;
-        default:			/* >= POSITION SLEEPING */
-            max_hit = hit_limit(victim);
-            if (dam > max_hit / 10)
-                act("&RThat Really did HURT!&n", FALSE, victim, 0, 0, TO_CHAR);
-            if (IS_NPC(victim) && IS_SET(victim->specials.act, ACT_WIMPY) && GET_HIT(victim) < max_hit / 30) {
-                act("You wish that your wounds would stop BLEEDING that much!", FALSE, victim, 0, 0, TO_CHAR);
-                do_flee(victim, "", 0);
-            }
-            else if (!IS_NPC(victim) && IS_SET(victim->specials.act, PLR_WIMPY) && GET_HIT(victim) < victim->specials.wimpyness) {
-                act("You wish that your wounds would stop BLEEDING that much!", FALSE, victim, 0, 0, TO_CHAR);
-                do_flee(victim, "", 0);
-            }
-            break;
-    }
+					if (!IS_NPC(victim) &&
+					    (GET_LEVEL(victim) >= IMO)) {
+						act(messages->god_msg.attacker_msg,
+						    FALSE, ch,
+						    ch->equipment[WIELD],
+						    victim, TO_CHAR);
+						act(messages->god_msg.victim_msg,
+						    FALSE, ch,
+						    ch->equipment[WIELD],
+						    victim, TO_VICT);
+						act(messages->god_msg.room_msg,
+						    FALSE, ch,
+						    ch->equipment[WIELD],
+						    victim, TO_NOTVICT);
+					} else if (dam != 0) {
+						if (GET_POS(victim) == POSITION_DEAD) {
+							act(messages->die_msg.attacker_msg,
+							    FALSE, ch,
+							    ch->equipment[WIELD],
+							    victim, TO_CHAR);
+							act(messages->die_msg.victim_msg,
+							    FALSE, ch,
+							    ch->equipment[WIELD],
+							    victim, TO_VICT);
+							act(messages->die_msg.room_msg,
+							    FALSE, ch,
+							    ch->equipment[WIELD],
+							    victim, TO_NOTVICT);
+						} else {
+							act(messages->hit_msg.attacker_msg,
+							    FALSE, ch,
+							    ch->equipment[WIELD],
+							    victim, TO_CHAR);
+							act(messages->hit_msg.victim_msg,
+							    FALSE, ch,
+							    ch->equipment[WIELD],
+							    victim, TO_VICT);
+							act(messages->hit_msg.room_msg,
+							    FALSE, ch,
+							    ch->equipment[WIELD],
+							    victim, TO_NOTVICT);
+						}
+					} else {	/* Dam == 0 */
+						act(messages->miss_msg.attacker_msg,
+						    FALSE, ch,
+						    ch->equipment[WIELD],
+						    victim, TO_CHAR);
+						act(messages->miss_msg.victim_msg,
+						    FALSE, ch,
+						    ch->equipment[WIELD],
+						    victim, TO_VICT);
+						act(messages->miss_msg.room_msg,
+						    FALSE, ch,
+						    ch->equipment[WIELD],
+						    victim, TO_NOTVICT);
+					}
+					break;
+				}	/* end of if */
+			}	/* end of for */
+		}		/* end of if */
+	}
+	/* end of else */
+	switch (GET_POS(victim)) {
+	case POSITION_MORTALLYW:
+		act("$n is mortally wounded, and will die soon, if not aided.",
+		    TRUE, victim, 0, 0, TO_ROOM);
+		act("You are mortally wounded, and will die soon, if not aided.",
+		    FALSE, victim, 0, 0, TO_CHAR);
+		break;
+	case POSITION_INCAP:
+		act("$n is incapacitated and will slowly die, if not aided.",
+		    TRUE, victim, 0, 0, TO_ROOM);
+		act("You are incapacitated an will slowly die, if not aided.",
+		    FALSE, victim, 0, 0, TO_CHAR);
+		break;
+	case POSITION_STUNNED:
+		act("$n is stunned, but could regain consciousness again.",
+		    TRUE, victim, 0, 0, TO_ROOM);
+		act("You're stunned, but could regain consciousness again.",
+		    FALSE, victim, 0, 0, TO_CHAR);
+		break;
+	case POSITION_DEAD:
+		act("&r$n is dead! R.I.P.&n", TRUE, victim, 0, 0, TO_ROOM);
+		act("&rYou are dead!  Sorry...&n", FALSE, victim, 0, 0, TO_CHAR);
+		break;
+	default:		/* >= POSITION SLEEPING */
+		max_hit = hit_limit(victim);
+		if (dam > max_hit / 10)
+			act("&RThat Really did HURT!&n", FALSE, victim, 0, 0, TO_CHAR);
+		if (IS_NPC(victim) && IS_SET(victim->specials.act, ACT_WIMPY) &&
+		    GET_HIT(victim) < max_hit / 30) {
+			act("You wish that your wounds would stop BLEEDING that much!",
+			    FALSE, victim, 0, 0, TO_CHAR);
+			do_flee(victim, "", 0);
+		} else if (!IS_NPC(victim) && IS_SET(victim->specials.act,
+			   PLR_WIMPY) &&
+			   GET_HIT(victim) < victim->specials.wimpyness) {
+			act("You wish that your wounds would stop BLEEDING that much!",
+			    FALSE, victim, 0, 0, TO_CHAR);
+			do_flee(victim, "", 0);
+		}
+		break;
+	}
 
-    if (GET_POS(victim) < POSITION_MORTALLYW)
-        if (ch->specials.fighting == victim)
-            stop_fighting(ch);
+	if (GET_POS(victim) < POSITION_MORTALLYW)
+		if (ch->specials.fighting == victim)
+			stop_fighting(ch);
 
-    if (!AWAKE(victim))
-        if (victim->specials.fighting)
-            stop_fighting(victim);
+	if (!AWAKE(victim))
+		if (victim->specials.fighting)
+			stop_fighting(victim);
 
-    if (GET_POS(victim) == POSITION_DEAD) {
-        if (IS_NPC(victim)) {
-            if (IS_AFFECTED(ch, AFF_RERAISE))
-                gain_exp(ch, 0);
-            else {
-                if (IS_AFFECTED(ch, AFF_GROUP))
-                    group_gain(ch, victim);
-                else {
-                    /* Calculate level-difference bonus? */
-                    exp = GET_EXP(victim);
-                    exp = MAX(exp, 1);
-                    gain_exp(ch, exp);
-                    GET_GOLD(ch) += GET_GOLD(victim);
-                    GET_GOLD(ch) += (GET_LEVEL(victim) * GET_LEVEL(victim) * 500);
-                    change_alignment(ch, victim);
-                }
+	if (GET_POS(victim) == POSITION_DEAD) {
+		if (IS_NPC(victim)) {
+			if (IS_AFFECTED(ch, AFF_RERAISE))
+				gain_exp(ch, 0);
+			else {
+				if (IS_AFFECTED(ch, AFF_GROUP))
+					group_gain(ch, victim);
+				else {
+					/* Calculate level-difference bonus? */
+					exp = GET_EXP(victim);
+					exp = MAX(exp, 1);
+					gain_exp(ch, exp);
+					GET_GOLD(ch) += GET_GOLD(victim);
+					GET_GOLD(ch) += (GET_LEVEL(victim) *
+							 GET_LEVEL(victim)
+							 * 500);
+					change_alignment(ch, victim);
+				}
 
-                /* quest : check quest */
-                if (ch->master) {
-                    f = ch->master->followers;
-                    /* check master */
-                    /*
-                      if(IS_AFFECTED(ch->master, AFF_GROUP) &&
-                    */
-                    if (ch->master->in_room == ch->in_room)
-                        check_quest_mob_die(ch->master, victim->nr);
-                } else {
-                    f = ch->followers;
+				/* quest : check quest */
+				if (ch->master) {
+					f = ch->master->followers;
+					/* check master */
+					/*
+					   if(IS_AFFECTED(ch->master, AFF_GROUP) &&
+					 */
+					if (ch->master->in_room == ch->in_room)
+						check_quest_mob_die(ch->master, victim->nr);
+				} else {
+					f = ch->followers;
 
-                    /* check ch */
-                    check_quest_mob_die(ch, victim->nr);
-                }
+					/* check ch */
+					check_quest_mob_die(ch, victim->nr);
+				}
 
-                while (f) {
-                  /* check followers */
-                  /*
-                    if(IS_AFFECTED(f->follower, AFF_GROUP) &&
-                  */
-                  if (f->follower->in_room == ch->in_room)
-                      check_quest_mob_die(f->follower, victim->nr);
-                  f = f->next;
-                }
-            }
-        } else {			/* if player killed . */
-            ch->player.pk_num++;
-            if (!IS_NPC(ch) && !IS_AFFECTED(victim, AFF_RERAISE)) {
-                exp = ((GET_EXP(victim) / 10) * 4 / 9);
-                gain_exp(ch, exp);
-                GET_ALIGNMENT(ch) -= 100;
-                GET_GOLD(ch) += GET_GOLD(victim);
-            }
-        }
-    
-        /* just for log */
-        if (!IS_NPC(victim)) { // 이름이 깨져 들어오더라도 방어
-            const char *v_name = GET_NAME(victim) ? GET_NAME(victim) : "Unknown";
-            const char *c_name = (IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch));
-            if (!c_name) c_name = "Unknown";
-            
-            const char *r_name = world[victim->in_room].name ? world[victim->in_room].name : "Unknown Room";
+				while (f) {
+					/* check followers */
+					/*
+					   if(IS_AFFECTED(f->follower, AFF_GROUP) &&
+					 */
+					if (f->follower->in_room == ch->in_room)
+						check_quest_mob_die(f->follower, victim->nr);
+					f = f->next;
+				}
+			}
+		} else {	/* if player killed . */
+			ch->player.pk_num++;
+			if (!IS_NPC(ch) && !IS_AFFECTED(victim, AFF_RERAISE)) {
+				exp = ((GET_EXP(victim) / 10) * 4 / 9);
+				gain_exp(ch, exp);
+				GET_ALIGNMENT(ch) -= 100;
+				GET_GOLD(ch) += GET_GOLD(victim);
+			}
+		}
 
-            if (!IS_AFFECTED(victim, AFF_RERAISE)) {
-                snprintf(buf, sizeof(buf), "%s killed by %s at %s", v_name, c_name, r_name);
-            } else {
-                snprintf(buf, sizeof(buf), "%s was reraised at killing of %s at %s", v_name, c_name, r_name);
-            }
-            log(buf);
-        }
-    }
+		/* just for log */
+		if (!IS_NPC(victim)) {
+			if (!IS_AFFECTED(victim, AFF_RERAISE)) {
+				sprintf(buf, "%s killed by %s at %s", GET_NAME(victim),
+					(IS_NPC(ch) ? ch->player.short_descr :
+					 GET_NAME(ch)),
+					world[victim->in_room].name);
+			} else {
+				sprintf(buf,
+					"%s was reraised at killing of %s at %s",
+					GET_NAME(victim),
+					(IS_NPC(ch) ? ch->player.short_descr :
+					 GET_NAME(ch)),
+					world[victim->in_room].name);
+			}
+			log(buf);
+		}
 
-    die(victim, GET_LEVEL(ch), ch);
+		die(victim, GET_LEVEL(ch), ch);
+	}
 }
 
 void hit(struct char_data *ch, struct char_data *victim, int type)
 {
-    struct obj_data *wielded = 0;
-    int w_type;
-    int dam, prf;
-    int parry_num;
-    int miss;
-    int limit_nodice, limit_sizedice;
-    
-    extern int thaco[4][IMO + 4];
-    extern byte backstab_mult[];
-    extern struct str_app_type str_app[];
-    extern struct dex_app_type dex_app[];
+	struct obj_data *wielded = 0;
+	//  struct obj_data *held = 0;
+	int w_type;
+	int dam, prf;
+	int parry_num;
+	int miss;
+	int limit_nodice, limit_sizedice;
+	// char buffer[MAX_STRING_LENGTH];
 
-    if (ch == NULL || victim == NULL)
-        return;
+	extern int thaco[4][IMO + 4];
+	extern byte backstab_mult[];
+	extern struct str_app_type str_app[];
+	extern struct dex_app_type dex_app[];
 
-    if (ch == victim)
-        return;
+	if (ch == NULL || victim == NULL)
+		return;
 
-    if (ch->in_room != victim->in_room) {
-        log("NOT SAME ROOM WHEN FIGHTING!");
-        return;
-    }
+	if (ch->in_room != victim->in_room) {
+		log("NOT SAME ROOM WHEN FIGHTING!");
+		return;
+	}
 
-    prf = 0;
-    /* parry for NPC */
-    if (GET_LEARNED(victim, SKILL_PARRY)) {
-        /* new mechanism by atre */
-        parry_num = GET_LEARNED(victim, SKILL_PARRY);
-        parry_num += (GET_SKILLED(victim, SKILL_PARRY) << 1);
-        parry_num += (GET_DEX(victim) << 1);
+	prf = 0;
+	/* parry for NPC */
+	if (GET_LEARNED(victim, SKILL_PARRY)) {
+		/* new mechanism by atre */
+		parry_num = GET_LEARNED(victim, SKILL_PARRY);
+		parry_num += (GET_SKILLED(victim, SKILL_PARRY) << 1);
+		parry_num += (GET_DEX(victim) << 1);
 
-        if (GET_CLASS(victim) == CLASS_THIEF) {
-            parry_num += GET_LEVEL(victim);
-        }
+		if (GET_CLASS(victim) == CLASS_THIEF) {
+			parry_num += GET_LEVEL(victim);
+		}
 
-        if (number(0, parry_num) > (GET_HITROLL(ch) << 1) + GET_LEVEL(ch) - GET_LEVEL(victim) + 43) {
-            prf = 1;
-        }
-    }
+		if (number(0, parry_num) > (GET_HITROLL(ch) << 1) +
+		    GET_LEVEL(ch) -
+		    GET_LEVEL(victim) + 43) {
+			prf = 1;
+		}
+	}
+	/* mirror image */
+	/* new mechanism by atre */
+	if (!prf && IS_AFFECTED(victim, AFF_MIRROR_IMAGE)) {
+		parry_num = GET_LEVEL(victim) + GET_LEARNED(victim, SPELL_MIRROR_IMAGE);
+		parry_num += (GET_SKILLED(victim, SPELL_MIRROR_IMAGE) << 1);
+		if (number(0, parry_num) > 3 * GET_LEVEL(ch)) {
+			prf = 2;
+		}
+	}
 
-    /* new mechanism by atre */
-    if (!prf && IS_AFFECTED(victim, AFF_MIRROR_IMAGE)) {
-        parry_num = GET_LEVEL(victim) + GET_LEARNED(victim, SPELL_MIRROR_IMAGE);
-        parry_num += (GET_SKILLED(victim, SPELL_MIRROR_IMAGE) << 1);
-        if (number(0, parry_num) > 3 * GET_LEVEL(ch)) {
-            prf = 2;
-        }
-    }
+	if (prf) {
+		if (prf == 1) {
+			send_to_char("You parry successfully.\n\r", victim);
+			act("$N parries successfully.",
+			    FALSE, ch, 0, victim, TO_CHAR);
+			INCREASE_SKILLED1(victim, ch, SKILL_PARRY);
+		} else if (prf == 2) {
+			send_to_char("You hit illusion. You are confused.\n\r", ch);
+			act("$n hits illusion, looks confused.",
+			    FALSE, ch, 0, victim, TO_VICT);
+			INCREASE_SKILLED1(victim, ch, SPELL_MIRROR_IMAGE);
+		}
+		return;
+	}
 
-    if (prf) {
-        if (prf == 1) {
-            send_to_char("You parry successfully.\n\r", victim);
-            act("$N parries successfully.", FALSE, ch, 0, victim, TO_CHAR);
-            INCREASE_SKILLED1(victim, ch, SKILL_PARRY);
-        }
-        else if (prf == 2) {
-            send_to_char("You hit illusion. You are confused.\n\r", ch);
-            act("$n hits illusion, looks confused.", FALSE, ch, 0, victim, TO_VICT);
-            INCREASE_SKILLED1(victim, ch, SPELL_MIRROR_IMAGE);
-        }
-        return;
-    }
+	// if (ch->equipment[HOLD])
+	//     held = ch->equipment[HOLD];
 
-    if (ch->equipment[WIELD] && (ch->equipment[WIELD]->obj_flags.type_flag == ITEM_WEAPON)) {
-        wielded = ch->equipment[WIELD];
-        switch (wielded->obj_flags.value[3]) {
-            case 0:
-            case 1:
-            case 2:
-                w_type = TYPE_WHIP;
-                break;
-            case 3:
-                w_type = TYPE_SLASH;
-                break;
-            case 4:
-            case 5:
-            case 6:
-                w_type = TYPE_CRUSH;
-                break;
-            case 7:
-                w_type = TYPE_BLUDGEON;
-                break;
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-                w_type = TYPE_PIERCE;
-                break;
-            default:
-                w_type = TYPE_HIT;
-                break;
-        }
-    } else {
-        if (IS_NPC(ch) && (ch->specials.attack_type >= TYPE_HIT))
-            w_type = ch->specials.attack_type;
-        else
-            w_type = TYPE_HIT;
-    }
+	if (ch->equipment[WIELD] &&
+	    (ch->equipment[WIELD]->obj_flags.type_flag == ITEM_WEAPON)) {
+		wielded = ch->equipment[WIELD];
+		switch (wielded->obj_flags.value[3]) {
+		case 0:
+		case 1:
+		case 2:
+			w_type = TYPE_WHIP;
+			break;
+		case 3:
+			w_type = TYPE_SLASH;
+			break;
+		case 4:
+		case 5:
+		case 6:
+			w_type = TYPE_CRUSH;
+			break;
+		case 7:
+			w_type = TYPE_BLUDGEON;
+			break;
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			w_type = TYPE_PIERCE;
+			break;
+		default:
+			w_type = TYPE_HIT;
+			break;
+		}
+	} else {
+		if (IS_NPC(ch) && (ch->specials.attack_type >= TYPE_HIT))
+			w_type = ch->specials.attack_type;
+		else
+			w_type = TYPE_HIT;
+	}
 
-    miss = -GET_HITROLL(ch);
-    miss -= number(0, dex_app[GET_DEX(ch)].attack);
-    miss -= number(0, thaco[(int) GET_CLASS(ch) - 1][(int) GET_LEVEL(ch)]);
-    miss += dex_app[GET_DEX(victim)].defensive;
-    if (type == SKILL_BACKSTAB) {
-        miss -= (GET_LEVEL(ch) >> 2);
-        miss -= ((GET_LEVEL(ch) >> 2) + (GET_SKILLED(ch, SKILL_BACKSTAB) >> 2));
-    }
+	miss = -GET_HITROLL(ch);
+	miss -= number(0, dex_app[GET_DEX(ch)].attack);
+	miss -= number(0, thaco[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)]);
+	miss += dex_app[GET_DEX(victim)].defensive;
+	if (type == SKILL_BACKSTAB) {
+		miss -= (GET_LEVEL(ch) >> 2);
+		miss -= ((GET_LEVEL(ch) >> 2) + (GET_SKILLED(ch,
+						 SKILL_BACKSTAB) >> 2));
+	}
 
-    /* attack misses */
-    if (AWAKE(victim) && miss > 0) {
-        if (type == SKILL_BACKSTAB)
-            damage(ch, victim, 0, SKILL_BACKSTAB);
-        else
-            damage(ch, victim, 0, w_type);
-        return;
-    }
+	/* attack misses */
+	if (AWAKE(victim) && miss > 0) {
+		if (type == SKILL_BACKSTAB)
+			damage(ch, victim, 0, SKILL_BACKSTAB);
+		else
+			damage(ch, victim, 0, w_type);
+		return;
+	}
 
-    dam = str_app[STRENGTH_APPLY_INDEX(ch)].todam;
-    dam += GET_DAMROLL(ch);
+	dam = str_app[STRENGTH_APPLY_INDEX(ch)].todam;
+	dam += GET_DAMROLL(ch);
+	if (!wielded) {
+		if (GET_CLASS(ch) == CLASS_WARRIOR)
+			dam += dice(ch->specials.damnodice, ch->specials.damsizedice);
+		else
+			dam += 0;
 
-    if (!wielded) {
-        if (GET_CLASS(ch) == CLASS_WARRIOR)
-            dam += dice(ch->specials.damnodice, ch->specials.damsizedice);
-        else
-            dam += 0;
+		/* increase dice of bare hand */
+		if (GET_CLASS(ch) == CLASS_WARRIOR) {
 
-        /* increase dice of bare hand */
-        if (GET_CLASS(ch) == CLASS_WARRIOR) {
-            if (number(0, 49 + ((ch->specials.damnodice * ch->specials.damsizedice) << 4)) == 37) {
-                /* Check for all remortaled by dsshin   */
-                /* Limit is changed by epochal          */
+			if (number(0, 49 + ((ch->specials.damnodice * ch->specials.damsizedice) << 4)) == 37) {
+				/* Check for all remortaled by dsshin   */
+				/* Limit is changed by epochal                  */
 
-                limit_nodice = 13;
-                limit_sizedice = 21;
+				limit_nodice = 13;
+				limit_sizedice = 21;
 
-                int rcnt = 0;
-                if (ch->player.remortal & REMORTAL_MAGIC_USER)
-                    rcnt++;
-                if (ch->player.remortal & REMORTAL_CLERIC)
-                    rcnt++;
-                if (ch->player.remortal & REMORTAL_THIEF)
-                    rcnt++;
-                if (ch->player.remortal & REMORTAL_WARRIOR)
-                    rcnt++;
+				int rcnt = 0;
+				if (ch->player.remortal & REMORTAL_MAGIC_USER)
+					rcnt++;
+				if (ch->player.remortal & REMORTAL_CLERIC)
+					rcnt++;
+				if (ch->player.remortal & REMORTAL_THIEF)
+					rcnt++;
+				if (ch->player.remortal & REMORTAL_WARRIOR)
+					rcnt++;
 
-                if (rcnt == 2) {
-                    limit_nodice = 21;
-                    limit_sizedice = 41;
-                }
+				if (rcnt == 2) {
+					limit_nodice = 21;
+					limit_sizedice = 41;
+				}
 
-                if (rcnt == 3) {
-                    limit_nodice = 41;
-                    limit_sizedice = 61;
-                }
+				if (rcnt == 3) {
+					limit_nodice = 41;
+					limit_sizedice = 61;
+				}
 
-                if (rcnt == 4) {
-                    limit_nodice = 1000;
-                    limit_sizedice = 1000;
-                }
+				if (rcnt == 4) {
+					limit_nodice = 1000;
+					limit_sizedice = 1000;
+				}
 
-                /*  to here */
-                if (number(0, 2) == 1) {
-                    if (ch->specials.damnodice < limit_nodice) {
-                        send_to_char("&LYour bare hand dice is added!!!&n\n\r", ch);
-                        ch->specials.damnodice++;
-                    }
-                } else {
-                    if (ch->specials.damsizedice < limit_sizedice) {
-                        send_to_char("&TYour bare hand dice is enlarged!!!&n\n\r", ch);
-                        ch->specials.damsizedice++;
-                    }
-                }
-            }
-        }
-    } else {
-        dam += dice(wielded->obj_flags.value[1], wielded->obj_flags.value[2]);
-        if (ch->equipment[HOLD] && number(1, 10) > 4 && CAN_WEAR(ch->equipment[HOLD], ITEM_WIELD) && GET_CLASS(ch) == CLASS_WARRIOR)
-            dam += dice(ch->equipment[HOLD]->obj_flags.value[1], ch->equipment[HOLD]->obj_flags.value[2]);
-    }
+				/*  to here */
+				if (number(0, 2) == 1) {
+					if (ch->specials.damnodice < limit_nodice) {
+						send_to_char("Your bare hand dice is added!!!\n\r", ch);
+						ch->specials.damnodice++;
+					}
+				} else {
+					if (ch->specials.damsizedice < limit_sizedice) {
+						send_to_char
+						    ("Your bare hand dice is enlarged!!!\n\r", ch);
+						ch->specials.damsizedice++;
+					}
+				}
+			}
+		}
+	} else {
+		dam += dice(wielded->obj_flags.value[1],
+			    wielded->obj_flags.value[2]);
+		if (ch->equipment[HOLD] && number(1, 10) > 4 &&
+		    CAN_WEAR(ch->equipment[HOLD], ITEM_WIELD) &&
+		    GET_CLASS(ch) == CLASS_WARRIOR)
+			dam += dice(ch->equipment[HOLD]->obj_flags.value[1],
+				    ch->equipment[HOLD]->obj_flags.value[2]);
+	}
 
-    /* 여의봉 */
-    if (ch->equipment[WIELD] && ch->equipment[WIELD]->item_number >= 0 && ch->equipment[HOLD] && ch->equipment[HOLD]->item_number >= 0
-            && obj_index[ch->equipment[WIELD]->item_number].virtual == 11126 && obj_index[ch->equipment[HOLD]->item_number].virtual == 11126
-            && number(1, 10) > 8)
-        dam += dice(ch->equipment[HOLD]->obj_flags.value[1], ch->equipment[HOLD]->obj_flags.value[2]);
+	/* 여의봉 */
+	if (ch->equipment[WIELD]
+	    && ch->equipment[WIELD]->item_number >= 0
+	    && ch->equipment[HOLD]
+	    && ch->equipment[HOLD]->item_number >= 0
+	    && obj_index[ch->equipment[WIELD]->item_number].virtual == 11126
+	    && obj_index[ch->equipment[HOLD]->item_number].virtual == 11126
+	    && number(1, 10) > 8)
+		dam += dice(ch->equipment[HOLD]->obj_flags.value[1],
+			    ch->equipment[HOLD]->obj_flags.value[2]);
 
-    /* lss belt sword */
-    if (ch->equipment[WEAR_WAISTE] && ch->equipment[WEAR_WAISTE]->item_number >= 0
-            && obj_index[ch->equipment[WEAR_WAISTE]->item_number].virtual == 9508 && number(1, 10) > 6)
-       dam += dice(ch->equipment[WEAR_WAISTE]->obj_flags.value[1], ch->equipment[WEAR_WAISTE]->obj_flags.value[2]);
+	/* lss belt sword */
+	if (ch->equipment[WEAR_WAISTE]
+	    && ch->equipment[WEAR_WAISTE]->item_number >= 0
+	    && obj_index[ch->equipment[WEAR_WAISTE]->item_number].virtual == 9508
+	    && number(1, 10) > 6)
+		dam += dice(ch->equipment[WEAR_WAISTE]->obj_flags.value[1],
+			    ch->equipment[WEAR_WAISTE]->obj_flags.value[2]);
 
-    if (GET_AC(victim) > 0)
-        dam -= (GET_AC(victim) >> 2);
-    else
-        dam += (GET_AC(victim) >> 1);
+	if (GET_AC(victim) > 0)
+		dam -= (GET_AC(victim) >> 2);
+	else
+		dam += (GET_AC(victim) >> 1);
 
-    if (GET_POS(victim) < POSITION_FIGHTING)
-        dam *= 1 + (POSITION_FIGHTING - GET_POS(victim)) / 3;
-    
-    if (ch->skills[SKILL_EXTRA_DAMAGING].learned) {
-        if (ch->skills[SKILL_EXTRA_DAMAGING].learned > number(1, 500) - 4 * GET_LEVEL(ch)) {
-            /* warrior's extra damaging is more powerful */
-            INCREASE_SKILLED1(ch, victim, SKILL_EXTRA_DAMAGING);
-            if (ch->player.class == CLASS_WARRIOR)
-                dam += (dam * ((GET_SKILLED(ch, SKILL_EXTRA_DAMAGING) >> 5) + 1));
-            else
-                dam += number(dam >> 1, dam * ((GET_SKILLED(ch, SKILL_EXTRA_DAMAGING) >> 5) + 1));
-        }
-    }
+	if (GET_POS(victim) < POSITION_FIGHTING)
+		dam *= 1 + (POSITION_FIGHTING - GET_POS(victim)) / 3;
+	/* Position  sitting  x 1.33 */
+	/* Position  resting  x 1.66 */
+	/* Position  sleeping x 2.00 */
+	/* Position  stunned  x 2.33 */
+	/* Position  incap    x 2.66 */
+	/* Position  mortally x 3.00 */
 
-    if (IS_AFFECTED(ch, AFF_LOVE))
-        dam *= 2;
-    if (IS_AFFECTED(ch, AFF_DEATH))
-        dam *= 4;
+	if (ch->skills[SKILL_EXTRA_DAMAGING].learned) {
+		if (ch->skills[SKILL_EXTRA_DAMAGING].learned >
+		    number(1, 500) - 4 * GET_LEVEL(ch)) {
+			/* warrior's extra damaging is more powerful */
+			INCREASE_SKILLED1(ch, victim, SKILL_EXTRA_DAMAGING);
+			if (ch->player.class == CLASS_WARRIOR)
+				dam += (dam * ((GET_SKILLED(ch,
+						SKILL_EXTRA_DAMAGING) >> 5) + 1));
+			else
+				dam += number(dam >> 1, dam * ((GET_SKILLED(ch,
+									    SKILL_EXTRA_DAMAGING)
+								>> 5) + 1));
+		}
+	}
 
-    /* each class has dedicated weapon */
-    if (GET_CLASS(ch) == CLASS_THIEF && w_type == TYPE_PIERCE && number(1, 10) > 5)
-        dam *= 2;
-    if (GET_CLASS(ch) == CLASS_MAGIC_USER && w_type == TYPE_BLUDGEON && number(1, 10) > 5)
-        dam *= 2;
-    if (GET_CLASS(ch) == CLASS_WARRIOR && w_type == TYPE_SLASH && number(1, 10) > 5)
-        dam *= 2;
-    if (GET_CLASS(ch) == CLASS_CLERIC && w_type == TYPE_BLUDGEON && number(1, 10) > 5)
-        dam *= 2;
+	if (IS_AFFECTED(ch, AFF_LOVE))
+		dam *= 2;
+	/*
+	if (IS_AFFECTED(ch, AFF_DEATH))
+		dam *= 4;
+		*/
 
-    if (IS_AFFECTED(ch, AFF_SHADOW_FIGURE) && number(1, 10) > 6)
-        dam *= 3 / 2;
+	/* each class has dedicated weapon */
+	if (GET_CLASS(ch) == CLASS_THIEF &&
+	    w_type == TYPE_PIERCE && number(1, 10) > 5)
+		dam *= 2;
+	if (GET_CLASS(ch) == CLASS_MAGIC_USER &&
+	    w_type == TYPE_BLUDGEON && number(1, 10) > 5)
+		dam *= 2;
+	if (GET_CLASS(ch) == CLASS_WARRIOR &&
+	    w_type == TYPE_SLASH && number(1, 10) > 5)
+		dam *= 2;
+	if (GET_CLASS(ch) == CLASS_CLERIC &&
+	    w_type == TYPE_BLUDGEON && number(1, 10) > 5)
+		dam *= 2;
 
-    dam = MAX(1, dam);
+	/*
+	if (IS_AFFECTED(ch, AFF_SHADOW_FIGURE) && number(1, 10) > 6)
+		dam *= 3 / 2;
+		*/
 
-    if (type == SKILL_BACKSTAB) {
-        if (IS_AFFECTED(ch, AFF_HIDE)) {
-            log("backstab + hide");
-            dam <<= 1;
-        }
+	dam = MAX(1, dam);
 
-        if (IS_NPC(ch)) {
-            dam *= backstab_mult[GET_LEVEL(ch) / 2];
-        } else { /* PC */
-            dam *= (backstab_mult[(int) GET_LEVEL(ch)] + (GET_SKILLED(ch, SKILL_BACKSTAB) >> 2));
-        }
+	if (type == SKILL_BACKSTAB) {
+		if (IS_AFFECTED(ch, AFF_HIDE)) {
+			log("backstab+hide");
+			dam <<= 1;
+		}
+		if (IS_NPC(ch)) {
+			dam *= backstab_mult[GET_LEVEL(ch) / 2];
+		} else {	/* PC */
+			dam *= (backstab_mult[(int)GET_LEVEL(ch)] +
+				(GET_SKILLED(ch,
+					     SKILL_BACKSTAB)
+				 >> 2));
+		}
+		if (!IS_AFFECTED(victim, AFF_REFLECT_DAMAGE))
+			damage(ch, victim, dam << 1, SKILL_BACKSTAB);
+		else {
+			if (victim->skills[SPELL_REFLECT_DAMAGE].learned >
+									      number(1, 500)) {
+				INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
 
-        if (!IS_AFFECTED(victim, AFF_REFLECT_DAMAGE))
-            damage(ch, victim, dam << 1, SKILL_BACKSTAB);
-        else {
-            if (victim->skills[SPELL_REFLECT_DAMAGE].learned > number(1, 500)) {
-                INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
-                
-                act("$N reflects your damage!", TRUE, ch, 0, victim, TO_CHAR); /* 메세지 출력 수정, 251201 Komo */
-                act("You reflect damage on $n successfully.", TRUE, ch, 0, victim, TO_VICT);
-                act("$N reflects damage on $n successfully.", TRUE, ch, 0, victim, TO_NOTVICT);
-                dam >>= 2;
-                dam = MAX(1, dam);
-                damage(victim, ch, dam, w_type);
-            } else
-                damage(ch, victim, dam << 1, SKILL_BACKSTAB);
-        }
-    } else {
-        if (!IS_AFFECTED(victim, AFF_REFLECT_DAMAGE))
-            damage(ch, victim, dam, w_type);
-        else {
-            if (victim->skills[SPELL_REFLECT_DAMAGE].learned > number(1, 300)) {
-                INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
-                act("$N reflects your damage!", TRUE, ch, 0, victim, TO_CHAR);
-                act("You reflect damage on $n successfully.", TRUE, ch, 0, victim, TO_VICT);
-                act("$N reflects damage on $n successfully.", TRUE, ch, 0, victim, TO_NOTVICT);
-                dam >>= 2;
-                damage(victim, ch, dam, w_type);
-            } else
-                damage(ch, victim, dam, w_type);
-        }
-    }
+				/* 메세지 출력 수정, 251201 Komo */
+                act("$N reflects your damage!", 
+					TRUE, ch, 0, victim, TO_CHAR); 
+                act("You reflect damage on $n successfully.", 
+					TRUE, ch, 0, victim, TO_VICT);
+                act("$N reflects damage on $n successfully.", 
+					TRUE, ch, 0, victim, TO_NOTVICT);
+				dam >>= 2;
+				dam = MAX(1, dam);
+				damage(victim, ch, dam, w_type);
+			} else
+				damage(ch, victim, dam << 1, SKILL_BACKSTAB);
+		}
+	} else {
+		if (!IS_AFFECTED(victim, AFF_REFLECT_DAMAGE))
+			damage(ch, victim, dam, w_type);
+		else {
+			if (victim->skills[SPELL_REFLECT_DAMAGE].learned >
+									      number(1, 300)) {
+				INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
+                act("$N reflects your damage!", 
+					TRUE, ch, 0, victim, TO_CHAR);
+                act("You reflect damage on $n successfully.", 
+					TRUE, ch, 0, victim, TO_VICT);
+                act("$N reflects damage on $n successfully.", 
+					TRUE, ch, 0, victim, TO_NOTVICT);
+				dam >>= 2;
+				damage(victim, ch, dam, w_type);
+			} else
+				damage(ch, victim, dam, w_type);
+		}
+	}
 }
 
 /* control the fights going on */
