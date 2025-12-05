@@ -27,6 +27,9 @@ extern int noenchantflag;
 
 /* Extern procedures */
 
+void DEBUG_LOG(const char *format, ...);
+void log(char *str);
+
 void damage(struct char_data *ch, struct char_data *victim,
 	    int damage, int weapontype);
 bool saves_spell(struct char_data *ch, int spell);

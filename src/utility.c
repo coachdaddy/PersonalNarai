@@ -575,7 +575,6 @@ void prune_crlf(char *txt) {
  * 251130 by Komo
  */
 void utf8_safe_strncpy(char *dest, const char *src, size_t n) {
-    size_t i;
     
     strncpy(dest, src, n - 1);
     dest[n - 1] = '\0';

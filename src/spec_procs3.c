@@ -45,7 +45,6 @@ void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
 
 int level_gate(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[100];
 	int f, r;
 
 	if (cmd == 84) {
