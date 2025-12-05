@@ -18,8 +18,10 @@ extern struct room_data *world;
 extern struct str_app_type str_app[];
 extern int top_of_world;
 
-void hit(struct char_data *ch, struct char_data *victim, int type);
+void DEBUG_LOG(const char *format, ...);
 void log(char *str);
+
+void hit(struct char_data *ch, struct char_data *victim, int type);
 int number(int from, int to);
 void obj_from_room(struct obj_data *o);
 void obj_to_char(struct obj_data *o, struct char_data *ch);
@@ -127,6 +129,7 @@ void mobile_activity(void)
 		if (mob_index[ch->nr].virtual == SON_OGONG_MIRROR) {
 			(ch->quest.solved)++;
 			if (ch->quest.solved > 50) {
+				DEBUG_LOG("mobact.c mobile_activity(%s)", ch->player.name);
 				extract_char(ch, TRUE);
 			}
 		}

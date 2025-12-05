@@ -86,7 +86,7 @@ void load_messages(void);
 void weather_and_time(int mode);
 void assign_command_pointers(void);
 void assign_spell_pointers(void);
-void log(char *str);
+
 int dice(int number, int size);
 int number(int from, int to);
 void boot_social_messages(void);
@@ -99,6 +99,9 @@ int MAX(int a, int b);
 int str_cmp(char *arg1, char *arg2);
 char *one_argument(char *arg, char *first_arg);
 void wear(struct char_data *ch, struct obj_data *obj, int where_flag);
+
+void DEBUG_LOG(const char *format, ...);
+void log(char *str);
 
 /* from act.wizard.c */
 void roll_abilities(struct char_data *ch);
@@ -3524,6 +3527,8 @@ void do_rent(struct char_data *ch, int cmd, char *arg)
 	wipe_obj(ch->carrying);
 	ch->carrying = 0;
 	// save_room = ch->in_room;
+
+	DEBUG_LOG("db.c purge(%s)", ch->player.name);
 	extract_char(ch, TRUE);
 /*
 	ch->in_room = world[save_room].number;

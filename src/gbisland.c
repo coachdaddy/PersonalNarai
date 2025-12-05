@@ -35,6 +35,9 @@ extern char *dirs[];
 
 #define GBISLAND_SEED_EVIL_POWER	23309
 
+void DEBUG_LOG(const char *format, ...);
+void log(char *str);
+
 int number(int from, int to);
 void wipe_stash(char *filename);
 void save_char_nocon(struct char_data *ch, sh_int load_room);
@@ -451,6 +454,7 @@ int gbisland_lanessa(struct char_data *ch, int cmd, char *arg)
 
 				obj_to_room(obj, ch->in_room);
 
+				DEBUG_LOG("gbisland.c lanessa(%s)", ch->player.name);
 				extract_char(ch, TRUE);
 			} else if (paper1 || paper2) {
 				do_say(ch,
