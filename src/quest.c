@@ -1050,6 +1050,7 @@ void do_challenge_abort(struct char_data *ch, char *argument, int cmd)
                 if (mob->in_room == ch->in_room) {
                     act("&cCHALLENGE&n : &y$n fades away as the challenge is aborted.&n", TRUE, mob, 0, 0, TO_ROOM);
                 }
+				DEBUG_LOG("quest.c challenge abort(%s)", mob->player.name);
                 extract_char(mob, FALSE);
             }
         }

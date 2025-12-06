@@ -1058,12 +1058,17 @@ void extract_char(struct char_data *ch, int drop_items)
         return; /* exit(1);  <-- 기존 코드. 리턴시킴 */
     }
 
+    if (ch->player.name)
+        snprintf(for_debug, sizeof(for_debug), "extract_char(%s)", ch->player.name);
+
     // 안전한 로그 출력토록 수정, 251130 by Komo
     if (ch->player.name)
         snprintf(for_debug, sizeof(for_debug), "extract_char(%s)", ch->player.name);
     else
         snprintf(for_debug, sizeof(for_debug), "extract_char(NAME_NULL)");
-    log(for_debug);
+
+	DEBUG_LOG("%s", for_debug);
+    // log(for_debug);
 
     if (!IS_NPC(ch) && !ch->desc) {
         for (t_desc = descriptor_list; t_desc; t_desc = t_desc->next)

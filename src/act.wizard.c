@@ -992,11 +992,14 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 				vict->carrying = 0;
 				if (vict->desc)
 					close_socket(vict->desc);
+
+				DEBUG_LOG("act.wizard.c purge(%s)", vict->player.name);
 				extract_char(vict, TRUE);
 				return;
 			}
 			act("$n disintegrates $N.", FALSE, ch, 0, vict, TO_NOTVICT);
 			if (IS_NPC(vict)) {
+				DEBUG_LOG("act.wizard.c purge(%s)", vict->player.name);
 				extract_char(vict, TRUE);
 			}
 		} else if ((obj = get_obj_in_list_vis(ch, name,
@@ -1019,6 +1022,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 		for (vict = world[ch->in_room].people; vict; vict = next_v) {
 			next_v = vict->next_in_room;
 			if (IS_NPC(vict))
+				DEBUG_LOG("act.wizard.c purge(%s)", vict->player.name);
 				extract_char(vict, TRUE);
 		}
 		for (obj = world[ch->in_room].contents; obj; obj = next_o) {
