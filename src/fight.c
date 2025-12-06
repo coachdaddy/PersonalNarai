@@ -384,8 +384,8 @@ void raw_kill(struct char_data *ch, int level)
 
 	death_cry(ch);
 	make_corpse(ch, level);
-	DEBUG_LOG("fight.c raw_kill(%s)", ch->player.name);
 	extract_char(ch, TRUE);
+	DEBUG_LOG("In fight.c - raw_kill(%s) level (%d)", ch->player.name, level);
 }
 
 void die(struct char_data *ch, int level, struct char_data *who)
@@ -557,7 +557,6 @@ void die(struct char_data *ch, int level, struct char_data *who)
         }    /* Challenge Room Quest Completion Check -- END */
     }
 
-	DEBUG_LOG("Player %s level(%d) in fight.c", ch->player.name, level);
     raw_kill(ch, level);
 
     /* 도전의 방에서 사망한 플레이어 시체는 이동시켜두자... */

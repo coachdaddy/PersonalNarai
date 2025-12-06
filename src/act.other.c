@@ -77,6 +77,8 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 	log(cyb);
 	if (ch->desc)
 		close_socket(ch->desc);
+
+	DEBUG_LOG("act.other.c extract char(%s)", ch->player.name);
 	extract_char(ch, FALSE);
 }
 
