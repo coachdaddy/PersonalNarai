@@ -80,7 +80,7 @@ char *how_good(int p1, int p2)
 int guild(struct char_data *ch, int cmd, char *arg)
 {
 	char buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
-    char buf3[MAX_STRING_LENGTH * 2]; // 스택 보호를 위해 적당한 크기로 조정
+    static char buf3[MAX_STRING_LENGTH * 2]; // 스택 보호를 위해 적당한 크기로 조정
     char tmp[MAX_STRING_LENGTH];
     int number, i, percent;
     int lev, cla;

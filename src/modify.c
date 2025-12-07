@@ -457,19 +457,27 @@ struct help_index_element *
 	return (list);
 }
 
+/* ASAN, 251208 */
 void page_string(struct descriptor_data *d, char *str, int keep_internal)
 {
-	if (!d)
-		return;
+    if (!d || !str || !*str)
+        return;
 
-	if (keep_internal) {
-		CREATE(d->showstr_head, char, strlen(str) + 1);
-		strcpy(d->showstr_head, str);
-		d->showstr_point = d->showstr_head;
-	} else
-		d->showstr_point = str;
+    /* 기존 페이징 데이터 정리 */
+    if (d->showstr_head) {
+        free(d->showstr_head);
+        d->showstr_head = NULL;
+    }
 
-	show_string(d, "");
+    size_t alloc_size = strlen(str) + 1; // 사이즈 계산
+    CREATE(d->showstr_head, char, alloc_size);
+    
+    /* strcpy 대신 strlcpy 사용 -> utility.c에 정의  */
+    strlcpy(d->showstr_head, str, alloc_size);
+    
+    d->showstr_point = d->showstr_head;
+
+    show_string(d, "");
 }
 
 void show_string(struct descriptor_data *d, char *input)

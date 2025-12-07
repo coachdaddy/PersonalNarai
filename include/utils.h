@@ -35,6 +35,7 @@ extern void log(char *str);
 size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 안전한 문자열 연결 함수, 251125 by Komo */
 const char *get_char_name(struct char_data *ch, struct char_data *viewer);  /* in utility.c PERS 매크로 대체 함수, 251125 by Komo */
 long int hit_limit(struct char_data *ch);
+size_t strlcpy(char *dst, const char *src, size_t siz);         /* in utility.c, strlcpy, 251208 by Komo */
 
 // Don't use NULL pointer for null character ('\0')
 #define NUL '\0'
