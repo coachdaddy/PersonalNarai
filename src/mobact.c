@@ -160,11 +160,8 @@ void mobile_activity(void)
 						     obj = world[ch->in_room].contents;
 						     obj; obj = obj->next_content) {
 							if (CAN_GET_OBJ(ch, obj)) {
-								if
-								    (obj->obj_flags.cost
-								    > max) {
-									best_obj
-									    = obj;
+								if (obj->obj_flags.cost > max) {
+									best_obj = obj;
 									max = obj->obj_flags.cost;
 								}
 							}
@@ -173,9 +170,7 @@ void mobile_activity(void)
 						if (best_obj) {
 							obj_from_room(best_obj);
 							obj_to_char(best_obj, ch);
-							act("$n gets $p.",
-							    FALSE, ch,
-							    best_obj, 0, TO_ROOM);
+							act("$n gets $p.", FALSE, ch, best_obj, 0, TO_ROOM);
 						}
 					}
 				}	/* Scavenger */
@@ -209,11 +204,8 @@ void mobile_activity(void)
 				/* if can go */
 				if (IS_SET(ch->specials.act, ACT_AGGRESSIVE)) {
 					found = FALSE;
-					for (tmp_ch =
-					     world[ch->in_room].people; tmp_ch;
-					     tmp_ch = tmp_ch->next_in_room) {
-						if (!IS_NPC(tmp_ch) &&
-									       CAN_SEE(ch, tmp_ch)
+					for (tmp_ch = world[ch->in_room].people; tmp_ch; tmp_ch = tmp_ch->next_in_room) {
+						if (!IS_NPC(tmp_ch) && CAN_SEE(ch, tmp_ch)
 						    && (GET_LEVEL(tmp_ch) < IMO)) {
 							if
 							    (!IS_SET(ch->specials.act,
@@ -224,26 +216,14 @@ void mobile_activity(void)
 									    = tmp_ch;
 									found
 									    = TRUE;
-									if
-									    (IS_EVIL(ch)
-									    &&
-									    IS_GOOD(cho_ch) &&
-									    IS_AFFECTED(cho_ch,
-											AFF_PROTECT_EVIL)) {
-										if
-										    (!saves_spell(ch,
-										    SAVING_PARA) &&
-										    GET_LEVEL(ch)
-										    < GET_LEVEL
-										    (cho_ch)) {
+									if (IS_EVIL(ch) && IS_GOOD(cho_ch) &&
+									    IS_AFFECTED(cho_ch, AFF_PROTECT_EVIL)) {
+										if (!saves_spell(ch, SAVING_PARA) && 
+												GET_LEVEL(ch) < GET_LEVEL (cho_ch)) {
 											act
 											    ("$n tries to attack, but failed miserably.",
-											     TRUE,
-											     ch,
-											     0,
-											     0, TO_ROOM);
-											found
-											    = FALSE;
+											     TRUE, ch, 0, 0, TO_ROOM);
+											found = FALSE;
 										}
 									}
 								} else {
@@ -262,12 +242,9 @@ void mobile_activity(void)
 						if (!IS_AFFECTED(cho_ch, AFF_HOLY_SHIELD)) {
 							if (found) {
 								first_attack(ch, cho_ch);
-								/*
-								   hit(ch, cho_ch, 0);
-								 */
+								/* hit(ch, cho_ch, 0); */
 							}
-						} else {
-						}
+						} else { }
 					}
 				}	/* is aggressive */
 			}
