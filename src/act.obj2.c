@@ -32,7 +32,8 @@ struct obj_data *get_object_in_equip_vis(struct char_data *ch,
 					 char *arg, struct obj_data
 					 **equipment, int *j);
 /* char *strdup(char *source); */
-void log(char *str);
+void mudlog(const char *str);
+
 int MIN(int a, int b);
 void cast_cure_critic(byte level, struct char_data *ch, char *arg, int si,
 		      struct char_data *tar_ch, struct obj_data *tar_obj);
@@ -62,7 +63,7 @@ void weight_change_object(struct obj_data *obj, int weight)
 		GET_OBJ_WEIGHT(obj) += weight;
 		obj_to_obj(obj, tmp_obj);
 	} else {
-		log("Unknown attempt to subtract weight from an object.");
+		mudlog("Unknown attempt to subtract weight from an object.");
 	}
 }
 
@@ -1018,7 +1019,7 @@ void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
 		break;
 	default:
 		{
-			log("Unknown type called in wear.");
+			mudlog("Unknown type called in wear.");
 		}
 		break;
 	}

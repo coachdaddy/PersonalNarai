@@ -6,7 +6,7 @@
 
 
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
 
 int number(int from, int to);
 void damage(struct char_data *ch, struct char_data *victim, int dam, int type);

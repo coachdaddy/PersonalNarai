@@ -37,7 +37,7 @@ extern int outlaw_skill_costs[];
 extern int assasin_skill_costs[];
 
 void do_look(struct char_data *ch, char *arg, int cmd);
-void log(char *str);
+void mudlog(const char *str);
 void stash_char(struct char_data *ch);
 void unstash_char(struct char_data *ch, char *filename);
 int MIN(int a, int b);
@@ -204,7 +204,7 @@ int guild_entry(struct char_data *ch, int cmd, char *arg)
 			GET_NAME(ch),
 			guild_names[(int)guild_number]);
 		send_to_all(buf);
-		log(buf);
+		mudlog(buf);
 		for (i = 0; i < MAX_GUILD_SKILLS; i++) {
 			ch->player.guild_skills[i] = 0;
 		}
@@ -219,7 +219,7 @@ int guild_entry(struct char_data *ch, int cmd, char *arg)
 			GET_NAME(ch),
 			guild_names[(int)ch->player.guild]);
 		send_to_all(buf);
-		log(buf);
+		mudlog(buf);
 		ch->player.guild = 0;
 		for (i = 0; i < MAX_GUILD_SKILLS; i++) {
 			ch->player.guild_skills[i] = 0;
@@ -427,7 +427,7 @@ int guild_practice_yard(struct char_data *ch, int cmd, char *arg)
 			send_to_char(buf, ch);
 			break;
 		default:
-			log("shit in train");
+			mudlog("shit in train");
 			break;
 		}
 		if (GET_EXP(ch) > cost) {

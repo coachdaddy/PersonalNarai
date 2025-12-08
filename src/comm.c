@@ -126,7 +126,7 @@ int is_korean(struct descriptor_data *d);
 void affect_update(void);	/* In spells.c */
 void point_update(void);	/* In limits.c */
 void free_char(struct char_data *ch);
-void log(char *str);
+void mudlog(const char *str);
 void mobile_activity(void);
 void mobile_activity2(void);
 void string_add(struct descriptor_data *d, char *str);
@@ -172,14 +172,14 @@ int main(int argc, char **argv)
 	srandom(boottime = time(0));
 	snprintf(buf, sizeof(buf), "mud-%d.pid", port);
 	if (access(buf, F_OK) == 0) {
-		log("Port busy: pid file already exists.");
+		mudlog("Port busy: pid file already exists.");
 		exit(port);
 	}
 
 	umask(0077);
 
 	snprintf(buf, sizeof(buf), "Running game on port %d.", port);
-	log(buf);
+	mudlog(buf);
 	run_the_game(port);
 	return (0);
 }
@@ -191,9 +191,9 @@ void run_the_game(int port)
 	void saveallplayers();
 
 	descriptor_list = NULL;
-	log("Signal trapping.");
+	mudlog("Signal trapping.");
 	signal_setup();
-	log("Opening mother connection.");
+	mudlog("Opening mother connection.");
 	s = init_socket(port);
 
 	boot_db();
@@ -201,7 +201,7 @@ void run_the_game(int port)
 	FILE *pidfp;
 	char pidfile[256];
 	sprintf(pidfile, "writing pid file: mud-%d.pid", port);
-	log(pidfile);
+	mudlog(pidfile);
 
 	sprintf(pidfile, "mud-%d.pid", port);
 	pidfp = fopen(pidfile, "w+");
@@ -212,11 +212,11 @@ void run_the_game(int port)
 		fclose(pidfp);
 	}
 
-	log("Entering game loop.");
+	mudlog("Entering game loop.");
 	no_echo_local(s);
 
 	game_loop(s);
-	log("DOWN??????????SAVE ALL CHARS???????");
+	mudlog("DOWN??????????SAVE ALL CHARS???????");
 	transall(3001);
 	saveallplayers();
 
@@ -224,7 +224,7 @@ void run_the_game(int port)
 	shutdown(s, 2);
 
 	unlink(pidfile);
-	log("Normal termination of game.");
+	mudlog("Normal termination of game.");
 }
 
 void transall(int room)
@@ -341,7 +341,7 @@ void game_loop(int s)
 				freaky(point);
 				FD_CLR(point->descriptor, &input_set);
 				FD_CLR(point->descriptor, &output_set);
-				log("Kicked out a freaky folk.\n\r");
+				mudlog("Kicked out a freaky folk.\n\r");
 				close_socket(point);
 			}
 		}
@@ -422,7 +422,7 @@ void game_loop(int s)
 				freaky(point);
 				FD_CLR(point->descriptor, &input_set);
 				FD_CLR(point->descriptor, &output_set);
-				log("Kicked out a freaky folk.\n\r");
+				mudlog("Kicked out a freaky folk.\n\r");
 				close_socket(point);
 			}
 		}
@@ -632,25 +632,24 @@ void record_player_number()
 			if (!(n % 2)) {
 				strcat(line, "|");
 			} else {
-				log(line);
+				mudlog(line);
 				line[0] = 0;
 			}
 			++n;
 		}
 		if (n % 2) {
-			log(line);
+			mudlog(line);
 		}
 
 		if (m > most)
 			most = m;
 		sprintf(line, "%s%d/%d active connections",
 			(n % 2) ? "\n\r" : "", m, most);
-		log(line);
-		// sprintf(line,"from korea: %d from abroad %d", in_d, out_d );
-		// log(line);
+		mudlog(line);
 		t = 30 + time(0) - boottime;
 		sprintf(line, "Running time %d:%02d", t / 3600, (t % 3600) / 60);
-		log(line);
+		mudlog(line);
+
 #ifdef REBOOT_WHEN
 		static bool adjust = FALSE;
 		if (!adjust && reboot_time >= A_DAY * 3) {
@@ -757,7 +756,7 @@ int init_socket(int port)
 
 	bzero(&sa, sizeof(struct sockaddr_in));
 	gethostname(hostname, MAX_HOSTNAME);
-	log(hostname);
+	mudlog(hostname);
 	hp = gethostbyname(hostname);
 	if (hp == NULL) {
 		perror("gethostbyname");
@@ -979,7 +978,7 @@ int process_input(struct descriptor_data *t)
 			} else
 				break;
 		else {
-			log("EOF encountered on socket read.");
+			mudlog("EOF encountered on socket read.");
 			return (-1);
 		}
 	}
@@ -1088,7 +1087,7 @@ int process_input(struct descriptor_data *t)
 
 void close_sockets(int s)
 {
-	log("Closing all sockets.");
+	mudlog("Closing all sockets.");
 	while (descriptor_list)
 		close_socket(descriptor_list);
 	close(s);
@@ -1124,7 +1123,7 @@ void close_socket(struct descriptor_data *d)
 			// #endif
 			act("$n has lost $s link.", TRUE, d->character, 0, 0, TO_ROOM);
 			snprintf(buf, sizeof(buf), "Closing link to: %s.", GET_NAME(d->character));
-			log(buf);
+			mudlog(buf);
 			d->character->desc = 0;
 		} else {
 			snprintf(buf, sizeof(buf), "Losing player: %s.", GET_NAME(d->character));
@@ -1140,11 +1139,11 @@ void close_socket(struct descriptor_data *d)
 	  stash_char(d->character);
 #endif
 */
-			log(buf);
+			mudlog(buf);
 			free_char(d->character);
 		}
 	} else
-		log("Losing descriptor without char.");
+		mudlog("Losing descriptor without char.");
 
 	if (next_to_process == d)	/* to avoid crashing the process loop */
 		next_to_process = next_to_process->next;
@@ -1317,8 +1316,8 @@ void act(char *str, int hide_invisible, struct char_data *ch, struct obj_data *o
                             i = "$";
                             break;
                         default:
-                            log("Illegal $-code to act():");
-                            log(str);
+                            mudlog("Illegal $-code to act():");
+                            mudlog(str);
                             break;
                     }
                     while (*i && ((point - buf) <= MAX_STRING_LENGTH - 1))
@@ -1430,8 +1429,8 @@ void acthan(char *streng, char *strhan, int hide_invisible, struct char_data *ch
                             i = "$";
                             break;
                         default:
-                            log("Illegal $-code to act():");
-                            log(str);
+                            mudlog("Illegal $-code to act():");
+                            mudlog(str);
                             break;
                     }
                     while (*i && ((point - buf) <= MAX_STRING_LENGTH - 1))
@@ -1464,7 +1463,7 @@ void freaky(struct descriptor_data *d)
 		d->connected,
 		d->descriptor,
 		d->original ? d->original->player.name : d->character->player.name);
-	log(buf);
+	mudlog(buf);
 }
 
 #undef siginterrupt
@@ -1532,19 +1531,19 @@ void checkpointing(int sig)
 	extern int tics;
 
 	if (!tics) {
-		log("CHECKPOINT shutdown: tics not updated");
+		mudlog("CHECKPOINT shutdown: tics not updated");
 		saveallplayers();
 		abort();
 	} else
 		tics = 0;
-	log("checkpointing");
+	mudlog("checkpointing");
 }
 void shutdown_request(int sig)
 {
 	extern int shutdowngame;
 
 	send_to_all("Shut down signal has been received.\n\r");
-	log("Received USR2 - shutdown request");
+	mudlog("Received USR2 - shutdown request");
 	shutdowngame = 1;
 }
 
@@ -1559,7 +1558,7 @@ void hupsig(int sig)
 			GET_LEVEL(xo->character), xo->host,
 			world[xo->character->in_room].name,
 			xo->character->in_room);
-		log(s);
+		mudlog(s);
 	}
 	saveallplayers();
 	longjmp(env, -1);
@@ -1567,5 +1566,5 @@ void hupsig(int sig)
 
 void logsig(int sig)
 {
-	log("Signal received. Ignoring.");
+	mudlog("Signal received. Ignoring.");
 }

@@ -47,7 +47,7 @@ int str_cmp(char *arg1, char *arg2);
 bool circle_follow(struct char_data *ch, struct char_data *victim);
 
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
 
 int do_simple_move(struct char_data *ch, int cmd, int following)
 /* Assumes, 
@@ -90,14 +90,14 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
         char log_buf[256];
         sprintf(log_buf, "SYSERR: Invalid source sector type %d in room %d, clamping to SECT_FIELD", 
                 sect_from, world[ch->in_room].number);
-        log(log_buf);
+        mudlog(log_buf);
         sect_from = SECT_FIELD;
     }
     if (sect_to < 0 || sect_to >= 9) {
         char log_buf[256];
         sprintf(log_buf, "SYSERR: Invalid dest sector type %d in room %d, clamping to SECT_FIELD", 
                 sect_to, world[dest_room_rnum].number);
-        log(log_buf);
+        mudlog(log_buf);
         sect_to = SECT_FIELD;
     }
 
