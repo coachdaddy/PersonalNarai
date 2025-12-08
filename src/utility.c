@@ -256,7 +256,7 @@ void DEBUG_LOG(const char *format, ...)
     snprintf(final_buf, sizeof(final_buf), "DEBUG_LOG: %s", debug_buf);
 
     // 기존 log() 함수를 호출하여 기록
-    log(final_buf);
+    mudlog(final_buf);
 }
 
 
