@@ -35,6 +35,7 @@ extern void log(char *str);
 size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 안전한 문자열 연결 함수, 251125 by Komo */
 const char *get_char_name(struct char_data *ch, struct char_data *viewer);  /* in utility.c PERS 매크로 대체 함수, 251125 by Komo */
 long int hit_limit(struct char_data *ch);
+size_t strlcpy(char *dst, const char *src, size_t siz);         /* in utility.c, strlcpy, 251208 by Komo */
 
 // Don't use NULL pointer for null character ('\0')
 #define NUL '\0'
@@ -295,3 +296,10 @@ void print_increased_skilled(struct char_data *ch, int sk_no);
 			}	\
 		}	\
 	}
+
+
+// 251208, 가독성 및 관리를 위한 확률 매크로 추가
+/* N분의 1 */
+#define ONE_IN(n) (number(0, (n) - 1) == 0)
+/* 퍼센트(백분율) */
+#define PERCENT(p) (number(1, 100) <= (p))

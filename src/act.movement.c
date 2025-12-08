@@ -415,6 +415,7 @@ void do_close(struct char_data *ch, char *argument, int cmd)
 	}
 }
 
+/* ASAN, 251208 */
 int has_key(struct char_data *ch, int key)
 {
 	struct obj_data *o;
@@ -423,10 +424,12 @@ int has_key(struct char_data *ch, int key)
 		if (obj_index[o->item_number].virtual == key)
 			return (1);
 
-	if (ch->equipment[HOLD])
-		if (obj_index[ch->equipment[HOLD]->item_number].virtual == key)
-			return (1);
-
+	if (ch->equipment[HOLD]) {
+        if (ch->equipment[HOLD]->item_number >= 0 && 
+            obj_index[ch->equipment[HOLD]->item_number].virtual == key)
+            return (1);
+    }
+	
 	return (0);
 }
 
