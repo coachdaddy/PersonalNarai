@@ -309,3 +309,6 @@ void print_increased_skilled(struct char_data *ch, int sk_no);
 #define ONE_IN(n) (number(0, (n) - 1) == 0)
 /* 퍼센트(백분율) */
 #define PERCENT(p) (number(1, 100) <= (p))
+
+
+#include "prototypes.h"
