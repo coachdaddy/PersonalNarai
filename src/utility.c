@@ -524,13 +524,14 @@ void do_colortest(struct char_data *ch, char *argument, int cmd)
  * size: 목표 버퍼의 전체 크기 (sizeof(dest))
  * 251125 by Komo
  */
+#ifndef HAVE_STRLCAT
 size_t strlcat(char *dest, const char *src, size_t size)
 {
     size_t dlen = strlen(dest);
     size_t slen = strlen(src);
     size_t n = size;
 
-    if (n <= dlen) return (slen + n); 
+    if (n <= dlen) return (slen + n);
 
     char *d = dest + dlen;
     const char *s = src;
@@ -544,6 +545,7 @@ size_t strlcat(char *dest, const char *src, size_t size)
 
     return (dlen + slen);
 }
+#endif
 
 
 /* * 기존 PERS 매크로를 대체하는 함수
