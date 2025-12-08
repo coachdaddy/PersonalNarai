@@ -223,8 +223,8 @@ void print_increased_skilled(struct char_data *ch, int sk_no)
 
 
 
-// 잠재적 문제를 없앤 새로운 log 함수, 251018
-void log(char *str)
+// 잠재적 문제를 없앤 새로운 log 함수, 251018 -> 이름 변경 by Komo
+void mudlog(const char *str)
 {
     time_t now;
     struct tm *ts;
