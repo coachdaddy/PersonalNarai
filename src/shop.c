@@ -23,6 +23,8 @@ extern struct index_data *mob_index;
 
 char *fread_string(FILE * fl);
 
+void mudlog(const char *str);
+
 struct shop_data {
 	int producing[MAX_PROD];	/* Which item to produce (virtual)      */
 	float profit_buy;	/* Factor to multiply cost with.        */
@@ -530,7 +532,7 @@ void assign_the_shopkeepers()
             mob_index[shop_index[temp1].keeper].func = shop_keeper;
         } else {
             snprintf(buf, sizeof(buf), "SYSERR: Shop index #%d has invalid keeper RNUM [%d]. Skipped.", temp1, keeper_rnum);
-            log(buf);
+            mudlog(buf);
         }
     }
 }
