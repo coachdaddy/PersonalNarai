@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
 #include "structs.h"
 #include "utils.h"
 #include "comm.h"
@@ -754,34 +755,29 @@ void spell_enchant_weapon(byte level, struct char_data *ch,
 		}
 		/* if(ITEM_MAGIC) end */
 		else {
-			/*      if (number(0,18000) == 444) {           */
-			if (number(0, 1800) == 444) {
+			if (ONE_IN(1800)) {
 				obj->obj_flags.value[1] *= (2 + number(0, 4));
 				act("$p laughs evily. 'FU HA HA HA'", FALSE,
 				    ch, obj, 0, TO_CHAR);
-				// BUG FIX?????
-				// GET_HIT(ch) =- 3;
 				GET_HIT(ch) = -3;
 
 			}
-			if (number(0, 18000) == 888) {
-				/*      if (number(0,1800) == 888) {    */
+
+			if (ONE_IN(18000)) {
 				obj->obj_flags.value[2] *= (6 + number(0, 8));
 				act("$p laughs evily. 'HMM.. HA HA'", FALSE,
 				    ch, obj, 0, TO_CHAR);
 				GET_HIT(ch) = -3;
 			}
-			/*      if (number(0, 4999)==1234 || number(0,4999) == 3456) {  */
-			if (number(0, 49999) == 1234 || number(0, 49999) == 3456) {
+			
+			if (ONE_IN(25000)) { /* 2/50000 */
 				obj->obj_flags.value[1] *= (6 + number(0, 8));
 				obj->obj_flags.value[2] *= (8 + number(0, 10));
 				act("$p IS BLESSED BY SAINT XARK.", FALSE, ch,
 				    obj, 0, TO_CHAR);
 				GET_HIT(ch) = 10000;
 			}
-			if (number(0, 100000) < 5)
-				/*      if (number(0, 1000) < 5 )       */
-			{
+			if (ONE_IN(20000)) { /* 5/100K = 1/20k,  if (number(0, 1000) < 5 )       */
 				SET_BIT(obj->obj_flags.extra_flags, ITEM_MAGIC);
 				type = number(0, 14);
 				if (type & 0x0001)
@@ -792,58 +788,59 @@ void spell_enchant_weapon(byte level, struct char_data *ch,
 					SET_BIT(obj->obj_flags.extra_flags, ITEM_ANTI_THIEF);
 				if (type & 0x0008)
 					SET_BIT(obj->obj_flags.extra_flags, ITEM_ANTI_WARRIOR);
+				
 				type = number(1, 19);
+				/* memory leak 방지 */
+				#define REPLACE_STR(dest, new_str) \
+                    do { if (dest) free(dest); dest = strdup(new_str); } while(0)
+				
 				switch (type) {
-				case WEAPON_SMASH:
-				case WEAPON_FLAME:
-				case WEAPON_ICE:
-					obj->obj_flags.value[0] = type;
-					break;
-				case WEAPON_DRAGON_SLAYER:
-					obj->obj_flags.value[0] = type;
-					obj->obj_flags.value[3] = 3;
-					obj->name = "dragon slayer";
-					obj->short_description = "Mystic Dragon Slayer";
-					obj->description =
-					    "Mystic Dragon Slayer lies here.\n\r";
-					break;
-				case WEAPON_ANTI_EVIL_WEAPON:
-					SET_BIT(obj->obj_flags.extra_flags, ITEM_ANTI_EVIL);
-					obj->obj_flags.value[0] = type;
-					obj->obj_flags.value[3] = 3;
-					obj->name = "silver spear";
-					obj->short_description = "Silver Spear";
-					obj->description =
-					    "Silver Spear lies here.\n\r";
-					break;
-				case WEAPON_ANTI_GOOD_WEAPON:
-					SET_BIT(obj->obj_flags.extra_flags, ITEM_ANTI_GOOD);
-					obj->obj_flags.value[0] = type;
-					obj->obj_flags.value[3] = 3;
-					obj->name = "demon blade";
-					obj->short_description = "Mighty Demon Blade";
-					obj->description =
-					    "Mighty Demon Blade lies here.\n\r";
-					break;
-				case WEAPON_DISINTEGRATE:
-					obj->obj_flags.value[0] = type;
-					obj->obj_flags.value[3] = 3;
-					obj->name = "sword disintegrate";
-					obj->short_description = "runed longsword";
-					obj->description =
-					    "Longsword runed by a word 'Disintergrate' lies here.\n\r";
-					break;
-				case WEAPON_LIGHTNING:
-				case WEAPON_CALL_LIGHTNING:
-				case WEAPON_FIREBALL:
-				case WEAPON_FROST_BREATH:
-				case WEAPON_ENERGY_DRAIN:
-				case WEAPON_FIRE_BREATH:
-					obj->obj_flags.value[0] = type;
-					break;
-				default:
-					obj->obj_flags.value[0] = WEAPON_ANY_MAGIC;
-					break;
+					case WEAPON_SMASH:
+                    case WEAPON_FLAME:
+                    case WEAPON_ICE:
+                        obj->obj_flags.value[0] = type;
+                        break;
+                    case WEAPON_DRAGON_SLAYER:
+                        obj->obj_flags.value[0] = type;
+                        obj->obj_flags.value[3] = 3;
+                        REPLACE_STR(obj->name, "dragon slayer");
+                        REPLACE_STR(obj->short_description, "Mystic Dragon Slayer");
+                        REPLACE_STR(obj->description, "Mystic Dragon Slayer lies here.\n\r");
+                        break;
+                    case WEAPON_ANTI_EVIL_WEAPON:
+                        SET_BIT(obj->obj_flags.extra_flags, ITEM_ANTI_EVIL);
+                        obj->obj_flags.value[0] = type;
+                        obj->obj_flags.value[3] = 3;
+                        REPLACE_STR(obj->name, "silver spear");
+                        REPLACE_STR(obj->short_description, "Silver Spear");
+                        REPLACE_STR(obj->description, "Silver Spear lies here.\n\r");
+                        break;
+                    case WEAPON_ANTI_GOOD_WEAPON:
+                        SET_BIT(obj->obj_flags.extra_flags, ITEM_ANTI_GOOD);
+                        obj->obj_flags.value[0] = type;
+                        obj->obj_flags.value[3] = 3;
+                        REPLACE_STR(obj->name, "demon blade");
+                        REPLACE_STR(obj->short_description, "Mighty Demon Blade");
+                        REPLACE_STR(obj->description, "Mighty Demon Blade lies here.\n\r");
+                        break;
+                    case WEAPON_DISINTEGRATE:
+                        obj->obj_flags.value[0] = type;
+                        obj->obj_flags.value[3] = 3;
+                        REPLACE_STR(obj->name, "sword disintegrate");
+                        REPLACE_STR(obj->short_description, "runed longsword");
+                        REPLACE_STR(obj->description, "Longsword runed by a word 'Disintergrate' lies here.\n\r");
+                        break;
+                    case WEAPON_LIGHTNING:
+                    case WEAPON_CALL_LIGHTNING:
+                    case WEAPON_FIREBALL:
+                    case WEAPON_FROST_BREATH:
+                    case WEAPON_ENERGY_DRAIN:
+                    case WEAPON_FIRE_BREATH:
+                        obj->obj_flags.value[0] = type;
+                        break;
+                    default:
+                        obj->obj_flags.value[0] = WEAPON_ANY_MAGIC;
+                        break;
 				}
 				obj->obj_flags.gpd = number(1, 12);
 				act("$p glows brightly more and more...",
@@ -853,70 +850,50 @@ void spell_enchant_weapon(byte level, struct char_data *ch,
 				act("New object appeared.", FALSE, ch, obj, 0, TO_CHAR);
 			}
 
-			if (number(0, 8) < 2 || GET_LEVEL(ch) >= IMO) {
-				if (number(0, 18000) == 900 || number(0,
-				    18000) == 176) {
-					obj->obj_flags.extra_flags ^= ITEM_NORENT;
-					act("$p is blessed by ThunderBolt.",
-					    FALSE, ch, obj, 0, TO_CHAR);
+			if (PERCENT(22) || GET_LEVEL(ch) >= IMO) {
+				if (ONE_IN(9000)) { /* 2/18000 */
+					if (IS_SET(obj->obj_flags.extra_flags, ITEM_NORENT)) {
+                        REMOVE_BIT(obj->obj_flags.extra_flags, ITEM_NORENT);
+                        act("$p is blessed by ThunderBolt and becomes PERMANENT!", FALSE, ch, obj, 0, TO_CHAR);
+                    } else {
+                        act("$p shines with ThunderBolt's energy!", FALSE, ch, obj, 0, TO_CHAR);
+                    }
 				}
 				obj->affected[0].modifier *= number(1, 2);
 				act("$p gain new energy.", FALSE, ch, obj, 0, TO_CHAR);
-				if (number(0, 8) < 6)
-					obj->affected[1].modifier *= number(1, 3);
-				if (number(0, 8) < 5)
-					obj->obj_flags.value[1] += number(1,
-									  level
-									  / 10
-									  + 1);
-				if (number(0, 8) < 4) {
-					obj->obj_flags.value[2] += number(1,
-									  level
-									  / 10
-									  + 1);
-					act("$p BRIGHTS WITH LIGHT.", FALSE,
-					    ch, obj, 0, TO_CHAR);
-				}
-				if (number(0, 99) == 13) {
-					obj->obj_flags.value[1] += number(1,
-									  level
-									  / 10
-									  + 1)
-					    * 3;
-					act("$p BRIGHTS WITH GLOWING AURA.",
-					    FALSE, ch, obj, 0, TO_CHAR);
-				} else if (number(0, 99) == 29) {
-					obj->obj_flags.value[2] += number(1,
-									  level
-									  / 10
-									  + 1)
-					    * 3;
-					act("$p BRIGHTS WITH GLOWING LIGHT.",
-					    FALSE, ch, obj, 0, TO_CHAR);
-				} else if (number(0, 99) == 57 || number(0,
-					   99) == 91 ||
-					   number(0, 99) == 71) {
-					obj->affected[0].modifier *= number(2, 4);
-					obj->affected[1].modifier *= number(2, 4);
-					act("$p BRIGHTS WITH DARKLIGHT.",
-					    FALSE, ch, obj, 0, TO_CHAR);
-				}
-				if (number(0, 9) > 7) {
-					obj->obj_flags.value[1] += (1 +
-									       number(0, 1));
-					obj->obj_flags.value[2] += (1 +
-									       number(0, 1));
-					act("$p IS SHARPENED BY EVIL XARK.",
-					    FALSE, ch, obj, 0, TO_CHAR);
+				if (PERCENT(67)) /* dr */
+                    obj->affected[1].modifier *= number(1, 3);
+                if (PERCENT(56)) /* ldice */
+                    obj->obj_flags.value[1] += number(1, level / 10 + 1);
+                if (PERCENT(44)) { /* rdice */
+                    obj->obj_flags.value[2] += number(1, level / 10 + 1);
+                    act("$p BRIGHTS WITH LIGHT.", FALSE, ch, obj, 0, TO_CHAR);
+                }
+
+				if (PERCENT(1)) { /* ldice */
+                    obj->obj_flags.value[1] += number(1, level / 10 + 1) * 3;
+                    act("$p BRIGHTS WITH GLOWING AURA.", FALSE, ch, obj, 0, TO_CHAR);
+                } else if (PERCENT(1)) {
+                    obj->obj_flags.value[2] += number(1, level / 10 + 1) * 3;
+                    act("$p BRIGHTS WITH GLOWING LIGHT.", FALSE, ch, obj, 0, TO_CHAR);
+                } else if (PERCENT(3)) {
+                    obj->affected[0].modifier *= number(2, 4);
+                    obj->affected[1].modifier *= number(2, 4);
+                    act("$p BRIGHTS WITH DARKLIGHT.", FALSE, ch, obj, 0, TO_CHAR);
+                }
+
+				if (PERCENT(20)) {
+					obj->obj_flags.value[1] += (1 + number(0, 1));
+					obj->obj_flags.value[2] += (1 + number(0, 1));
+					act("$p IS SHARPENED BY EVIL XARK.", FALSE, ch, obj, 0, TO_CHAR);
 				}
 			} else {
-				if (!number(0, 9)) {
-					act("Ba..n..$p nearly explodes, but quiet.",
-					    FALSE, ch, obj, 0, TO_CHAR);
-				} else {
+				if (PERCENT(10)) {
+					act("Ba..n..$p nearly explodes, but quiet.", FALSE, ch, obj, 0, TO_CHAR);
+				} else { /* ASAN, 251208*/
+					/* 순서 변경: act -> extract_obj */
+					act("BANG!!!! $p explodes. It hurts!", FALSE, ch, obj, 0, TO_CHAR);
 					extract_obj(obj);
-					act("BANG!!!! $p explodes. It hurts!",
-					    FALSE, ch, obj, 0, TO_CHAR);
 					GET_HIT(ch) -= GET_HIT(ch) / number(5, 20);
 				}
 			}

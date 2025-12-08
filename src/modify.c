@@ -480,41 +480,60 @@ void page_string(struct descriptor_data *d, char *str, int keep_internal)
     show_string(d, "");
 }
 
+/* ASAN, 251208 */
 void show_string(struct descriptor_data *d, char *input)
 {
-	char buffer[MAX_STRING_LENGTH], buf[MAX_INPUT_LENGTH];
-	register char *scan, *chk;
-	int lines = 0, toggle = 1;
+    char buffer[MAX_STRING_LENGTH];
+    char buf[MAX_INPUT_LENGTH];
+    char *scan, *chk;
+    int lines = 0, toggle = 1;
 
-	one_argument(input, buf);
+    if (!d || !d->showstr_point)
+        return;
 
-	if (*buf) {
-		if (d->showstr_head) {
-			free(d->showstr_head);
-			d->showstr_head = 0;
-		}
-		d->showstr_point = 0;
-		return;
-	}
+    one_argument(input, buf);
 
-	/* show a chunk */
-	for (scan = buffer;; scan++, d->showstr_point++)
-		if ((((*scan = *d->showstr_point) == '\n') || (*scan == '\r')) &&
-		    ((toggle = -toggle) < 0))
-			lines++;
-		else if (!*scan || (lines >= 22)) {
-			*scan = '\0';
-			SEND_TO_Q(buffer, d);
+    if (*buf) {
+        if (d->showstr_head) {
+            free(d->showstr_head);
+            d->showstr_head = NULL;
+        }
+        d->showstr_point = NULL;
+        return;
+    }
 
-			/* see if this is the end (or near the end) of the string */
-			for (chk = d->showstr_point; isspace(*chk); chk++) ;
-			if (!*chk) {
-				if (d->showstr_head) {
-					free(d->showstr_head);
-					d->showstr_head = 0;
-				}
-				d->showstr_point = 0;
-			}
-			return;
-		}
+    /* show a chunk */
+    for (scan = buffer;; scan++, d->showstr_point++) {
+        
+        if ((scan - buffer) >= (MAX_STRING_LENGTH - 10)) { // 여유분 10바이트
+            *scan = '\0';
+            SEND_TO_Q(buffer, d);
+            
+            return;
+        }
+
+        *scan = *d->showstr_point;
+
+        if ((*scan == '\n' || *scan == '\r') && ((toggle = -toggle) < 0))
+            lines++;
+
+        /* 종료는 문자열 끝(NULL) 또는 22줄 도달 */
+        else if (!*scan || (lines >= 22)) {
+            *scan = '\0';
+            SEND_TO_Q(buffer, d);
+
+            /* see if this is the end (or near the end) of the string */
+            for (chk = d->showstr_point; isspace(*chk); chk++)
+                ;
+            
+            if (!*chk) {
+                if (d->showstr_head) {
+                    free(d->showstr_head);
+                    d->showstr_head = NULL;
+                }
+                d->showstr_point = NULL;
+            }
+            return;
+        }
+    }
 }

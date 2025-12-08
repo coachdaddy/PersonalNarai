@@ -296,3 +296,10 @@ void print_increased_skilled(struct char_data *ch, int sk_no);
 			}	\
 		}	\
 	}
+
+
+// 251208, 가독성 및 관리를 위한 확률 매크로 추가
+/* N분의 1 */
+#define ONE_IN(n) (number(0, (n) - 1) == 0)
+/* 퍼센트(백분율) */
+#define PERCENT(p) (number(1, 100) <= (p))
