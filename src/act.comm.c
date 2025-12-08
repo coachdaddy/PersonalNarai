@@ -24,7 +24,8 @@
 extern struct room_data *world;
 extern struct descriptor_data *descriptor_list;
 
-int file_to_string(char *name, char *buf);
+/* extern functions */
+int file_to_string(char *name, char *buf);  /* in db.c */
 void prune_crlf(char *txt);                                     /* in utility.c 251130 */
 void utf8_safe_strncpy(char *dest, const char *src, size_t n); /* in utility.c 251130 */
 
@@ -85,7 +86,7 @@ void do_sayh(struct char_data *ch, char *argument, int cmd)
 void save_chat_history(struct char_data *ch, char *argument)
 {
     char buf[MAX_HISTORY_MSG];      // 날짜용
-    char temp_msg[MAX_HISTORY_MSG]; // 전체 메시지 조립용 임시 버퍼
+    char temp_msg[MAX_INPUT_LENGTH]; // 전체 메시지 조립용 임시 버퍼
     time_t tt = time(NULL);
     
     strftime(buf, sizeof(buf), "%F %H:%M", localtime(&tt));
@@ -211,7 +212,7 @@ void do_lastchat(struct char_data *ch, char *argument, int cmd)
 void do_tell(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *vict;
-	char *s, name[100], message[MAX_INPUT_LENGTH], buf[MAX_OUTPUT_LENGTH];
+	char *s, name[100], message[MAX_INPUT_LENGTH], buf[MAX_INPUT_LENGTH + 100];
 
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
@@ -234,7 +235,7 @@ void do_tell(struct char_data *ch, char *argument, int cmd)
 			s = CAN_SEE(vict, ch) ? GET_NAME(ch) : "Someone";
 		snprintf(buf, sizeof(buf), "%s tells you '%s'\n\r", s, message);
 		send_to_char(buf, vict);
-		sprintf(vict->specials.reply_who, "%s", GET_NAME(ch));
+		snprintf(vict->specials.reply_who, sizeof(vict->specials.reply_who), "%s", GET_NAME(ch));
 		snprintf(buf, sizeof(buf), "You tell %s '%s'\n\r", GET_NAME(vict), message);
 		send_to_char(buf, ch);
 	} else {
@@ -260,7 +261,7 @@ void do_send(struct char_data *ch, char *argument, int cmd)
 	}
 	prune_crlf(argument); // 251130 by Komo
 	half_chop(argument, name, message);
-	sprintf(paint_name, "paints/%s", message);
+	snprintf(paint_name, sizeof(paint_name), "paints/%s", message);
 	if (!*name || !*message)
 		send_to_char("Who do you wish to tell what??\n\r", ch);
 	else if (!(vict = get_char_vis(ch, name)))
@@ -309,13 +310,12 @@ void do_gtell(struct char_data *ch, char *argument, int cmd)
 			send_to_char(buf, f->follower);
 		}
 	}
-/* send_to_char("Ok.\n\r", ch); */
 }
 /* 속삭이기 */
 void do_whisper(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *vict;
-	char name[100], message[MAX_INPUT_LENGTH], buf[MAX_OUTPUT_LENGTH];
+	char name[100], message[MAX_INPUT_LENGTH], buf[MAX_INPUT_LENGTH + 100];
 
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
@@ -344,7 +344,7 @@ void do_whisper(struct char_data *ch, char *argument, int cmd)
 void do_ask(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *vict;
-	char name[100], message[MAX_INPUT_LENGTH], buf[MAX_OUTPUT_LENGTH];
+	char name[100], message[MAX_INPUT_LENGTH], buf[MAX_INPUT_LENGTH + 100];
 
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
@@ -372,7 +372,7 @@ void do_ask(struct char_data *ch, char *argument, int cmd)
 void do_write(struct char_data *ch, char *argument, int cmd)
 {
 	struct obj_data *paper = 0, *pen = 0;
-	char papername[MAX_INPUT_LENGTH], penname[MAX_INPUT_LENGTH], buf[MAX_OUTPUT_LENGTH];
+	char papername[MAX_INPUT_LENGTH], penname[MAX_INPUT_LENGTH], buf[MAX_INPUT_LENGTH + 100];
 
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;

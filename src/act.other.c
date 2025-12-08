@@ -35,6 +35,7 @@ void log(char *str);
 void close_socket(struct descriptor_data *d);
 int number(int from, int to);
 int str_cmp(char *arg1, char *arg2);
+int move_stashfile_safe(const char *victim);
 void page_string(struct descriptor_data *d, char *str, int keep);
 void do_say(struct char_data *ch, char *str, int cmd);
 bool saves_spell(struct char_data *ch, int type);
@@ -63,14 +64,10 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 
     act ("$n has left the game.", TRUE, ch, 0, 0, TO_ROOM);
 
-#ifdef	RETURN_TO_QUIT
 	save_char(ch, world[ch->in_room].number);
-#else
-	save_char(ch, ch->in_room);
-#endif
 
 	act("Goodbye, friend.. Come back soon!", FALSE, ch, 0, 0, TO_CHAR);
-	sprintf(cyb, "%s closed connect(quit)", GET_NAME(ch));
+	snprintf(cyb, sizeof(cyb), "%s closed connection. (quit)", GET_NAME(ch));
 	log(cyb);
 	if (ch->desc)
 		close_socket(ch->desc);
@@ -133,11 +130,8 @@ void do_save(struct char_data *ch, char *argument, int cmd)
 		return;
 	snprintf(buf, sizeof(buf), "Saving %s.\n\r", GET_NAME(ch));
 	send_to_char(buf, ch);
-#ifdef  RETURN_TO_QUIT
+
 	save_char(ch, world[ch->in_room].number);
-#else
-	save_char(ch, ch->in_room);
-#endif
 	stash_char(ch);
 	
     save_result = move_stashfile_safe(GET_NAME(ch));
@@ -312,8 +306,7 @@ void do_steal(struct char_data *ch, char *argument, int cmd)
 			hit(victim, ch, TYPE_UNDEFINED);
 }
 
-bool
-do_practice(struct char_data *ch, char *arg, int cmd)
+bool do_practice(struct char_data *ch, char *arg, int cmd)
 {
 	int i;
 	extern char *spells[], *how_good();
@@ -946,15 +939,13 @@ void do_shouryuken(struct char_data *ch, char *argument, int cmd)
 	struct char_data *victim;
 	char victim_name[240];
 	int percent;
-	// int tmp;
-	// int level_plus;
 
-	if ((GET_LEVEL(ch) == IMO) && (!IS_NPC(ch))) {
+	if ((GET_LEVEL(ch) == IMO) && (!IS_NPC(ch))) 
 		return;
-	}
+	
 	if (GET_SEX(ch) != SEX_MALE) {
 		send_to_char
-		    ("남자 전용 스킬입니다.성전환을 하는게 어떨지~~\n\r", ch);
+		    ("남자 전용 스킬입니다. 성전환을 하는게 어떨지~~\n\r", ch);
 		return;
 	}
 
@@ -967,10 +958,6 @@ void do_shouryuken(struct char_data *ch, char *argument, int cmd)
 			send_to_char("누굴 때려?\n\r", ch);
 			return;
 		}
-		/*
-		   send_to_char_han("Kick who?","누굴 때려요?\n\r",ch);
-		   return;
-		 */
 	}
 	if (!(victim = get_char_room_vis(ch, victim_name))) {
 		if (ch->specials.fighting)
@@ -992,11 +979,7 @@ void do_shouryuken(struct char_data *ch, char *argument, int cmd)
 	}
 
 	if (GET_MANA(ch) < 100) {
-		/*
-		   send_to_char("You do not have enough mana.\n\r",ch);
-		 */
-		send_to_char
-		    ("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
+		send_to_char("당신은 너무 지쳐서 시도할 수가 없군요!\n\r", ch);
 		do_say(ch, "학학학...난 너무 지쳤어!!!\n\r", 0);
 		return;
 	}
@@ -1015,51 +998,21 @@ void do_shouryuken(struct char_data *ch, char *argument, int cmd)
 	do_say(ch, "쇼~~~류~~켄~", 0);
 
 	if (ch == victim) {
-		send_to_char
-		    ("당신은 승룡권을 실패해서 몹시 지칩니다.\n\r", ch);
+		send_to_char("당신은 승룡권을 실패해서 몹시 지칩니다.\n\r", ch);
 		return;
 	}
 
 	if (GET_MOVE(ch) < 0) {
-		send_to_char
-		    ("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
+		send_to_char("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
 		do_say(ch, "헥헥헥...난 너무 지쳤어!!!\n\r", 0);
 		return;
 	}
 
 	if (percent < ch->skills[SKILL_SHOURYUKEN].learned) {
 		INCREASE_SKILLED(ch, victim, SKILL_SHOURYUKEN);
-		// level_plus = 10 + (GET_LEVEL(ch) + GET_SKILLED(ch, SKILL_SHOURYUKEN)) / 8;
-		// tmp = number(10, level_plus);
 		GET_MOVE(ch) -= (600 - GET_SKILLED(ch, SKILL_SHOURYUKEN));
 		GET_MANA(ch) -= (300 - GET_SKILLED(ch, SKILL_SHOURYUKEN));
-		/*
-		   for(i = 0; i < tmp; i++) {
-		   switch(number(1,4)) {
-		   case 1:
-		   act("이얍얍얍얍~~~",TRUE,ch,0,0,TO_ROOM);
-		   break;
-		   case 2:
-		   act("끼야오홋!!!!!",TRUE,ch,0,0,TO_ROOM);
-		   break;
-		   case 3:
-		   act("아자자자자~~!!",TRUE,ch,0,0,TO_ROOM);
-		   break;
-		   case 4:
-		   act("으샤샤샤샤!!!!",TRUE,ch,0,0,TO_ROOM);
-		   break;
-		   default:
-		   break;
-		   }
-		   if(!(tmp_vic=get_char_room_vis(ch,victim_name))) {
-		   if (ch->specials.fighting)
-		   tmp_vic = ch->specials.fighting;
-		   }
-		   if (victim == tmp_vic)
-		   damage(ch, victim, dam, TYPE_HIT);
-		   else break;
-		   }
-		 */
+
 		act("쇼오오오~~", TRUE, ch, 0, 0, TO_ROOM);
 		damage(ch, victim, dam, TYPE_HIT);
 
@@ -1086,8 +1039,7 @@ void do_shouryuken(struct char_data *ch, char *argument, int cmd)
 	} else {
 		WAIT_STATE(ch, PULSE_VIOLENCE / 3);
 		damage(ch, victim, dam, TYPE_HIT);
-		send_to_char
-		    ("당신은 승룡권을 실패해서 몹시 지칩니다.\n\r", ch);
+		send_to_char("당신은 승룡권을 실패해서 몹시 지칩니다.\n\r", ch);
 	}
 }
 
@@ -1149,8 +1101,7 @@ void do_throw_object(struct char_data *ch, char *argument, int cmd)
 			    - (GET_SKILLED(ch, SKILL_THROW_OBJECT) >> 2);
 			if (percent > ch->skills[SKILL_THROW_OBJECT].learned) {
 				dam = 0;
-				do_say(ch,
-				       "윽...이렇게 비싼건....망했당..\n\r", 0);
+				do_say(ch, "윽...이렇게 비싼건....망했당..\n\r", 0);
 			}
 			snprintf(buf, sizeof(buf),
 				"$n님이 $N님에게 %s을 던집니다!!!",

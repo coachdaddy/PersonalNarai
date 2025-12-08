@@ -104,8 +104,7 @@ void do_hit(struct char_data *ch, char *argument, int cmd)
 
 void do_kill(struct char_data *ch, char *argument, int cmd)
 {
-	static char arg[MAX_STRING_LENGTH];
-	char buf[70];
+	char arg[MAX_INPUT_LENGTH], buf[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 
 	if (GET_LEVEL(ch) >= IMO && GET_LEVEL(ch) < IMO + 3) {
@@ -126,9 +125,10 @@ void do_kill(struct char_data *ch, char *argument, int cmd)
 		else if (ch == victim)
 			send_to_char("Your mother would be so sad.. :(\n\r", ch);
 		else {
-			if (GET_LEVEL(ch) < IMO + 3 && GET_LEVEL(victim) >=
-			    (IMO + 3))
-				return;
+			if (GET_LEVEL(ch) < IMO + 3 && GET_LEVEL(victim) >= (IMO + 3)) {
+                send_to_char("You cannot kill a higher god!\n\r", ch);
+                return;
+            }
 			act("You chop $M to pieces! Ah! The blood!",
 			    FALSE, ch, 0, victim, TO_CHAR);
 			act("$N chops you to pieces!", FALSE, victim, 0, ch, TO_CHAR);
@@ -159,14 +159,11 @@ void do_backstab(struct char_data *ch, char *argument, int cmd)
 	}
 	if (!IS_NPC(ch)) {
 		if (!ch->equipment[WIELD]) {
-			send_to_char
-			    ("You need to wield a weapon, to make it a succes.\n\r", ch);
+			send_to_char("You need to wield a weapon, to make it a success.\n\r", ch);
 			return;
 		}
 		if (ch->equipment[WIELD]->obj_flags.value[3] != 11) {
-			send_to_char
-			    ("Only piercing weapons can be used for backstabbing.\n\r",
-			     ch);
+			send_to_char("Only piercing weapons can be used for backstabbing.\n\r", ch);
 			return;
 		}
 		if (ch->specials.fighting) {
@@ -178,8 +175,7 @@ void do_backstab(struct char_data *ch, char *argument, int cmd)
 			return;
 		}
 	}
-	percent = number(1, 101) + (GET_LEVEL(victim) << 1) - GET_LEVEL(ch)
-	    - GET_DEX(ch);	/* 101% is a complete failure */
+	percent = number(1, 101) + (GET_LEVEL(victim) << 1) - GET_LEVEL(ch) - GET_DEX(ch); /* 101% is a complete failure */
 	if (AWAKE(victim) && (percent > ch->skills[SKILL_BACKSTAB].learned))
 		damage(ch, victim, 0, SKILL_BACKSTAB);
 	else {
@@ -266,8 +262,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 			if (CAN_GO(ch, attempt)) {
 				act("$n panics, and attempts to flee.",
 				    TRUE, ch, 0, 0, TO_ROOM);
-				if ((die = do_simple_move(ch, attempt, FALSE))
-				    == 1) {
+				if ((die = do_simple_move(ch, attempt, FALSE)) == 1) {
 					/* The escape has succeded */
 					send_to_char("You flee head over heels.\n\r", ch);
 				} else {
@@ -278,7 +273,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 				}
 			}
 		}		/* for */
-		/* No exits was found */
+		/* No exits were found */
 		send_to_char("PANIC! You couldn't escape!\n\r", ch);
 		return;
 	}
@@ -290,10 +285,9 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 	}
 
 	for (; i > 0; i--) {
-		attempt = number(0, 5);		/* Select a random direction */
+		attempt = number(0, 5); /* Select a random direction */
 		if (CAN_GO(ch, attempt)) {
-			act("$n panics, and attempts to flee.", TRUE, ch, 0,
-			    0, TO_ROOM);
+			act("$n panics, and attempts to flee.", TRUE, ch, 0, 0, TO_ROOM);
 			if ((die = do_simple_move(ch, attempt, FALSE)) == 1) {
 				/* The escape has succeded */
 				loose = (GET_PLAYER_MAX_HIT(ch->specials.fighting)
@@ -301,8 +295,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 				    100 /
 				    GET_PLAYER_MAX_HIT(ch->specials.fighting);
 				loose *= GET_LEVEL(ch->specials.fighting);
-				level_dif = GET_LEVEL(ch->specials.fighting) -
-				    GET_LEVEL(ch);
+				level_dif = GET_LEVEL(ch->specials.fighting) - GET_LEVEL(ch);
 				if (level_dif <= 0)
 					level_dif = 1;
 				loose *= level_dif;
@@ -317,14 +310,12 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 				ch->specials.fighting->specials.hunting = ch;
 
 				/* stop fighting who was fighting against ch */
-				for (tmp_victim = character_list; tmp_victim;
-				     tmp_victim = temp) {
+				for (tmp_victim = character_list; tmp_victim; tmp_victim = temp) {
 					temp = tmp_victim->next;
 					if (tmp_victim->specials.fighting == ch)
 						stop_fighting(tmp_victim);
 				}
-				if (ch->specials.fighting->specials.fighting
-				    == ch)
+				if (ch->specials.fighting->specials.fighting == ch)
 					stop_fighting(ch->specials.fighting);
 				stop_fighting(ch);
 				return;
@@ -337,7 +328,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 		}
 	}			/* for */
 
-	/* No exits was found */
+	/* No exits were found */
 	send_to_char("PANIC! You couldn't escape!\n\r", ch);
 }
 
@@ -472,7 +463,7 @@ void do_multi_kick(struct char_data *ch, char *argument, int cmd)
 		send_to_char("Aren't we funny today...\n\r", ch);
 		return;
 	}
-	GET_MOVE(ch) -= ((IMO << 1) - GET_LEVEL(ch));
+	GET_MOVE(ch) -= ((IMO / 2 << 1) - GET_LEVEL(ch)); // 저레벨에 mv 소모 너무 큼
 	WAIT_STATE(ch, PULSE_VIOLENCE);
 
 	dam = GET_LEVEL(ch) * (1 + (GET_SKILLED(ch, SKILL_KICK) >> 2));
@@ -527,6 +518,9 @@ void do_kick(struct char_data *ch, char *argument, int cmd)
 	percent = ((200 - GET_AC(victim) - GET_HITROLL(ch)) >> 5) + number(1, 101);
 	WAIT_STATE(ch, PULSE_VIOLENCE);
 	if (percent > ch->skills[SKILL_KICK].learned) {
+		if (number(1, 5) == 1) {
+            INCREASE_SKILLED(ch, victim, SKILL_KICK); // 20% chance on miss
+        }
 		damage(ch, victim, 0, SKILL_KICK);
 	} else {
 		INCREASE_SKILLED(ch, victim, SKILL_KICK);
@@ -573,8 +567,7 @@ void do_punch(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 	dam = ((GET_LEARNED(ch, SKILL_PUNCH) >> 1) + (GET_SKILLED(ch,
-								  SKILL_PUNCH)
-						      << 1))
+								  SKILL_PUNCH) << 1))
 	    * number(GET_LEVEL(ch), GET_LEVEL(ch) << 1);
 
 	percent = ((300 - GET_AC(victim) - GET_HITROLL(ch) - GET_SKILLED(ch,
@@ -609,9 +602,7 @@ void do_tornado(struct char_data *ch, char *argument, int cmd)
 			   if(ch->skills[SKILL_TORNADO].learned>number(1,99)) {
 			 */
 			if (GET_LEARNED(ch, SKILL_TORNADO) + (GET_SKILLED(ch,
-									  SKILL_TORNADO)
-							      >> 3)
-			    > number(1, 111)) {
+									  SKILL_TORNADO) >> 3) > number(1, 111)) {
 				hit(ch, tch, TYPE_UNDEFINED);
 			}
 		}
@@ -620,7 +611,7 @@ void do_tornado(struct char_data *ch, char *argument, int cmd)
 		ch->points.move -= (IMO - GET_LEVEL(ch) + 2);
 	INCREASE_SKILLED(ch, ch, SKILL_TORNADO);
 	if (!IS_NPC(ch))
-		WAIT_STATE(ch, PULSE_VIOLENCE * 1);
+		WAIT_STATE(ch, PULSE_VIOLENCE);
 }
 
 void do_light_move(struct char_data *ch, char *argument, int cmd)
@@ -644,7 +635,7 @@ void do_light_move(struct char_data *ch, char *argument, int cmd)
 			}
 		}
 	} else {
-		send_to_char("this skill can used only in fighting.\n\r", ch);
+		send_to_char("This skill can be used only in fighting.\n\r", ch);
 	}
 }
 
@@ -675,14 +666,6 @@ void do_flash(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 
-	/*
-	   if (!IS_NPC(victim)&&!IS_NPC(ch)&&GET_LEVEL(ch)<IMO)
-	   {
-	   send_to_char("You can't use flash to player\n\r",ch);
-	   return;
-	   }
-	 */
-
 	percent = number(1, 101) + GET_LEVEL(victim) * 2 - GET_LEVEL(ch)
 	    - (GET_SKILLED(ch, SKILL_FLASH) >> 2);
 
@@ -691,7 +674,7 @@ void do_flash(struct char_data *ch, char *argument, int cmd)
 
 	if (percent > ch->skills[SKILL_FLASH].learned) {
 		send_to_char("You can't get chance ...\n\r", ch);
-		act("$n try flash attack $N, but failed."
+		act("$n tried a flash attack $N, but failed."
 		    ,FALSE, ch, 0, victim, TO_NOTVICT);
 		damage(ch, victim, 0, SKILL_FLASH);
 	} else {
@@ -781,7 +764,7 @@ void do_shoot(struct char_data *ch, char *argument, int cmd)
 	char name[256];
 
 	one_argument(argument, name);
-	/* if( strcmp(name,"")==0 ) send_to_char("Shoot whom?\n\r",ch); */
+	
 	if (!(victim = get_char_room_vis(ch, name))) {
 		if (ch->specials.fighting) {
 			victim = ch->specials.fighting;
@@ -826,9 +809,6 @@ void do_temptation(struct char_data *ch, char *argument, int cmd)
 
 		if ((ch->skills[SKILL_TEMPTATION].learned > percent
 		     && GET_SEX(victim) == SEX_MALE && GET_LEVEL(victim) < 34)) {
-			/*
-			   GET_LEVEL(victim)<GET_LEVEL(ch))) {
-			 */
 			INCREASE_SKILLED(ch, victim, SKILL_TEMPTATION);
 			do_say(ch, "HOHOHOHOHOHO!!!!!!", 0);
 			if (!IS_NPC(ch))

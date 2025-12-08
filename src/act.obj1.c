@@ -534,14 +534,10 @@ void do_put(struct char_data *ch, char *argument, int cmd)
 							/* make up for above line */
 							IS_CARRYING_W(ch) +=
 							    GET_OBJ_WEIGHT(obj_object);
-/*                obj_from_char(sub_object); do not rearrange order... */
 							obj_to_obj(obj_object, sub_object);
-/*                obj_to_char(sub_object,ch);do not rearrange order... */
 						} else {
 							obj_from_char(obj_object);
-							/* Do we need obj_from_room???(sub_object,....); */
 							obj_to_obj(obj_object, sub_object);
-							/* Dow we need obj_to_room???(sub_object,ch);    */
 						}
 
 						act("$n puts $p in $P", TRUE,
@@ -560,9 +556,7 @@ void do_put(struct char_data *ch, char *argument, int cmd)
 						    ch, &tmp_char, &sub_object);
 				if (sub_object) {
 					if (GET_ITEM_TYPE(sub_object) == ITEM_CONTAINER) {
-						if
-						    (!IS_SET(sub_object->obj_flags.value[1],
-						     CONT_CLOSED)) {
+						if (!IS_SET(sub_object->obj_flags.value[1], CONT_CLOSED)) {
 							if (obj_object == sub_object) {
 								send_to_char
 								    ("You attempt to fold it into itself, but fail.\n\r", ch);
@@ -576,17 +570,12 @@ void do_put(struct char_data *ch, char *argument, int cmd)
 								if (bits == FIND_OBJ_INV) {
 									obj_from_char(obj_object);
 									/* make up for above line */
-									IS_CARRYING_W(ch)
-									    +=
+									IS_CARRYING_W(ch) +=
 									    GET_OBJ_WEIGHT(obj_object);
-/*                obj_from_char(sub_object); do not rearrange order... */
 									obj_to_obj(obj_object, sub_object);
-/*                obj_to_char(sub_object,ch);do not rearrange order... */
 								} else {
 									obj_from_char(obj_object);
-									/* Do we need obj_from_room???(sub_object,....); */
 									obj_to_obj(obj_object, sub_object);
-									/* Dow we need obj_to_room???(sub_object,ch);    */
 								}
 
 								act("$n puts $p in $P",

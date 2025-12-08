@@ -1,4 +1,5 @@
-
+#ifndef _STRUCTS_H_
+#define _STRUCTS_H_
 #include <sys/types.h>
 #include <stdlib.h>
 
@@ -12,24 +13,23 @@ typedef unsigned short byte;
 
 typedef long long LONGLONG;
 
+#ifndef TICS_PER_SEC
+#define TICS_PER_SEC 5
+#endif
+
 #define IMO		61
 
-/*
-#define PULSE_MOBILE    41
-*/
+#define PULSE_ZONE      (60 * TICS_PER_SEC) // 1 min
+#define PULSE_VIOLENCE  12
 #define PULSE_MOBILE    39
 #define PULSE_MOBILE2   13
 
-#define PULSE_ZONE     240
-#define PULSE_VIOLENCE  12
-#define WAIT_SEC       4
-#define WAIT_ROUND     4
+#define WAIT_SEC        TICS_PER_SEC
+#define WAIT_ROUND      TICS_PER_SEC
 
-//#define MAX_STRING_LENGTH   2000
 #define MAX_STRING_LENGTH   4096
-#define MAX_OUTPUT_LENGTH    512
-// #define MAX_INPUT_LENGTH 500 -> 251027
-#define MAX_INPUT_LENGTH 	2048
+#define MAX_OUTPUT_LENGTH   5000
+#define MAX_INPUT_LENGTH    2048
 #define MAX_MESSAGES          61
 #define MAX_ITEMS            153
 
@@ -206,7 +206,7 @@ struct obj_data {
 /* ======================================================================= */
 /* The following defs are for room_data  */
 /* ======================================================================= */
-#define NOWHERE    -1		/* nil reference for room-database    */
+#define NOWHERE -1	/* nil reference for room-database    */
 #define NOBODY  -1  /* nil reference for mobile-database (추가, 251017) */
 
 /* Bitvector For 'room_flags' */
@@ -799,5 +799,7 @@ struct con_app_type {
 	int hitp;
 	int shock;
 };
+
+#endif /* _STRUCTS_H_ */
 
 #include "prototypes.h"

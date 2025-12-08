@@ -40,6 +40,7 @@ extern char *fullness[];
 extern char *spells[];
 
 extern char *guild_names[];
+extern char *connected_types[];
 
 /* extern functions */
 
@@ -48,7 +49,7 @@ void page_string(struct descriptor_data *d, char *str, int keep_internal);
 int number(int from, int to);
 int strn_cmp(char *arg1, char *arg2, int n);
 void log(char *str);
-int move_stashfile_safe (const char *victim);
+int move_stashfile_safe(const char *victim);
 void close_socket(struct descriptor_data *d);
 void sprintbit(long vektor, char *names[], char *result);
 void weather_change(int);
@@ -64,7 +65,7 @@ time_t news_last_mod = 0; // 파일이 마지막으로 수정된 시간, 251119
 
 /* Procedures related to 'look' */
 
-void argument_split_2(char *argument, char *first_arg, char *second_arg)
+void argument_split(char *argument, char *first_arg, char *second_arg)
 {
 	int look_at, /* found, */ begin;
 	/* found = */ begin = 0;
@@ -74,9 +75,8 @@ void argument_split_2(char *argument, char *first_arg, char *second_arg)
 
 	/* Find length of first word */
 	for (look_at = 0; *(argument + begin + look_at) > ' '; look_at++)
-
 		/* Make all letters lower case, AND copy them to first_arg */
-		*(first_arg + look_at) = LOWER(*(argument + begin + look_at));
+		*(first_arg + look_at) = tolower(*(argument + begin + look_at));
 	*(first_arg + look_at) = '\0';
 	begin += look_at;
 
@@ -85,9 +85,8 @@ void argument_split_2(char *argument, char *first_arg, char *second_arg)
 
 	/* Find length of second word */
 	for (look_at = 0; *(argument + begin + look_at) > ' '; look_at++)
-
 		/* Make all letters lower case, AND copy them to second_arg */
-		*(second_arg + look_at) = LOWER(*(argument + begin + look_at));
+		*(second_arg + look_at) = tolower(*(argument + begin + look_at));
 	*(second_arg + look_at) = '\0';
 	begin += look_at;
 }
@@ -190,7 +189,7 @@ void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode,
 		}
 	}
 	if ((!found) && (show))
-		send_to_char_han("Nothing\n\r", "없음", ch);
+		send_to_char_han("Nothing.\n\r", "없음.\n\r", ch);
 }
 
 void show_char_to_char(struct char_data *i, struct char_data *ch, int mode)
@@ -198,6 +197,8 @@ void show_char_to_char(struct char_data *i, struct char_data *ch, int mode)
 	char buffer[MAX_STRING_LENGTH];
 	int j, found, percent;
 	struct obj_data *tmp_obj;
+
+	buffer[0] = '\0';
 
 	if (mode == 0) {
 		if (i && IS_AFFECTED(i, AFF_SHADOW_FIGURE)) {
@@ -446,11 +447,12 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 		send_to_char_han("It is pitch black...\n\r",
 				 "너무 깜깜합니다..\n\r", ch);
 	else {
-		argument_split_2(argument, arg1, arg2);
+		argument_split(argument, arg1, arg2);
 		keyword_no = search_block(arg1, keywords, FALSE);	/* Partiel Match */
 
 		if ((keyword_no == -1) && *arg1) {
 			keyword_no = 7;
+			arg2[0] = '\0';
 			strlcat(arg2, arg1, sizeof(arg2));	/* Let arg2 become the target object (arg1) */
 		}
 
@@ -458,6 +460,8 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 		tmp_object = 0;
 		tmp_char = 0;
 		tmp_desc = 0;
+
+		buffer[0] = '\0';
 
 		switch (keyword_no) {
 			/* look <dir> */
@@ -567,14 +571,14 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 										 2, TRUE);
 							} else
 								send_to_char_han("It is closed.\n\r",
-										 "닫혔군요", ch);
+										 "닫혔군요.\n\r", ch);
 						} else {
 							send_to_char_han("That is not a container.\n\r",
 									 "이것은 물건을 담을 용기가 아니군요.\n\r", ch);
 						}
 					} else {	/* wrong argument */
 						send_to_char_han("You do not see that item here.\n\r",
-								 "그런 아이템은 없어요.", ch);
+								 "그런 아이템은 없어요.\n\r", ch);
 					}
 				} else {	/* no argument */
 					send_to_char_han("Look in what?!\n\r",
@@ -619,14 +623,12 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 							page_string(ch->desc,
 								    tmp_desc, 0);
 							return;		/* RETURN SINCE IT WAS A ROOM DESCRIPTION */
-							/* Old system was: found = TRUE; */
 						}
 					}
 					/* Search for extra descriptions in items */
 					/* Equipment Used */
 					if (!found) {
-						for (j = 0; j < MAX_WEAR &&
-						     !found; j++) {
+						for (j = 0; j < MAX_WEAR && !found; j++) {
 							if (ch->equipment[j]) {
 								if
 								    (CAN_SEE_OBJ(ch,
@@ -636,10 +638,8 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 									    find_ex_description(arg2,
 												ch->equipment[j]->ex_description);
 									if (tmp_desc) {
-										page_string(ch->desc,
-											    tmp_desc, 0);
-										found
-										    = TRUE;
+										page_string(ch->desc, tmp_desc, 0);
+										found = TRUE;
 									}
 								}
 							}
@@ -650,18 +650,15 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 						for (tmp_object = ch->carrying;
 						     tmp_object && !found;
 						     tmp_object = tmp_object->next_content) {
-							if CAN_SEE_OBJ
-								(ch, tmp_object) {
+							if (CAN_SEE_OBJ(ch, tmp_object)) {
 								tmp_desc =
 								    find_ex_description(arg2,
 											tmp_object->ex_description);
 								if (tmp_desc) {
-									page_string(ch->desc,
-										    tmp_desc, 0);
-									found
-									    = TRUE;
+									page_string(ch->desc, tmp_desc, 0);
+									found = TRUE;
 								}
-								}
+							}
 						}
 					}
 
@@ -672,18 +669,15 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 						     world[ch->in_room].contents;
 						     tmp_object && !found;
 						     tmp_object = tmp_object->next_content) {
-							if CAN_SEE_OBJ
-								(ch, tmp_object) {
+							if (CAN_SEE_OBJ(ch, tmp_object)) {
 								tmp_desc =
 								    find_ex_description(arg2,
 											tmp_object->ex_description);
 								if (tmp_desc) {
-									page_string(ch->desc,
-										    tmp_desc, 0);
-									found
-									    = TRUE;
+									page_string(ch->desc, tmp_desc, 0);
+									found = TRUE;
 								}
-								}
+							}
 						}
 					}
 					/* wrong argument */
@@ -726,6 +720,7 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 				send_to_char(buffer, ch);
 				if (!IS_SET(ch->specials.act, PLR_BRIEF))
 					send_to_char(world[ch->in_room].description, ch);
+					send_to_char("\r\n", ch);
 				snprintf(buffer, sizeof(buffer), "[ EXITS : ");
 				/*
 				if (EXIT(ch, 0))
@@ -777,7 +772,7 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 void do_bank(struct char_data *ch, char *argument, int cmd)
 {
 	send_to_char_han("You can only do that at the bank.\n\r",
-			 "그것은 은행에서만 가능한 일이에요.", ch);
+			 "그것은 은행에서만 가능한 일이에요.\n\r", ch);
 }
 
 void do_read(struct char_data *ch, char *argument, int cmd)
@@ -792,7 +787,6 @@ void do_read(struct char_data *ch, char *argument, int cmd)
 void do_examine(struct char_data *ch, char *argument, int cmd)
 {
 	char name[100], buf[100];
-	// int bits;
 	struct char_data *tmp_char;
 	struct obj_data *tmp_object;
 
@@ -807,7 +801,6 @@ void do_examine(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 
-	/* bits = */ 
 	generic_find(name, FIND_OBJ_INV | FIND_OBJ_ROOM |
 				  FIND_OBJ_EQUIP, ch, &tmp_char, &tmp_object);
 
@@ -872,45 +865,76 @@ void do_exits(struct char_data *ch, char *argument, int cmd)
 {
 	int door;
 	char buf[MAX_STRING_LENGTH];
-	static char *exits[] =
-	{
-		"North",
-		"East ",
-		"South",
-		"West ",
-		"Up   ",
-		"Down "
-	};
+	char *p = buf;
+    int remaining_space = MAX_STRING_LENGTH;
+    int written_chars;
+    int found_any_exit = 0;
 
-	*buf = '\0';
+	static char *exits[] = {
+        "North", "East ", "South", "West ", "Up   ", "Down "
+    };
+
+	*p = '\0';
+
+	send_to_char_han("Obvious exits:\r\n", "명백한 출구는:\r\n", ch);
+
 	for (door = 0; door <= 5; door++) { 
-			/* EXIT exist && not CLOSED */ 
-			if (EXIT(ch, door) && !IS_SET(EXIT(ch, door)->exit_info, EX_CLOSED)) { 
-				/* not NOWHERE */ 
-				if (EXIT(ch, door)->to_room != NOWHERE) { 
-					if (GET_LEVEL(ch) >= IMO) 
-						sprintf(buf + strlen(buf), "%-5s - [%5d] %s\r\n", exits[door], world[EXIT(ch, door)->to_room].number, world[EXIT(ch, door)->to_room].name); 
-					else 
-						sprintf(buf + strlen(buf), "%s - %s\r\n", exits[door], world[EXIT(ch, door)->to_room].name); 
-				/* NOWHERE */ 
-				} else if (EXIT(ch, door)->to_room == NOWHERE) { 
-						sprintf(buf + strlen(buf), "%s - Too dark to tell\r\n", exits[door]); 
-				/* DARK && not IMO */ 
-				} else if (IS_DARK(EXIT(ch, door)->to_room) && !OMNI(ch)) { 
-						sprintf(buf + strlen(buf), "%s - Too dark to tell\r\n", exits[door]); 
-						/* OTHERWISE */ 
-				} else { 
-						sprintf(buf + strlen(buf), "%s - %s\r\n", exits[door], world[EXIT(ch, door)->to_room].name); 
-				} 
-			} 
+		written_chars = 0;
+
+		if (!EXIT(ch, door)) {
+			continue;
+		}
+
+		found_any_exit = 1;
+
+		if (EXIT(ch, door)->to_room == NOWHERE) {
+			written_chars = snprintf(p, remaining_space, "%-7s - Leads nowhere\r\n", exits[door]);
+		} else {
+            // 괄호 모양을 결정할 변수, 기본값은 정렬을 위한 공백
+            const char *left_bracket = " ";
+            const char *right_bracket = " ";
+
+            if (IS_SET(EXIT(ch, door)->exit_info, EX_LOCKED)) { // 잠겨있는지
+                left_bracket = "{";
+                right_bracket = "}";
+            }
+            else if (IS_SET(EXIT(ch, door)->exit_info, EX_CLOSED)) { // 잠겨있지 않다면, 닫혀있는지
+                left_bracket = "(";
+                right_bracket = ")";
+            }
+
+            if (IS_DARK(EXIT(ch, door)->to_room) && !OMNI(ch)) { // 어두워서 안 보이는 경우
+                written_chars = snprintf(p, remaining_space, "%-7s - Too dark to tell\r\n", exits[door]);
+            } else {
+                // IMO인지 확인
+                if (GET_LEVEL(ch) >= IMO) {
+                    written_chars = snprintf(p, remaining_space, "%s%-5s%s - [%5d] %s\r\n",
+                        left_bracket, exits[door], right_bracket,
+                        world[EXIT(ch, door)->to_room].number,
+                        world[EXIT(ch, door)->to_room].name);
+                } else {
+                    // 일반 플레이어
+                    written_chars = snprintf(p, remaining_space, "%s%-5s%s - %s [%5d] \r\n",
+                        left_bracket, exits[door], right_bracket,
+                        world[EXIT(ch, door)->to_room].name, 
+						world[EXIT(ch, door)->to_room].number);
+                }
+            }
+
+            if (written_chars > 0 && written_chars < remaining_space) {
+                p += written_chars;
+                remaining_space -= written_chars;
+            } else if (written_chars >= remaining_space) {
+				log("do_exits: Buffer full, exit list truncated.");
+				break;
+			}
+        }
 	}
 
-	send_to_char_han("Obvious exits:\n\r", "명백한 출구는:\n\r", ch);
-
-	if (sizeof(*buf) > 0)
-		send_to_char(buf, ch);
-	else
-		send_to_char("None.\n\r", ch);
+	if (found_any_exit)
+        send_to_char(buf, ch);
+    else
+        send_to_char("None.\r\n", ch);
 }
 /*
 static char ac_msg[13][44] = {
@@ -967,7 +991,7 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 {
 	struct affected_type *aff;
 	struct time_info_data playing_time;
-	static char buf[200], buf2[200];
+	char buf[200], buf2[200];
 	struct time_info_data real_time_passed(time_t t2, time_t t1);
 	int tmp;
 	extern byte saving_throws[4][5][IMO + 10];
@@ -1009,40 +1033,6 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 	snprintf(buf, sizeof(buf), "Your ac is %d.\n\r", ch->points.armor);
 	snprintf(buf2, sizeof(buf2), "당신의 무장정도는 %d 입니다.\n\r", ch->points.armor);
 	send_to_char_han(buf, buf2, ch);
-
-/*  tmp = ch->points.armor/10;
-  switch( tmp )
-  { case 10: send_to_char( ac_msg[0], ch ); break;
-    case 9:
-    case 8:  send_to_char( ac_msg[1], ch ); break;
-    case 7:
-    case 6:  send_to_char( ac_msg[2], ch ); break;
-    case 5:
-    case 4:  send_to_char( ac_msg[3], ch ); break;
-    case 3:
-    case 2:  send_to_char( ac_msg[4], ch ); break;
-    case 1:
-    case 0:  send_to_char( ac_msg[5], ch ); break;
-    case -1:
-    case -2:
-    case -3:  send_to_char( ac_msg[6], ch ); break;
-    case -4:
-    case -5:
-    case -6:  send_to_char( ac_msg[7], ch ); break;
-    case -7:
-    case -8:
-    case -9:  send_to_char( ac_msg[8], ch ); break;
-    case -10:
-    case -11:
-    case -12:  send_to_char( ac_msg[9], ch ); break;
-    case -13:
-    case -14:
-    case -15:  send_to_char( ac_msg[10], ch ); break;
-    case -16:
-    case -17:
-    case -18:  send_to_char( ac_msg[11], ch ); break;
-    default:  send_to_char( ac_msg[12], ch ); break;
-  } */
 
 	if (GET_COND(ch, DRUNK) > 10)
 		send_to_char_han("You are intoxicated.\n\r",
@@ -1315,8 +1305,7 @@ void do_attribute(struct char_data *ch, char *argument, int cmd)
 				break;
 			default:
 				snprintf(buf, sizeof(buf), "Spell : '%s'\n\r",
-									spells[aff->type
-									- 1]);
+									spells[aff->type - 1]);
 				send_to_char(buf, ch);
 				break;
 			}
@@ -1375,7 +1364,7 @@ void do_time(struct char_data *ch, char *argument, int cmd)
 void do_weather(struct char_data *ch, char *argument, int cmd)
 {
 	extern struct weather_data weather_info;
-	static char buf[100], buf2[100];
+	char buf[100], buf2[100];
 	char static *sky_look[4] =
 	{
 		"cloudless",
@@ -1415,7 +1404,7 @@ void do_weather(struct char_data *ch, char *argument, int cmd)
 		send_to_char_han(buf, buf2, ch);
 	} else
 		send_to_char_han("You have no feeling about the weather at all.\n\r",
-				 "여기선 날씨가 어떤지 알 수 없습니다.\n\r", ch);
+				 		 "여기선 날씨가 어떤지 알 수 없습니다.\n\r", ch);
 }
 
 void do_help(struct char_data *ch, char *argument, int cmd)
@@ -1443,8 +1432,7 @@ void do_help(struct char_data *ch, char *argument, int cmd)
 			mid = (bot + top) / 2;
 			minlen = strlen(argument);
 
-			if (!(chk = strn_cmp(argument,
-					     help_index[mid].keyword, minlen))) {
+			if (!(chk = strn_cmp(argument, help_index[mid].keyword, minlen))) {
 				fseek(help_fl, help_index[mid].pos, 0);
 				*buffer = '\0';
 				for (;;) {
@@ -1493,12 +1481,9 @@ void do_spells(struct char_data *ch, char *argument, int cmd)
 				spells[i], spell_info[i + 1].min_level[0],
 				spell_info[i +
 					   1].min_level[1],
-				spell_info[i + 1].min_level[2], spell_info[i +
-									   1].min_level[3],
-				spell_info[i + 1].max_skill[0], spell_info[i +
-									   1].max_skill[1],
-				spell_info[i + 1].max_skill[2], spell_info[i +
-									   1].max_skill[3],
+				spell_info[i + 1].min_level[2], spell_info[i + 1].min_level[3],
+				spell_info[i + 1].max_skill[0], spell_info[i + 1].max_skill[1],
+				spell_info[i + 1].max_skill[2], spell_info[i + 1].max_skill[3],
 				spell_info[i + 1].min_usesmana);
 			strlcat(buf, tmp, sizeof(buf));
 		}
@@ -1525,8 +1510,8 @@ void do_spells(struct char_data *ch, char *argument, int cmd)
 void do_wizhelp(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_STRING_LENGTH];
-	int no, i;
-	int j, is_wizcmd;
+	int no, i, j, is_wizcmd;
+	size_t len = 0;
 	/* The list of commands (interpreter.c)  */
 	extern char *command[];
 	/* First command is command[0]           */
@@ -1537,6 +1522,9 @@ void do_wizhelp(struct char_data *ch, char *argument, int cmd)
 		return;
 	send_to_char("The following privileged commands are available:\n\r", ch);
 	*buf = '\0';
+
+	len += snprintf(buf + len, sizeof(buf) - len, "The following privileged commands are available:\n\r");
+
 	for (no = 1, i = 0; *command[i] != '\n'; i++) {
 		is_wizcmd = 1;
 		for (j = 0; j < 4; j++) {
@@ -1546,14 +1534,23 @@ void do_wizhelp(struct char_data *ch, char *argument, int cmd)
 				break;
 			}
 		}
+
 		if (is_wizcmd) {
-			sprintf(buf + strlen(buf), "%-15s", command[i]);
-			if (!(no % 5))
-				strcat(buf, "\n\r");
+			if (len < sizeof(buf)) {
+                len += snprintf(buf + len, sizeof(buf) - len, "%-15s", command[i]);
+            }
+
+            if (!(no % 5)) {
+                if (len < sizeof(buf)) {
+                    len += snprintf(buf + len, sizeof(buf) - len, "\n\r");
+                }
+            }
 			no++;
 		}
 	}
-	strcat(buf, "\n\r");
+	if (len < sizeof(buf)) {
+        snprintf(buf + len, sizeof(buf) - len, "\n\r");
+    }
 	page_string(ch->desc, buf, 1);
 }
 
@@ -1565,6 +1562,8 @@ void do_who(struct char_data *ch, char *argument, int cmd)
 	int is_korean;
 	char page_buffer[25600];
 	char *name = NULL;
+
+	buf[0] = buf2[0] = page_buffer[0] = '\0';
 
 	condtype = 0;
 	if (argument) {
@@ -1703,28 +1702,27 @@ void do_who(struct char_data *ch, char *argument, int cmd)
 							GET_LEVEL(d->character),
 							GET_NAME(d->character), d->character->player.title);
 					if (IS_SET(d->character->specials.act, PLR_CRIMINAL))
-						strcat(buf, " (CRIMINAL)");
+						strlcat(buf, " (CRIMINAL)", sizeof(buf));
 				}
 				if (GET_LEVEL(ch) < IMO) {
 					snprintf(buf2, sizeof(buf2), " PK#(%d)\n\r",
 						d->character->player.pk_num);
-					strcat(buf, buf2);
+					strlcat(buf, buf2, sizeof(buf));
 				} else if (d->character->player.guild >= 0 &&
 					   d->character->player.guild <= MAX_GUILD_LIST) {
 					snprintf(buf2, sizeof(buf2), " PK#(%d) %s\n\r",
 						d->character->player.pk_num,
 						guild_names[(int)d->character->player.guild]);
-					strcat(buf, buf2);
+					strlcat(buf, buf2, sizeof(buf));
 				}
 			}
 			if (!IS_AFFECTED(d->character, AFF_SHADOW_FIGURE)) {
-				strcat(page_buffer, buf);
+				strlcat(page_buffer, buf, sizeof(page_buffer));
 			} else {
 				if (GET_LEVEL(ch) < IMO)
-					strcat(page_buffer,
-					       "A shadow figure\n\r");
+					strlcat(page_buffer, "A shadow figure\n\r", sizeof(page_buffer));
 				else
-					strcat(page_buffer, buf);
+					strlcat(page_buffer, buf, sizeof(page_buffer));
 			}
 			num_player++;
 		}
@@ -1732,7 +1730,7 @@ void do_who(struct char_data *ch, char *argument, int cmd)
 	snprintf(buf, sizeof(buf), is_korean ?
 		"\n\r%d 명이 있습니다.\n\r" :
 		"\n\rYou can see %d players.\n\r", num_player);
-	strcat(page_buffer, buf);
+	strlcat(page_buffer, buf, sizeof(page_buffer));
 	page_string(ch->desc, page_buffer, 1);
 }
 
@@ -1740,63 +1738,91 @@ extern char *connected_types[];
 
 void do_users(struct char_data *ch, char *argument, int cmd)
 {
-	char line[256], line2[256];
+	char line[MAX_STRING_LENGTH], line2[MAX_STRING_LENGTH];
 	struct descriptor_data *d;
-	int m = 0, n = 0, flag, t;
+	int total_cnt = 0;    /* m: 전체 접속자 수 */
+    int visible_cnt = 0;  /* n: 내 눈에 보이는 접속자 수 */
+    int flag, uptime;
+    size_t len = 0;       /* 현재 버퍼에 써진 길이 추적용 */
 	static int most = 0;
 	extern int boottime;
+	extern char *connected_types[];
 
 	one_argument(argument, line);
 	flag = ((GET_LEVEL(ch) < IMO) || (strcmp("-t", line) == 0));
-	line[0] = 0;
+	line[0] = '\0';
+    len = 0;
 	for (d = descriptor_list; d; d = d->next) {
-		++m;
-		if (flag)
-			continue;
+		total_cnt++;
+		if (flag) continue;
 		if (d->original) {
-			if (!CAN_SEE(ch, d->original))
-				continue;
-			sprintf(line + strlen(line), "%3d%2d:", d->descriptor,
-				d->original->specials.timer);
-			sprintf(line + strlen(line), "%-14s%2d ",
-				GET_NAME(d->original), GET_LEVEL(d->original));
+			if (!CAN_SEE(ch, d->original)) continue;
+
+			if (len < sizeof(line)) {
+                len += snprintf(line + len, sizeof(line) - len, 
+                        "%3d%2d:%-14s%2d ", 
+                        d->descriptor, 
+                        d->original->specials.timer,
+                        GET_NAME(d->original), 
+                        GET_LEVEL(d->original));
+            }
 		} else if (d->character) {
-			if (!CAN_SEE(ch, d->character))
-				continue;
-			sprintf(line + strlen(line), "%3d%2d:", d->descriptor,
-				d->character->specials.timer);
-			sprintf(line + strlen(line), "%-14s%2d ",
-				(d->connected == CON_PLYNG) ?
-				GET_NAME(d->character) :
-				"Not in game",
-				GET_LEVEL(d->character));
-		} else
-			sprintf(line + strlen(line), "%3d%9s%10s ",
-				d->descriptor, "  UNDEF  ", connected_types[d->connected]);
-		sprintf(line + strlen(line), "%-15s", d->host);
-		if (!(n % 2)) {
-			strcat(line, "|");
+			if (!CAN_SEE(ch, d->character)) continue;
+			if (len < sizeof(line)) {
+                len += snprintf(line + len, sizeof(line) - len, 
+                        "%3d%2d:%-14s%2d ", 
+                        d->descriptor, 
+                        d->character->specials.timer,
+                        (d->connected == CON_PLYNG) ? GET_NAME(d->character) : "Not in game",
+                        GET_LEVEL(d->character));
+            }
 		} else {
-			strcat(line, "\n\r");
-			send_to_char(line, ch);
-			line[0] = 0;
+			if (len < sizeof(line)) {
+                len += snprintf(line + len, sizeof(line) - len, 
+                        "%3d%9s%10s ", d->descriptor, " UNDEF ", 
+                        connected_types[d->connected]);
+            }
 		}
-		++n;
+			
+		if (len < sizeof(line)) {
+            len += snprintf(line + len, sizeof(line) - len, "%-15s", d->host);
+        }
+		if (!(visible_cnt % 2)) {
+            if (len < sizeof(line)) {
+                len += snprintf(line + len, sizeof(line) - len, " | ");
+            }
+        } else { /* 홀수(1, 3...)번째 사람은 줄바꿈 후 전송 */
+            if (len < sizeof(line)) {
+                len += snprintf(line + len, sizeof(line) - len, "\n\r");
+            }
+            send_to_char(line, ch);
+            
+            /* 전송했으니 버퍼 리셋 */
+            line[0] = '\0';
+            len = 0;
+        }
+        visible_cnt++;
 	}
-	if ((!flag) && (n % 2)) {
-		strcat(line, "\n\r");
-		send_to_char(line, ch);
-	}
-	if (m > most)
-		most = m;
-	sprintf(line, "%s%d/%d active connections\n\r",
-		(n % 2) ? "\n\r" : "", m, most);
-	if (GET_LEVEL(ch) > IMO + 2)
-		send_to_char(line, ch);
-	t = 30 + time(0) - boottime;
-	sprintf(line, "Running time %d:%02d\n\r", t / 3600, (t % 3600) / 60);
-	sprintf(line2, "현재 %d시간 %02d분 지났습니다.\n\r", t / 3600,
-		(t % 3600) / 60);
+	if ((!flag) && (visible_cnt % 2)) {
+        if (len < sizeof(line)) {
+            len += snprintf(line + len, sizeof(line) - len, "\n\r");
+        }
+        send_to_char(line, ch);
+    }
+
+    /* 최고 접속자 갱신 */
+    if (total_cnt > most) most = total_cnt;
+
+    /* 통계 출력 */
+    snprintf(line, sizeof(line), "%s%d/%d active connections\n\r", (visible_cnt % 2) ? "\n\r" : "", total_cnt, most);
+             
+    if (GET_LEVEL(ch) > IMO + 2)
+        send_to_char(line, ch);
+
+    /* 업타임 출력 */
+    uptime = 30 + time(0) - boottime;
+    snprintf(line, sizeof(line), "Running time %d:%02d\n\r", uptime / 3600, (uptime % 3600) / 60);
+    snprintf(line2, sizeof(line2), "현재 %d시간 %02d분 지났습니다.\n\r", uptime / 3600, (uptime % 3600) / 60);
 	send_to_char_han(line, line2, ch);
 }
 void do_inventory(struct char_data *ch, char *argument, int cmd)
@@ -1833,7 +1859,6 @@ void do_equipment(struct char_data *ch, char *argument, int cmd)
 
 void do_credits(struct char_data *ch, char *argument, int cmd)
 {
-
 	page_string(ch->desc, credits, 0);
 }
 
@@ -1914,8 +1939,7 @@ void do_where(struct char_data *ch, char *argument, int cmd)
 							d->character->player.name,
 							world[d->character->in_room].name,
 							world[d->character->in_room].number);
-						// world[d->character->in_room].name); 
-						// world[d->character->in_room].number);
+						
 						if (d->character &&
 						    (!IS_AFFECTED(d->character,
 								  AFF_SHADOW_FIGURE) ||
@@ -2118,7 +2142,7 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 	target = atoi(name);
 	for (d = descriptor_list; d; d = d->next) {
 		if (target == d->descriptor) {
-			sprintf(name, "Policed: %d\n", d->descriptor);
+			snprintf(name, sizeof(name), "Policed: %d\n", d->descriptor);
 			log(name);
 			if ((d->connected == CON_PLYNG) && (d->character)) {
 				if (d->character->player.level < ch->player.level) {
@@ -2149,30 +2173,59 @@ extern int baddoms;
 extern char baddomain[BADDOMS][32];
 #endif
 
-void do_wizlock(struct char_data *ch, char *argument, int cmd)
+/*
+ * 함수명: do_siteban (구 do_wizlock), 251121 by Komo
+* */
+void do_siteban(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[200];
-	int i, j;
+    char buf[MAX_INPUT_LENGTH];
+    char out_buf[MAX_STRING_LENGTH];
+    int i, j;
 
-	buf[0] = 0;
-	one_argument(argument, buf);
-	if (*argument) {
-		j = (-1);
-		for (i = 0; i < baddoms; ++i)
-			if (strcmp(baddomain[i], buf) == 0) {
-				j = i;
-				break;
-			}
-		if (j >= 0) {
-			strcpy(baddomain[j], baddomain[--baddoms]);
-		} else {
-			if (baddoms < BADDOMS)
-				strcpy(baddomain[baddoms++], buf);
-		}
-	} else {
-		for (i = 0; i < baddoms; ++i) {
-			snprintf(buf, sizeof(buf), "%s\n", baddomain[i]);
-			send_to_char(buf, ch);
+    buf[0] = '\0';
+    out_buf[0] = '\0';
+    one_argument(argument, buf);
+
+    if (*buf) {
+        j = -1;
+        
+        for (i = 0; i < baddoms; ++i)
+            if (strcmp(baddomain[i], buf) == 0) {
+                j = i;
+                break;
+            }
+
+        if (j >= 0) {
+            baddoms--;
+            if (j != baddoms) {
+                memmove(baddomain[j], baddomain[baddoms], sizeof(baddomain[0]));
+                baddomain[j][sizeof(baddomain[0]) - 1] = '\0';
+            }
+            
+            snprintf(out_buf, sizeof(out_buf), "Domain '%s' removed from siteban list.\n\r", buf);
+            send_to_char(out_buf, ch);
+        } else {
+            if (baddoms < BADDOMS) {
+                strncpy(baddomain[baddoms], buf, sizeof(baddomain[0]) - 1);
+                baddomain[baddoms][sizeof(baddomain[0]) - 1] = '\0';
+                baddoms++;
+				
+				snprintf(out_buf, sizeof(out_buf), "Domain '%s' added to siteban list.\n\r", buf);
+                send_to_char(out_buf, ch);
+            } else {
+                send_to_char("Siteban list is full.\n\r", ch);
+            }
+        }
+    } else { // 인자가 없다면 -> 현재 리스트 보여주기
+        send_to_char("Currently sitebanned domains:\n\r", ch);
+        if (baddoms == 0) {
+            send_to_char("  None.\n\r", ch);
+            return;
+        }
+        
+        for (i = 0; i < baddoms; ++i) {
+            snprintf(out_buf, sizeof(out_buf), "  %s\n\r", baddomain[i]);
+            send_to_char(out_buf, ch);
 		}
 	}
 }

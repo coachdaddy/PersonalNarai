@@ -25,6 +25,7 @@ extern struct room_data *world;
 extern struct char_data *character_list;
 extern struct descriptor_data *descriptor_list;
 extern struct index_data *obj_index;
+extern struct index_data *mob_index;
 extern int rev_dir[];
 extern int top_of_world;
 extern char *dirs[];
@@ -41,7 +42,8 @@ int special(struct char_data *ch, int cmd, char *arg);
 void death_cry(struct char_data *ch);
 struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name,
 				     struct obj_data *list);
-void do_look(struct char_data *ch, char *arg, int cmd);
+void do_look(struct char_data *ch, char *argument, int cmd);
+void stop_fighting (struct char_data *ch);
 int number(int from, int to);
 int str_cmp(char *arg1, char *arg2);
 bool circle_follow(struct char_data *ch, struct char_data *victim);
@@ -172,7 +174,6 @@ void do_move(struct char_data *ch, char *argument, int cmd)
 	if (!world[ch->in_room].dir_option[cmd]) {
 		send_to_char("Alas, you cannot go that way...\n\r", ch);
 	} else {		/* Direction is possible */
-
 		if (IS_SET(EXIT(ch, cmd)->exit_info, EX_CLOSED)) {
 			if (EXIT(ch, cmd)->keyword) {
 				snprintf(tmp, sizeof(tmp), "The %s seems to be closed.\n\r",
@@ -186,7 +187,6 @@ void do_move(struct char_data *ch, char *argument, int cmd)
 		else if (!ch->followers && !ch->master)
 			do_simple_move(ch, cmd, FALSE);
 		else {
-
 			if (IS_AFFECTED(ch, AFF_CHARM) && (ch->master) &&
 			    (ch->in_room == ch->master->in_room)) {
 				send_to_char
@@ -210,8 +210,7 @@ void do_move(struct char_data *ch, char *argument, int cmd)
 								    ch, TO_CHAR);
 								cmd++;
 								send_to_char("\n\r", k->follower);
-								do_move(k->follower,
-									argument, cmd);
+								do_move(k->follower, argument, cmd);
 								cmd--;
 							}
 						}
@@ -445,9 +444,7 @@ void do_lock(struct char_data *ch, char *argument, int cmd)
 		send_to_char("Lock what?\n\r", ch);
 	else if (generic_find(argument, FIND_OBJ_INV | FIND_OBJ_ROOM,
 			      ch, &victim, &obj)) {
-
 		/* this is an object */
-
 		if (obj->obj_flags.type_flag != ITEM_CONTAINER)
 			send_to_char("That's not a container.\n\r", ch);
 		else if (!IS_SET(obj->obj_flags.value[1], CONT_CLOSED))
@@ -461,13 +458,10 @@ void do_lock(struct char_data *ch, char *argument, int cmd)
 		else {
 			SET_BIT(obj->obj_flags.value[1], CONT_LOCKED);
 			send_to_char("*Cluck*\n\r", ch);
-			act("$n locks $p - 'cluck', it says.", FALSE, ch, obj,
-			    0, TO_ROOM);
+			act("$n locks $p - 'cluck', it says.", FALSE, ch, obj, 0, TO_ROOM);
 		}
 	} else if ((door = find_door(ch, type, dir)) >= 0) {
-
 		/* a door, perhaps */
-
 		if (!IS_SET(EXIT(ch, door)->exit_info, EX_ISDOOR))
 			send_to_char("That's absurd.\n\r", ch);
 		else if (!IS_SET(EXIT(ch, door)->exit_info, EX_CLOSED))
@@ -489,8 +483,7 @@ void do_lock(struct char_data *ch, char *argument, int cmd)
 			send_to_char("*Click*\n\r", ch);
 			/* now for locking the other side, too */
 			if ((other_room = EXIT(ch, door)->to_room) != NOWHERE)
-				if ((back =
-									 world[other_room].dir_option[rev_dir[door]]))
+				if ((back = world[other_room].dir_option[rev_dir[door]]))
 					if (back->to_room == ch->in_room)
 						SET_BIT(back->exit_info, EX_LOCKED);
 		}
@@ -511,9 +504,7 @@ void do_unlock(struct char_data *ch, char *argument, int cmd)
 		send_to_char("Unlock what?\n\r", ch);
 	else if (generic_find(argument, FIND_OBJ_INV | FIND_OBJ_ROOM,
 			      ch, &victim, &obj)) {
-
 		/* this is an object */
-
 		if (obj->obj_flags.type_flag != ITEM_CONTAINER)
 			send_to_char("That's not a container.\n\r", ch);
 		else if (!IS_SET(obj->obj_flags.value[1], CONT_CLOSED))
@@ -530,9 +521,7 @@ void do_unlock(struct char_data *ch, char *argument, int cmd)
 			act("$n unlocks $p.", FALSE, ch, obj, 0, TO_ROOM);
 		}
 	} else if ((door = find_door(ch, type, dir)) >= 0) {
-
 		/* it is a door */
-
 		if (!IS_SET(EXIT(ch, door)->exit_info, EX_ISDOOR))
 			send_to_char("That's absurd.\n\r", ch);
 		else if (!IS_SET(EXIT(ch, door)->exit_info, EX_CLOSED))
@@ -959,12 +948,9 @@ void do_follow(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 	if (IS_AFFECTED(ch, AFF_CHARM) && (ch->master)) {
-
 		act("But you only feel like following $N!",
 		    FALSE, ch, 0, ch->master, TO_CHAR);
-
 	} else {		/* Not Charmed follow person */
-
 		if (leader == ch) {
 			if (!ch->master) {
 				send_to_char("You are already following yourself.\n\r", ch);
