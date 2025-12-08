@@ -36,7 +36,7 @@ extern char *dirs[];
 #define GBISLAND_SEED_EVIL_POWER	23309
 
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
 
 int number(int from, int to);
 void wipe_stash(char *filename);
@@ -60,7 +60,7 @@ void gbisland_move_seashore(struct char_data *ch)
 
     // 범위 검사
     if (sect_type < 0 || sect_type >= 9) {
-        log("SYSERR: Invalid sector type in gbisland..."); // 필요하면 로그 남기기
+        mudlog("SYSERR: Invalid sector type in gbisland..."); // 필요하면 로그 남기기
         sect_type = 0; 
     }
 

@@ -32,7 +32,7 @@ int dice(int number, int size);
 void hit(struct char_data *ch, struct char_data *victim, int type);
 void stop_fighting(struct char_data *ch);
 int number(int from, int to);
-void log(char *str);
+void mudlog(const char *str);
 
 void mob_spell_fire_storm(byte level, struct char_data *ch,
 			  struct char_data *victim, struct obj_data *obj)
@@ -163,10 +163,10 @@ struct char_data *
 	if (mode == MODE_RANDOM) {
 		tmp = number(0, count - 1);
 		if (tmp < 0 || tmp >= count)
-			log("number error in choose victim");
+			mudlog("number error in choose victim");
 		snprintf(buf, sizeof(buf), "choose mob: count = %d, rnd # %d, (%s)", count, tmp,
 			victims[tmp]->player.name);
-		log(buf);
+		mudlog(buf);
 		return (victims[tmp]);
 	}
 

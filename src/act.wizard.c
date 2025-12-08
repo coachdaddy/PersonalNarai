@@ -69,7 +69,7 @@ void gain_exp_regardless(struct char_data *ch, int gain);
 void load_zones(int zon);
 
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
 
 void reload_world_file(FILE *fl, int zone_rnum);
 
@@ -336,7 +336,7 @@ void do_demote(struct char_data *ch, char *argument, int cmd)
 	void do_start(struct char_data *ch);
 
 	snprintf(buf, sizeof(buf), "%s demoted %s", GET_NAME(ch), argument);
-	log(buf);
+	mudlog(buf);
 
 	if (IS_NPC(ch))
 		return;
@@ -939,7 +939,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
 		act("$n has created $N!", FALSE, ch, 0, mob, TO_ROOM);
 		send_to_char("Done.\n\r", ch);
 		snprintf(buf, sizeof(buf), "%s loaded char %d", ch->player.name, number);
-		log(buf);
+		mudlog(buf);
 	} else if (is_abbrev(type, "obj")) {
 		if ((r_num = real_object(number)) < 0) {
 			send_to_char("There is no object with that number.\n\r", ch);
@@ -956,7 +956,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
 			obj_to_room(obj, ch->in_room);
 		send_to_char("Ok.\n\r", ch);
 		snprintf(buf, sizeof(buf), "%s loaded object %d", ch->player.name, number);
-		log(buf);
+		mudlog(buf);
 	} else
 		send_to_char("That'll have to be either 'char' or 'obj'.\n\r", ch);
 }
@@ -2004,7 +2004,7 @@ void do_zreload(struct char_data *ch, char *argument, int cmd)
 
     snprintf(buf, sizeof(buf), "[ZRELOAD] (GC) %s reloaded Zone %d (%s).", 
             GET_NAME(ch), target_zone_num, zone_table[zone_rnum].filename);
-    log(buf);
+    mudlog(buf);
 
     load_zones(zone_rnum);
 
@@ -2065,7 +2065,7 @@ void do_wreload(struct char_data *ch, char *argument, int cmd)
 
     /* 로그 및 메시지 */
     snprintf(buf, sizeof(buf), "[WRELOAD] (GC) %s reloaded World file for Zone %d.", GET_NAME(ch), target_zone_num);
-    log(buf);
+    mudlog(buf);
     
     snprintf(buf, sizeof(buf), "&c[WRELOAD]&n 존 %d번 월드 데이터(%s) 업데이트 완료.\r\n"
 				 "&c[WRELOAD]&n 동기화를 위해 zreload 실행을 권장합니다.\r\n"

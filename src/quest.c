@@ -24,7 +24,7 @@
 extern struct room_data *world;
 
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
 
 int number(int from, int to);
 void half_chop(char *string, char *arg1, char *arg2);
@@ -301,7 +301,7 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 			QM[num].name);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &U%s&Y? 어디 있는 걸까? 모르겠는데...&n\n\r",
 			QM[num].name);
-		log("QUEST : INVALID mobile (or zone not found).");
+		mudlog("QUEST : INVALID mobile (or zone not found).");
 	} else { 
 		char qbuf[100];
 		strncpy(qbuf, QM[num].name, strlen(QM[num].name));
@@ -370,7 +370,7 @@ void init_quest(void)
 	int num, size;
 
 	if (!(fp = fopen(QUEST_FILE, "r"))) {
-		log("init quest (quest_file)");
+		mudlog("init quest (quest_file)");
 		exit(0);
 	}
 
@@ -396,7 +396,7 @@ void init_quest(void)
 		topQM++;
 
 		if (topQM > MaxQuest) {
-			log("Quest Mobiles are overflow.");
+			mudlog("Quest Mobiles are overflow.");
 			fclose(fp);
 			return;
 		}

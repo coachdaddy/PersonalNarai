@@ -101,7 +101,7 @@ char *one_argument(char *arg, char *first_arg);
 void wear(struct char_data *ch, struct obj_data *obj, int where_flag);
 
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
 
 /* from act.wizard.c */
 void roll_abilities(struct char_data *ch);
@@ -127,12 +127,12 @@ void boot_db(void)
 	int i;
 	extern int no_specials;
 
-	log("Boot db -- BEGIN.");
+	mudlog("Boot db -- BEGIN.");
 
-	log("Resetting the game time:");
+	mudlog("Resetting the game time:");
 	reset_time();
 
-	log("Reading news, credits, help-page, plan, wizards, and motd.");
+	mudlog("Reading news, credits, help-page, plan, wizards, and motd.");
 	file_to_string(NEWS_FILE, news);
 	file_to_string(CREDITS_FILE, credits);
 	file_to_string(IMOTD_FILE, imotd);
@@ -141,66 +141,66 @@ void boot_db(void)
 	file_to_string(PLAN_FILE, plan);
 	file_to_string(WIZARDS_FILE, wizards);
 
-	log("Opening mobile, object and help files.");
+	mudlog("Opening mobile, object and help files.");
 	if (!(mob_f = fopen(MOB_FILE, "r"))) {
 		perror("boot");
 		exit(0);
 	}
-	log("Mob done");
+	mudlog("Mob done");
 
 	if (!(obj_f = fopen(OBJ_FILE, "r"))) {
 		perror("boot");
 		exit(0);
 	}
-	log("Obj done");
+	mudlog("Obj done");
 	if (!(help_fl = fopen(HELP_KWRD_FILE, "r")))
-		log("   Could not open help file.");
+		mudlog("   Could not open help file.");
 	else
 		help_index = build_help_index(help_fl, &top_of_helpt);
-	log("help index done.");
+	mudlog("help index done.");
 
 	init_quest();
 
-	log("quest manager : initialize.");
+	mudlog("quest manager : initialize.");
 
-	log("Loading zone table.");
+	mudlog("Loading zone table.");
 	boot_zones();
 
-	log("Loading rooms.");
+	mudlog("Loading rooms.");
 	boot_world();
-	log("Renumbering rooms.");
+	mudlog("Renumbering rooms.");
 	renum_world();
 
-	log("Generating index tables for mobile files.");
+	mudlog("Generating index tables for mobile files.");
 	mob_index = generate_indices(mob_f, &top_of_mobt);
-	log("Generating index tables for object files.");
+	mudlog("Generating index tables for object files.");
 	obj_index = generate_indices(obj_f, &top_of_objt);
 
-	log("Renumbering zone table.");
+	mudlog("Renumbering zone table.");
 	renum_zone_table();
 
-	log("Generating player index.");
+	mudlog("Generating player index.");
 	build_player_index();
 
-	log("Loading fight messages.");
+	mudlog("Loading fight messages.");
 	load_messages();
 
-	log("Loading social messages.");
+	mudlog("Loading social messages.");
 	boot_social_messages();
 
-	log("Assigning function pointers:");
+	mudlog("Assigning function pointers:");
 	if (!no_specials) {
-		log("   Mobiles.");
+		mudlog("   Mobiles.");
 		assign_mobiles();
-		log("   Objects.");
+		mudlog("   Objects.");
 		assign_objects();
-		log("   Room.");
+		mudlog("   Room.");
 		assign_rooms();
 	}
 
-	log("   Commands.");
+	mudlog("   Commands.");
 	assign_command_pointers();
-	log("   Spells.");
+	mudlog("   Spells.");
 	assign_spell_pointers();
 
 	for (i = 0; i <= top_of_zone_table; i++) {
@@ -212,7 +212,7 @@ void boot_db(void)
 		reset_zone(i);
 	}
 	reset_q.head = reset_q.tail = 0;
-	log("Boot db -- DONE.");
+	mudlog("Boot db -- DONE.");
 }
 
 /* reset the time in the game from file */
@@ -275,7 +275,7 @@ void reset_time(void)
 	snprintf(buf, sizeof(buf), "   Current Gametime: %dH %dD %dM %dY.",
 		time_info.hours, time_info.day,
 		time_info.month, time_info.year);
-	log(buf);
+	mudlog(buf);
 
 	weather_info.pressure = 960;
 	if ((time_info.month >= 7) && (time_info.month <= 12))
@@ -399,14 +399,14 @@ void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
     while (1) {
         if (fscanf(fl, " #%d\n", &virtual_nr) != 1) {
             snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error or EOF in load_rooms (Zone %d). Expecting #VNUM.", zone_rnum);
-            log(err_buf);
+            mudlog(err_buf);
             exit(1);
         }
 
         temp = fread_string(fl);
 		if (!temp) {
             snprintf(err_buf, sizeof(err_buf), "SYSERR: fread_string returned NULL in load_rooms (Zone %d, VNUM %d).", zone_rnum, virtual_nr);
-            log(err_buf);
+            mudlog(err_buf);
             exit(1);
         }
 
@@ -424,7 +424,7 @@ void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
 		world[*room_nr].description = fread_string(fl);
         if (world[*room_nr].description == NULL) {
             snprintf(err_buf, sizeof(err_buf), "SYSERR: fread_string returned NULL for Description (Room #%d)", virtual_nr);
-            log(err_buf);
+            mudlog(err_buf);
             exit(1);
         }
 
@@ -432,7 +432,7 @@ void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
 
 		if (fscanf(fl, " %*d %d %d ", &world[*room_nr].room_flags, &world[*room_nr].sector_type) != 2) {
              snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in room flags/sector (Room #%d)", virtual_nr);
-             log(err_buf);
+             mudlog(err_buf);
              exit(1);
         }
 
@@ -448,7 +448,7 @@ void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
 		while (1) {
 			if (fscanf(fl, " %255s \n", chk) != 1) {
                 snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in room exits/extra (Room #%d)", virtual_nr);
-                log(err_buf);
+                mudlog(err_buf);
                 exit(1);
             }
 
@@ -462,7 +462,7 @@ void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
                 new_descr->keyword = fread_string(fl);
                 if (!new_descr->keyword) {
                     snprintf(err_buf, sizeof(err_buf), "SYSERR: NULL keyword in extra desc (Room #%d)", virtual_nr);
-                    log(err_buf);
+                    mudlog(err_buf);
                     exit(1); // 파일 꼬였으니 과감히 종료!
                 }
 
@@ -470,7 +470,7 @@ void load_rooms(FILE *fl, int zone_rnum, int *room_nr)
                 new_descr->description = fread_string(fl);
                 if (!new_descr->description) {
                     snprintf(err_buf, sizeof(err_buf), "SYSERR: NULL description in extra desc (Room #%d)", virtual_nr);
-                    log(err_buf);
+                    mudlog(err_buf);
                     exit(1);
                 }
 
@@ -500,7 +500,7 @@ void boot_world(void)
     character_list = 0;
     object_list = 0;
 
-    log("boot_world: Loading world files...");
+    mudlog("boot_world: Loading world files...");
 
     if (!(map_files = fopen(ALL_WORLD_FILE, "r"))) {
         perror("boot_world: Error opening ALL_WORLD_FILE");
@@ -522,7 +522,7 @@ void boot_world(void)
         if (z_rnum == -1) {
             snprintf(buf, sizeof(buf), "boot_world: Warning - World file '%s' uses undefined zone number %d.", 
                     file_name_from_list, zone_num_input);
-            log(buf);
+            mudlog(buf);
             z_rnum = 0; 
         } else {
             CREATE(zone_table[z_rnum].wld_filename, char, strlen(file_name_from_list) + 1);
@@ -543,7 +543,7 @@ void boot_world(void)
     top_of_world = --room_nr; 
     
     snprintf(buf, sizeof(buf), "boot_world: Total %d rooms loaded.", top_of_world + 1);
-    log(buf);
+    mudlog(buf);
 }
 
 #undef ALL_WORLD_FILE
@@ -674,7 +674,7 @@ void setup_dir(FILE *fl, int room, int dir)
 
     if (fscanf(fl, " %d ", &tmp) != 1) {
         snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in setup_dir flags (Room #%d)", world[room].number);
-        log(err_buf);
+        mudlog(err_buf);
         exit(1);
     }
 
@@ -691,14 +691,14 @@ void setup_dir(FILE *fl, int room, int dir)
 
     if (fscanf(fl, " %d ", &tmp) != 1) {
         snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in setup_dir key (Room #%d)", world[room].number);
-        log(err_buf);
+        mudlog(err_buf);
         exit(1);
     }
     world[room].dir_option[dir]->key = tmp;
 
     if (fscanf(fl, " %d ", &tmp) != 1) {
         snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in setup_dir to_room (Room #%d)", world[room].number);
-        log(err_buf);
+        mudlog(err_buf);
         exit(1);
     }
     world[room].dir_option[dir]->to_room = tmp;
@@ -826,7 +826,7 @@ void load_zones(int zon)
     fl = fopen(zone_table[zon].filename, "r");
     if (!fl) {
         snprintf(buf, sizeof(buf), "Error in reading zone file '%s'", zone_table[zon].filename);
-        log(buf);
+        mudlog(buf);
         return;
     }
 
@@ -853,22 +853,22 @@ void boot_zones(void)
     char current_working_dir[256]; // 디버깅용
 
     // 디버깅 로그, 함수 시작 및 CWD 확인 ---
-    log("boot_zones: Function started.");
+    mudlog("boot_zones: Function started.");
     if (getcwd(current_working_dir, sizeof(current_working_dir)) != NULL) {
         snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: Current working directory: [%s]", current_working_dir);
-        log(debug_log_buffer);
+        mudlog(debug_log_buffer);
     } else {
-        log("boot_zones: Error getting current working directory.");
+        mudlog("boot_zones: Error getting current working directory.");
     }
 
     if (!(all_files = fopen(ALL_ZONE_FILE, "r"))) { // ALL_ZONE_FILE은 "zone/zone_files.new"
         perror("boot_zones(ALL_ZONE_FILE)");
         snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: CRITICAL - Failed to open ALL_ZONE_FILE: %s", ALL_ZONE_FILE);
-        log(debug_log_buffer);
+        mudlog(debug_log_buffer);
         exit(0);
     }
     snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: Successfully opened ALL_ZONE_FILE: %s", ALL_ZONE_FILE);
-    log(debug_log_buffer);
+    mudlog(debug_log_buffer);
 
     while (1) {
         char vnum_buf[256]; // 존 번호를 임시로 읽을 버퍼
@@ -876,13 +876,13 @@ void boot_zones(void)
 
         /* 첫 번째 존 번호 또는 '$' 읽기 */
         if (fscanf(all_files, "%s", vnum_buf) != 1) {
-            log("boot_zones: Error reading zone file list (Unexpected EOF).");
+            mudlog("boot_zones: Error reading zone file list (Unexpected EOF).");
             break;
         }
 
         /* '$' 문자를 만나면 루프 종료 */
         if (*vnum_buf == '$') {
-            log("boot_zones: Done reading zone file list.");
+            mudlog("boot_zones: Done reading zone file list.");
             break;
         }
 
@@ -891,7 +891,7 @@ void boot_zones(void)
 
         /* 두 번째 토큰 - 파일 경로 읽기 */
         if (fscanf(all_files, "%s", file_name_from_list) != 1) {
-            log("boot_zones: Error reading filename after zone number.");
+            mudlog("boot_zones: Error reading filename after zone number.");
             break;
         }
 
@@ -926,7 +926,7 @@ void boot_zones(void)
     }
     top_of_zone_table = --zon;
     fclose(all_files);
-    log("boot_zones: Function finished.");
+    mudlog("boot_zones: Function finished.");
 }
 #undef ALL_ZONE_FILE
 
@@ -1047,7 +1047,7 @@ struct char_data *
 		if ((nr = real_mobile(nr)) < 0) {
 			snprintf(buf, sizeof(buf),
 				"Mobile (V) %d does not exist in database.", i);
-			log(buf);
+			mudlog(buf);
 			return (0);
 		}
 
@@ -1404,7 +1404,7 @@ struct char_data *
 			mob->player.class = CLASS_WARRIOR;
 			break;
 		default:
-			log("mob must have a class.");
+			mudlog("mob must have a class.");
 			exit(1);
 		}
 
@@ -1552,7 +1552,7 @@ struct char_data *
 			mob->specials.damsizedice = abil;
 			break;
 		default:
-			log("mob's hardness is unknown.");
+			mudlog("mob's hardness is unknown.");
 			exit(1);
 		}
 
@@ -1645,7 +1645,7 @@ struct char_data *
 					 << 1);
 	} else {		/* The old monsters are down below here */
 		perror("Old monster exit! (db.c, read_mobile)");
-		log("Old monster exit in mob file! (db.c, read_mobile)");
+		mudlog("Old monster exit in mob file! (db.c, read_mobile)");
 		exit(0);
 	}
 
@@ -2010,7 +2010,7 @@ void reset_zone(int zone)
 
                 default:
                     snprintf(buf, sizeof(buf), "Undefd cmd in reset table; zone %d cmd %d.\n\r", zone, cmd_no);
-                    log(buf);
+                    mudlog(buf);
                     exit(0);
                     break;
             }
@@ -2119,7 +2119,7 @@ void reset_zone(int zone)
 				snprintf(buf, sizeof(buf),
 					"Undefd cmd in reset table; zone %d cmd %d.\n\r",
 					zone, cmd_no);
-				log(buf);
+				mudlog(buf);
 				exit(0);
 				break;
 		} else
@@ -2357,7 +2357,7 @@ void char_to_store(struct char_data *ch, struct char_file_u *st)
 		}
 	}
 	if ((i >= MAX_AFFECT) && af && af->next)
-		log("WARNING: OUT OF STORE ROOM FOR AFFECTED TYPES!!!");
+		mudlog("WARNING: OUT OF STORE ROOM FOR AFFECTED TYPES!!!");
 	ch->tmpabilities = ch->abilities;
 	st->birth = ch->player.time.birth;
 	st->played = ch->player.time.played;
@@ -2613,7 +2613,7 @@ char *fread_string(FILE * fl)
 			exit(0);
 		}
 		if (strlen(tmp) + strlen(buf) > MAX_STRING_LENGTH) {
-			log("fread_string: string too large (db.c)");
+			mudlog("fread_string: string too large (db.c)");
 			buf[70] = 0;
 			fprintf(stderr, "%s\n", buf);
 			exit(0);
@@ -2716,9 +2716,9 @@ int file_to_string(char *name, char *buf)
 
 		if (!feof(fl)) {
 			if (strlen(buf) + strlen(tmp) + 2 > MAX_STRING_LENGTH) {
-				log("fl->strng: string too big (db.c, file_to_string)");
+				mudlog("fl->strng: string too big (db.c, file_to_string)");
 				buf[25] = '\0';
-				log(buf);
+				mudlog(buf);
 				*buf = '\0';
 				return (-1);
 			}
@@ -2999,13 +2999,13 @@ int move_stashfile_safe (const char *victim)
     char log_buf[1024];
 
     if (!victim || victim[0] == '\0') {
-        log("move_stashfile_safe error: victim name is NULL or empty.");
+        mudlog("move_stashfile_safe error: victim name is NULL or empty.");
         return -1;
     }
 
     if (strlen(victim) >= sizeof(name)) {
         snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: victim name '%s' is too long.", victim);
-        log(log_buf);
+        mudlog(log_buf);
         return -1;
     }
     strncpy(name, victim, sizeof(name) - 1);
@@ -3015,7 +3015,7 @@ int move_stashfile_safe (const char *victim)
     for (i = 0; name[i]; ++i) {
         if (!isalnum((unsigned char)name[i])) {
             snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: victim name '%s' contains invalid characters.", victim);
-            log(log_buf);
+            mudlog(log_buf);
             return -1;
         }
         name[i] = tolower((unsigned char)name[i]);
@@ -3027,13 +3027,13 @@ int move_stashfile_safe (const char *victim)
     /* 오류 처리 */
     if (rename(sf1, sf2) != 0) {
         snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: Failed to rename '%s' to '%s'", sf1, sf2);
-        log(log_buf);
+        mudlog(log_buf);
         perror("move_stashfile_safe system error");
         return -1; // 실패 반환
     }
 
     snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe: Successfully renamed '%s' to '%s'", sf1, sf2);
-    log(log_buf);
+    mudlog(log_buf);
     
     return 0; // 성공 반환
 }
@@ -3069,7 +3069,7 @@ void stash_char(struct char_data *ch)
     sprintf (stashfile, "%s/%c/%s.x", STASH, name[0], name); // 확장자를 .x 로 변경
 
     sprintf (buf, "Saving character data to stash : %s", stashfile);
-	log(buf);
+	mudlog(buf);
 
 	sigsetmask(mask);
 	if (!(fl = fopen(stashfile, "w"))) {	/* remove all data if exist */
@@ -3213,11 +3213,11 @@ void unstash_char(struct char_data *ch, char *filename)
 	}
 
 	snprintf(buf, sizeof(buf), "Unstash : %s\n", stashfile);
-	log(buf);
+	mudlog(buf);
 
 	fscanf(fl, "%d", &n);
 	if (n != KJHRENT) {
-		log("File format error in unstash_char. (db.c)");
+		mudlog("File format error in unstash_char. (db.c)");
 		sigsetmask(0);
 		fclose(fl);
 		return;
@@ -3362,13 +3362,13 @@ void unstash_char(struct char_data *ch, char *filename)
 	sprintf(fname, "%s/%c/%s.x.y", STASH, name[0], name);
 
 	if (!(fp = fopen(fname, "rb"))) {
-		log("Can't open file in unstash_char. (db.c)");
+		mudlog("Can't open file in unstash_char. (db.c)");
 		return;
 	}
 
 	fscanf(fp, "%d\n", &magic_num);
 	if (magic_num != KJHRENT) {
-		log("File format error in unstash_char. (db.c)");
+		mudlog("File format error in unstash_char. (db.c)");
 		fclose(fp);
 		return;
 	}
@@ -3382,7 +3382,7 @@ void unstash_char(struct char_data *ch, char *filename)
 			fscanf(fp, "%d", &value[i]);
 		obj = read_object(virtual_n, VIRTUAL);
 		if (!obj) {
-			log("Obj's virtual number doesn't exist. (db.c)");
+			mudlog("Obj's virtual number doesn't exist. (db.c)");
 			fclose(fp);
 			return;
 		}
@@ -3484,7 +3484,7 @@ void do_extractrent(struct char_data *ch, char *argument, int cmd)
 	unstash_char(ch, name);
 	send_to_char("OK.\n\r", ch);
 	snprintf(buf, sizeof(buf), "%s grabbed rent for %s", GET_NAME(ch), name);
-	log(buf);
+	mudlog(buf);
 }
 void do_replacerent(struct char_data *ch, char *argument, int cmd)
 {
@@ -3497,7 +3497,7 @@ void do_replacerent(struct char_data *ch, char *argument, int cmd)
 	move_stashfile_safe(name);
 	send_to_char("OK.\n\r", ch);
 	snprintf(buf, sizeof(buf), "%s replaced rent for %s", GET_NAME(ch), name);
-	log(buf);
+	mudlog(buf);
 }
 
 void do_rent(struct char_data *ch, int cmd, char *arg)

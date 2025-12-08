@@ -223,8 +223,8 @@ void print_increased_skilled(struct char_data *ch, int sk_no)
 
 
 
-// 잠재적 문제를 없앤 새로운 log 함수, 251018
-void log(char *str)
+// 잠재적 문제를 없앤 새로운 log 함수, 251018 -> 이름 변경 by Komo
+void mudlog(const char *str)
 {
     time_t now;
     struct tm *ts;
@@ -524,13 +524,14 @@ void do_colortest(struct char_data *ch, char *argument, int cmd)
  * size: 목표 버퍼의 전체 크기 (sizeof(dest))
  * 251125 by Komo
  */
+#ifndef HAVE_STRLCAT
 size_t strlcat(char *dest, const char *src, size_t size)
 {
     size_t dlen = strlen(dest);
     size_t slen = strlen(src);
     size_t n = size;
 
-    if (n <= dlen) return (slen + n); 
+    if (n <= dlen) return (slen + n);
 
     char *d = dest + dlen;
     const char *s = src;
@@ -544,6 +545,7 @@ size_t strlcat(char *dest, const char *src, size_t size)
 
     return (dlen + slen);
 }
+#endif
 
 
 /* * 기존 PERS 매크로를 대체하는 함수
@@ -599,3 +601,34 @@ void utf8_safe_strncpy(char *dest, const char *src, size_t n) {
     }
 	dest[len] = '\0';
 }
+
+
+/*
+ * BSD 표준 함수가 없는 리눅스 환경용 strlcpy, 251208
+ */
+#ifndef HAVE_STRLCPY /* 충돌 방지 */
+size_t strlcpy(char *dst, const char *src, size_t siz)
+{
+    char *d = dst;
+    const char *s = src;
+    size_t n = siz;
+
+    /* Copy as many bytes as will fit */
+    if (n != 0) {
+        while (--n != 0) {
+            if ((*d++ = *s++) == '\0')
+                break;
+        }
+    }
+
+    /* Not enough room in dst, add NUL and traverse rest of src */
+    if (n == 0) {
+        if (siz != 0)
+            *d = '\0';      /* NUL-terminate dst */
+        while (*s++)
+            ;
+    }
+
+    return (s - src - 1);   /* count does not include NUL */
+}
+#endif

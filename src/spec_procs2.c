@@ -35,7 +35,7 @@ extern struct index_data *mob_index;
 
 void do_look(struct char_data *ch, char *argument, int cmd);
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
 
 void hit(struct char_data *ch, struct char_data *victim, int type);
 void gain_exp(struct char_data *ch, int gain);
@@ -1376,7 +1376,7 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 			}
 			i = find_name(ch->player.name);
 			if (i == -1) {
-				log("이럴루가!!!");
+				mudlog("이럴루가!!!");
 				send_to_char("ING? Then, how can i be here?\n\r", ch);
 				return TRUE;
 			}

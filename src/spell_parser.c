@@ -28,7 +28,8 @@ extern char *spell_wear_off_msg[];
 /* Extern procedures */
 
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
+
 int number(int from, int to);
 int MIN(int a, int b);
 int MAX(int a, int b);

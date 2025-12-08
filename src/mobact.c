@@ -19,7 +19,7 @@ extern struct str_app_type str_app[];
 extern int top_of_world;
 
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
 
 void hit(struct char_data *ch, struct char_data *victim, int type);
 int number(int from, int to);
@@ -144,7 +144,7 @@ void mobile_activity(void)
 					snprintf(buf, sizeof(buf),
 						"Attempting to call a non-existing MOB func.\n (mobact.c) %s",
 						ch->player.short_descr);
-					log(buf);
+					mudlog(buf);
 					REMOVE_BIT(ch->specials.act, ACT_SPEC);
 				} else {
 					if ((*mob_index[ch->nr].func) (ch, 0,

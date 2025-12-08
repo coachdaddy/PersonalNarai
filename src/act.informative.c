@@ -55,7 +55,7 @@ void weather_change(int);
 void prune_crlf(char *txt);			/* in utility.c 251130 */
 
 void DEBUG_LOG(const char *format, ...);
-void log(char *str);
+void mudlog(const char *str);
 
 /* intern functions */
 void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode,
@@ -1862,7 +1862,7 @@ void load_news_if_changed() {
 
     // 파일이 바뀌었다면 다시 읽음
     if (!(fl = fopen(filename, "r"))) {
-        log("SYSERR: 뉴스 파일을 열 수 없습니다.");
+        mudlog("SYSERR: 뉴스 파일을 열 수 없습니다.");
         return;
     }
 
@@ -1876,7 +1876,7 @@ void load_news_if_changed() {
     news_last_mod = file_info.st_mtime;
     
     fclose(fl);
-    log("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
+    mudlog("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
 }
 
 void do_news(struct char_data *ch, char *argument, int cmd)

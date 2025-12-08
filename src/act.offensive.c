@@ -31,7 +31,7 @@ void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
 void set_fighting(struct char_data *ch, struct char_data *victim);
 void stop_fighting(struct char_data *ch);
 void do_say(struct char_data *ch, char *arg, int cmd);
-void log(char *str);
+void mudlog(const char *str);
 bool saves_spell(struct char_data *ch, int type);
 int str_cmp(char *arg1, char *arg2);
 int do_simple_move(struct char_data *ch, int cmd, int following);
@@ -110,7 +110,7 @@ void do_kill(struct char_data *ch, char *argument, int cmd)
 
 	if (GET_LEVEL(ch) >= IMO && GET_LEVEL(ch) < IMO + 3) {
 		snprintf(buf, sizeof(buf), "Fight IMO:%s v.s. %s", GET_NAME(ch), argument);
-		log(buf);
+		mudlog(buf);
 		return;
 	}
 	if ((GET_LEVEL(ch) < IMO) || IS_NPC(ch)) {
