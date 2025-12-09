@@ -17,6 +17,7 @@
 #include "spells.h"
 
 #include "guild_list.h"
+#include "prototypes.h"
 
 
 /* Global data */

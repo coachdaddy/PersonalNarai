@@ -20,6 +20,7 @@
 #include "spells.h"
 #include "limit.h"
 #include "mob_magic.h"		/* cyb */
+#include "prototypes.h"
 
 /*   external vars  */
 extern struct room_data *world;

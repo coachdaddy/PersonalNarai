@@ -19,6 +19,7 @@
 #include "db.h"
 #include "spells.h"
 #include "limit.h"
+#include "prototypes.h"
 
 /*   external vars  */
 extern struct room_data *world;
@@ -28,7 +29,6 @@ extern struct index_data *obj_index;
 extern struct time_info_data time_info;
 extern struct title_type titles[4][IMO + 4];
 extern struct index_data *mob_index;
-
 
 char *how_good(int p1, int p2)
 {
@@ -98,7 +98,7 @@ int guild(struct char_data *ch, int cmd, char *arg)
     // 범위 검사 및 로그 출력 수정
     if (number <= 0 || number >= MAX_SPL_LIST) {
         snprintf(buf, sizeof(buf), "SYSERR: guild - skill number out of range: %d", number);
-        log(buf);
+        mudlog(buf);
         
         send_to_char("Error in skill data.\r\n", ch);
         return (TRUE);

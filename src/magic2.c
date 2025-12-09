@@ -18,6 +18,7 @@
 #include "magic_weapon.h"
 
 #include "guild_list.h"
+#include "prototypes.h"
 
 /* Extern structures */
 extern struct room_data *world;
