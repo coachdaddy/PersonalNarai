@@ -189,11 +189,15 @@ int main(int argc, char **argv)
 	umask(0077);
 
 	mudlog("(main) Signal trapping.");
-    signal_setup();
+
+	signal_setup();
+
 	snprintf(buf, sizeof(buf), "(main) Running game on port %d.", port);
 	mudlog(buf);
+
 	snprintf(buf, sizeof(buf), "Running game on port %d.", port);
 	mudlog(buf);
+
 	run_the_game(port);
 
 	// PID 파일 삭제 (정상 종료 시)
@@ -239,8 +243,7 @@ void run_the_game(int port)
 	mudlog(pidfile);
 
 	sprintf(pidfile, "mud-%d.pid", port);
-	pidfp = fopen(pidfile, "w+");
-	if (!pidfp) {
+	if (!(pidfp = fopen(pidfile, "w+"))) {
 		perror("ERROR: can't open pid file.");
 	} else {
 		fprintf(pidfp, "%ld\n", (long)getpid());

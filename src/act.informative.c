@@ -1906,8 +1906,13 @@ void load_news_if_changed() {
 
 void do_news(struct char_data *ch, char *argument, int cmd)
 {
-  	load_news_if_changed(); // 파일 확인 및 로딩 (변경된 경우에만 실제로 읽음)
-    page_string(ch->desc, news, 0); // send_to_char(news_content, ch);
+	load_news_if_changed(); // 파일 확인 및 로딩 (변경된 경우에만 실제로 읽음)
+
+	if(news_content) 
+		page_string(ch->desc, news_content, 0); // send_to_char(news_content, ch);
+	else
+		page_string(ch->desc, news, 0); // send_to_char(news_content, ch);
+
 }
 
 void do_plan(struct char_data *ch, char *argument, int cmd)

@@ -381,10 +381,10 @@ void build_player_index(void)
 
 			player_table[nr].nr = nr;
 
-			CREATE(player_table[nr].name, char,
-			       strlen(dummy.name) + 1);
+			CREATE(player_table[nr].name, char, strlen(dummy.name) + 1);
+
 			for (i = 0;
-			     (*(player_table[nr].name + i) = tolower(*(dummy.name + i))); i++) ;
+			     (*(player_table[nr].name + i) = tolower((unsigned char)*(dummy.name + i))); i++) ;
 		}
 	}
 
@@ -960,6 +960,14 @@ void boot_zones(void)
         }
 
         check = fread_string(fl);
+	if(!check) {
+            char error_buf[256];
+            snprintf(error_buf, sizeof(error_buf), "boot_zones: NULL from fread_stirng for zone file %s", file_name_from_list);
+            mudlog(error_buf);
+	    fclose(fl);
+            continue; // 파일을 못 열었어도 다음 존을 계속 읽기 위해 루프를 유지
+
+	}
 
         if (!zon)
             CREATE(zone_table, struct zone_data, 1);
