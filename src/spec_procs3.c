@@ -26,29 +26,13 @@ extern struct time_info_data time_info;
 extern struct title_type titles[4][IMO + 4];
 extern struct index_data *mob_index;
 
-/* extern procedures */
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void gain_exp(struct char_data *ch, int gain);
-void stop_fighting(struct char_data *ch);
-void set_title(struct char_data *ch);
-int number(int from, int to);
-int dice(int num, int size);
 
-void cast_cure_light(byte level, struct char_data *ch, char *arg, int type,
-		     struct char_data *victim, struct obj_data *tar_obj);
-void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type,
-		      struct char_data *victim, struct obj_data *tar_obj);
-void cast_heal(byte level, struct char_data *ch, char *arg, int type,
-	       struct char_data *victim, struct obj_data *tar_obj);
-void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
-		    struct char_data *victim, struct obj_data *tar_obj);
 
 int level_gate(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[100];
 	int f, r;
 
-	if (cmd == 84) {
+	if (cmd == 84) { /* cast */
 		send_to_char("You cannot do that here.\n\r", ch);
 		act("$n attempts to misbehave here.", FALSE, ch, 0, 0, TO_ROOM); // send_to_room_except 대체, 251126
 		return TRUE;
@@ -213,12 +197,10 @@ int great_mazinga(struct char_data *ch, int cmd, char *arg)
 	if (ch->specials.fighting && number(0, 5) < 4) {
 		vict = choose_victim(ch, VIC_FIGHTING, MODE_RANDOM);
 		if (vict) {
-			act("$n utters the words '로케트 주먹'.", 1, ch,
-			    0, 0, TO_ROOM);
+			act("$n utters the words '로케트 주먹'.", 1, ch, 0, 0, TO_ROOM);
 			mob_punch_drop(ch, vict);
 			if ((tmp = GET_MOVE(vict)) > 0) {
-				send_to_char
-				    ("주먹에 맞아 체력이 떨어집니다.\n\r", vict);
+				send_to_char("주먹에 맞아 체력이 떨어집니다.\n\r", vict);
 				GET_MOVE(vict) = tmp * 7 / 10;
 			}
 		}
@@ -228,23 +210,19 @@ int great_mazinga(struct char_data *ch, int cmd, char *arg)
 		if (number(0, 1) == 0) {
 			vict = choose_victim(ch, VIC_FIGHTING, MODE_MOVE_MAX);
 			if (vict) {
-				act("$n utters the words 'ecuder evom'.", 1,
-				    ch, 0, 0, TO_ROOM);
+				act("$n utters the words 'ecuder evom'.", 1, ch, 0, 0, TO_ROOM);
 				if ((tmp = GET_MOVE(vict)) > 0) {
 					send_to_char("갑자기 힘이 빠집니다.\n\r", vict);
-					GET_MOVE(vict) = tmp / 3 + dice(3, tmp
-									/ 10);
+					GET_MOVE(vict) = tmp / 3 + dice(3, tmp / 10);
 				}
 			}
 		} else {
 			vict = choose_victim(ch, VIC_ALL, MODE_MANA_MAX);
 			if (vict) {
-				act("$n utters the words 'ecuder anam'.", 1,
-				    ch, 0, 0, TO_ROOM);
+				act("$n utters the words 'ecuder anam'.", 1, ch, 0, 0, TO_ROOM);
 				if ((tmp = GET_MANA(vict)) > 0) {
 					send_to_char("갑자기 힘이 빠집니다.\n\r", vict);
-					GET_MANA(vict) = tmp / 3 + dice(3, tmp
-									/ 10);
+					GET_MANA(vict) = tmp / 3 + dice(3, tmp / 10);
 				}
 			}
 		}

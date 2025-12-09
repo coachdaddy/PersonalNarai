@@ -20,12 +20,9 @@
 #define TP_MOB    0
 #define TP_OBJ     1
 #define TP_ERROR  2
-
-void show_string(struct descriptor_data *d, char *input);
-int str_cmp(char *arg1, char *arg2);
-
 #define MAX_MSGS 100
 #define WRITER_NAME_LEN 20
+
 
 /* board */
 struct board_data {
@@ -372,7 +369,6 @@ char *one_word(char *argument, char *first_arg)
 		for (; isspace(*(argument + begin)); begin++) ;
 
 		if (*(argument + begin) == '\"') {	/* is it a quote */
-
 			begin++;
 
 			for (look_at = 0; (*(argument + begin + look_at) >=
@@ -384,14 +380,11 @@ char *one_word(char *argument, char *first_arg)
 
 			if (*(argument + begin + look_at) == '\"')
 				begin++;
-
 		} else {
-
 			for (look_at = 0; *(argument + begin + look_at) > ' ';
 			     look_at++)
 				*(first_arg + look_at) = LOWER(*(argument +
 								 begin + look_at));
-
 		}
 
 		*(first_arg + look_at) = '\0';

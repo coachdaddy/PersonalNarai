@@ -21,7 +21,6 @@
 #include "limit.h"
 
 /*   external vars  */
-
 extern struct room_data *world;
 extern struct char_data *character_list;
 extern struct descriptor_data *descriptor_list;
@@ -30,43 +29,6 @@ extern struct time_info_data time_info;
 extern struct title_type titles[4][IMO + 4];
 extern struct index_data *mob_index;
 
-/* extern procedures */
-
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void gain_exp(struct char_data *ch, int gain);
-void advance_level(struct char_data *ch, int level_up);
-void stop_fighting(struct char_data *ch);
-void set_title(struct char_data *ch);
-int MIN(int a, int b);
-int number(int from, int to);
-int dice(int num, int size);
-void page_string(struct descriptor_data *d, char *str, int keep);
-int do_simple_move(struct char_data *ch, int cmd, int following);
-void do_flash(struct char_data *ch, char *arg, int cmd);
-void do_cast(struct char_data *ch, char *arg, int cmd);
-void do_shouryuken(struct char_data *ch, char *arg, int cmd);
-void do_spin_bird_kick(struct char_data *ch, char *arg, int cmd);
-void do_backstab(struct char_data *ch, char *arg, int cmd);
-void do_punch(struct char_data *ch, char *argument, int cmd);
-void do_bash(struct char_data *ch, char *arg, int cmd);
-void do_light_move(struct char_data *ch, char *argument, int cmd);
-
-void cast_sleep(byte level, struct char_data *ch, char *arg, int si,
-		struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_cure_light(byte level, struct char_data *ch, char *arg, int type,
-		     struct char_data *victim, struct obj_data *tar_obj);
-void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type,
-		      struct char_data *victim, struct obj_data *tar_obj);
-void cast_heal(byte level, struct char_data *ch, char *arg, int type,
-	       struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
-		    struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_sunburst(byte level, struct char_data *ch, char *arg, int type,
-		   struct char_data *victim, struct obj_data *tar_obj);
-void cast_fireball(byte level, struct char_data *ch, char *arg, int type,
-		   struct char_data *victim, struct obj_data *tar_obj);
-void cast_color_spray(byte level, struct char_data *ch, char *arg, int type,
-		      struct char_data *victim, struct obj_data *tar_obj);
 
 char *how_good(int p1, int p2)
 {
@@ -127,10 +89,20 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	number = old_search_block(arg, 0, strlen(arg), spells, FALSE);
 
 	if (number == -1) {
-		send_to_char_han("You do not know of this spell...\n\r",
-				 		 "그런 기술은 모르는데요 ...\n\r", ch);
-		return (TRUE);
-	}
+        send_to_char_han("You do not know of this spell...\n\r", "그런 기술은 모르는데요 ...\n\r", ch);
+        return (TRUE);
+    }
+
+    number++;
+
+    // 범위 검사 및 로그 출력 수정
+    if (number <= 0 || number >= MAX_SPL_LIST) {
+        snprintf(buf, sizeof(buf), "SYSERR: guild - skill number out of range: %d", number);
+        log(buf);
+        
+        send_to_char("Error in skill data.\r\n", ch);
+        return (TRUE);
+    }
 
 	pskill = spell_info[number].prev;
 
@@ -377,7 +349,7 @@ void npc_steal(struct char_data *ch, struct char_data *victim)
 	} else {
 		/* Steal some gold coins */
 		acthan("$n suppresses a laugh.",
-		       "$n님이 키득키득 웃습니다.(왜그렇까?)",
+		       "$n님이 키득키득 웃습니다.(왜 그럴까?)",
 		       TRUE, ch, 0, 0, TO_NOTVICT);
 		gold = (int)((GET_GOLD(victim) * number(1, 10)) / 25);
 		if (gold > 0) {
@@ -489,8 +461,7 @@ void first_attack(struct char_data *ch, struct char_data *victim)
 	}
 }
 
-struct char_data *
- select_victim(struct char_data *ch)
+struct char_data *select_victim(struct char_data *ch)
 {
 	return ch->specials.fighting;
 }
@@ -789,295 +760,7 @@ int magic_user(struct char_data *ch, int cmd, char *arg)
 }
 
 /* modified by atre */
-#ifdef OldMobAct
-int thief(struct char_data *ch, int cmd, char *arg)
-{
-	struct char_data *cons;
-
-	if (cmd)
-		return FALSE;
-	if (GET_POS(ch) == POSITION_FIGHTING) {
-		if (number(1, 4) > 1) {
-			acthan("$n says 'Ya haa haa hap'.",
-			       "$n님이 '야하햐합' 하고 말합니다",
-			       1, ch, 0, 0, TO_ROOM);
-			for (cons = world[ch->in_room].people; cons; cons =
-			     cons->next_in_room) {
-				if (number(10, IMO + 3) < GET_LEVEL(ch) &&
-				    GET_LEVEL(cons)
-				    < IMO)
-					if (!IS_NPC(cons) && ch != cons)
-						hit(ch, cons, TYPE_UNDEFINED);	/* It is tornado */
-			}
-		} else if (GET_LEVEL(ch) > 10 && (GET_HIT(ch) * 100 /
-						  GET_PLAYER_MAX_HIT(ch)) < 47) {
-			acthan("$n says 'Quu ha cha cha'.",
-			       "$n님이 '크하차차' 하고 외칩니다",
-			       1, ch, 0, 0, TO_ROOM);
-			do_flash(ch, "", 0);
-		}
-	} else if (GET_POS(ch) != POSITION_STANDING)
-		return FALSE;
-	else {
-		for (cons = world[ch->in_room].people; cons; cons =
-		     cons->next_in_room) {
-			if ((!IS_NPC(cons)) && (GET_LEVEL(cons) < IMO) &&
-			    (GET_LEVEL(cons) >= GET_LEVEL(ch)) && (number(1,
-									  3) == 1))
-				npc_steal(ch, cons);
-		}
-	}
-	return TRUE;
-}
-
-int cleric(struct char_data *ch, int cmd, char *arg)
-{
-	struct char_data *vict;
-	char buf[80];
-
-	if (cmd)
-		return FALSE;
-	if (GET_POS(ch) != POSITION_FIGHTING) {
-		return FALSE;
-	}
-	if (!ch->specials.fighting)
-		return FALSE;
-	for (vict = world[ch->in_room].people; vict; vict = vict->next_in_room)
-		if (vict->specials.fighting == ch)
-			break;
-	if (!vict)
-		return FALSE;
-	switch (number(1, GET_LEVEL(ch))) {
-	case 1:
-		snprintf(buf, sizeof(buf), " 'armor' %s", GET_NAME(ch));
-		break;
-	case 2:
-		snprintf(buf, sizeof(buf), " 'cure light' %s", GET_NAME(ch));
-	case 3:
-	case 4:
-	case 5:
-		snprintf(buf, sizeof(buf), " 'bless' %s", GET_NAME(ch));
-		break;
-	case 6:
-		snprintf(buf, sizeof(buf), " 'blindness' %s", GET_NAME(vict));
-		break;
-	case 7:
-	case 8:
-		snprintf(buf, sizeof(buf), " 'poison' %s", GET_NAME(ch));
-		break;
-	case 9:
-		snprintf(buf, sizeof(buf), " 'cure critic' %s", GET_NAME(ch));
-		break;
-	case 10:
-		snprintf(buf, sizeof(buf), " 'dispel evil' %s", GET_NAME(ch));
-		break;
-	case 11:
-		snprintf(buf, sizeof(buf), " 'remove poison' %s", GET_NAME(ch));
-		break;
-	case 12:
-		snprintf(buf, sizeof(buf), " 'remove curse' %s", GET_NAME(ch));
-		break;
-	case 13:
-		snprintf(buf, sizeof(buf), " 'sancuary' %s", GET_NAME(ch));
-	case 14:
-		snprintf(buf, sizeof(buf), " 'heal' %s", GET_NAME(ch));
-		break;
-	case 15:
-		snprintf(buf, sizeof(buf), " 'call lightning' %s", GET_NAME(vict));
-		break;
-	case 16:
-		snprintf(buf, sizeof(buf), " 'harm' %s", GET_NAME(vict));
-		break;
-	case 17:
-	case 18:
-		snprintf(buf, sizeof(buf), " 'love' %s", GET_NAME(ch));
-		break;
-	case 19:
-		snprintf(buf, sizeof(buf), " 'love' %s", GET_NAME(vict));
-		break;
-	case 20:
-		snprintf(buf, sizeof(buf), " 'curse' %s", GET_NAME(vict));
-		break;
-	case 21:
-		snprintf(buf, sizeof(buf), " 'full heal' %s", GET_NAME(ch));
-		break;
-	case 22:
-	case 23:
-		snprintf(buf, sizeof(buf), " 'haste' %s", GET_NAME(ch));
-		break;
-	case 24:
-	case 25:
-		snprintf(buf, sizeof(buf), " 'sunburst' %s", GET_NAME(vict));
-		break;
-	case 26:
-	case 27:
-	case 28:
-	case 29:
-	case 30:
-	case 31:
-	case 32:
-		snprintf(buf, sizeof(buf), " 'full heal' %s", GET_NAME(vict));
-		break;
-	case 33:
-	case 34:
-		snprintf(buf, sizeof(buf), " 'full heal' %s", GET_NAME(ch));
-		break;
-	case 35:
-		snprintf(buf, sizeof(buf), " 'throw' %s", GET_NAME(vict));
-		break;
-	case 36:
-		snprintf(buf, sizeof(buf), " 'full fire' %s", GET_NAME(vict));
-		break;
-	case 37:
-	case 38:
-	case 39:
-	case 40:
-	default:
-		snprintf(buf, sizeof(buf), " 'improved haste'");
-		do_cast(ch, buf, 84);
-		snprintf(buf, sizeof(buf), " 'mirror'");
-		break;
-	}
-	do_cast(ch, buf, 84);
-	return TRUE;
-}
-
-int magic_user(struct char_data *ch, int cmd, char *arg)
-{
-	struct char_data *vict;
-	char buf[80];
-
-	if (cmd)
-		return FALSE;
-	if (GET_POS(ch) != POSITION_FIGHTING) {
-		if (GET_LEVEL(ch) != 27)	/* Hypnos */
-			return (FALSE);
-		for (vict = world[ch->in_room].people; vict; vict = vict->next_in_room)
-			if ((!IS_NPC(vict)) && (GET_LEVEL(vict) < IMO)) {
-				act("$n utters the words 'Hypnos Thanatos'.",
-				    1, ch, 0, 0, TO_ROOM);
-				cast_sleep(GET_LEVEL(ch), ch, "",
-					   SPELL_TYPE_SPELL, vict, 0);
-				return (TRUE);
-			}
-		return FALSE;
-	}
-	if (!ch->specials.fighting)
-		return FALSE;
-	for (vict = world[ch->in_room].people; vict; vict = vict->next_in_room)
-		if (vict->specials.fighting == ch)
-			break;
-	if (!vict)
-		return FALSE;
-	if (!ch)
-		return FALSE;
-	switch (number(1, GET_LEVEL(ch))) {
-	case 1:
-		snprintf(buf, sizeof(buf), " 'magic missile' %s", GET_NAME(vict));
-		break;
-	case 2:
-	case 3:
-		snprintf(buf, sizeof(buf), " 'chill touch' %s", GET_NAME(vict));
-		break;
-	case 4:
-		snprintf(buf, sizeof(buf), " 'invisibility' %s", GET_NAME(ch));
-		do_cast(ch, buf, 84);
-		snprintf(buf, sizeof(buf), " 'energy flow' %s", GET_NAME(vict));
-		break;
-	case 5:
-		snprintf(buf, sizeof(buf), " 'armor' %s", GET_NAME(ch));
-		do_cast(ch, buf, 84);
-		snprintf(buf, sizeof(buf), " 'burning hands' %s", GET_NAME(vict));
-		break;
-	case 6:
-	case 7:
-		snprintf(buf, sizeof(buf), " 'shocking grasp' %s", GET_NAME(vict));
-		break;
-	case 8:
-		snprintf(buf, sizeof(buf), " 'blindness' %s", GET_NAME(ch));
-		break;
-	case 9:
-		snprintf(buf, sizeof(buf), " 'lightning bolt' %s", GET_NAME(vict));
-		do_cast(ch, buf, 84);
-		snprintf(buf, sizeof(buf), " 'damage up'");
-		break;
-	case 10:
-		snprintf(buf, sizeof(buf), " 'self heal'");
-		break;
-	case 11:
-		snprintf(buf, sizeof(buf), " 'colour spray' %s", GET_NAME(vict));
-		break;
-	case 12:
-		snprintf(buf, sizeof(buf), " 'curse' %s", GET_NAME(vict));
-		break;
-	case 13:
-		snprintf(buf, sizeof(buf), " 'energy drain' %s", GET_NAME(vict));
-		break;
-	case 14:
-		snprintf(buf, sizeof(buf), " 'sleep' %s", GET_NAME(vict));
-		break;
-	case 15:
-		snprintf(buf, sizeof(buf), " 'fireball' %s", GET_NAME(vict));
-		do_cast(ch, buf, 84);
-		snprintf(buf, sizeof(buf), " 'mana boost' %s", GET_NAME(ch));
-		break;
-	case 16:
-		snprintf(buf, sizeof(buf), " 'mana boost' %s", GET_NAME(vict));
-		break;
-	case 17:
-		snprintf(buf, sizeof(buf), " 'vitalize' %s", GET_NAME(ch));
-		do_cast(ch, buf, 84);
-		snprintf(buf, sizeof(buf), " 'throw' %s", GET_NAME(vict));
-		break;
-	case 18:
-	case 19:
-		snprintf(buf, sizeof(buf), " 'crush aromr' %s", GET_NAME(vict));
-		break;
-	case 20:
-	case 21:
-	case 22:
-		snprintf(buf, sizeof(buf), " 'haste' %s", GET_NAME(ch));
-		break;
-	case 23:
-	case 24:
-	case 25:
-		snprintf(buf, sizeof(buf), " 'improved haste'");
-		break;
-	case 26:
-		snprintf(buf, sizeof(buf), " 'full fire' %s", GET_NAME(vict));
-		break;
-	case 27:
-	case 28:
-	case 29:
-	case 30:
-		snprintf(buf, sizeof(buf), " 'cone of ice' %s", GET_NAME(vict));
-		break;
-	case 31:
-		snprintf(buf, sizeof(buf), " 'vitalize' %s", GET_NAME(vict));
-		break;
-	case 32:
-	case 33:
-		snprintf(buf, sizeof(buf), " 'disintegrate' %s", GET_NAME(vict));
-		break;
-	case 34:
-	case 35:
-		snprintf(buf, sizeof(buf), " 'mirror image'");
-		break;
-	case 36:
-	case 37:
-	case 38:
-	case 39:
-	case 40:
-		snprintf(buf, sizeof(buf), " 'full heal' %s", GET_NAME(ch));
-		break;
-	default:
-		snprintf(buf, sizeof(buf), " 'disintegrate' %s", GET_NAME(vict));
-		break;
-	}
-	do_cast(ch, buf, 84);
-	return TRUE;
-}
-#endif				/* OldMobAct */
+/* OldMobAct deleted */
 
 int paladin(struct char_data *ch, int cmd, char *arg)
 {

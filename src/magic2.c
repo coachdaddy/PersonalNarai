@@ -26,23 +26,6 @@ extern struct char_data *character_list;
 extern struct index_data *mob_index;
 extern int noenchantflag;
 
-/* Extern procedures */
-
-void damage(struct char_data *ch, struct char_data *victim,
-	    int damage, int weapontype);
-bool saves_spell(struct char_data *ch, int spell);
-void weight_change_object(struct obj_data *obj, int weight);
-// char *strdup(char *source);
-int dice(int number, int size);
-void do_look(struct char_data *ch, char *argument, int cmd);
-int number(int from, int to);
-void stop_fighting(struct char_data *ch);
-void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode,
-		      bool show);
-void list_char_to_char(struct char_data *list, struct char_data *ch, int mode);
-int MIN(int a, int b);
-int MAX(int a, int b);
-void update_pos(struct char_data *ch);
 
 /* spells2.c - Not directly offensive spells */
 
@@ -304,9 +287,7 @@ void spell_create_water(byte level, struct char_data *ch,
 	int water;
 
 	extern struct weather_data weather_info;
-	void name_to_drinkcon(struct obj_data *obj, int type);
-	void name_from_drinkcon(struct obj_data *obj);
-
+	
 	assert(ch && obj);
 
 	INCREASE_SKILLED2(ch, ch, SPELL_CREATE_WATER);
@@ -340,9 +321,6 @@ void spell_create_nectar(byte level, struct char_data *ch,
 {
 	int nectar;
 
-	void name_to_drinkcon(struct obj_data *obj, int type);
-	void name_from_drinkcon(struct obj_data *obj);
-
 	assert(ch && obj);
 
 	INCREASE_SKILLED2(ch, ch, SPELL_CREATE_NECTAR);
@@ -375,9 +353,6 @@ void spell_create_golden_nectar(byte level, struct char_data *ch,
 				struct char_data *victim, struct obj_data *obj)
 {
 	int nectar;
-
-	void name_to_drinkcon(struct obj_data *obj, int type);
-	void name_from_drinkcon(struct obj_data *obj);
 
 	assert(ch && obj);
 
@@ -1053,20 +1028,16 @@ void spell_pray_for_armor(byte level, struct char_data *ch,
 			}
 		} else {
 			if (obj->affected[0].location != APPLY_NONE) {
-				obj->affected[0].modifier *= number(2, level /
-				    10) / 2;
+				obj->affected[0].modifier *= number(2, level / 10) / 2;
 			} else {
 				obj->affected[0].location = APPLY_AC;
-				obj->affected[0].modifier = number(2, level /
-								   10 + 2) / -2;
+				obj->affected[0].modifier = number(2, level / 10 + 2) / -2;
 			}
 			if (obj->affected[1].location != APPLY_NONE)
-				obj->affected[1].modifier *= number(2, level /
-				    10) / 2;
+				obj->affected[1].modifier *= number(2, level / 10) / 2;
 			else {
 				obj->affected[1].location = APPLY_AC;
-				obj->affected[1].modifier = number(2, level /
-								   10 + 2) / -2;
+				obj->affected[1].modifier = number(2, level / 10 + 2) / -2;
 			}
 			if (number(0, 9) < 2 || GET_LEVEL(ch) >= IMO) {
 				obj->affected[0].modifier *= number(1, 2);
@@ -1074,19 +1045,12 @@ void spell_pray_for_armor(byte level, struct char_data *ch,
 				if (number(0, 9) < 5)
 					obj->affected[1].modifier *= number(1, 2);
 				if (number(0, 9) < 4) {
-					obj->obj_flags.value[0] += number(1,
-									  level
-									  / 10
-									  + 1);
+					obj->obj_flags.value[0] += number(1, level / 10 + 1);
 					act("$p GLOWING WITH GREEN LIGHT.",
 					    FALSE, ch, obj, 0, TO_CHAR);
 				}
 				if (number(0, 99) == 11) {
-					obj->obj_flags.value[0] += number(1,
-									  level
-									  / 10
-									  + 1)
-					    * 4;
+					obj->obj_flags.value[0] += number(1, level / 10 + 1) * 4;
 					act("$p BRIGHT WITH GLOWING AURA.",
 					    FALSE, ch, obj, 0, TO_CHAR);
 				} else if (number(0, 99) == 88) {
@@ -1103,8 +1067,7 @@ void spell_pray_for_armor(byte level, struct char_data *ch,
 					extract_obj(obj);
 					act("BANG!!!! $p explodes. It hurts!",
 					    FALSE, ch, obj, 0, TO_CHAR);
-					GET_MANA(ch) -= GET_MANA(ch) /
-									      number(5, 20);
+					GET_MANA(ch) -= GET_MANA(ch) / number(5, 20);
 				}
 			}
 		}
@@ -1155,8 +1118,7 @@ void spell_heal(byte level, struct char_data *ch,
 		struct char_data *victim, struct obj_data *obj)
 {
 	int hit;
-	void gain_exp(struct char_data *ch, int gain);
-
+	
 	assert(victim);
 
 	INCREASE_SKILLED2(ch, victim, SPELL_HEAL);
@@ -1186,8 +1148,7 @@ void spell_full_heal(byte level, struct char_data *ch,
 		     struct char_data *victim, struct obj_data *obj)
 {
 	int hit;
-	void gain_exp(struct char_data *ch, int gain);
-
+	
 	assert(victim);
 
 	INCREASE_SKILLED2(ch, victim, SPELL_FULL_HEAL);
@@ -1357,7 +1318,8 @@ void spell_haste(byte level, struct char_data *ch,
 	    !affected_by_spell(victim, SPELL_IMPROVED_HASTE)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_HASTE);
 		af.type = SPELL_HASTE;
-		af.duration = 5;
+		af.duration = (level < IMO) ? 5 : level;
+        af.duration += (level > 30) + (level > 35);
 		af.modifier = 0;
 		af.location = APPLY_NONE;
 		af.bitvector = AFF_HASTE;
@@ -1733,19 +1695,12 @@ void spell_charm_person(byte level, struct char_data *ch,
 	struct affected_type af;
 	char buf[200];
 
-	void add_follower(struct char_data *ch, struct char_data *leader);
-	bool circle_follow(struct char_data *ch, struct char_data *victim);
-	void stop_follower(struct char_data *ch);
-
 	assert(ch && victim);
 
 	if (!IS_NPC(ch) && GET_LEVEL(ch) == IMO) {
 		send_to_char("You cannot use this spell.\n\r", ch);
 		return;
 	}
-
-	/* By testing for IS_AFFECTED we avoid ei. Mordenkainens sword to be */
-	/* able to be "recharmed" with duration                              */
 
 	if (IS_NPC(ch))
 		return;
@@ -1862,7 +1817,6 @@ void spell_sense_life(byte level, struct char_data *ch,
 void spell_reanimate(byte level, struct char_data *ch,
 		     struct char_data *victim, struct obj_data *obj)
 {
-	void add_follower(struct char_data *ch, struct char_data *leader);
 	struct char_data *mob;
 	struct char_data *read_mobile(int nr, int type);
 

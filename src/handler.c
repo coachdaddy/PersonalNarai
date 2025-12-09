@@ -26,19 +26,6 @@ extern struct index_data *mob_index;
 extern struct index_data *obj_index;
 extern struct descriptor_data *descriptor_list;
 
-/* External procedures */
-
-int str_cmp(char *arg1, char *arg2);
-void free_char(struct char_data *ch);
-void stop_fighting(struct char_data *ch);
-void remove_follower(struct char_data *ch);
-int MAX(int a, int b);
-int MIN(int a, int b);
-void log(char *str);
-void die(struct char_data *ch, int level, struct char_data *who);
-void free_obj(struct obj_data *o);
-int number(int from, int to);
-int search_block(char *arg, char **list, bool exact);
 
 
 /* 두 캐릭터가 같은 그룹인지 확인하는 함수 */
@@ -146,7 +133,7 @@ int isexactname(char *str, char *namelist)
 				return (0);
 			if (!*curstr || *curname == ' ')
 				break;
-			if (LOWER(*curstr) != LOWER(*curname))
+			if (tolower(*curstr) != tolower(*curname))
 				break;
 		}
 		/* skip to next name */
@@ -167,8 +154,6 @@ void affect_modify(struct char_data *ch, byte loc, short mod, long bitv, bool ad
 		REMOVE_BIT(ch->specials.affected_by, bitv);
 		mod = -mod;
 	}
-
-	// maxabil = (IS_NPC(ch) ? 25:(GET_LEVEL(ch) >= (IMO+2)? 25 : 18));
 
 	switch (loc) {
 	case APPLY_NONE:
@@ -255,19 +240,8 @@ void affect_modify(struct char_data *ch, byte loc, short mod, long bitv, bool ad
 		}
 		break;
 	default:
-
-		/* here is test for fixing bug */
-		/*
-		   snprintf(buf, sizeof(buf),"loc is %d.",loc);
-		 */
-		/*
-		   log(buf);
-		 */
-		/* end of test */
-
 		/*  log("Unknown apply adjust attempt (handler.c, affect_modify)."); */
 		break;
-
 	}			/* switch */
 }
 
@@ -425,18 +399,20 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
 /* Call affect_remove with every spell of spelltype "skill" */
 void affect_from_char(struct char_data *ch, byte skill)
 {
-	struct affected_type *hjp;
+	struct affected_type *hjp, *next_aff;
 
-	for (hjp = ch->affected; hjp; hjp = hjp->next)
-		if (hjp->type == skill)
-			affect_remove(ch, hjp);
-
+    // ASAN
+    for (hjp = ch->affected; hjp; hjp = next_aff) {
+        next_aff = hjp->next; // 다음 것 미리 확보
+        
+        if (hjp->type == skill)
+            affect_remove(ch, hjp);
+    }
 }
 
 /* Return if a char is affected by a spell (SPELL_XXX), NULL indicates 
    not affected                                                        */
-bool
-affected_by_spell(struct char_data *ch, byte skill)
+bool affected_by_spell(struct char_data *ch, byte skill)
 {
 	struct affected_type *hjp;
 
@@ -480,9 +456,7 @@ void char_from_room(struct char_data *ch)
 			log("NOWHERE extracting char : arrested");
 			return;
 		} else {
-			log
-			    ("NOWHERE extracting char from room (handler.c, char_from_room)");
-
+			log("NOWHERE extracting char from room (handler.c, char_from_room)");
 			exit(1);
 		}
 	}
@@ -568,10 +542,6 @@ void obj_from_char(struct obj_data *object)
 		tmp->next_content = object->next_content;
 	}
 
-/*
-  snprintf(buf, sizeof(buf),"obj from char: %s %s",GET_NAME(object->carried_by),object->short_description);
-  log(buf);
-*/
 	IS_CARRYING_W(object->carried_by) -= GET_OBJ_WEIGHT(object);
 	IS_CARRYING_N(object->carried_by)--;
 	object->carried_by = 0;
@@ -619,7 +589,7 @@ void equip_char(struct char_data *ch, struct obj_data *obj, int pos)
 
 	assert(pos >= 0);
 	assert(pos < MAX_WEAR);
-/*  assert(!(ch->equipment[pos]));  */
+
 	if (ch->equipment[pos]) {
 		return;
 	}
@@ -691,8 +661,7 @@ void equip_char(struct char_data *ch, struct obj_data *obj, int pos)
 	affect_total(ch);
 }
 
-struct obj_data *
- unequip_char(struct char_data *ch, int pos)
+struct obj_data *unequip_char(struct char_data *ch, int pos)
 {
 	int j;
 	struct obj_data *obj;
@@ -740,8 +709,7 @@ int get_number(char **name)
 }
 
 /* Search a given list for an object, and return a pointer to that object */
-struct obj_data *
- get_obj_in_list(char *name, struct obj_data *list)
+struct obj_data *get_obj_in_list(char *name, struct obj_data *list)
 {
 	struct obj_data *i;
 	int j, number;
@@ -764,8 +732,7 @@ struct obj_data *
 }
 
 /* Search a given list for an object number, and return a ptr to that obj */
-struct obj_data *
- get_obj_in_list_num(int num, struct obj_data *list)
+struct obj_data *get_obj_in_list_num(int num, struct obj_data *list)
 {
 	struct obj_data *i;
 
@@ -777,8 +744,7 @@ struct obj_data *
 }
 
 /*search the entire world for an object, and return a pointer  */
-struct obj_data *
- get_obj(char *name)
+struct obj_data *get_obj(char *name)
 {
 	struct obj_data *i;
 	int j, number;
@@ -801,8 +767,7 @@ struct obj_data *
 }
 
 /*search the entire world for an object number, and return a pointer  */
-struct obj_data *
- get_obj_num(int nr)
+struct obj_data *get_obj_num(int nr)
 {
 	struct obj_data *i;
 
@@ -814,8 +779,7 @@ struct obj_data *
 }
 
 /* search a room for a char, and return a pointer if found..  */
-struct char_data *
- get_char_room(char *name, int room)
+struct char_data *get_char_room(char *name, int room)
 {
 	struct char_data *i;
 	int j, number;
@@ -838,8 +802,7 @@ struct char_data *
 }
 
 /* search all over the world for a char, and return a pointer if found */
-struct char_data *
- get_char(char *name)
+struct char_data *get_char(char *name)
 {
 	struct char_data *i;
 	int j, number;
@@ -860,8 +823,7 @@ struct char_data *
 }
 
 /* search all over the world for a char num, and return a pointer if found */
-struct char_data *
- get_char_num(int nr)
+struct char_data *get_char_num(int nr)
 {
 	struct char_data *i;
 
@@ -1017,7 +979,6 @@ void update_object(struct obj_data *obj, int use)
 
 void update_char_objects(struct char_data *ch)
 {
-
 	int i;
 
 	if (!ch)
@@ -1153,8 +1114,11 @@ void extract_char(struct char_data *ch, int drop_items)
 
     if (ch && ch->desc) {
         /* remove all affected by spell */
-        for (af = ch->affected; af != NULL; af = af->next)
+        struct affected_type *next_af; // 임시 변수 선언 필요
+        for (af = ch->affected; af != NULL; af = next_af) {
+            next_af = af->next; // 지우기 전에 다음 주소 미리 저장
             affect_remove(ch, af);
+        }
         ch->desc->connected = CON_SLCT;
         SEND_TO_Q(MENU, ch->desc);
     }
@@ -1196,8 +1160,7 @@ struct char_data *get_char_room_vis(struct char_data *ch, char *name)
 	return (0);
 }
 
-struct char_data *
- get_specific_vis(struct char_data *ch, char *name, int type)
+struct char_data *get_specific_vis(struct char_data *ch, char *name, int type)
 {
 	struct char_data *i;
 
@@ -1211,8 +1174,7 @@ struct char_data *
 	return (0);
 }
 
-struct char_data *
- get_char_vis(struct char_data *ch, char *name)
+struct char_data *get_char_vis(struct char_data *ch, char *name)
 {
 	struct char_data *i;
 	int j, number;
@@ -1241,8 +1203,7 @@ struct char_data *
 	return (0);
 }
 
-struct char_data *
- get_char_vis_zone(struct char_data *ch, char *name)
+struct char_data *get_char_vis_zone(struct char_data *ch, char *name)
 {
 	struct char_data *i;
 	int j, number;
@@ -1272,8 +1233,7 @@ struct char_data *
 	return (0);
 }
 
-struct obj_data *
- get_obj_in_list_vis(struct char_data *ch, char *name,
+struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name,
 		     struct obj_data *list)
 {
 	struct obj_data *i;
@@ -1299,8 +1259,7 @@ struct obj_data *
 }
 
 /*search the entire world for an object, and return a pointer  */
-struct obj_data *
- get_obj_vis(struct char_data *ch, char *name)
+struct obj_data *get_obj_vis(struct char_data *ch, char *name)
 {
 	struct obj_data *i;
 	int j, number;
@@ -1333,8 +1292,7 @@ struct obj_data *
 	return (0);
 }
 
-struct obj_data *
- create_money(int amount)
+struct obj_data *create_money(int amount)
 {
 	struct obj_data *obj;
 	struct extra_descr_data *new_descr;

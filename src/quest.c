@@ -16,22 +16,15 @@
 
 #define MaxQuest		10000
 #define QUEST_FILE		"mob.quest"
+#define ZONE_NUMBER 47
+#define END_QUEST_MOBILE 631
 
 /* for Challenge Room Quest System */
 #define QUEST_ROOM_VNUM 3081           // 퀘스트 룸 VNUM
 #define CHALLENGE_ROOM_START_VNUM 3082 // '도전의 방' 시작 VNUM
 #define CHALLENGE_ROOM_END_VNUM 3089   // '도전의 방' 끝 VNUM (총 8개)
 extern struct room_data *world;
-
-int number(int from, int to);
-void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch);
-void log(char *str);
-void half_chop(char *string, char *arg1, char *arg2);
-struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name,
-				     struct obj_data *list);
-void send_to_char(char *messg, struct char_data *ch);
-void extract_obj(struct obj_data *obj);
-void obj_to_char(struct obj_data *o, struct char_data *ch);
+extern struct index_data *mob_index;
 
 struct {
 	int virtual;
@@ -44,13 +37,13 @@ int topQM;
 int level_quest[IMO + 4] =
 {
 	0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 10 */
-	2, 3, 4, 5, 6, 7, 8, 9, 10, 11,		/* 20 */
-	12, 13, 14, 15, 17, 19, 21, 23, 25, 27,		/* 30 */
-	29, 31, 33, 35, 37, 39, 41, 43, 45, 47,		/* 40 */
-	49, 51, 53, 55, 57, 59, 61, 63, 65, 67,		/* 50 */
-	69, 72, 75, 78, 81, 84, 87, 90, 93, 96, 	/* 60 */
-	120, 130, 140, 150
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,           /* 10 */
+    2, 3, 4, 5, 6, 7, 8, 9, 10, 11,         /* 20 */
+    12, 13, 14, 15, 17, 19, 21, 23, 25, 27, /* 30 */
+    29, 31, 33, 35, 37, 39, 41, 43, 45, 47, /* 40 */
+    49, 51, 53, 55, 57, 59, 61, 63, 65, 67, /* 50 */
+    69, 72, 75, 78, 81, 84, 87, 90, 93, 96, /* 60 */
+    120, 130, 140, 150
 };
 
 // Quest 보상 아이템의 종류를 명확하게 알아볼 수 있도록
@@ -202,14 +195,13 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 
 	/* request */
 	if (ch->quest.type > 0) {
-
 		/*      if error occur, can do request. */
 		if (ch->quest.data == NUL) {
 			ch->quest.type = 0;
 			return;
 		}
 
-		/* All remotal player cann't do request.    */
+		/* All remotal players can't do request.    */
 		if ((ch->player.level >= (IMO - 1)) && (ch->player.remortal >= 15)) {
 			send_to_char_han("&CQUEST&n : &YYou can't request.&n\n\r", "&CQUEST&n : &Y다른 임무를 맡을 수 없습니다.&n\n\r", ch);
 			return;
@@ -361,7 +353,7 @@ void init_quest(void)
 	int num, size;
 
 	if (!(fp = fopen(QUEST_FILE, "r"))) {
-		log("init quest (quest_file)");
+		log("(init_quest) Initializing quests (quest_file)");
 		exit(0);
 	}
 
@@ -379,44 +371,29 @@ void init_quest(void)
 		fscanf(fp, " %d ", &(QM[topQM].level));
 
 		fgets(buf, MAX_STRING_LENGTH - 1, fp);
-		size = strlen(buf) + 1;
-		buf[size - 1] = 0;
+
+		int len = strlen(buf);
+
+        while (len > 0 && (buf[len - 1] == '\n' || buf[len - 1] == '\r')) {
+            buf[len - 1] = '\0';
+            len--;
+        }
+
+        size = len + 1; 
 		CREATE(QM[topQM].name, char, size);
 		strcpy(QM[topQM].name, buf);
 
 		topQM++;
 
 		if (topQM > MaxQuest) {
-			log("Quest Mobiles are overflow.");
+			log("(init_quest) Quest Mobiles are overflown.");
 			fclose(fp);
 			return;
 		}
 
 	}
 }
-/* 기존 퀘스트 보상 산정, 알아보기가 어렵다...
-int give_gift_for_quest(int level)
-{
-	static int gift_array[100] =
-	{
-		0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 6,
-		1, 1, 1, 1, 1, 1, 1, 1, 3, 3,
-		1, 1, 1, 1, 1, 1, 1, 1, 5, 3,
-		1, 1, 1, 1, 1, 3, 1, 1, 1, 3,
-		1, 1, 1, 1, 1, 3, 1, 1, 1, 8,
-		1, 1, 1, 1, 1, 1, 1, 1, 3, 7,
-		1, 1, 1, 1, 1, 1, 1, 1, 8, 9,
-		5, 5, 5, 5, 6, 6, 7, 6, 9, 1,
-	};
-	int num;
 
-	num = number(level * 3 / 2, 99);
-
-	return (gift_array[num]);
-}
- */
 
 int give_reward_for_quest(int level)
 {
@@ -577,7 +554,6 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 	}
 
 	if (ch->quest.type < 0) {
-//		switch (give_gift_for_quest(GET_LEVEL(ch))) {
 		switch (give_reward_for_quest(GET_LEVEL(ch))) {
 		case 1:	/* some gold */
 			GET_GOLD(ch) += number(100000, (500000 *
@@ -600,7 +576,7 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 
 			/* name */
 			free(obj->name);
-			snprintf(buf1, sizeof(buf1), "%s QUEST ARMOR", wear[fnum]);
+			snprintf(buf1, sizeof(buf1), "%s's QUEST ARMOR", wear[fnum]);
 			CREATE(obj->name, char, strlen(buf1) + 1);
 			strcpy(obj->name, buf1);
 
@@ -638,10 +614,6 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 			CREATE(obj->short_description, char, strlen(buf1) + 1);
 			strcpy(obj->short_description, buf1);
 
-			/* dice 
-			   obj->obj_flags.value[1] = number(5+(GET_LEVEL(ch)>>3),5+(GET_LEVEL(ch)>>1));
-			   obj->obj_flags.value[2] = number(5+(GET_LEVEL(ch)>>3),5+(GET_LEVEL(ch)>>1));
-			 */
 			/* dice */
 			obj->obj_flags.value[1] = number(GET_LEVEL(ch) / 2, GET_LEVEL(ch) / 10);
 			obj->obj_flags.value[2] = number(5 + (GET_LEVEL(ch) >> 3), 5 + (GET_LEVEL(ch) >> 1));
@@ -674,9 +646,8 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 		case 9:	/* ticket for DR */
 			obj = read_object(7993, VIRTUAL);
 			obj_to_char(obj, ch);
-			send_to_char_han(
-						"QUEST : QM gives a ticket for meta(DR) for your success.\n\r",
-						"QUEST : 당신의 성공을 축하하며 QM이 메타용 DR 티켓을 줍니다.\n\r", ch);
+			send_to_char_han("&CQUEST&n : &YQM gives a ticket for meta(DR) for your success.&n\n\r",
+                             "&CQUEST&n : &Y당신의 성공을 축하하며 QM이 메타용 DR 티켓을 줍니다.&n\n\r", ch);
 			break;
             case 10: /* light source for lower levels */ /* 영원히 타오르는 퀘스트 횃불 */
                 obj = read_object(2319, VIRTUAL); // 2319번 아이템을 기본틀로 (rod of dark light)
@@ -1041,7 +1012,7 @@ void do_challenge_abort(struct char_data *ch, char *argument, int cmd)
                 if (mob->in_room == ch->in_room) {
                     act("&cCHALLENGE&n : &y$n fades away as the challenge is aborted.&n", TRUE, mob, 0, 0, TO_ROOM);
                 }
-                extract_char(mob);
+                extract_char(mob, FALSE);
             }
         }
     }

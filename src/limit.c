@@ -26,25 +26,6 @@ extern struct obj_data *object_list;
 extern struct title_type titles[4][IMO + 4];
 extern struct room_data *world;
 
-/* External procedures */
-
-int move_stashfile_safe (const char *victim);
-void update_pos(struct char_data *victim);	/* in fight.c */
-void damage(struct char_data *ch, struct char_data *victim,	/*    do      */
-	    int damage, int weapontype);
-struct time_info_data age(struct char_data *ch);
-int number(int from, int to);
-int dice(int num, int size);
-int MIN(int a, int b);
-int MAX(int a, int b);
-void stop_fighting(struct char_data *ch);
-void char_from_room(struct char_data *ch);
-void char_to_room(struct char_data *ch, int to);
-void do_rent(struct char_data *ch, int cmd, char *arg);
-void close_socket(struct descriptor_data *d);
-void obj_from_obj(struct obj_data *o);
-void obj_to_obj(struct obj_data *o, struct obj_data *to);
-void obj_to_room(struct obj_data *o, int room);
 
 /* When age < 15 return the value p0 */
 /* When age in 15..29 calculate the line between p1 & p2 */
@@ -73,18 +54,12 @@ int graf(int age, int p0, int p1, int p2, int p3, int p4, int p5, int p6)
 
 long int hit_limit(struct char_data *ch)
 {
-	int extra[7] =
-	{1, 2, 4, 8, 4, 2, 1};
+	int extra[7] = {1, 2, 4, 8, 4, 2, 1};
 	long int max;
 
 	max = ch->points.max_hit;
 
 	if (!IS_NPC(ch)) {
-		/*
-		   share = max / 10;
-		   for (i = 0; i < 7; i++)
-		   extra[i] *= share;
-		 */
 		max += graf(age(ch).year, extra[0], extra[1], extra[2], extra[3],
 			    extra[4], extra[5], extra[6]);
 	}
@@ -94,18 +69,12 @@ long int hit_limit(struct char_data *ch)
 
 long int mana_limit(struct char_data *ch)
 {
-	int extra[7] =
-	{1, 2, 3, 4, 3, 2, 1};
+	int extra[7] = {1, 2, 3, 4, 3, 2, 1};
 	long int max;
 
 	max = ch->points.max_mana;
 
 	if (!IS_NPC(ch)) {
-		/*
-		   share = max / 10;
-		   for (i = 0; i < 7; i++)
-		   extra[i] *= share;
-		 */
 		max += graf(age(ch).year, extra[0], extra[1], extra[2], extra[3],
 			    extra[4], extra[5], extra[6]);
 	}
@@ -114,18 +83,12 @@ long int mana_limit(struct char_data *ch)
 
 long int move_limit(struct char_data *ch)
 {
-	int extra[7] =
-	{1, 2, 4, 8, 4, 2, 1};
+	int extra[7] = {1, 2, 4, 8, 4, 2, 1};
 	long int max;
 
 	max = ch->points.max_move;
 
 	if (!IS_NPC(ch)) {
-		/*
-		   share = max / 10;
-		   for (i = 0; i < 7; i++)
-		   extra[i] *= share;
-		 */
 		max += graf(age(ch).year, extra[0], extra[1], extra[2], extra[3],
 			    extra[4], extra[5], extra[6]);
 	}
@@ -136,8 +99,7 @@ long int move_limit(struct char_data *ch)
 int hit_gain(struct char_data *ch)
 {
 	int gain, c;
-	int extra[7] =
-	{1, 3, 6, 8, 5, 3, 1};
+	int extra[7] = {1, 3, 6, 8, 5, 3, 1};
 	int i;
 
 	c = GET_CON(ch) / 2;
@@ -188,11 +150,6 @@ int hit_gain(struct char_data *ch)
 		gain >>= 2;
 		gain = number(1, gain);
 		GET_HIT(ch) -= dice(30 - GET_CON(ch), 30 - GET_CON(ch));
-		/*
-		   GET_HIT(ch) -= dice(GET_LEVEL(ch), GET_LEVEL(ch));
-		   if (IS_NPC(ch))
-		   GET_HIT(ch) -= dice(GET_LEVEL(ch), GET_LEVEL(ch));
-		 */
 	}
 
 	if ((GET_COND(ch, FULL) == 0) || (GET_COND(ch, THIRST) == 0))
@@ -204,8 +161,7 @@ int hit_gain(struct char_data *ch)
 int mana_gain(struct char_data *ch)
 {
 	int gain, c;
-	int extra[7] =
-	{1, 2, 4, 8, 4, 2, 1};
+	int extra[7] = {1, 2, 4, 8, 4, 2, 1};
 	int i;
 
 	c = GET_INT(ch) / 2;
@@ -268,8 +224,7 @@ int mana_gain(struct char_data *ch)
 int move_gain(struct char_data *ch)
 {
 	int gain, c;
-	int extra[7] =
-	{1, 2, 4, 8, 4, 2, 1};
+	int extra[7] = {1, 2, 4, 8, 4, 2, 1};
 	int i;
 
 	c = GET_DEX(ch) / 2;
@@ -584,21 +539,30 @@ void point_update(void)
             rcnt++;
 
         int flag = 1;
-        if ((titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
-                !IS_NPC(i) && (GET_LEVEL(i) < 40) && (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)]) && (flag == 1)) {
-            GET_LEVEL(i)++;
-            advance_level(i, 1);
-            snprintf(buf, sizeof(buf), "\n\r %s LEVEL UP !! ---==Congratulations==--- \n", i->player.name);
-            send_to_all(buf);
-            if (i->in_room != NOWHERE)
-                save_char(i, world[i->in_room].number);
-            else
-                save_char(i, 3001); // 방 정보 없으면 mid
-            flag = 0;
-        }
+        /* ASAN : 먼저 NPC가 아니고, 레벨이 IMO보다 낮은지 확인, 251202 */
+        if (!IS_NPC(i) && GET_LEVEL(i) < IMO) {
+            /* 40레벨 미만 */
+            if (GET_LEVEL(i) < 40 && 
+               (titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
+               (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)]) && (flag == 1)) {
+                
+                GET_LEVEL(i)++;
+                advance_level(i, 1);
+                
+                snprintf(buf, sizeof(buf), "\n\r %s LEVEL UP !! ---==Congratulations==--- \n", i->player.name);
+                send_to_all(buf);
+                
+                if (i->in_room != NOWHERE)
+                    save_char(i, world[i->in_room].number);
+                else
+                    save_char(i, 3001);
 
-        if ((titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
-                !IS_NPC(i) && (GET_LEVEL(i) >= 40 && GET_LEVEL(i) < IMO) && (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) {
+                flag = 0;
+            }
+            /* 40레벨 이상 */
+            else if (GET_LEVEL(i) >= 40 && 
+                    (titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
+                    (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) {
             if (rcnt >= 1 && GET_LEVEL(i) < 50 && flag == 1) {
                 GET_LEVEL(i)++;
                 advance_level(i, 1);

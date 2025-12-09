@@ -16,22 +16,13 @@
 #include "colors.h"
 
 extern struct time_data time_info;
-extern struct room_data *world;
+extern struct room_data *world;      /* In db.c */
+extern char *spells[];               /* defined in spell_parser.c */
 
-/* defined in spell_parser.c */
-extern char *spells[];
 
-void send_to_char(char *messg, struct char_data *ch);
-
-int MIN(int a, int b)
-{
-	return (a < b ? a : b);
-}
-
-int MAX(int a, int b)
-{
-	return (a > b ? a : b);
-}
+/**************************************************************************
+ * Main Utility Functions                            *
+************************************************************************* */
 
 /* creates a random number in interval [from;to] */
 int number(int from, int to)
@@ -48,8 +39,6 @@ int number(int from, int to)
 
 	d = to - from + 1;
 
-	if (d < 2)
-		d = 2;
 	return ((random() % d) + from);
 }
 
@@ -78,7 +67,7 @@ int str_cmp(char *arg1, char *arg2)
 	else if (!arg2)
 		return (1);
 	for (i = 0; *(arg1 + i) || *(arg2 + i); i++) {
-		if ((chk = LOWER(*(arg1 + i)) - LOWER(*(arg2 + i)))) {
+		if ((chk = tolower(*(arg1 + i)) - tolower(*(arg2 + i)))) {
 			if (chk < 0)
 				return (-1);
 			else
@@ -95,7 +84,7 @@ int strn_cmp(char *arg1, char *arg2, int n)
 	int chk, i;
 
 	for (i = 0; (*(arg1 + i) || *(arg2 + i)) && (n > 0); i++, n--) {
-		if ((chk = LOWER(*(arg1 + i)) - LOWER(*(arg2 + i)))) {
+		if ((chk = tolower(*(arg1 + i)) - tolower(*(arg2 + i)))) {
 			if (chk < 0)
 				return (-1);
 			else
@@ -105,28 +94,7 @@ int strn_cmp(char *arg1, char *arg2, int n)
 	return (0);
 }
 
-/* writes a string to the log */
-/* 잠재적 문제를 가진 함수라 대체
-void log(char *str)
-{
-	time_t ct;
-	char *tmstr;
-	static int count = 0;
 
-	ct = time(0);
-	tmstr = asctime(localtime(&ct));
-	if (count++ % 10 == 0) {
-		*(tmstr + strlen(tmstr) - 1) = '\0';
-		fprintf(stderr, "Current time : %s\n", tmstr);
-		*(tmstr + strlen(tmstr) - 5) = '\0';
-		fprintf(stderr, "%s :: %s\n", &tmstr[11], str);
-	} else {
-		*(tmstr + strlen(tmstr) - 6) = '\0';
-		fprintf(stderr, "%s :: %s\n", &tmstr[11], str);
-	}
-	fflush(stderr);
-}
- */
 void sprintbit(long vektor, char *names[], char *result)
 {
 	long nr;
@@ -217,7 +185,7 @@ void print_increased_skilled(struct char_data *ch, int sk_no)
 {
 	char buf[256];
 
-	snprintf(buf, sizeof(buf), "Your %s POWER is more skilled!\n\r", spells[sk_no - 1]);
+	snprintf(buf, sizeof(buf), "&sYour %s POWER is more skilled!&n\n\r", spells[sk_no - 1]);
 	send_to_char(buf, ch);
 }
 
@@ -246,7 +214,7 @@ void mudlog(const char *str)
 void DEBUG_LOG(const char *format, ...)
 {
     char debug_buf[MAX_STRING_LENGTH];
-    char final_buf[MAX_STRING_LENGTH];
+    char final_buf[MAX_STRING_LENGTH * 2];
     va_list args;
 
     va_start(args, format);
