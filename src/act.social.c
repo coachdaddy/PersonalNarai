@@ -204,8 +204,7 @@ void do_action(struct char_data *ch, char *argument, int cmd)
 
 void do_insult(struct char_data *ch, char *argument, int cmd)
 {
-	static char buf[100];
-	static char arg[MAX_STRING_LENGTH];
+	char buf[MAX_INPUT_LENGTH], arg[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 
 	one_argument(argument, arg);

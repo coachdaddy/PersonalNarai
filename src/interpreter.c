@@ -66,210 +66,6 @@ extern struct index_data *obj_index;
 extern struct room_data *world;
 struct command_info cmd_info[MAX_CMD_LIST];
 
-/* external fcntls */
-
-void unstash_char(struct char_data *ch, char *name);
-void stash_char(struct char_data *ch);
-void set_title(struct char_data *ch);
-void init_char(struct char_data *ch);
-void store_to_char(struct char_file_u *st, struct char_data *ch);
-int create_entry(char *name);
-int special(struct char_data *ch, int cmd, char *arg);
-void mudlog(const char *str);
-int MIN(int a, int b);
-int number(int from, int to);
-int str_cmp(char *arg1, char *arg2);
-void char_to_room(struct char_data *ch, int room);
-void do_start(struct char_data *ch);
-
-int remove_entry(struct char_data *ch);
-void delete_char(struct char_data *ch);
-
-void close_socket(struct descriptor_data *d);
-
-void do_shoot(struct char_data *ch, char *argument, int cmd);
-void do_wimpy(struct char_data *ch, char *argument, int cmd);
-void do_move(struct char_data *ch, char *argument, int cmd);
-void do_look(struct char_data *ch, char *argument, int cmd);
-void do_read(struct char_data *ch, char *argument, int cmd);
-void do_write(struct char_data *ch, char *argument, int cmd);
-void do_say(struct char_data *ch, char *argument, int cmd);
-// void do_exit (struct char_data *ch, char *argument, int cmd);
-void do_snoop(struct char_data *ch, char *argument, int cmd);
-void do_insult(struct char_data *ch, char *argument, int cmd);
-void do_quit(struct char_data *ch, char *argument, int cmd);
-void do_help(struct char_data *ch, char *argument, int cmd);
-void do_who(struct char_data *ch, char *argument, int cmd);
-void do_emote(struct char_data *ch, char *argument, int cmd);
-void do_echo(struct char_data *ch, char *argument, int cmd);
-void do_trans(struct char_data *ch, char *argument, int cmd);
-void do_kill(struct char_data *ch, char *argument, int cmd);
-void do_stand(struct char_data *ch, char *argument, int cmd);
-void do_sit(struct char_data *ch, char *argument, int cmd);
-void do_rest(struct char_data *ch, char *argument, int cmd);
-void do_sleep(struct char_data *ch, char *argument, int cmd);
-void do_wake(struct char_data *ch, char *argument, int cmd);
-void do_force(struct char_data *ch, char *argument, int cmd);
-void do_get(struct char_data *ch, char *argument, int cmd);
-void do_drop(struct char_data *ch, char *argument, int cmd);
-void do_news(struct char_data *ch, char *argument, int cmd);
-void do_score(struct char_data *ch, char *argument, int cmd);
-void do_title(struct char_data *ch, char *argument, int cmd);
-void do_spells(struct char_data *ch, char *argument, int cmd);
-void do_report(struct char_data *ch, char *argument, int cmd);
-void do_inventory(struct char_data *ch, char *argument, int cmd);
-void do_equipment(struct char_data *ch, char *argument, int cmd);
-void do_shout(struct char_data *ch, char *argument, int cmd);
-void do_not_here(struct char_data *ch, char *argument, int cmd);
-void do_tell(struct char_data *ch, char *argument, int cmd);
-void do_send(struct char_data *ch, char *argument, int cmd);
-void do_gtell(struct char_data *ch, char *argument, int cmd);
-void do_wear(struct char_data *ch, char *argument, int cmd);
-void do_wield(struct char_data *ch, char *argument, int cmd);
-void do_grab(struct char_data *ch, char *argument, int cmd);
-void do_remove(struct char_data *ch, char *argument, int cmd);
-void do_put(struct char_data *ch, char *argument, int cmd);
-void do_shutdown(struct char_data *ch, char *argument, int cmd);
-void do_save(struct char_data *ch, char *argument, int cmd);
-void do_hit(struct char_data *ch, char *argument, int cmd);
-void do_string(struct char_data *ch, char *arg, int cmd);
-void do_give(struct char_data *ch, char *arg, int cmd);
-void do_stat(struct char_data *ch, char *arg, int cmd);
-void do_time(struct char_data *ch, char *arg, int cmd);
-void do_weather(struct char_data *ch, char *arg, int cmd);
-void do_load(struct char_data *ch, char *arg, int cmd);
-void do_purge(struct char_data *ch, char *arg, int cmd);
-void do_shutdow(struct char_data *ch, char *arg, int cmd);
-void do_whisper(struct char_data *ch, char *arg, int cmd);
-void do_cast(struct char_data *ch, char *arg, int cmd);
-void do_at(struct char_data *ch, char *arg, int cmd);
-void do_goto(struct char_data *ch, char *arg, int cmd);
-void do_ask(struct char_data *ch, char *arg, int cmd);
-void do_drink(struct char_data *ch, char *arg, int cmd);
-void do_eat(struct char_data *ch, char *arg, int cmd);
-void do_pour(struct char_data *ch, char *arg, int cmd);
-void do_sip(struct char_data *ch, char *arg, int cmd);
-void do_taste(struct char_data *ch, char *arg, int cmd);
-void do_order(struct char_data *ch, char *arg, int cmd);
-void do_follow(struct char_data *ch, char *arg, int cmd);
-void do_rent(struct char_data *ch, char *arg, int cmd);
-void do_junk(struct char_data *ch, char *arg, int cmd);
-void do_advance(struct char_data *ch, char *arg, int cmd);
-void do_close(struct char_data *ch, char *arg, int cmd);
-void do_open(struct char_data *ch, char *arg, int cmd);
-void do_lock(struct char_data *ch, char *arg, int cmd);
-void do_unlock(struct char_data *ch, char *arg, int cmd);
-void do_exits(struct char_data *ch, char *arg, int cmd);
-void do_enter(struct char_data *ch, char *arg, int cmd);
-void do_leave(struct char_data *ch, char *arg, int cmd);
-void do_flee(struct char_data *ch, char *arg, int cmd);
-void do_sneak(struct char_data *ch, char *arg, int cmd);
-void do_hide(struct char_data *ch, char *arg, int cmd);
-void do_backstab(struct char_data *ch, char *arg, int cmd);
-void do_pick(struct char_data *ch, char *arg, int cmd);
-void do_steal(struct char_data *ch, char *arg, int cmd);
-void do_bash(struct char_data *ch, char *arg, int cmd);
-void do_rescue(struct char_data *ch, char *arg, int cmd);
-void do_kick(struct char_data *ch, char *arg, int cmd);
-void do_punch(struct char_data *ch, char *arg, int cmd);
-void do_examine(struct char_data *ch, char *arg, int cmd);
-void do_users(struct char_data *ch, char *arg, int cmd);
-void do_where(struct char_data *ch, char *arg, int cmd);
-void do_levels(struct char_data *ch, char *arg, int cmd);
-void do_reroll(struct char_data *ch, char *arg, int cmd);
-void do_brief(struct char_data *ch, char *arg, int cmd);
-void do_wiznet(struct char_data *ch, char *arg, int cmd);
-void do_consider(struct char_data *ch, char *arg, int cmd);
-void do_group(struct char_data *ch, char *arg, int cmd);
-void do_restore(struct char_data *ch, char *arg, int cmd);
-void do_return(struct char_data *ch, char *argument, int cmd);
-void do_switch(struct char_data *ch, char *argument, int cmd);
-void do_quaff(struct char_data *ch, char *argument, int cmd);
-void do_recite(struct char_data *ch, char *argument, int cmd);
-void do_use(struct char_data *ch, char *argument, int cmd);
-void do_flag(struct char_data *ch, char *argument, int cmd);
-void do_noshout(struct char_data *ch, char *argument, int cmd);
-void do_wizhelp(struct char_data *ch, char *argument, int cmd);
-void do_credits(struct char_data *ch, char *argument, int cmd);
-void do_compact(struct char_data *ch, char *argument, int cmd);
-void do_action(struct char_data *ch, char *arg, int cmd);
-void do_practice(struct char_data *ch, char *arg, int cmd);
-void do_flick(struct char_data *ch, char *arg, int cmd);
-void do_wall(struct char_data *ch, char *arg, int cmd);
-void do_set(struct char_data *ch, char *arg, int cmd);
-void do_police(struct char_data *ch, char *arg, int cmd);
-void do_wizlock(struct char_data *ch, char *arg, int cmd);
-void do_noaffect(struct char_data *ch, char *arg, int cmd);
-void do_invis(struct char_data *ch, char *arg, int cmd);
-void do_notell(struct char_data *ch, char *arg, int cmd);
-void do_banish(struct char_data *ch, char *arg, int cmd);
-void do_reload(struct char_data *ch, char *arg, int cmd);
-void do_data(struct char_data *ch, char *arg, int cmd);
-void do_checkrent(struct char_data *ch, char *arg, int cmd);
-void do_chat(struct char_data *ch, char *arg, int cmd);
-void do_lastchat(struct char_data *ch, char *arg, int cmd);
-void do_bank(struct char_data *ch, char *arg, int cmd);
-void do_sys(struct char_data *ch, char *arg, int cmd);
-void do_extractrent(struct char_data *ch, char *arg, int cmd);
-void do_replacerent(struct char_data *ch, char *arg, int cmd);
-void do_tornado(struct char_data *ch, char *arg, int cmd);
-void do_light_move(struct char_data *ch, char *arg, int cmd);
-void do_flash(struct char_data *ch, char *arg, int cmd);
-void do_multi_kick(struct char_data *ch, char *arg, int cmd);
-void do_demote(struct char_data *ch, char *arg, int cmd);
-void do_nochat(struct char_data *ch, char *arg, int cmd);
-void do_post(struct char_data *ch, char *arg, int cmd);
-void do_sayh(struct char_data *ch, char *argument, int cmd);
-void do_assist(struct char_data *ch, char *argument, int cmd);
-void do_ungroup(struct char_data *ch, char *argument, int cmd);
-void do_wizards(struct char_data *ch, char *argument, int cmd);
-void do_hangul(struct char_data *ch, char *arg, int cmd);
-void do_version(struct char_data *ch, char *arg, int cmd);
-void do_disarm(struct char_data *ch, char *arg, int cmd);	/* chase */
-void do_shouryuken(struct char_data *ch, char *arg, int cmd);	/* chase */
-void do_throw_object(struct char_data *ch, char *arg, int cmd);		/* chase */
-void do_assault(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_cant(struct char_data *ch, char *arg, int cmd);		/* by process */
-void do_query(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_whistle(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_simultaneous(struct char_data *ch, char *arg, int cmd);		/* by process */
-void do_arrest(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_angry_yell(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_solace(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_unwield(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_unhold(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_temptation(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_shadow(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_smoke(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_inject(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_plan(struct char_data *ch, char *arg, int cmd);		/* by process */
-void do_power_bash(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_evil_strike(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_charge(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_solo(struct char_data *ch, char *arg, int cmd);		/* by process */
-void do_auto_assist(struct char_data *ch, char *arg, int cmd);	/* by process */
-void do_spin_bird_kick(struct char_data *ch, char *arg, int cmd);	/* by ares */
-void do_reply(struct char_data *ch, char *arg, int cmd);	/* by process */
-
-/* quest */
-void do_quest(struct char_data *ch, char *arg, int cmd);	/* by atre */
-void do_request(struct char_data *ch, char *arg, int cmd);	/* by atre */
-void do_hint(struct char_data *ch, char *arg, int cmd);		/* by atre */
-
-// Challenge Room Quest System
-void do_challenge(struct char_data *ch, char *argument, int cmd); // 251017 by Komo
-void do_begin(struct char_data *ch, char *argument, int cmd);     // 251017 by Komo
-void do_rejoin(struct char_data *ch, char *argument, int cmd);    // 251022 by Komo
-void do_challenge_abort(struct char_data *ch, char *argument, int cmd); // 251129 by Komo
-
-// color processing function
-void process_color_string(const char *input, char *output, int max_out_len); // src/utility.c, Komo
-void do_colortest(struct char_data *ch, char *argument, int cmd); // src/utility.c, Komo
-
-// Live Reloading System, 251120
-void do_zreload(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251120 by Komo
-void do_wreload(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251121 by Komo
-void do_zonelist(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251121 by Komo
 
 char *command[] = {
 	"north",			/* 1 */
@@ -889,13 +685,12 @@ void argument_interpreter(char *argument, char *first_arg, char *second_arg)
 		for (; *(argument + begin) == ' '; begin++) ;
 
 		/* Find length of first word */
-		for (look_at = 0; ISLETTER(*(argument + begin + look_at));
-		     look_at++)
+		for (look_at = 0; ISLETTER(*(argument + begin + look_at)); look_at++)
 
 			/* Make all letters lower case,
 			   AND copy them to first_arg */
 			*(first_arg + look_at) =
-			/*cyb   LOWER(*(argument + begin + look_at));  */
+			/*cyb   tolower(*(argument + begin + look_at));  */
 			    *(argument + begin + look_at);
 
 		*(first_arg + look_at) = '\0';
@@ -909,13 +704,12 @@ void argument_interpreter(char *argument, char *first_arg, char *second_arg)
 		for (; *(argument + begin) == ' '; begin++) ;
 
 		/* Find length of first word */
-		for (look_at = 0; ISLETTER(*(argument + begin + look_at));
-		     look_at++)
+		for (look_at = 0; ISLETTER(*(argument + begin + look_at)); look_at++)
 
 			/* Make all letters lower case,
 			   AND copy them to second_arg */
 			*(second_arg + look_at) =
-			/*cyb   LOWER(*(argument + begin + look_at)); */
+			/*cyb   tolower(*(argument + begin + look_at)); */
 			    *(argument + begin + look_at);
 
 		*(second_arg + look_at) = '\0';
@@ -942,30 +736,29 @@ int is_number(char *str)
    primary argument, following the sub-arg                  */
 char *one_argument(char *argument, char *first_arg)
 {
-	int /* found, */ begin, look_at;
+	char *p;
 
-	/* found = */ begin = 0;
+    if (!argument) return NULL;
 
-	do {
-		/* Find first non blank */
-		for (; isspace(*(argument + begin)); begin++) ;
+    while (1) {
+        while (isspace(*argument))
+            argument++;
+        
+        p = first_arg;
 
-		/* Find length of first word */
-		for (look_at = 0; ISLETTER(*(argument + begin + look_at));
-		     look_at++)
+        while (*argument && ISLETTER(*argument)) {
+            *p = tolower(*argument);
+            p++;
+            argument++;
+        }
 
-			/* Make all letters lower case,
-			   AND copy them to first_arg */
-			*(first_arg + look_at) =
-			/*cyb LOWER(*(argument + begin + look_at)); */
-			    *(argument + begin + look_at);
+        *p = '\0';
 
-		*(first_arg + look_at) = '\0';
-		begin += look_at;
-	}
-	while (fill_word(first_arg));
+        if (!fill_word(first_arg))
+            break;
+    }
 
-	return (argument + begin);
+    return argument;
 }
 
 int fill_word(char *argument)
@@ -980,7 +773,7 @@ int is_abbrev(char *arg1, char *arg2)
 		return (0);
 
 	for (; *arg1; arg1++, arg2++)
-		if (LOWER(*arg1) != LOWER(*arg2))
+		if (tolower(*arg1) != tolower(*arg2))
 			return (0);
 
 	return (1);
@@ -1396,7 +1189,8 @@ void query_status(struct descriptor_data *d)
 		ch->abilities.str, ch->abilities.str_add,
 		ch->abilities.wis, ch->abilities.intel,
 		ch->abilities.dex, ch->abilities.con);
-	SEND_TO_Q(buf, d);
+	char *msg_ptr = buf; // SEND_TO_Q 매크로에 포인터 전달, 251126 by Komo
+    SEND_TO_Q(msg_ptr, d);
 	SEND_TO_Q("\n\rDo you want to reroll your stat or improve?", d);
 	SEND_TO_Q("\n\rTo reroll, type R", d);
 	SEND_TO_Q("\n\rTo improve, type 2 initials of each stat.", d);
@@ -1454,9 +1248,7 @@ void nanny(struct descriptor_data *d, char *arg)
 	struct descriptor_data *k;
 	extern struct descriptor_data *descriptor_list;
 	extern int nonewplayers;
-	void do_look(struct char_data *ch, char *argument, int cmd);
-	void load_char_objs(struct char_data *ch);
-	int load_char(char *name, struct char_file_u *char_element);
+	
 	char improved_stat[2];
 	int i;
 	char new_connection[180];
@@ -1515,9 +1307,9 @@ void nanny(struct descriptor_data *d, char *arg)
 				       strlen(tmp_name) + 1);
 				CAP(tmp_name);
 				strcpy(GET_NAME(d->character), tmp_name);
-				snprintf(buf, sizeof(buf),
-					"Did I get that right, %s (Y/N)? ", tmp_name);
-				SEND_TO_Q(buf, d);
+				snprintf(buf, sizeof(buf), "Did I get that right, %s (Y/N)? ", tmp_name);
+                char *msg_ptr = buf; // SEND_TO_Q 매크로에 포인터 전달, 251126 by Komo
+                SEND_TO_Q(msg_ptr, d);
 				STATE(d) = CON_NMECNF;
 			}
 		}
@@ -1585,8 +1377,9 @@ void nanny(struct descriptor_data *d, char *arg)
 			snprintf(buf, sizeof(buf), "%s(%d)[%s] has connected.",
 				GET_NAME(d->character),
 				GET_LEVEL(d->character), d->host);
-			mudlog(buf);
-			SEND_TO_Q(motd, d);
+			log(buf);
+			char *msg_ptr = motd; // SEND_TO_Q에 포인터 전달, 251126 by Komo
+            SEND_TO_Q(msg_ptr, d);
 			SEND_TO_Q("\n\r\n&C*** PRESS RETURN : &n", d);
 			STATE(d) = CON_RMOTD;
 		}
@@ -1692,7 +1485,8 @@ void nanny(struct descriptor_data *d, char *arg)
 
 	case CON_RMOTD:	/* read CR after printing motd */
 		if (GET_LEVEL(d->character) >= IMO) {
-			SEND_TO_Q(imotd, d);
+			char *msg_ptr = imotd; // SEND_TO_Q에 포인터 전달, 251126 by Komo
+            SEND_TO_Q(msg_ptr, d);
 			SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
 			STATE(d) = CON_IMOTD;
 			break;
@@ -1879,7 +1673,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		d->pos = create_entry(GET_NAME(d->character));
 		save_char(d->character, NOWHERE);
 		SEND_TO_Q(motd, d);
-		SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
+		SEND_TO_Q("\n\r\n&C*** PRESS RETURN : &n", d);
 		break;
 	case CON_DELCNF:
 		/* check passwd */

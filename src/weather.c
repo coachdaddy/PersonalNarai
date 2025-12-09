@@ -21,10 +21,6 @@ extern struct weather_data weather_info;
 extern struct descriptor_data *descriptor_list; /* in comm.c, 251126 by Komo */
 extern struct room_data *world;					/* in db.c , 251126 by Komo */
 
-int dice(int num, int size);
-int MIN(int a, int b);
-int MAX(int a, int b);
-
 /* In this part. */
 void weather_and_time(int mode);
 void another_hour(int mode);

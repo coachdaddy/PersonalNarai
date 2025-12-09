@@ -35,20 +35,6 @@ extern char *dirs[];
 
 #define GBISLAND_SEED_EVIL_POWER	23309
 
-void DEBUG_LOG(const char *format, ...);
-void mudlog(const char *str);
-
-int number(int from, int to);
-void wipe_stash(char *filename);
-void save_char_nocon(struct char_data *ch, sh_int load_room);
-void raw_kill(struct char_data *ch, int level);
-void do_look(struct char_data *ch, char *argument, int cmd);
-void do_say(struct char_data *ch, char *str, int cmd);
-void do_open(struct char_data *ch, char *argument, int cmd);
-void do_move(struct char_data *ch, char *argument, int cmd);
-void do_give(struct char_data *ch, char *argument, int cmd);
-int MAX(int a, int b);
-int MIN(int a, int b);
 
 void gbisland_move_seashore(struct char_data *ch)
 {
@@ -200,8 +186,7 @@ void gbisland_false_move(struct char_data *ch, int dir)
 				    ch, TO_CHAR);
 
 				if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-					snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir
-									   - 1]);
+					snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir - 1]);
 					act(tmp, TRUE, k->follower, 0, 0, TO_ROOM);
 				}
 			}
@@ -257,8 +242,7 @@ void gbisland_go_out_barrier(struct char_data *ch)
 				send_to_char("\n\r", k->follower);
 
 				if (!IS_AFFECTED(ch, AFF_SNEAK)) {
-					snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir
-									   - 1]);
+					snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[dir - 1]);
 					act(tmp, TRUE, k->follower, 0, 0, TO_ROOM);
 				}
 
@@ -491,8 +475,7 @@ int gbisland_carpie(struct char_data *ch, int cmd, char *arg)
 					}
 				}
 
-				send_to_char
-				    ("누군가 당신의 허벅지를 꼬집습니다.\n\r", victim);
+				send_to_char("누군가 당신의 허벅지를 꼬집습니다.\n\r", victim);
 				GET_POS(victim) = POSITION_STANDING;
 
 				if (IS_NPC(victim)) {
@@ -526,10 +509,8 @@ int gbisland_magic_paper(struct char_data *ch, int cmd, char *arg)
 	if (obj_index[obj->item_number].virtual != GBISLAND_MAGIC_PAPER)
 		return FALSE;
 
-	act("성스러운 기운이 방안에 가득히 넘쳐 흐릅니다.",
-	    FALSE, ch, 0, 0, TO_ROOM);
-	send_to_char
-	    ("성스러운 기운이 방안에 가득히 넘쳐 흐릅니다.\n\r", ch);
+	act("성스러운 기운이 방안에 가득히 넘쳐 흐릅니다.", FALSE, ch, 0, 0, TO_ROOM);
+	send_to_char("성스러운 기운이 방안에 가득히 넘쳐 흐릅니다.\n\r", ch);
 
 	room = ch->in_room;
 	for (victim = character_list; victim; victim = victim->next) {
@@ -564,12 +545,10 @@ int gbisland_magic_paper(struct char_data *ch, int cmd, char *arg)
 
 			if (GET_ALIGNMENT(victim) > 0) {
 				/* good */
-				send_to_char
-				    ("성스러운 기운이 당신에게 힘을 줍니다.\n\r", victim);
+				send_to_char("성스러운 기운이 당신에게 힘을 줍니다.\n\r", victim);
 			} else {
 				/* evil */
-				send_to_char
-				    ("성스러운 기운에 당신은 힘이 빠집니다.\n\r", victim);
+				send_to_char("성스러운 기운에 당신은 힘이 빠집니다.\n\r", victim);
 			}
 		}
 	}

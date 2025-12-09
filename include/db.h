@@ -5,6 +5,8 @@
 
 #include <errno.h>
 
+#include "structs.h"
+
 /* data files used by the game system */
 
 /*  default directory is defined in comm.c : usually lib */
@@ -59,21 +61,14 @@ struct obj_data *read_object(int nr, int type);
 struct char_data *read_mobile(int nr, int type);
 
 
-#define MENU         \
-"\n\rGOOD luck to NaraiMUDDER\n\r\n\
-0) Get away from NaraiMUD.\n\r\
-1) Into the NaraiMUD.\n\r\
-2) Modify description.\n\r\
-3) Change secret key.\n\r\
-** Delete character is removed .\n\r\n\r\
-   What number? : "
 /* 
 #define GREETINGS \
 "\n\r\n\r\
-                           	NaraiMUD\n\r\n\r\
-                           A derivative of KITMUD\n\r\n\r\
-                             Continued from EVE\n\r\
-                         Restarted at 2010. 12. 20. .........\n\r\n\r"
+                     	NaraiMUD (PERSONAL)            \n\r\n\r\
+                      A derivative of KIT-MUD           \n\r\n\r\
+                        Continued from EVE             \n\r\
+                    Restarted at 2010. 12. 20.         \n\r\
+                    Revisited at 2025. 10. 14. ........\n\r\n\r"
  */
 
 #define GREETINGS \
@@ -88,6 +83,16 @@ struct char_data *read_mobile(int nr, int type);
 &A                      Continued from EVE            &n\n\r\
 &g                 Restarted at 2010. 12. 20.         &n\n\r\
 &G                 Revisited at 2025. 10. 14. .....   &n\n\r\n\r"
+
+
+#define MENU         \
+"\n\rGOOD luck to NaraiMUDDER\n\r\n\
+0) Get away from NaraiMUD.\n\r\
+1) Into the NaraiMUD.\n\r\
+2) Modify description.\n\r\
+3) Change secret key.\n\r\
+** Delete character is removed .\n\r\n\r\
+   &YWhat number? : &n"
 
 
 #define WELC_MESSG \
@@ -144,23 +149,12 @@ struct index_data {
 	long pos;		/* file position of this field              */
 	int number;		/* number of existing units of this mob/obj     */
 	int (*func) ();		/* special procedure for this mob/obj       */
-};
 
-/* move to db2.h 
-// for queueing zones for update  
-struct reset_q_element
-{
-	int zone_to_reset;            // ref to zone_data 
-	struct reset_q_element *next;	
+	/* 퀘스트 시스템 개편을 위해 추가 */
+    char *name;      /* Monster name */
+    int level;       /* Monster level */
+    long act;        /* Monster act flags */
 };
-
-// structure for the update queue     
-struct reset_q_type
-{
-	struct reset_q_element *head;
-	struct reset_q_element *tail;
-} reset_q;
-*/
 
 struct player_index_element {
 	char *name;

@@ -10,19 +10,20 @@
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <string.h>
-#include <time.h>
-#include <sys/time.h>
-#include <fcntl.h>
 #include <signal.h>
 #include <setjmp.h>
 #include <unistd.h>
+#include <netdb.h>
+#include <string.h>
+#include <time.h>
+#include <fcntl.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
 
 #include "structs.h"
 #include "utils.h"
@@ -41,88 +42,95 @@
 #endif				// DFLT_PORT
 
 #define MAX_NAME_LENGTH 15
-#define MAX_HOSTNAME 256
-#define OPT_USEC 200000		/* time delay corresponding to 4 passes/sec */
-#define MAXFDALLOWED 200
-#define MAXOCLOCK 1200
+#define MAX_HOSTNAME    256
+#define OPT_USEC        200000 /* time delay corresponding to 5 passes/sec */
+#define MAXFDALLOWED    200
+#define MAXOCLOCK       1200
+#define A_DAY           86400
+#define MINUTES(m)      (60 * (m))
+#define TICS_PER_SEC    5
+#define SAVE_PERIOD_MINUTES 10 /* 10분마다 플레이어 저장 */
+#define PLAYER_SAVE_PERIOD  (MINUTES(SAVE_PERIOD_MINUTES) * TICS_PER_SEC)
 
 extern int errno;
 extern int no_echo;
-extern struct room_data *world;	/* In db.c */
-extern int top_of_world;	/* In db.c */
-extern struct time_info_data time_info;		/* In db.c */
+extern struct room_data *world;			/* In db.c */
+extern int top_of_world;				/* In db.c */
+extern struct time_info_data time_info;	/* In db.c */
 extern char help[];
+extern char *connected_types[];
 
 extern void no_echo_telnet(struct descriptor_data *d);
 extern void echo_telnet(struct descriptor_data *d);
 extern void no_echo_local(int fd);
 extern void weather_and_time(int mode);
 
-sigset_t __unmask;
-
 /* local globals */
 struct descriptor_data *descriptor_list, *next_to_process;
-jmp_buf env;
 
 int s;
 int slow_death = 0;		/* Shut her down, Martha, she's sucking mud */
 int shutdowngame = 0;		/* clean shutdown */
-int no_specials = 0;		/* Suppress ass. of special routines */
+int reboot_game = 0;
+int reboot_counter = -1;
+struct timeval null_time;
 int boottime;
-
-/* reboot_time = 24 hour */
-/* u_long reboot_time = 86400; */
-u_long reboot_time = REBOOT_TIME;
+unsigned long reboot_time = REBOOT_TIME; // 현재 4일
 
 int maxdesc, avail_descs;
-int tics = 0;			/* for extern checkpointing */
-int nonewplayers = 0;
-int nostealflag = 0;
-int nokillflag = 0;
-int noshoutflag = 0;
+int tics = 0; /* for extern checkpointing */
+
+char pidfile[256] = {0};
+
 int nochatflag = 0;
 int nodisarmflag = 0;		/* for disarm .Chase written */
 int noenchantflag = 0;		/* noenchant!! */
+int nokillflag = 0;
+int nonewplayers = 0;
+int no_specials = 0;		/* Suppress ass. of special routines */
+int nostealflag = 0;
+int noshoutflag = 0;
+
 int regen_percent = 50;
 int regen_time_percent = 66;
 int regen_time = 200;
 
 struct descriptor_data *xo;
 
-void logsig(int sig);
-void hupsig(int sig);
-void shutdown_request(int sig);
-void checkpointing(int sig);
-void on_echo_local(int fd);
-void stash_char(struct char_data *ch);
-int move_stashfile_safe (const char *victim);
-void transall(int room);
-int unfriendly_domain(char *h);
-
-int get_from_q(struct txt_q *queue, char *dest);
-/* write_to_q is in comm.h for the macro */
-void run_the_game(int port);
 void game_loop(int s);
+void signal_setup(void);
+void handle_graceful_shutdown(int sig);
+void handle_immediate_shutdown(int sig);
+void run_the_game(int port);
+
+/* write_to_q is in comm.h for the macro */
+int get_from_q(struct txt_q *queue, char *dest);
 int init_socket(int port);
 int new_connection(int s);
 int new_descriptor(int s);
+int unfriendly_domain(char *h);
 int process_output(struct descriptor_data *t);
 int process_input(struct descriptor_data *t);
+void saveallplayers(void);
+void zapper(void);
+void checkpointing(int sig);
+void nonblock(int s);
+void on_echo_local(int fd);
+void transall(int room);
+int move_stashfile_safe(const char *victim); // 251016
 void close_sockets(int s);
 void close_socket(struct descriptor_data *d);
-struct timeval timediff(struct timeval *a, struct timeval *b);
+void stash_char(struct char_data *ch);
 void flush_queues(struct descriptor_data *d);
-void nonblock(int s);
 void parse_name(struct descriptor_data *desc, char *arg);
-void freaky(struct descriptor_data *d);
-void zapper(void);
+void log_abnormal_disconnect(struct descriptor_data *d);
+struct timeval timediff(struct timeval *a, struct timeval *b);
 
 /* extern fcnts */
-struct char_data *make_char(char *name, struct descriptor_data *desc);
+int is_korean(struct descriptor_data *d);
 void boot_db(void);
 void zone_update(void);
 void record_player_number(void);
-int is_korean(struct descriptor_data *d);
 void affect_update(void);	/* In spells.c */
 void point_update(void);	/* In limits.c */
 void free_char(struct char_data *ch);
@@ -135,7 +143,8 @@ void stop_fighting(struct char_data *ch);
 void show_string(struct descriptor_data *d, char *input);
 void save_char(struct char_data *ch, sh_int load_room);
 void do_assist(struct char_data *ch, char *argument, int cmd);
-void process_color_string(const char *input, char *output, int max_out_len); // Komo, 251022
+void process_color_string(const char *input, char *output, int max_out_len); // Komo
+struct char_data *make_char(char *name, struct descriptor_data *desc);
 
 /* *********************************************************************
 *  main game loop and related stuff               *
@@ -145,31 +154,29 @@ int main(int argc, char **argv)
 {
 	int port;
 	char buf[512];
-	char *dir;
 
 	close(0);
 	close(1);
-	port = DFLT_PORT;
-	dir = DFLT_DIR;
-	// strcpy(baddomain[0],"165.246.11.109"); // In-ha univ.
 	baddoms = 0;
+	port = DFLT_PORT;
+
 	if (argc == 2) {
-		if (!ISDIGIT(*argv[1])) {
-			fprintf(stderr, "Usage: %s [ port # ]\n", argv[0]);
-			exit(0);
-		} else if ((port = atoi(argv[1])) <= 1024) {
-			fprintf(stderr, "Illegal port #\n");
-			exit(0);
+		char *p = argv[1];
+        while (*p) {
+            if (!isdigit(*p)) {
+                fprintf(stderr, "(main) Port number must contain only digits. Usage: %s [ port # ]\n", argv[0]);
+                exit(1);
+            }
+            p++;
+        }
+        if ((port = atoi(argv[1])) <= 1024) {
+            fprintf(stderr, "Illegal port number.\n");
+            exit(0);
 		}
 	}
 
-	// no more need to chdir to "lib"
-	if (chdir(dir) < 0) {
-		// perror("chdir");
-		// exit(0);
-	}
-
 	srandom(boottime = time(0));
+
 	snprintf(buf, sizeof(buf), "mud-%d.pid", port);
 	if (access(buf, F_OK) == 0) {
 		mudlog("Port busy: pid file already exists.");
@@ -178,19 +185,30 @@ int main(int argc, char **argv)
 
 	umask(0077);
 
+	log("(main) Signal trapping.");
+    signal_setup();
+	snprintf(buf, sizeof(buf), "(main) Running game on port %d.", port);
+	log(buf);
 	snprintf(buf, sizeof(buf), "Running game on port %d.", port);
 	mudlog(buf);
 	run_the_game(port);
+
+	// PID 파일 삭제 (정상 종료 시)
+    if (pidfile[0] != '\0') {
+        unlink(pidfile);
+        log("(main) PID file removed on normal termination.");
+    }
+    log("(main) Normal termination of game.");
+
 	return (0);
 }
 
 /* Init sockets, run game, and cleanup sockets */
 void run_the_game(int port)
 {
-	void signal_setup(void);
-	void saveallplayers();
-
 	descriptor_list = NULL;
+
+	log("(run_the_game) Opening mother connection.");
 	mudlog("Signal trapping.");
 	signal_setup();
 	mudlog("Opening mother connection.");
@@ -199,6 +217,20 @@ void run_the_game(int port)
 	boot_db();
 
 	FILE *pidfp;
+	log("(run_the_game) Writing pid file.");
+
+	if (!(pidfp = fopen(pidfile, "w+"))) {
+        perror("(run_the_game) ERROR: can't open pid file.");
+    } else {
+        fprintf(pidfp, "%d\n", getpid());
+        fclose(pidfp);
+    }
+
+	log("(run_the_game) Entering game loop.");
+	no_echo_local(s);
+
+	game_loop(s);
+	log("(run_the_game) DOWN??? SAVE ALL CHARS???");
 	char pidfile[256];
 	sprintf(pidfile, "writing pid file: mud-%d.pid", port);
 	mudlog(pidfile);
@@ -218,63 +250,72 @@ void run_the_game(int port)
 	game_loop(s);
 	mudlog("DOWN??????????SAVE ALL CHARS???????");
 	transall(3001);
+	log("(run_the_game) Game loop ended. Saving all characters.");
 	saveallplayers();
-
 	close_sockets(s);
 	shutdown(s, 2);
 
+	log("(run_the_game) Normal termination of game.");
 	unlink(pidfile);
 	mudlog("Normal termination of game.");
 }
 
-void transall(int room)
+// 신호 처리 로직 통합, by Komo
+void handle_graceful_shutdown(int sig)
 {
-	struct descriptor_data *pt, *npt;
-
-	for (pt = descriptor_list; pt; pt = npt) {
-		npt = pt->next;
-		if (pt->connected == CON_PLYNG)
-			if (pt->character) {
-				char_from_room(pt->character);
-				char_to_room(pt->character, real_room(room));
-				send_to_char(
-						    "\n\r\n\r\n\r\n\rShutdown System has transferred you!\n\r\n\r",
-						    pt->character);
-				send_to_all("MUD will be up in 65 seconds :p\n\r\n\r");
-				process_output(pt);
-			}
-	}
+    reboot_game = 1; // '리붓' 플래그 설정
+    log("Received SIGUSR1 - Graceful shutdown/reboot request.");
 }
 
-void saveallplayers()
-{
-	struct descriptor_data *pt, *npt;
 
-	for (pt = descriptor_list; pt; pt = npt) {
-		npt = pt->next;
-		if (pt->connected == CON_PLYNG)
-			if (pt->character) {
-#ifdef  RETURN_TO_QUIT
-				save_char(pt->character,
-					  world[pt->character->in_room].number);
-#else
-				save_char(pt->character, pt->character->in_room);
-#endif
-				stash_char(pt->character);
-			}
-	}
+// SIGUSR2, SIGINT, SIGTERM: 즉시 종료
+void handle_immediate_shutdown(int sig)
+{
+    if (!shutdowngame) {
+        log("Received signal for immediate shutdown.");
+        if (pidfile[0] != '\0') {
+            unlink(pidfile);
+            log("PID file removed by signal handler.");
+        }
+        saveallplayers();
+        exit(0);
+    }
 }
+
+
+void signal_setup(void)
+{
+    // checkpointing을 위한 타이머 설정 추가
+    struct itimerval itime;
+    struct timeval interval;
+
+    interval.tv_sec = 900; // 15분
+    interval.tv_usec = 0;
+    itime.it_interval = interval;
+    itime.it_value = interval;
+    setitimer(ITIMER_REAL, &itime, 0); // 타이머 시작
+    signal(SIGALRM, checkpointing);
+
+    signal(SIGPIPE, SIG_IGN);
+    signal(SIGUSR1, handle_graceful_shutdown);  // 1분 후 리붓
+    signal(SIGUSR2, handle_immediate_shutdown); // 즉시 종료
+    signal(SIGINT, handle_immediate_shutdown);  
+    signal(SIGTERM, handle_immediate_shutdown); 
+    signal(SIGHUP, handle_immediate_shutdown);  // 기타 시스템 신호
+}
+
 
 void game_loop(int s)
 {
 	fd_set input_set, output_set, exc_set;
-	struct timeval last_time, now, timespent, timeout, null_time;
+	struct timeval last_time, now, timespent, timeout;
 	static struct timeval opt_time;
 	char comm[MAX_INPUT_LENGTH];
 	struct descriptor_data *point, *next_point;
-	int pulse = 0, mask, xoclock = 0;
+	struct char_data *ch;
+	int pulse = 0;
 	char prmpt[32];
-	int ctmp;
+	int pulse_per_mud_hour;
 
 	null_time.tv_sec = 0;
 	null_time.tv_usec = 0;
@@ -284,11 +325,6 @@ void game_loop(int s)
 
 	maxdesc = s;
 	avail_descs = MAXFDALLOWED;
-
-	mask = sigmask(SIGUSR1) | sigmask(SIGUSR2) | sigmask(SIGINT) |
-	    sigmask(SIGBUS) | sigmask(SIGSEGV) |
-	    sigmask(SIGPIPE) | sigmask(SIGALRM) | sigmask(SIGTERM) |
-	    sigmask(SIGURG) | sigmask(SIGXCPU) | sigmask(SIGHUP);
 
 	/* Main loop */
 	while (!shutdowngame) {
@@ -314,31 +350,29 @@ void game_loop(int s)
 			last_time.tv_usec -= 1000000;
 			last_time.tv_sec++;
 		}
-		sigsetmask(mask);
-		if (select(maxdesc + 1, &input_set, &output_set, &exc_set,
-			   &null_time) < 0) {
+
+		if (select(maxdesc + 1, &input_set, &output_set, &exc_set, &null_time) < 0) {
 			perror("Select poll");
-			exit(0);
+			return;
 		}
-		if (select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0,
-		    &timeout) <
-		    0) {
-			perror("Select sleep");
-			exit(1);
+		if (select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &timeout) < 0) {
+			if (errno != EINTR) {
+                perror("Select sleep");
+                exit(1);
+            }
 		}
 
-		sigsetmask(0);
 		/* Respond to whatever might be happening */
 		/* New connection? */
 		if (FD_ISSET(s, &input_set))
 			if (new_descriptor(s) < 0)
 				perror("New connection");
 
-		/* kick out the freaky folks */
+		/* Handle network exceptions */
 		for (point = descriptor_list; point; point = next_point) {
 			next_point = point->next;
 			if (FD_ISSET(point->descriptor, &exc_set)) {
-				freaky(point);
+				log_abnormal_disconnect(point);
 				FD_CLR(point->descriptor, &input_set);
 				FD_CLR(point->descriptor, &output_set);
 				mudlog("Kicked out a freaky folk.\n\r");
@@ -351,18 +385,13 @@ void game_loop(int s)
 				if (process_input(point) < 0) {
 					FD_CLR(point->descriptor, &input_set);
 					FD_CLR(point->descriptor, &output_set);
-					if (point->connected == CON_PLYNG) {
-						stash_char(point->character);
-						move_stashfile_safe(point->character->player.name);
-					}
 					close_socket(point);
 				}
 		}
 		/* process_commands; */
 		for (point = descriptor_list; point; point = next_to_process) {
 			next_to_process = point->next;
-			if ((--(point->wait) <= 0) &&
-								 get_from_q(&point->input, comm)) {
+			if ((--(point->wait) <= 0) && get_from_q(&point->input, comm)) {
 				if (no_echo)
 					SEND_TO_Q("\n", point);
 				echo_telnet(point);
@@ -372,12 +401,9 @@ void game_loop(int s)
 				    point->character->specials.was_in_room != NOWHERE) {
 					if (point->character->in_room != NOWHERE)
 						char_from_room(point->character);
-					char_to_room(point->character,
-						     point->character->specials.was_in_room);
-					point->character->specials.was_in_room
-					    = NOWHERE;
-					act("$n has returned.", TRUE,
-					    point->character, 0, 0, TO_ROOM);
+					char_to_room(point->character, point->character->specials.was_in_room);
+					point->character->specials.was_in_room = NOWHERE;
+					act("$n has returned.", TRUE, point->character, 0, 0, TO_ROOM);
 				}
 				point->wait = 1;
 				if (point->character)
@@ -419,7 +445,7 @@ void game_loop(int s)
 		for (point = descriptor_list; point; point = next_point) {
 			next_point = point->next;
 			if (FD_ISSET(point->descriptor, &exc_set)) {
-				freaky(point);
+				log_abnormal_disconnect(point);
 				FD_CLR(point->descriptor, &input_set);
 				FD_CLR(point->descriptor, &output_set);
 				mudlog("Kicked out a freaky folk.\n\r");
@@ -428,74 +454,63 @@ void game_loop(int s)
 		}
 		for (point = descriptor_list; point; point = next_point) {
 			next_point = point->next;
-			xo = point;
-			if (FD_ISSET(point->descriptor, &output_set) &&
-			    point->output.head) {
+			if (FD_ISSET(point->descriptor, &output_set) && point->output.head) {
 				if (process_output(point) < 0) {
 					FD_CLR(point->descriptor, &input_set);
 					FD_CLR(point->descriptor, &output_set);
-					if (point->connected == CON_PLYNG) {
-						stash_char(point->character);
-						move_stashfile_safe(point->character->player.name);
-					}
 					close_socket(point);
 				} else
 					point->prompt_mode = 1;
 			}
 		}
-		/* give the people some prompts */
-		++xoclock;
-		if (xoclock == MAXOCLOCK)
-			xoclock = 0;
+		/* --- PROMPT - give the people some prompts --- */
 		for (point = descriptor_list; point; point = point->next) {
-			if ((!point->connected) && (!point->original) &&
-			    (GET_LEVEL(point->character) < IMO) &&
-			    (point->descriptor ==
-			     xoclock)) {
-#ifdef  RETURN_TO_QUIT
-				save_char(point->character,
-					  world[point->character->in_room].number);
-#else
-				save_char(point->character, point->character->in_room);
-#endif
-				stash_char(point->character);
-			}
 			if (point->prompt_mode) {
 				if (point->str)
-					write_to_descriptor(point->descriptor,
-							    "] ");
+					write_to_descriptor(point->descriptor, "] ");
 				else if (!point->connected) {
 					if (point->showstr_point)
-						write_to_descriptor(point->descriptor,
-								    "*** Press return ***");
+						write_to_descriptor(point->descriptor, "*** Press return ***");
 					else {
-						sprintf(prmpt,
-							"\[%ld,%ld,%ld] ",
+						sprintf(prmpt, "\[%ld,%ld,%ld] ",
 							GET_HIT(point->character),
 							GET_MANA(point->character),
 							GET_MOVE(point->character));
 						write_to_descriptor(point->descriptor, prmpt);
-						/* follows are for auto-rescue and auto-assist */
-						/*
-						   if(point->character->master->specials.fighting &&
-						   !point->character->specials.fighting &&
-						   IS_SET(point->character->specials.act,PLR_AUTO_ASSIST)
-						   )
-						   {
-						   do_assist(point->character,"",0);
-						   } */
 					}
 				}
 				point->prompt_mode = 0;
 			}
 		}
-		setjmp(env);
 
 		/* handle heartbeat stuff */
-		/* Note: pulse now changes every 1/4 sec  */
-
 		pulse++;
+
 		zapper();
+		/* 
+         * zapper()가 reboot_game=1로 만들면 아래 로직이 실행됨
+         */
+        if (reboot_game && reboot_counter < 0) {
+            // 리붓 절차 시작
+            reboot_counter = TICS_PER_SEC * 60; // 60초 카운트다운
+            send_to_all("\n\r\n\r### SYSTEM: Server is rebooting in 1 minute. Please log off safely. ###\n\r\n\r");
+            log("Graceful shutdown sequence initiated (via zapper or SIGUSR1).");
+            reboot_game = 0; // 플래그 초기화
+        }
+
+        if (reboot_counter >= 0) {
+            if (pulse % TICS_PER_SEC == 0) { // Approx. every second
+                int seconds_left = reboot_counter / TICS_PER_SEC;
+                if (seconds_left == 30 || seconds_left == 10 || seconds_left <= 5) {
+                    char buf[100];
+                    snprintf(buf, sizeof(buf), "### SYSTEM: Rebooting in %d seconds. ###\n\r", seconds_left);
+                    send_to_all(buf);
+                }
+            }
+            if (--reboot_counter < 0) {
+                shutdowngame = 1; // 1분 경과, 실제 종료 플래그 설정
+            }
+        } /* new shutdown logic */
 		if (!(pulse % PULSE_ZONE)) {
 			zone_update();
 			record_player_number();
@@ -511,83 +526,79 @@ void game_loop(int s)
 		if (!(pulse % PULSE_VIOLENCE)) {
 			perform_violence();
 		}
-		ctmp = SECS_PER_MUD_HOUR * 4 + 1;
-		if (!(pulse % ctmp)) {
+		/* 
+         * --- 게임내 시간 흐름(TICK)에 따른 처리 ---
+         * ctmp라는 모호한 변수명을 pulse_per_mud_hour로 변경하고,
+         * TICK 계산에 정의된 상수를 활용 - 251121 by Komo
+         */
+        pulse_per_mud_hour = SECS_PER_MUD_HOUR * TICS_PER_SEC;
+		if (!(pulse % pulse_per_mud_hour)) {
 			weather_and_time(1);
 			affect_update();
 			point_update();
 		}
-		if (pulse >= 2400) {
-			pulse = 0;
-		}
+		/* 정의된 주기마다 플레이어 저장 (tics 기준) */
+        if (tics > 0 && (tics % PLAYER_SAVE_PERIOD == 0)) {
+            struct descriptor_data *d;
+            int player_count = 0;
+            char buf[256];
+
+            for (d = descriptor_list; d; d = d->next) {
+                if (d->connected == CON_PLYNG && d->character) {
+                    player_count++;
+                }
+            }
+
+            if (player_count > 0) {
+                saveallplayers();
+                snprintf(buf, sizeof(buf), "Periodic player save executed (%d min interval). %d players saved.",
+                         SAVE_PERIOD_MINUTES, player_count);
+                log(buf);
+            } else {
+                snprintf(buf, sizeof(buf), "Periodic player save skipped (No active players, %d min interval).", 
+                         SAVE_PERIOD_MINUTES);
+                log(buf);
+            }
+        }
 		tics++;
 	}
 }
 
-void zapper(void)		/* auto shutdown */
+void transall(int room)
 {
-	int t;
-	static int flag = 0;
+	struct descriptor_data *pt, *npt;
 
-	t = time(0) - boottime;
-	if (t > reboot_time + 60 && flag) {
-		send_to_all("SHUTDOWN MESSAGE FROM SYSTEM!!!!!!\n\r\n\r\n\r");
-		send_to_all("Shutdown immediately!\n\r");
-		send_to_all("MUD will be up in 65 seconds :P\n\r\n\r");
-		shutdowngame = 1;
+	for (pt = descriptor_list; pt; pt = npt) {
+		npt = pt->next;
+		if (pt->connected == CON_PLYNG)
+			if (pt->character) {
+				char_from_room(pt->character);
+				char_to_room(pt->character, real_room(room));
+				send_to_char(
+						    "\n\r\n\r\n\r\n\rShutdown System has transferred you!\n\r\n\r",
+						    pt->character);
+				send_to_all("&H   MUD will be up in 65 seconds :p&n\n\r\n\r");
+				process_output(pt);
+			}
 	}
-	if (t > reboot_time && !flag) {
-		flag = 1;
-		send_to_all("SHUTDOWN MESSAGE FROM SYSTEM!!!!!!\n\r\n\r\n\r");
-		send_to_all("Shutdown after 1 minute!\n\r");
-		send_to_all("MUD will be up in 65 seconds :P\n\r\n\r");
+}
+
+void saveallplayers()
+{
+	struct descriptor_data *pt, *npt;
+
+	for (pt = descriptor_list; pt; pt = npt) {
+		npt = pt->next;
+		if (pt->connected == CON_PLYNG)
+			if (pt->character) {
+				save_char(pt->character,
+					  world[pt->character->in_room].number);
+				stash_char(pt->character);
+				move_stashfile_safe(pt->character->player.name);
+			}
 	}
 }
 
-/*
-#define KAIST "143.248."
-#define POSTECH "141.223."
-#define HANA "128.134."
-#define KOTEL "147.6."
-#define KREO "134.75."
-#define SEOUL "147.46"
-#define KAIST2 "137.68."
-#define GOLDSTAR "156.147"
-
-int is_korean(struct descriptor_data *d)
-{
-  if( strncmp(d->host,KAIST,strlen(KAIST)-1) 
-    && strncmp(d->host,POSTECH,strlen(POSTECH)-1) 
-    && strncmp(d->host,HANA,strlen(HANA)-1) 
-    && strncmp(d->host,KREO,strlen(KREO)-1) 
-    && strncmp(d->host,SEOUL,strlen(SEOUL)-1) 
-    && strncmp(d->host,KAIST2,strlen(KAIST2)-1) 
-    && strncmp(d->host,KOTEL,strlen(KOTEL)-1) )
-     return 0;
-  else return 1;
-}
-
-#define MAX_FOREIGN 20
-
-int more_than_20(struct descriptor_data *d)
-{
-  int nooff=0;
-  struct descriptor_data *tmp;
-  int t, tod, dow;
-
-  t=time(0)+32400;
-  tod=(t%86400)/3600;
-  dow=(t/86400)%7;
-  if(dow<4 || tod<=9 || tod >= 17) return 0;
-  for(tmp=descriptor_list;tmp;tmp=tmp->next){
-    if(!is_korean(tmp)) nooff++;
-  }
-  if(nooff>MAX_FOREIGN) return 1;
-  else return 0;
-}
-*/
-
-extern char *connected_types[];
 
 void record_player_number()
 {
@@ -600,9 +611,6 @@ void record_player_number()
 	tod = (t % 3600);
 
 	// zone period is about 48 sec, but rather irregular.
-#define A_DAY		86400
-#define MINUTES(m)	(60*(m))
-
 	static int hour = -1;
 	int th = (t % A_DAY) / MINUTES(60);
 	if (tod < MINUTES(1) && hour != th) {
@@ -627,8 +635,7 @@ void record_player_number()
 					d->descriptor, "  UNDEF  ",
 					connected_types[d->connected]);
 			sprintf(line + strlen(line), "%-15s", d->host);
-			// if(is_korean(d)) in_d++;
-			// else out_d++;
+			
 			if (!(n % 2)) {
 				strcat(line, "|");
 			} else {
@@ -792,7 +799,6 @@ int init_socket(int port)
 int new_connection(int s)
 {
 	struct sockaddr_in isa;
-	/* struct sockaddr peer; */
 	unsigned int i;
 	int t;
 
@@ -813,9 +819,6 @@ int new_descriptor(int s)
 	int i;
 	unsigned int size;
 	struct sockaddr_in sock;
-
-	/* 색상 파싱을 위한 버퍼 */
-    char color_buf[MAX_STRING_LENGTH * 3];
 
 	if ((desc = new_connection(s)) < 0)
 		return (-1);
@@ -848,15 +851,7 @@ int new_descriptor(int s)
 		free((char *)newd);
 		return (-1);
 	}
-	/* cyb  if(more_than_20(newd)) {
-	   write_to_descriptor(desc,
-	   "Sorry, the site for foreign players are full.\n\r");
-	   fprintf(stderr,"Reject from %s\n",newd->host);
-	   close(desc);
-	   flush_queues(newd);
-	   free((char *)newd);
-	   return(-1);
-	   } */
+
 	/* init desc data */
 	newd->ncmds = 0;
 	newd->contime = time(0);
@@ -880,10 +875,10 @@ int new_descriptor(int s)
 	newd->snoop.snoop_by = 0;
 
 	/* prepend to list */
-
 	descriptor_list = newd;
 
 	SEND_TO_Q(GREETINGS, newd);
+
 	if (nonewplayers) {
 		SEND_TO_Q("WARNING:\n\r", newd);
 		SEND_TO_Q("No NEW characters are being accepted right now.\n\r\n\r", newd);
@@ -927,7 +922,6 @@ int process_output(struct descriptor_data *t)
 	return (1);
 }
 
-#include <sys/ioctl.h>
 
 int write_to_descriptor(int desc, char *txt)
 {
@@ -937,13 +931,7 @@ int write_to_descriptor(int desc, char *txt)
 	if (total == 0)
 		return 0;
 	sofar = 0;
-	do {			/*
-				   ioctl(desc,SIOCGPGRP,&w);
-				   ioctl(desc,SIOCATMARK,&x);
-				   ioctl(desc,SIOCGHIWAT,&y);
-				   ioctl(desc,SIOCGLOWAT,&z);
-				   snprintf(buf, sizeof(buf),"IOCTL: %d %d %x %x",w,x,y,z);
-				 */
+	do {
 		thisround = write(desc, txt + sofar, total - sofar);
 		if (thisround < 0) {
 			perror("Write to socket");
@@ -951,8 +939,7 @@ int write_to_descriptor(int desc, char *txt)
 		} else {
 			sofar += thisround;
 		}
-	}
-	while (sofar < total);
+	} while (sofar < total);
 	return (0);
 }
 
@@ -981,8 +968,7 @@ int process_input(struct descriptor_data *t)
 			mudlog("EOF encountered on socket read.");
 			return (-1);
 		}
-	}
-	while (!ISNEWL(*(t->buf + begin + sofar - 1)));
+	} while (!ISNEWL(*(t->buf + begin + sofar - 1)));
 
 	*(t->buf + begin + sofar) = 0;
 
@@ -1070,11 +1056,6 @@ int process_input(struct descriptor_data *t)
 			}
 			/* find end of entry */
 			for (; ISNEWL(*(t->buf + i)); i++) ;
-			/* squelch the entry from the buffer */
-			/* for (squelch = 0;; squelch++)
-			   if ((*(t->buf + squelch) = *(t->buf + i + squelch)) == '\0')
-			   break; */
-			/* forbid infinite loop */
 			/* 메모리 overlap 방지, 251202 */
             size_t remain_len = strlen(t->buf + i);
             memmove(t->buf, t->buf + i, remain_len + 1);
@@ -1113,14 +1094,9 @@ void close_socket(struct descriptor_data *d)
 	}
 	if (d->character) {
 		if (d->connected == CON_PLYNG) {
-#ifdef  RETURN_TO_QUIT
 			save_char(d->character, world[d->character->in_room].number);
-#else
-			save_char(d->character, d->character->in_room);
-#endif
-			// #ifdef SYPARK
 			stash_char(d->character);
-			// #endif
+			move_stashfile_safe(d->character->player.name);
 			act("$n has lost $s link.", TRUE, d->character, 0, 0, TO_ROOM);
 			snprintf(buf, sizeof(buf), "Closing link to: %s.", GET_NAME(d->character));
 			mudlog(buf);
@@ -1154,8 +1130,7 @@ void close_socket(struct descriptor_data *d)
 		/* This is somewhere inside the list */
 	{
 		/* Locate the previous element */
-		for (tmp = descriptor_list; (tmp->next != d) && tmp;
-		     tmp = tmp->next) ;
+		for (tmp = descriptor_list; (tmp->next != d) && tmp; tmp = tmp->next) ;
 
 		tmp->next = d->next;
 	}
@@ -1167,7 +1142,7 @@ void close_socket(struct descriptor_data *d)
 
 void nonblock(int s)
 {
-	if (fcntl(s, F_SETFL, FNDELAY) == -1) {
+	if (fcntl(s, F_SETFL, O_NONBLOCK) == -1) {
 		perror("Noblock");
 		exit(1);
 	}
@@ -1232,339 +1207,222 @@ void send_to_room(char *messg, int room)
             }
 }
 
+/* 
+ * act, acthan에만 쓰이던 매크로 함수 삭제 & 헬퍼함수 도입 (utils.h) 
+ *                                                  --- 251125 by Komo
+ * ANA, SANA,       -> get_indefinite_article
+ * HSHR, HSSH, HMHR -> get_pronoun
+ * PERS             -> get_char_name (in utility.c)
+ * OBJN, OBJS       -> get_obj_name
+* */
+
+/* 관사 a/an 처리 도우미 함수 : 모음(a,e,i,o,u)으로 시작하면 an을 반환 */
+static const char *get_indefinite_article(const char *name, bool capitalize)
+{
+    // 이름의 첫 글자가 모음인지 확인 (strchr 사용)
+    if (strchr("aeiouAEIOU", *name)) {
+        return capitalize ? "An" : "an";
+    }
+    return capitalize ? "A" : "a";
+}
+
+/* 성별에 따른 대명사 반환 (he/she/it, him/her/it, his/her/its) */
+static const char *get_pronoun(struct char_data *ch, char type)
+{
+    int sex = GET_SEX(ch);
+
+    switch (type) {
+        case 'm': // HMHR (him/her/it)
+            if (sex == SEX_MALE) return "him";
+            if (sex == SEX_FEMALE) return "her";
+            return "it";
+        
+        case 's': // HSHR (his/her/its)
+            if (sex == SEX_MALE) return "his";
+            if (sex == SEX_FEMALE) return "her";
+            return "its";
+            
+        case 'e': // HSSH (he/she/it)
+            if (sex == SEX_MALE) return "he";
+            if (sex == SEX_FEMALE) return "she";
+            return "it";
+    }
+    return "it";
+}
+
+/* 아이템 이름 반환 (type: 'o'=name, 'p'=short_desc) */
+static const char *get_obj_name(struct obj_data *obj, struct char_data *viewer, char type)
+{
+    if (!CAN_SEE_OBJ(viewer, obj)) {
+        return "something";
+    }
+    
+    if (type == 'o') // OBJN
+        return fname(obj->name);
+        
+    return obj->short_description; // OBJS ('p')
+}
 /* higher-level communication */
+/*
+ * [통합 엔진 함수] 251125 by Komo
+ * act와 acthan의 기능 처리
+ * str_han이 NULL이면 무조건 str_eng를 사용
+ */
+static void perform_act(const char *str_eng, const char *str_han, int hide_invisible, struct char_data *ch, struct obj_data *obj, void *vict_obj, int type)
+{
+    const char *strp;
+    const char *template;   // 현재 대상에게 보여줄 원본 문자열 (영어 or 한글)
+    const char *replacement;// 치환될 문자열 ($n -> 이름)
+    
+    char *point;            // 버퍼에 쓸 포인터
+    struct char_data *to;
+    char buf[MAX_STRING_LENGTH];
+    char color_buf[MAX_STRING_LENGTH * 3];
+
+    // 영어 문장조차 없으면 리턴
+    if (!str_eng || !*str_eng) return;
+
+    // 대상 설정
+    if (type == TO_VICT)       to = (struct char_data *)vict_obj;
+    else if (type == TO_CHAR)  to = ch;
+    else                       to = world[ch->in_room].people;
+
+    // 루프 시작
+    for (; to; to = to->next_in_room) {
+        // 전송 조건 체크
+        if (!to->desc || 
+            ((to == ch) && (type != TO_CHAR)) ||
+            (!CAN_SEE(to, ch) && hide_invisible) ||
+            !AWAKE(to) ||
+            ((type == TO_NOTVICT) && (to == (struct char_data *)vict_obj)))
+        {
+            continue;
+        }
+
+        // 언어 선택
+        if (str_han && *str_han && IS_SET(to->specials.act, PLR_KOREAN)) {
+            template = str_han;
+        } else {
+            template = str_eng;
+        }
+
+        // 문자열 파싱 - 기존 act 로직
+        for (strp = template, point = buf; *strp; ++strp) {
+            if (*strp == '$') {
+                ++strp;
+                replacement = NULL;
+
+                switch (*strp) {
+                    case 'n': replacement = get_char_name(ch, to); break;
+                    case 'N': replacement = get_char_name((struct char_data *)vict_obj, to); break;
+                    case 'm': replacement = get_pronoun(ch, 'm'); break;
+                    case 'M': replacement = get_pronoun((struct char_data *)vict_obj, 'm'); break;
+                    case 's': replacement = get_pronoun(ch, 's'); break;
+                    case 'S': replacement = get_pronoun((struct char_data *)vict_obj, 's'); break;
+                    case 'e': replacement = get_pronoun(ch, 'e'); break;
+                    case 'E': replacement = get_pronoun((struct char_data *)vict_obj, 'e'); break;
+                    case 'o': replacement = get_obj_name(obj, to, 'o'); break;
+                    case 'O': replacement = get_obj_name((struct obj_data *)vict_obj, to, 'o'); break;
+                    case 'p': replacement = get_obj_name(obj, to, 'p'); break;
+                    case 'P': replacement = get_obj_name((struct obj_data *)vict_obj, to, 'p'); break;
+                    case 'a': replacement = get_indefinite_article(obj->name, FALSE); break;
+                    case 'A': replacement = get_indefinite_article(((struct obj_data *)vict_obj)->name, TRUE); break;
+                    case 'T': replacement = (char *)vict_obj; break;
+                    case 'F': replacement = fname((char *)vict_obj); break;
+                    case '$': replacement = "$"; break;
+                    default:
+                        log("SYSERR: Illegal $-code to act():");
+                        log(template);
+                        break;
+                }
+
+                while (replacement && *replacement && (point - buf) < (MAX_STRING_LENGTH - 3)) {
+                    *point++ = *replacement++;
+                }
+            } else {
+                if ((point - buf) < (MAX_STRING_LENGTH - 3)) {
+                    *point++ = *strp;
+                }
+            }
+        }
+
+        // 마무리 및 전송
+        *point++ = '\n';
+        *point++ = '\r';
+        *point   = '\0';
+
+        CAP(buf);
+
+        process_color_string(buf, color_buf, sizeof(color_buf));
+        write_to_q(color_buf, &to->desc->output);
+        
+        if ((type == TO_VICT) || (type == TO_CHAR))
+            return;
+    }
+}
+
+/* * [Wrapper 1] act : 한글 문장 자리에 NULL을 넘겨서 영어만 출력 */
 void act(char *str, int hide_invisible, struct char_data *ch, struct obj_data *obj, void *vict_obj, int type)
 {
-    char *strp, *point, *i = NULL;
-    struct char_data *to;
-    char buf[MAX_STRING_LENGTH];
+    perform_act(str, NULL, hide_invisible, ch, obj, vict_obj, type);
+}
 
-    /* 색상 파싱을 위한 최종 버퍼 */
-    char color_buf[MAX_STRING_LENGTH * 3];
+/* * [Wrapper 2] acthan : 영어와 한글 문장을 모두 넘겨서 상황에 맞게 출력 */
+void acthan(char *streng, char *strhan, int hide_invisible, struct char_data *ch, struct obj_data *obj, void *vict_obj, int type)
+{
+    perform_act(streng, strhan, hide_invisible, ch, obj, vict_obj, type);
+}
 
-    if (!str || !*str)
-        return;
+/* 기존 freaky 함수 대체 */
+void log_abnormal_disconnect(struct descriptor_data *d)
+{
+    char buf[256];
+    char *name = "Unknown";
 
-    if (type == TO_VICT)
-        to = (struct char_data *)vict_obj;
-    else if (type == TO_CHAR)
-        to = ch;
-    else
-        to = world[ch->in_room].people;
+    if (d->original && d->original->player.name) {
+        name = d->original->player.name;
+    } else if (d->character && d->character->player.name) {
+        name = d->character->player.name;
+    }
 
-    for (; to; to = to->next_in_room) {
-        if (to->desc && ((to != ch) || (type == TO_CHAR)) && (CAN_SEE(to, ch) || !hide_invisible) && AWAKE(to) &&
-                !((type == TO_NOTVICT) && (to == (struct char_data *)vict_obj))) {
-            for (strp = str, point = buf; (point - buf) <= MAX_STRING_LENGTH - 1;)
-                if (*strp == '$') {
-                    switch (*(++strp)) {
-                        case 'n':
-                            i = get_char_name(ch, to);
-                            break;
-                        case 'N':
-                            i = get_char_name((struct char_data *)vict_obj, to);
-                            break;
-                        case 'm':
-                            i = HMHR(ch);
-                            break;
-                        case 'M':
-                            i = HMHR((struct char_data *)vict_obj);
-                            break;
-                        case 's':
-                            i = HSHR(ch);
-                            break;
-                        case 'S':
-                            i = HSHR((struct char_data *)vict_obj);
-                            break;
-                        case 'e':
-                            i = HSSH(ch);
-                            break;
-                        case 'E':
-                            i = HSSH((struct char_data *)vict_obj);
-                            break;
-                        case 'o':
-                            i = OBJN(obj, to);
-                            break;
-                        case 'O':
-                            i = OBJN((struct obj_data *)vict_obj, to);
-                            break;
-                        case 'p':
-                            i = OBJS(obj, to);
-                            break;
-                        case 'P':
-                            i = OBJS((struct obj_data *)vict_obj, to);
-                            break;
-                        case 'a':
-                            i = SANA(obj);
-                            break;
-                        case 'A':
-                            i = SANA((struct obj_data *)vict_obj);
-                            break;
-                        case 'T':
-                            i = (char *)vict_obj;
-                            break;
-                        case 'F':
-                            i = fname((char *)vict_obj);
-                            break;
-                        case 'w':
-                            i = WEAP(obj, to);
-                            break;
-                        case 'W':
-                            i = WEAP((struct obj_data *)vict_obj, to);
-                            break;
-                        case '$':
-                            i = "$";
-                            break;
-                        default:
-                            mudlog("Illegal $-code to act():");
-                            mudlog(str);
-                            break;
-                    }
-                    while (*i && ((point - buf) <= MAX_STRING_LENGTH - 1))
-                        *point++ = *i++;
+    snprintf(buf, sizeof(buf), 
+        "ABNORMAL DISCONNECT: Socket %d, State %d, Player '%s' kicked due to network exception.", 
+        d->descriptor, 
+        d->connected, 
+        name
+    );
+    
+    log(buf);
+}
 
-                    ++strp;
-                }
-                else if (!(*(point++) = *(strp++)))
-                    break;
+void zapper(void)
+{
+    int t;
+    static int zapper_triggered = 0; // 이 함수가 리붓을 실행했는지 확인
 
-            *(--point) = '\n';
-            *(++point) = '\r';
-            *(++point) = '\0';
+    t = time(0) - boottime; // 머드가 실행된 총 시간
 
-            CAP(buf);
-
-            process_color_string(buf, color_buf, sizeof(color_buf)); // 색상 코드 처리
-            write_to_q(color_buf, &to->desc->output);
-        }
-        if ((type == TO_VICT) || (type == TO_CHAR))
-            return;
+    if (t > reboot_time && !zapper_triggered && reboot_counter < 0) {
+        log("(zapper) Automatic reboot time reached. Triggering graceful shutdown.");
+        reboot_game = 1;
+        zapper_triggered = 1;
     }
 }
 
-void acthan(char *streng, char *strhan, int hide_invisible, struct char_data *ch,
-	    struct obj_data *obj, void *vict_obj, int type)
-{
-	register char *strp, *str, *point, *i = NULL;
-    struct char_data *to;
-    char buf[MAX_STRING_LENGTH];
-
-    /* 색상 파싱을 위한 최종 버퍼 */
-    char color_buf[MAX_STRING_LENGTH * 3];
-
-    /* 원본 문자열이 유효하지 않으면 즉시 리턴 */
-    if (!streng || !strhan || !*streng || !*strhan)
-        return;
-
-    if (type == TO_VICT)
-        to = (struct char_data *)vict_obj;
-    else if (type == TO_CHAR)
-        to = ch;
-    else
-        to = world[ch->in_room].people;
-
-    for (; to; to = to->next_in_room) {
-        if (to->desc && ((to != ch) || (type == TO_CHAR)) && (CAN_SEE(to, ch) || !hide_invisible) && AWAKE(to) &&
-                !((type == TO_NOTVICT) && (to == (struct char_data *)vict_obj))) {
-            if ((IS_SET(to->specials.act, PLR_KOREAN))) {
-                str = strhan;
-            }
-            else {
-                str = streng;
-            }
-
-            for (strp = str, point = buf; (point - buf) <= MAX_STRING_LENGTH - 1;)
-                if (*strp == '$') {
-                    strp++;
-                    switch (*strp) {
-                        case 'n':
-                            i = get_char_name(ch, to);
-                            break;
-                        case 'N':
-                            i = get_char_name((struct char_data *)vict_obj, to);
-                            break;
-                        case 'm':
-                            i = HMHR(ch);
-                            break;
-                        case 'M':
-                            i = HMHR((struct char_data *)vict_obj);
-                            break;
-                        case 's':
-                            i = HSHR(ch);
-                            break;
-                        case 'S':
-                            i = HSHR((struct char_data *)vict_obj);
-                            break;
-                        case 'e':
-                            i = HSSH(ch);
-                            break;
-                        case 'E':
-                            i = HSSH((struct char_data *)vict_obj);
-                            break;
-                        case 'o':
-                            i = OBJN(obj, to);
-                            break;
-                        case 'O':
-                            i = OBJN((struct obj_data *)vict_obj, to);
-                            break;
-                        case 'p':
-                            i = OBJS(obj, to);
-                            break;
-                        case 'P':
-                            i = OBJS((struct obj_data *)vict_obj, to);
-                            break;
-                        case 'a':
-                            i = SANA(obj);
-                            break;
-                        case 'A':
-                            i = SANA((struct obj_data *)vict_obj);
-                            break;
-                        case 'T':
-                            i = (char *)vict_obj;
-                            break;
-                        case 'F':
-                            i = fname((char *)vict_obj);
-                            break;
-                        case '$':
-                            i = "$";
-                            break;
-                        default:
-                            mudlog("Illegal $-code to act():");
-                            mudlog(str);
-                            break;
-                    }
-                    while (*i && ((point - buf) <= MAX_STRING_LENGTH - 1))
-                        *point++ = *i++;
-                    ++strp;
-                }
-                else if (!(*(point++) = *(strp++)))
-                    break;
-
-            *(--point) = '\n';
-            *(++point) = '\r';
-            *(++point) = '\0';
-
-            CAP(buf);
-
-            process_color_string(buf, color_buf, sizeof(color_buf)); // 색상 코드 처리
-            write_to_q(color_buf, &to->desc->output);
-        }
-
-        if ((type == TO_VICT) || (type == TO_CHAR))
-            return;
-    }
-}
-
-void freaky(struct descriptor_data *d)
-{
-	char buf[128];
-
-	snprintf(buf, sizeof(buf), "%d %d %s",
-		d->connected,
-		d->descriptor,
-		d->original ? d->original->player.name : d->character->player.name);
-	mudlog(buf);
-}
-
-#undef siginterrupt
-
-int siginterrupt(int sig, int flag)
-{
-	sigset_t __sigintr;
-	struct sigaction sa;
-
-	sigaction(sig, NULL, &sa);
-	sigemptyset(&__sigintr);
-	if (flag) {
-		sigaddset(&__sigintr, sig);
-		sa.sa_flags &= ~SA_RESTART;
-	} else {
-		sigdelset(&__sigintr, sig);
-		sa.sa_flags |= SA_RESTART;
-	}
-	return (sigaction(sig, &sa, NULL));
-}
-
-int sigsetmask(unsigned mask)
-{
-	sigset_t set;
-
-	if (mask) {
-		sigprocmask(SIG_SETMASK, NULL, &set);
-		for (int sig = 1; mask; sig++, mask >>= 1)
-			if (mask & 0x01)
-				sigaddset(&set, sig);
-	} else
-		sigemptyset(&set);
-
-	return sigprocmask(SIG_SETMASK, &set, NULL);
-}
-
-void signal_setup(void)
-{
-	struct itimerval itime;
-	struct timeval interval;
-
-	sigemptyset(&__unmask);
-
-	signal(SIGUSR2, shutdown_request);
-	signal(SIGPIPE, SIG_IGN);
-	signal(SIGALRM, logsig);
-	siginterrupt(SIGHUP, 1);
-	signal(SIGHUP, hupsig);
-	siginterrupt(SIGINT, 1);
-	signal(SIGINT, hupsig);
-	siginterrupt(SIGTERM, 1);
-	signal(SIGTERM, hupsig);
-/*  siginterrupt(SIGSEGV, 1); signal(SIGSEGV, hupsig);
-  siginterrupt(SIGBUS , 1); signal(SIGBUS , hupsig);*/
-
-	interval.tv_sec = 900;	/* 15 minutes */
-	interval.tv_usec = 0;
-	itime.it_interval = interval;
-	itime.it_value = interval;
-	setitimer(ITIMER_VIRTUAL, &itime, 0);
-	signal(SIGVTALRM, checkpointing);
-}
+/* 서버 멈춤 감지 */
 void checkpointing(int sig)
 {
 	extern int tics;
+    static int last_tics = 0;
 
-	if (!tics) {
-		mudlog("CHECKPOINT shutdown: tics not updated");
-		saveallplayers();
-		abort();
-	} else
-		tics = 0;
-	mudlog("checkpointing");
-}
-void shutdown_request(int sig)
-{
-	extern int shutdowngame;
-
-	send_to_all("Shut down signal has been received.\n\r");
-	mudlog("Received USR2 - shutdown request");
-	shutdowngame = 1;
-}
-
-/* kick out players etc */
-void hupsig(int sig)
-{
-	void saveallplayers();
-	char s[MAX_STRING_LENGTH];
-
-	if (xo && xo->character) {
-		sprintf(s, "SIG: %d %s(%d) %s in %s(%d)", sig, GET_NAME(xo->character),
-			GET_LEVEL(xo->character), xo->host,
-			world[xo->character->in_room].name,
-			xo->character->in_room);
-		mudlog(s);
-	}
-	saveallplayers();
-	longjmp(env, -1);
-}
-
-void logsig(int sig)
-{
-	mudlog("Signal received. Ignoring.");
+    if (tics == last_tics) { // 지난 검사와 tics가 같으면 멈춘 것
+        log("!!! CHECKPOINT shutdown: tics not updated. Server appears to be frozen.");
+        log("!!! Emergency saving all players before abort().");
+        saveallplayers();
+        abort();
+    }
+    else {
+        last_tics = tics; // remember current tics
+    }
+    log("(checkpointing) Checkpoint signal received. Tics saved.");
 }

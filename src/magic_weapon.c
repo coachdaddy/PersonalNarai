@@ -5,35 +5,6 @@
 #include "spells.h"
 
 
-void DEBUG_LOG(const char *format, ...);
-void mudlog(const char *str);
-
-int number(int from, int to);
-void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
-int MIN(int a, int b);
-
-void spell_lightning_bolt(byte level, struct char_data *ch,
-			  struct char_data *victim, struct obj_data *obj);
-void spell_call_lightning(byte level, struct char_data *ch,
-			  struct char_data *victim, struct obj_data *obj);
-void spell_fireball(byte level, struct char_data *ch,
-		    struct char_data *victim, struct obj_data *obj);
-void spell_fire_breath(byte level, struct char_data *ch,
-		       struct char_data *victim, struct obj_data *obj);
-void spell_frost_breath(byte level, struct char_data *ch,
-			struct char_data *victim, struct obj_data *obj);
-void spell_energy_drain(byte level, struct char_data *ch,
-			struct char_data *victim, struct obj_data *obj);
-void spell_disintegrate(byte level, struct char_data *ch,
-			struct char_data *victim, struct obj_data *obj);
-void spell_magic_missile(byte level, struct char_data *ch,
-			 struct char_data *victim, struct obj_data *obj);
-void spell_full_heal(byte level, struct char_data *ch,
-		     struct char_data *victim, struct obj_data *obj);
-
-bool affected_by_spell(struct char_data *ch, byte skill);
-void affect_to_char(struct char_data *ch, struct affected_type *af);
-
 extern struct weather_data weather_info;
 extern struct room_data *world;
 
@@ -138,9 +109,7 @@ void magic_weapon_hit(struct char_data *ch, struct char_data *victim,
 		return;
 }
 
-void sweapon_smash(ch, victim, weapon)
-struct char_data *ch, *victim;
-struct obj_data *weapon;
+void sweapon_smash(struct char_data *ch, struct char_data *victim, struct obj_data *weapon)
 {
 	int dam = 80;
 
@@ -157,9 +126,7 @@ struct obj_data *weapon;
 		GET_POS(victim) = POSITION_SITTING;
 }
 
-void sweapon_flame(ch, victim, weapon)
-struct char_data *ch, *victim;
-struct obj_data *weapon;
+void sweapon_flame(struct char_data *ch, struct char_data *victim, struct obj_data *weapon)
 {
 	int dam;
 	dam = number(50, 100);
@@ -175,9 +142,7 @@ struct obj_data *weapon;
 	damage(ch, victim, dam, TYPE_UNDEFINED);
 }
 
-void sweapon_ice(ch, victim, weapon)
-struct char_data *ch, *victim;
-struct obj_data *weapon;
+void sweapon_ice(struct char_data *ch, struct char_data *victim, struct obj_data *weapon)
 {
 	int dam;
 	dam = number(50, 150);
@@ -191,9 +156,7 @@ struct obj_data *weapon;
 	damage(ch, victim, dam, TYPE_UNDEFINED);
 }
 
-void sweapon_bombard(ch, victim, weapon)
-struct char_data *ch, *victim;
-struct obj_data *weapon;
+void sweapon_bombard(struct char_data *ch, struct char_data *victim, struct obj_data *weapon)
 {
 	int dam;
 	dam = number(GET_LEVEL(ch), GET_LEVEL(ch) + GET_LEVEL(victim));
@@ -206,9 +169,7 @@ struct obj_data *weapon;
 		GET_POS(victim) = POSITION_STUNNED;
 }
 
-void sweapon_shot(ch, victim, weapon)
-struct char_data *ch, *victim;
-struct obj_data *weapon;
+void sweapon_shot(struct char_data *ch, struct char_data *victim, struct obj_data *weapon)
 {
 	int dam = 150;
 	dam = dam + (GET_STR(ch) << 3) + (GET_CON(ch) << 3);
@@ -218,9 +179,7 @@ struct obj_data *weapon;
 	damage(ch, victim, dam, TYPE_UNDEFINED);
 }
 
-void sweapon_dragon_slayer(ch, victim, weapon)
-struct char_data *ch, *victim;
-struct obj_data *weapon;
+void sweapon_dragon_slayer(struct char_data *ch, struct char_data *victim, struct obj_data *weapon)
 {
 	int dam;
 	if (IS_NPC(victim) && !IS_SET(victim->specials.act, ACT_DRAGON))
@@ -231,9 +190,7 @@ struct obj_data *weapon;
 	damage(ch, victim, dam, TYPE_UNDEFINED);
 }
 
-void sweapon_anti_good(ch, victim, weapon)
-struct char_data *ch, *victim;
-struct obj_data *weapon;
+void sweapon_anti_good(struct char_data *ch, struct char_data *victim, struct obj_data *weapon)
 {
 	int dam;
 	dam = number(GET_LEVEL(ch), GET_LEVEL(ch) + GET_LEVEL(victim));
@@ -259,9 +216,7 @@ struct obj_data *weapon;
 	}
 }
 
-void sweapon_anti_evil(ch, victim, weapon)
-struct char_data *ch, *victim;
-struct obj_data *weapon;
+void sweapon_anti_evil(struct char_data *ch, struct char_data *victim, struct obj_data *weapon)
 {
 	int dam;
 	dam = number(GET_LEVEL(ch), GET_LEVEL(ch) + GET_LEVEL(victim));
@@ -287,17 +242,10 @@ struct obj_data *weapon;
 	}
 }
 
-void sweapon_god(ch, victim, weapon)
-struct char_data *ch, *victim;
-struct obj_data *weapon;
+void sweapon_god(struct char_data *ch, struct char_data *victim, struct obj_data *weapon)
 {
 	struct affected_type af;
-/*
-	spell_blindness( 100, ch, victim, 0 );
-	spell_crush_armor( 50, ch, victim, 0 );
-	spell_poison ( 50, ch, victim, 0 );
-	spell_curse ( 50, ch, victim, 0 );
-*/
+
 	if (!affected_by_spell(ch, SPELL_SANCTUARY)) {
 		af.type = SPELL_SANCTUARY;
 		af.duration = 20;
