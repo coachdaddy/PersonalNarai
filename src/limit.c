@@ -481,7 +481,7 @@ void check_idling(struct char_data *ch)
 			char_from_room(ch);
 			char_to_room(ch, 1);	/* Into room number 0 */
 		} else if (ch->specials.timer >= 35) {
-			do_rent(ch, 0, "");
+			do_rent(ch, "", 0);
 			if (ch->desc)
 				close_socket(ch->desc);
 		}

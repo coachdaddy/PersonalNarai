@@ -306,7 +306,7 @@ void do_steal(struct char_data *ch, char *argument, int cmd)
 			hit(victim, ch, TYPE_UNDEFINED);
 }
 
-bool do_practice(struct char_data *ch, char *arg, int cmd)
+void do_practice(struct char_data *ch, char *arg, int cmd)
 {
 	int i;
 	extern char *spells[], *how_good();
@@ -325,7 +325,7 @@ bool do_practice(struct char_data *ch, char *arg, int cmd)
 				send_to_char(tmp, ch);
 			} else {
 				send_to_char("There's no such a person or mob.\n", ch);
-				return FALSE;
+				return;
 			}
 		} else
 			victim = ch;
@@ -365,7 +365,7 @@ bool do_practice(struct char_data *ch, char *arg, int cmd)
 		}
 	}
 	page_string(ch->desc, buf, 1);
-	return TRUE;
+	return;
 }
 
 void do_brief(struct char_data *ch, char *argument, int cmd)

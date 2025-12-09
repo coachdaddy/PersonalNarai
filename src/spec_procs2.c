@@ -1858,8 +1858,6 @@ int jale_room(struct char_data *ch, int cmd, char *arg)
 
 int safe_house(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[100];
-
 	if (GET_LEVEL(ch) >= (IMO + 2))
 		return FALSE;
 

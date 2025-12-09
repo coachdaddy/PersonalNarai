@@ -7,6 +7,7 @@
    251208 by Komo
 */
 
+#include <stdio.h>
 
 /* --- act.comm.c --- */
 void do_say(struct char_data *ch, char *argument, int cmd);
@@ -138,7 +139,7 @@ void do_not_here(struct char_data *ch, char *argument, int cmd);
 void do_sneak(struct char_data *ch, char *argument, int cmd);
 void do_hide(struct char_data *ch, char *argument, int cmd);
 void do_steal(struct char_data *ch, char *argument, int cmd);
-bool do_practice(struct char_data *ch, char *arg, int cmd);
+void do_practice(struct char_data *ch, char *arg, int cmd);
 void do_brief(struct char_data *ch, char *argument, int cmd);
 void do_compact(struct char_data *ch, char *argument, int cmd);
 void do_group(struct char_data *ch, char *argument, int cmd);
@@ -303,7 +304,7 @@ void wipe_stash(char *filename);
 void do_checkrent(struct char_data *ch, char *argument, int cmd);
 void do_extractrent(struct char_data *ch, char *argument, int cmd);
 void do_replacerent(struct char_data *ch, char *argument, int cmd);
-void do_rent(struct char_data *ch, int cmd, char *arg);
+void do_rent(struct char_data *ch, char *arg, int cmd);
 void wipe_obj(struct obj_data *obj);
 
 /* --- fight.c --- */
@@ -439,6 +440,9 @@ void nanny(struct descriptor_data *d, char *arg);
 
 /* --- limit.c --- */
 int graf(int age, int p0, int p1, int p2, int p3, int p4, int p5, int p6);
+long int hit_limit(struct char_data *ch);
+long int mana_limit(struct char_data *ch);
+long int move_limit(struct char_data *ch);
 int hit_gain(struct char_data *ch);
 int mana_gain(struct char_data *ch);
 int move_gain(struct char_data *ch);

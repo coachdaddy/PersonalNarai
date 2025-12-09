@@ -800,6 +800,11 @@ struct con_app_type {
 	int shock;
 };
 
-#endif /* _STRUCTS_H_ */
+/* prototypes.h 적용 후 */
+struct player_index_element;
 
+#ifndef NO_PROTOTYPES
 #include "prototypes.h"
+#endif
+
+#endif /* _STRUCTS_H_ */

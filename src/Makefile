@@ -64,7 +64,7 @@ $(OBJDIR)/% :  %.o
 
 default :    objdir $(PROG_BIN) 
 
-all:    $(PROG_BIN) utils
+all:    $(PROG_BIN)
 
 $(PROG_BIN) : $(OBJS)
 	$(LD) -o $@ $^ $(LDFLAGS) $(LIBS)

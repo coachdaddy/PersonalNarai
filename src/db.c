@@ -644,7 +644,7 @@ void clean_memory_for_room(int rnum)
 /* .wld 파일을 열어 기존 방들의 내용을 업데이트함 251121 by Komo */
 void reload_world_file(FILE *fl, int zone_rnum)
 {
-    int virtual_nr, flag, tmp, rnum;
+    int virtual_nr, flag, rnum;
     char chk[256];
     struct extra_descr_data *new_descr;
     char *new_name, *new_desc;
@@ -2898,7 +2898,7 @@ void do_replacerent(struct char_data *ch, char *argument, int cmd)
 	log(buf);
 }
 
-void do_rent(struct char_data *ch, int cmd, char *arg)
+void do_rent(struct char_data *ch, char *arg, int cmd)
 {
 	// sh_int save_room;
 	int i;
