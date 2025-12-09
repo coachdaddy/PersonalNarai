@@ -40,7 +40,8 @@ void page_string(struct descriptor_data *d, char *str, int keep);
 void do_say(struct char_data *ch, char *str, int cmd);
 bool saves_spell(struct char_data *ch, int type);
 void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
-int MIN(int a, int b);
+// int MAX(int a, int b);
+// int MIN(int a, int b);
 
 int move_stashfile_safe (const char *victim);
 

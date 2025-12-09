@@ -375,16 +375,14 @@ char *one_word(char *argument, char *first_arg)
 			     ' ') &&
 			     (*(argument + begin + look_at) != '\"');
 			     look_at++)
-				*(first_arg + look_at) = LOWER(*(argument +
-								 begin + look_at));
+				*(first_arg + look_at) = tolower(*(argument + begin + look_at));
 
 			if (*(argument + begin + look_at) == '\"')
 				begin++;
 		} else {
 			for (look_at = 0; *(argument + begin + look_at) > ' ';
 			     look_at++)
-				*(first_arg + look_at) = LOWER(*(argument +
-								 begin + look_at));
+				*(first_arg + look_at) = tolower(*(argument + begin + look_at));
 		}
 
 		*(first_arg + look_at) = '\0';

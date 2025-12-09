@@ -102,7 +102,7 @@ int isname(char *str, char *namelist)
 				return (0);
 			if (!*curstr || *curname == ' ')
 				break;
-			if (LOWER(*curstr) != LOWER(*curname))
+			if (tolower(*curstr) != tolower(*curname))
 				break;
 		}
 		/* skip to next name */

@@ -1074,8 +1074,8 @@ void assign_command_pointers(void)
 	COMMANDO(216, POSITION_DEAD, do_set, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
 	COMMANDO(217, POSITION_DEAD, do_police, IMO + 3, IMO + 3, IMO + 3, IMO
 		 + 3);
-	COMMANDO(218, POSITION_DEAD, do_wizlock, IMO + 3, IMO + 3, IMO + 3,
-		 IMO + 3);
+//	COMMANDO(218, POSITION_DEAD, do_wizlock, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+	COMMANDO(218, POSITION_DEAD, do_siteban, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
 	COMMANDO(219, POSITION_DEAD, do_noaffect, IMO + 1, IMO + 1, IMO + 1, IMO
 		 + 1);
 	COMMANDO(220, POSITION_DEAD, do_invis, IMO, IMO, IMO, IMO);
@@ -1377,7 +1377,7 @@ void nanny(struct descriptor_data *d, char *arg)
 			snprintf(buf, sizeof(buf), "%s(%d)[%s] has connected.",
 				GET_NAME(d->character),
 				GET_LEVEL(d->character), d->host);
-			log(buf);
+			mudlog(buf);
 			char *msg_ptr = motd; // SEND_TO_Q에 포인터 전달, 251126 by Komo
             SEND_TO_Q(msg_ptr, d);
 			SEND_TO_Q("\n\r\n&C*** PRESS RETURN : &n", d);

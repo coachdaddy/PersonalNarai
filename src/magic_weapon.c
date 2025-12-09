@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "spells.h"
 
+#include "prototypes.h"
 
 extern struct weather_data weather_info;
 extern struct room_data *world;

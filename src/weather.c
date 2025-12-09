@@ -14,6 +14,7 @@
 #include "handler.h"
 #include "interpreter.h"
 #include "db.h"
+#include "prototypes.h"
 
 /* uses */
 extern struct time_info_data time_info;

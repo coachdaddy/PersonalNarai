@@ -388,7 +388,7 @@ void init_quest(void)
 		topQM++;
 
 		if (topQM > MaxQuest) {
-			log("(init_quest) Quest Mobiles are overflown.");
+			mudlog("(init_quest) Quest Mobiles are overflown.");
 			fclose(fp);
 			return;
 		}
@@ -713,7 +713,7 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 
 
 /* For Challenge Room Quest System by Komo, 251017 */
-void do_challenge(struct char_data *ch)
+void do_challenge(struct char_data *ch, char *argument, int cmd)
 {
     int i, room_rnum;
     bool found_empty_room = FALSE;
@@ -825,7 +825,7 @@ void do_challenge(struct char_data *ch)
 }
 
 
-void do_begin(struct char_data *ch)
+void do_begin(struct char_data *ch, char *argument, int cmd)
 {
     struct char_data *mob, *existing_mob;
     int mob_rnum, mob_vnum = 0;
@@ -913,7 +913,7 @@ void do_begin(struct char_data *ch)
 }
 
 
-void do_rejoin(struct char_data *ch)
+void do_rejoin(struct char_data *ch, char *argument, int cmd)
 {
     struct char_data *group_leader;
     struct follow_type *f;

@@ -64,7 +64,7 @@ int mana_gain(struct char_data *ch);
 int hit_gain(struct char_data *ch);
 int move_gain(struct char_data *ch);
 int load_char(char *name, struct char_file_u *char_element);
-int move_stashfile_safe(char *name); // 251016-> 201024
+int move_stashfile_safe(const char *victim);
 extern int is_number(char *str); // 251118
 long int mana_limit(struct char_data *ch);
 long int hit_limit(struct char_data *ch);
@@ -77,10 +77,8 @@ void sprinttype(int type, char *names[], char *result);
 void sprintbit(long vektor, char *names[], char *result);
 void unstash_char(struct char_data *ch, char *filename);
 void page_string(struct descriptor_data *d, char *str, int keep);
-int move_stashfile_safe(const char *victim);
-int MIN(int a, int b);
+// int MIN(int a, int b);
 void gain_exp_regardless(struct char_data *ch, int gain);
-void log(char *str);
 void store_to_char_for_transform(struct char_file_u *st, struct char_data *ch);
 extern void do_look(struct char_data *ch, char *argument, int cmd);
 struct time_info_data age(struct char_data *ch);
@@ -251,7 +249,7 @@ void do_at(struct char_data *ch, char *argument, int cmd)
 		send_to_char("You must supply a room number or a name.\n\r", ch);
 		return;
 	}
-	if (ISDIGIT(*loc_str)) {
+	if (isdigit(*loc_str)) {
 		loc_nr = atoi(loc_str);
 		for (location = 0; location <= top_of_world; location++)
 			if (world[location].number == loc_nr)
@@ -309,7 +307,7 @@ void do_goto(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 
-	if (ISDIGIT(*buf)) {
+	if (isdigit(*buf)) {
 		loc_nr = atoi(buf);
 		for (location = 0; location <= top_of_world; location++)
 			if (world[location].number == loc_nr)
@@ -873,9 +871,9 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         return;
     }
 
-    argument = load_one_argument(argument, arg1); /* type: char/obj */
-    argument = load_one_argument(argument, arg2); /* vnum */
-    argument = load_one_argument(argument, arg3); /* quantity (optional) */
+//    argument = load_one_argument(argument, arg1); /* type: char/obj */
+//    argument = load_one_argument(argument, arg2); /* vnum */
+//    argument = load_one_argument(argument, arg3); /* quantity (optional) */
 
 
     /* 도움말 개선 */
@@ -954,7 +952,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         send_to_char(feedback_buf, ch);
 
         snprintf(log_buf, sizeof(log_buf), "%s loaded %d x char %d (%s)", ch->player.name, quantity, vnum, mob_name);
-        log(log_buf);
+        mudlog(log_buf);
 
     /* --- 아이템(obj) 생성 --- */
     } else if (is_abbrev(arg1, "obj")) {
@@ -1006,7 +1004,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         send_to_char(feedback_buf, ch);
 
         snprintf(log_buf, sizeof(log_buf), "%s loaded %d x object %d (%s)", ch->player.name, quantity, vnum, obj_name);
-        log(log_buf);
+        mudlog(log_buf);
 
     } else {
         send_to_char("That'll have to be either 'char' or 'obj'.\n\r", ch);
@@ -1079,7 +1077,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 			
 			// "confirm"이 입력된 경우, 플레이어 삭제 절차 진행
 			snprintf(buf, sizeof(buf), "PURGE: %s permanently deleted player %s.", ch->player.name, vict->player.name);
-			log(buf); // 로그 기록
+			mudlog(buf); // 로그 기록
 
 			stash_char(vict);
 			move_stashfile_safe(vict->player.name); 
@@ -1253,7 +1251,7 @@ void do_advance(struct char_data *ch, char *argument, int cmd)
 		send_to_char("You must supply a level number.\n\r", ch);
 		return;
 	} else {
-		if (!ISDIGIT(*level)) {
+		if (!isdigit(*level)) {
 			send_to_char("Second argument must be a positive integer.\n\r", ch);
 			return;
 		}

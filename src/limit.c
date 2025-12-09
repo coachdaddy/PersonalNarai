@@ -562,32 +562,38 @@ void point_update(void)
             /* 40레벨 이상 */
             else if (GET_LEVEL(i) >= 40 && 
                     (titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
-                    (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) {
-            if (rcnt >= 1 && GET_LEVEL(i) < 50 && flag == 1) {
-                GET_LEVEL(i)++;
-                advance_level(i, 1);
-                snprintf(buf, sizeof(buf), "\n\r %s MAKE LEVEL !! ---==Congratulations==--- \n", i->player.name);
-                send_to_all(buf);
-                if (i->in_room != NOWHERE)
-                    save_char(i, world[i->in_room].number);
-                else
-                    save_char(i, 3001); // 방 정보 없으면 mid
-                flag = 0;
-            }
+                    (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) { 
+					if (rcnt >= 1 && GET_LEVEL(i) < 50 && flag == 1) { 
+						GET_LEVEL(i)++; 
+						advance_level(i, 1); 
+						snprintf(buf, sizeof(buf), 
+								"\n\r %s MAKE LEVEL !! ---==Congratulations==--- \n", i->player.name); 
+						send_to_all(buf); 
 
-            if (rcnt >= 2 && GET_LEVEL(i) < 60 && flag == 1) {
-                GET_LEVEL(i)++;
-                advance_level(i, 1);
-                snprintf(buf, sizeof(buf), "\n\r %s Rank UP !! ---==Congratulations==--- \n", i->player.name);
-                send_to_all(buf);
-                if (i->in_room != NOWHERE)
-                    save_char(i, world[i->in_room].number);
-                else
-                    save_char(i, 3001); // 방 정보 없으면 mid
-                flag = 0;
-            }
-        }
-    } /* for */
+						if (i->in_room != NOWHERE) 
+							save_char(i, world[i->in_room].number); 
+						else 
+							save_char(i, 3001); // 방 정보 없으면 mid
+												
+						flag = 0; 
+					}
+
+		            if (rcnt >= 2 && GET_LEVEL(i) < 60 && flag == 1) { 
+						GET_LEVEL(i)++; 
+						advance_level(i, 1); 
+						snprintf(buf, sizeof(buf), 
+								"\n\r %s Rank UP !! ---==Congratulations==--- \n", i->player.name); 
+						send_to_all(buf);
+
+						if (i->in_room != NOWHERE) 
+							save_char(i, world[i->in_room].number); 
+						else 
+							save_char(i, 3001); // 방 정보 없으면 mid
+						flag = 0; 
+					} 
+			} 
+		}
+	} /* for */
 
     /* objects */
     for (j = object_list; j; j = next_thing) {

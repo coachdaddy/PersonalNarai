@@ -91,9 +91,12 @@ int no_specials = 0;		/* Suppress ass. of special routines */
 int nostealflag = 0;
 int noshoutflag = 0;
 
+/*
+ * move to db.c
 int regen_percent = 50;
 int regen_time_percent = 66;
 int regen_time = 200;
+*/
 
 struct descriptor_data *xo;
 
@@ -185,10 +188,10 @@ int main(int argc, char **argv)
 
 	umask(0077);
 
-	log("(main) Signal trapping.");
+	mudlog("(main) Signal trapping.");
     signal_setup();
 	snprintf(buf, sizeof(buf), "(main) Running game on port %d.", port);
-	log(buf);
+	mudlog(buf);
 	snprintf(buf, sizeof(buf), "Running game on port %d.", port);
 	mudlog(buf);
 	run_the_game(port);
@@ -196,9 +199,9 @@ int main(int argc, char **argv)
 	// PID 파일 삭제 (정상 종료 시)
     if (pidfile[0] != '\0') {
         unlink(pidfile);
-        log("(main) PID file removed on normal termination.");
+        mudlog("(main) PID file removed on normal termination.");
     }
-    log("(main) Normal termination of game.");
+    mudlog("(main) Normal termination of game.");
 
 	return (0);
 }
@@ -208,7 +211,7 @@ void run_the_game(int port)
 {
 	descriptor_list = NULL;
 
-	log("(run_the_game) Opening mother connection.");
+	mudlog("(run_the_game) Opening mother connection.");
 	mudlog("Signal trapping.");
 	signal_setup();
 	mudlog("Opening mother connection.");
@@ -217,7 +220,7 @@ void run_the_game(int port)
 	boot_db();
 
 	FILE *pidfp;
-	log("(run_the_game) Writing pid file.");
+	mudlog("(run_the_game) Writing pid file.");
 
 	if (!(pidfp = fopen(pidfile, "w+"))) {
         perror("(run_the_game) ERROR: can't open pid file.");
@@ -226,11 +229,11 @@ void run_the_game(int port)
         fclose(pidfp);
     }
 
-	log("(run_the_game) Entering game loop.");
+	mudlog("(run_the_game) Entering game loop.");
 	no_echo_local(s);
 
 	game_loop(s);
-	log("(run_the_game) DOWN??? SAVE ALL CHARS???");
+	mudlog("(run_the_game) DOWN??? SAVE ALL CHARS???");
 	char pidfile[256];
 	sprintf(pidfile, "writing pid file: mud-%d.pid", port);
 	mudlog(pidfile);
@@ -250,12 +253,12 @@ void run_the_game(int port)
 	game_loop(s);
 	mudlog("DOWN??????????SAVE ALL CHARS???????");
 	transall(3001);
-	log("(run_the_game) Game loop ended. Saving all characters.");
+	mudlog("(run_the_game) Game loop ended. Saving all characters.");
 	saveallplayers();
 	close_sockets(s);
 	shutdown(s, 2);
 
-	log("(run_the_game) Normal termination of game.");
+	mudlog("(run_the_game) Normal termination of game.");
 	unlink(pidfile);
 	mudlog("Normal termination of game.");
 }
@@ -264,7 +267,7 @@ void run_the_game(int port)
 void handle_graceful_shutdown(int sig)
 {
     reboot_game = 1; // '리붓' 플래그 설정
-    log("Received SIGUSR1 - Graceful shutdown/reboot request.");
+    mudlog("Received SIGUSR1 - Graceful shutdown/reboot request.");
 }
 
 
@@ -272,10 +275,10 @@ void handle_graceful_shutdown(int sig)
 void handle_immediate_shutdown(int sig)
 {
     if (!shutdowngame) {
-        log("Received signal for immediate shutdown.");
+        mudlog("Received signal for immediate shutdown.");
         if (pidfile[0] != '\0') {
             unlink(pidfile);
-            log("PID file removed by signal handler.");
+            mudlog("PID file removed by signal handler.");
         }
         saveallplayers();
         exit(0);
@@ -494,7 +497,7 @@ void game_loop(int s)
             // 리붓 절차 시작
             reboot_counter = TICS_PER_SEC * 60; // 60초 카운트다운
             send_to_all("\n\r\n\r### SYSTEM: Server is rebooting in 1 minute. Please log off safely. ###\n\r\n\r");
-            log("Graceful shutdown sequence initiated (via zapper or SIGUSR1).");
+            mudlog("Graceful shutdown sequence initiated (via zapper or SIGUSR1).");
             reboot_game = 0; // 플래그 초기화
         }
 
@@ -553,11 +556,11 @@ void game_loop(int s)
                 saveallplayers();
                 snprintf(buf, sizeof(buf), "Periodic player save executed (%d min interval). %d players saved.",
                          SAVE_PERIOD_MINUTES, player_count);
-                log(buf);
+                mudlog(buf);
             } else {
                 snprintf(buf, sizeof(buf), "Periodic player save skipped (No active players, %d min interval).", 
                          SAVE_PERIOD_MINUTES);
-                log(buf);
+                mudlog(buf);
             }
         }
 		tics++;
@@ -1331,8 +1334,8 @@ static void perform_act(const char *str_eng, const char *str_han, int hide_invis
                     case 'F': replacement = fname((char *)vict_obj); break;
                     case '$': replacement = "$"; break;
                     default:
-                        log("SYSERR: Illegal $-code to act():");
-                        log(template);
+                        mudlog("SYSERR: Illegal $-code to act():");
+                        mudlog(template);
                         break;
                 }
 
@@ -1392,7 +1395,7 @@ void log_abnormal_disconnect(struct descriptor_data *d)
         name
     );
     
-    log(buf);
+    mudlog(buf);
 }
 
 void zapper(void)
@@ -1403,7 +1406,7 @@ void zapper(void)
     t = time(0) - boottime; // 머드가 실행된 총 시간
 
     if (t > reboot_time && !zapper_triggered && reboot_counter < 0) {
-        log("(zapper) Automatic reboot time reached. Triggering graceful shutdown.");
+        mudlog("(zapper) Automatic reboot time reached. Triggering graceful shutdown.");
         reboot_game = 1;
         zapper_triggered = 1;
     }
@@ -1416,13 +1419,13 @@ void checkpointing(int sig)
     static int last_tics = 0;
 
     if (tics == last_tics) { // 지난 검사와 tics가 같으면 멈춘 것
-        log("!!! CHECKPOINT shutdown: tics not updated. Server appears to be frozen.");
-        log("!!! Emergency saving all players before abort().");
+        mudlog("!!! CHECKPOINT shutdown: tics not updated. Server appears to be frozen.");
+        mudlog("!!! Emergency saving all players before abort().");
         saveallplayers();
         abort();
     }
     else {
         last_tics = tics; // remember current tics
     }
-    log("(checkpointing) Checkpoint signal received. Tics saved.");
+    mudlog("(checkpointing) Checkpoint signal received. Tics saved.");
 }

@@ -928,7 +928,7 @@ void do_exits(struct char_data *ch, char *argument, int cmd)
                 p += written_chars;
                 remaining_space -= written_chars;
             } else if (written_chars >= remaining_space) {
-				log("do_exits: Buffer full, exit list truncated.");
+				mudlog("do_exits: Buffer full, exit list truncated.");
 				break;
 			}
         }
@@ -2146,7 +2146,7 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 	for (d = descriptor_list; d; d = d->next) {
 		if (target == d->descriptor) {
 			snprintf(name, sizeof(name), "Policed: %d\n", d->descriptor);
-			log(name);
+			mudlog(name);
 			if ((d->connected == CON_PLYNG) && (d->character)) {
 				if (d->character->player.level < ch->player.level) {
 					stash_char(d->character);
