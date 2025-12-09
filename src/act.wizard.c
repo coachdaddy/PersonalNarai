@@ -1045,10 +1045,12 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 
 		for (vict = world[ch->in_room].people; vict; vict = next_v) {
 			next_v = vict->next_in_room;
-			if (IS_NPC(vict))
+			if (IS_NPC(vict)) {
 				DEBUG_LOG("act.wizard.c purge(%s)", vict->player.name);
 				extract_char(vict, TRUE);
+			}
 		}
+
 		for (obj = world[ch->in_room].contents; obj; obj = next_o) {
 			next_o = obj->next_content;
 			extract_obj(obj);
