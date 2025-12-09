@@ -214,7 +214,7 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 			(ch->quest.solved)--;
 		} else {
 			/* 단군의 request penalty */
-			int xp = number(5000000, 10000000);
+			int xp = number(M(5), M(10));
 
 			if (GET_EXP(ch) > xp) {
 				GET_EXP(ch) -= xp;

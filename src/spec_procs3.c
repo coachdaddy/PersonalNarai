@@ -240,7 +240,7 @@ int string_machine(struct char_data *ch, int cmd, char *arg)
 	if (cmd != 306)
 		return 0;
 
-	if (GET_GOLD(ch) < 10000000) {
+	if (GET_GOLD(ch) < M(10)) {
 		act("You should earn money for this service.",
 		    FALSE, ch, 0, 0, TO_CHAR);
 		return 1;
@@ -265,7 +265,7 @@ int string_machine(struct char_data *ch, int cmd, char *arg)
 	CREATE(obj->short_description, char, strlen(arg) + 1);
 	strcpy(obj->short_description, arg);
 
-	GET_GOLD(ch) -= 10000000;
+	GET_GOLD(ch) -= M(10);
 
 	act("STRING Service DONE.\n\r", FALSE, ch, 0, 0, TO_CHAR);
 
@@ -286,7 +286,7 @@ int slot_machine(struct char_data *ch, int cmd, char *arg)
 		return 1;
 
 	/* no gold */
-	if (GET_GOLD(ch) < 1000000) {
+	if (GET_GOLD(ch) < M(1)) {
 		act("You should have money!!!", FALSE, ch, 0, 0, TO_CHAR);
 		return 1;
 	}
@@ -305,10 +305,10 @@ int slot_machine(struct char_data *ch, int cmd, char *arg)
 
 	if (same == 0) {
 		act("You lost your coins.", FALSE, ch, 0, 0, TO_CHAR);
-		GET_GOLD(ch) -= 1000000;
+		GET_GOLD(ch) -= M(1);
 	} else if (same == 1) {
 		act("Good!!! You win this turn!!!", FALSE, ch, 0, 0, TO_CHAR);
-		GET_GOLD(ch) += 2000000;
+		GET_GOLD(ch) += M(2);
 	} else {
 		snprintf(buf, sizeof(buf), "Excellent!!! %s made JACKPOT!!!\n\r", GET_NAME(ch));
 		act(buf, FALSE, ch, 0, 0, TO_ROOM);
@@ -316,7 +316,7 @@ int slot_machine(struct char_data *ch, int cmd, char *arg)
 		/*
 		   send_to_all(buf);
 		 */
-		GET_GOLD(ch) += 20000000;
+		GET_GOLD(ch) += M(20);
 	}
 
 	return 1;

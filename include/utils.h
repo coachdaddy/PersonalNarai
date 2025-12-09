@@ -225,11 +225,13 @@ void print_increased_skilled(struct char_data *ch, int sk_no);
     } while(0)
 
 
-// 251208, 가독성 및 관리를 위한 확률 매크로 추가
-/* N분의 1 */
-#define ONE_IN(n) (number(0, (n) - 1) == 0)
-/* 퍼센트(백분율) */
-#define PERCENT(p) (number(1, 100) <= (p))
+// 251208, 가독성 및 관리를 위한 매크로 추가
+#define ONE_IN(n) (number(0, (n) - 1) == 0) /* N분의 1 */
+#define PERCENT(p) (number(1, 100) <= (p))  /* 퍼센트(백분율) */
 
+/* Unit Macros, 251209 */
+#define K(x) ((long)(x) * 1000)         /* Kilo, 1천 */
+#define M(x) ((long)(x) * 1000000)      /* Mega, 백만 */
+#define G(x) ((long)(x) * 1000000000)   /* Giga, 10억 */
 
 #include "prototypes.h"

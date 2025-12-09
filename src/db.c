@@ -2366,14 +2366,7 @@ void init_char(struct char_data *ch)
 	ch->specials.wimpyness = 0;
 
 	/* initial bonus */
-#ifdef BETA_TEST
-	GET_GOLD(ch) = 10000000000L;
-	ch->quest.solved = 50;
-	ch->specials.damnodice = 10;
-	ch->specials.damsizedice = 10;
-#else
 	ch->points.gold = 1000;
-#endif
 
 	for (i = 0; i <= MAX_SKILLS - 1; i++) {
 		if (GET_LEVEL(ch) < IMO + 3) {

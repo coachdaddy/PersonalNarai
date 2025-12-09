@@ -25,21 +25,6 @@ extern struct room_data *world;
 extern struct descriptor_data *descriptor_list;
 extern struct char_data *character_list;
 
-void raw_kill(struct char_data *ch);
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
-void set_fighting(struct char_data *ch, struct char_data *victim);
-void stop_fighting(struct char_data *ch);
-void do_say(struct char_data *ch, char *arg, int cmd);
-void mudlog(const char *str);
-bool saves_spell(struct char_data *ch, int type);
-int str_cmp(char *arg1, char *arg2);
-int do_simple_move(struct char_data *ch, int cmd, int following);
-int number(int from, int to);
-int MIN(int a, int b);
-int MAX(int a, int b);
-void die(struct char_data *ch, int level, struct char_data *v);
-void first_attack(struct char_data *ch, struct char_data *victim);
 
 void do_hit(struct char_data *ch, char *argument, int cmd)
 {
@@ -302,7 +287,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 				loose *= level_dif;
 				if (loose < 0)
 					loose = -loose;
-				loose = MIN(1000000, loose);
+				loose = MIN(M(1), loose);
 				if (!IS_NPC(ch))
 					gain_exp(ch, -loose);
 				send_to_char("You flee head over heels.\n\r", ch);

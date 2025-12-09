@@ -346,8 +346,8 @@ void game_loop(int s)
 		last_time.tv_sec = now.tv_sec + timeout.tv_sec;
 		last_time.tv_usec = now.tv_usec + timeout.tv_usec;
 
-		if (last_time.tv_usec >= 1000000) {
-			last_time.tv_usec -= 1000000;
+		if (last_time.tv_usec >= M(1)) {
+			last_time.tv_usec -= M(1);
 			last_time.tv_sec++;
 		}
 
@@ -729,7 +729,7 @@ struct timeval timediff(struct timeval *a, struct timeval *b)
 	tmp = *a;
 
 	if ((rslt.tv_usec = tmp.tv_usec - b->tv_usec) < 0) {
-		rslt.tv_usec += 1000000;
+		rslt.tv_usec += M(1);
 		--(tmp.tv_sec);
 	}
 	if ((rslt.tv_sec = tmp.tv_sec - b->tv_sec) < 0) {

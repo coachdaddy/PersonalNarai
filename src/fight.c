@@ -891,25 +891,18 @@ void damage(struct char_data *ch, struct char_data *victim,
 {
 	char buf[MAX_STRING_LENGTH];
 	struct message_type *messages;
-	int i, j, nr, max_hit, exp;
+	int i, j, nr;
+    long int max_hit, exp;
 	extern int nokillflag;
 
 	/* for quest */
 	struct follow_type *f;
-
-	long int hit_limit(struct char_data *ch);
 
 	if (!victim || !ch)
 		return;
 
     if (ch == victim && attacktype != TYPE_SUFFERING)
         return;
-
-#ifdef GHOST
-	/* connectionless PC can't damage or be damaged */
-	if ((!IS_NPC(ch) && !ch->desc) || (!IS_NPC(victim) && !victim->desc))
-		return;
-#endif				/* GHOST */
 
 	if (nokillflag)
 		if (!IS_NPC(ch) && !IS_NPC(victim))
@@ -939,17 +932,6 @@ void damage(struct char_data *ch, struct char_data *victim,
 			if (!ch->specials.fighting && ch->in_room == victim->in_room)
 				set_fighting(ch, victim);
 
-			/* forbid charmed person damage charmed person */
-			/*
-			   if (IS_AFFECTED(ch, AFF_CHARM) && IS_AFFECTED(victim,AFF_CHARM)) {
-			   if(ch->specials.fighting)
-			   stop_fighting(ch);
-			   if(victim->specials.fighting)
-			   stop_fighting(victim);
-			   return;
-			   }
-			 */
-
 			/* charmed mob can't ALWAYS kill another mob for player */
 			if (IS_NPC(ch) && IS_NPC(victim) && victim->master &&
 			    !number(0, 4) && IS_AFFECTED(victim, AFF_CHARM) &&
@@ -971,12 +953,8 @@ void damage(struct char_data *ch, struct char_data *victim,
 		dam /= 2;
 	if (IS_AFFECTED(victim, AFF_LOVE))
 		dam *= 2;
-	/*
-	   if (IS_NPC(ch))
-	   dam *= 2;
-	 */
 
-	dam = MAX(dam, -dam);
+	dam = MAX(1, dam); // dam이 음수면 1로 보정
 	/* MAX DAMAGE */
 	dam = MIN(dam, 100000);
 	GET_HIT(victim) -= dam;	/* this is the maximum damage */

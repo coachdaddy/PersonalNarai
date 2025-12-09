@@ -1160,9 +1160,9 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 	cost[1] = cost[0] * (GET_MAX_HIT(ch) - GET_HIT(ch));
 	cost[2] = cost[0] * (GET_MAX_MANA(ch) - GET_MANA(ch));
 	cost[3] = cost[0] * (GET_MAX_MOVE(ch) - GET_MOVE(ch));
-	cost[4] = 50000 + cost[0] * 20;
-	cost[5] = 500000000;
-	cost[6] = 4000000 + GET_SEX(ch) * 1000000;
+	cost[4] = K(50) + cost[0] * 20;
+	cost[5] = M(500);
+	cost[6] = M(4) + GET_SEX(ch) * M(1);
 
 	if (cmd == 59) {	/* List */
 		snprintf(buf, sizeof(buf), "1 - Hit points restoration (%d coins)\n\r", cost[1]);
@@ -1394,7 +1394,6 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 	char buf[MAX_STRING_LENGTH];
 	char buf2[MAX_STRING_LENGTH];
 	int k, opt;
-	// int mult;
 	long int cost = 0;
 	struct obj_data *tmp_obj;
 
@@ -1425,7 +1424,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				k = GET_PLAYER_MAX_HIT(ch);
 				cost = k * 200;
 				cost = number(cost, cost << 1);
-				cost = MIN(50000000, cost);
+				cost = MIN(M(50), cost);
 				if (cost <= 0 || cost > GET_EXP(ch)) {
 					send_to_char("Come back when you are ", ch);
 					send_to_char("more experienced.\n\r", ch);
@@ -1445,7 +1444,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				k = ch->points.max_mana;
 				cost = k * 200;
 				cost = number(cost, cost << 1);
-				cost = MIN(50000000, cost);
+				cost = MIN(M(50), cost);
 				if (cost <= 0 || cost > GET_EXP(ch)) {
 					send_to_char("Come back when you are ", ch);
 					send_to_char("more experienced.\n\r", ch);
@@ -1465,7 +1464,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				k = ch->points.max_move;
 				cost = k * 200;
 				cost = number(cost, cost << 1);
-				cost = MIN(50000000, cost);
+				cost = MIN(M(50), cost);
 				if (cost <= 0 || cost > GET_EXP(ch)) {
 					send_to_char("Come back when you are ", ch);
 					send_to_char("more experienced.\n\r", ch);
@@ -1507,7 +1506,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				ch->points.gold += cost * 2 / 3;
 				break;
 			case 6:
-				if (GET_EXP(ch) < 100000000) {
+				if (GET_EXP(ch) < M(100)) {
 					send_to_char
 					    ("Come back when you are more experienced.\n\r", ch);
 					return (TRUE);
@@ -1515,7 +1514,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				ch->specials.conditions[0] = -1;
 				ch->specials.conditions[1] = -1;
 				ch->specials.conditions[2] = -1;
-				cost = 100000000;
+				cost = M(100);
 				send_to_char_han(
 							"You are free from hunger and thirsty from now on!!!\n\r     Worship the God!\n\r",
 							"당신은 이제 배고픔과 목마름으로부터 해방입니다.\n\r신께 경배드리십시요.\n\r", ch);
@@ -1540,7 +1539,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 			}
 			tmp_obj = get_obj_in_list_vis(ch, buf, ch->carrying);
 			if (tmp_obj) {
-				if (GET_EXP(ch) < 250000000) {
+				if (GET_EXP(ch) < M(250)) {
 					send_to_char
 					    ("Come back when you are more experienced.\n\r", ch);
 					return TRUE;
@@ -1559,7 +1558,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				case 7991:	/* ticket for AC */
 					k = GET_AC(ch);
 					GET_AC(ch) -= number(2, 3);
-					GET_EXP(ch) -= 250000000;
+					GET_EXP(ch) -= M(250);
 					if (GET_AC(ch) < -120)
 						ch->quest.solved -= 15;
 					else
@@ -1572,7 +1571,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				case 7992:	/* ticket for HR */
 					k = GET_HITROLL(ch);
 					GET_HITROLL(ch) += number(1, 2);
-					GET_EXP(ch) -= 150000000;
+					GET_EXP(ch) -= M(150);
 					if (GET_HITROLL(ch) > 100)
 						ch->quest.solved -= 10;
 					else
@@ -1585,7 +1584,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				case 7993:	/* ticket for DR */
 					k = GET_DAMROLL(ch);
 					GET_DAMROLL(ch)++;
-					GET_EXP(ch) -= 250000000;
+					GET_EXP(ch) -= M(250);
 					if (GET_DAMROLL(ch) > 100)
 						ch->quest.solved -= 15;
 					else
@@ -1698,7 +1697,7 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 
     /* --- 올리모 전용 처리 로직 --- */
     if (all_done) {
-        if (GET_EXP(ch) < 1000000000) { 
+        if (GET_EXP(ch) < G(1)) { /* 10억 */
             send_to_char("&c[REMORTAL]&n You need 1,000,000,000 experience to change class as a Grand Master.\n\r", ch);
             return 0;
         }
@@ -1709,7 +1708,7 @@ int remortal(struct char_data *ch, int cmd, char *arg)
         }
 
         /* 처리 수행 */
-        GET_EXP(ch) -= 1000000000;
+        GET_EXP(ch) -= G(1);
         GET_CLASS(ch) = target_class_num;
         
         snprintf(buf, sizeof(buf), "&c[REMORTAL]&n&Y %s has changed class to %s with Grand Master's authority!&n\n\r", 
