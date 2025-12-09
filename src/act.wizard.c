@@ -367,7 +367,7 @@ void do_demote(struct char_data *ch, char *argument, int cmd)
 	void do_start(struct char_data *ch);
 
 	snprintf(buf, sizeof(buf), "%s demoted %s", GET_NAME(ch), argument);
-	log(buf);
+	mudlog(buf);
 
 	if (IS_NPC(ch))
 		return;
@@ -1048,6 +1048,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 		for (vict = world[ch->in_room].people; vict; vict = next_v) {
 			next_v = vict->next_in_room;
 			if (IS_NPC(vict))
+				DEBUG_LOG("act.wizard.c purge(%s)", vict->player.name);
 				extract_char(vict, TRUE);
 		}
 		for (obj = world[ch->in_room].contents; obj; obj = next_o) {
@@ -2097,7 +2098,7 @@ void do_zreload(struct char_data *ch, char *argument, int cmd)
 
     snprintf(buf, sizeof(buf), "[ZRELOAD] (GC) %s reloaded Zone %d (%s).", 
             GET_NAME(ch), target_zone_num, zone_table[zone_rnum].filename);
-    log(buf);
+    mudlog(buf);
 
     load_zones(zone_rnum);
 
@@ -2158,7 +2159,7 @@ void do_wreload(struct char_data *ch, char *argument, int cmd)
 
     /* 로그 및 메시지 */
     snprintf(buf, sizeof(buf), "[WRELOAD] (GC) %s reloaded World file for Zone %d.", GET_NAME(ch), target_zone_num);
-    log(buf);
+    mudlog(buf);
     
     snprintf(buf, sizeof(buf), "&c[WRELOAD]&n 존 %d번 월드 데이터(%s) 업데이트 완료.\r\n"
 				 "&c[WRELOAD]&n 동기화를 위해 zreload 실행을 권장합니다.\r\n"

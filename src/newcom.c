@@ -93,7 +93,7 @@ void stop_group(struct char_data *ch)
 	struct follow_type *j, *k;
 
 	if (!ch->master) {
-		log("No master but called stop_group");
+		mudlog("No master but called stop_group");
 		return;
 	}
 
@@ -204,7 +204,7 @@ void do_reloadzone(struct char_data *ch, char *argument, int cmd)
 			snprintf(buf2, sizeof(buf2), "Zone %s is now reloading..\n\r",
 				zone_table[i].name);
 			send_to_char(buf2, ch);
-			log(buf2);
+			mudlog(buf2);
 			load_zones(i);
 		}
 		return;
@@ -215,7 +215,7 @@ void do_reloadzone(struct char_data *ch, char *argument, int cmd)
 		snprintf(buf2, sizeof(buf2), "Zone %s is now reloading..\n\r",
 			zone_table[i].name);
 		send_to_char(buf2, ch);
-		log(buf2);
+		mudlog(buf2);
 		load_zones(i);
 		return;
 	}
@@ -225,7 +225,7 @@ void do_reloadzone(struct char_data *ch, char *argument, int cmd)
 			snprintf(buf2, sizeof(buf2), "Zone %s is now reloading..\n\r",
 				zone_table[i].name);
 			send_to_char(buf2, ch);
-			log(buf2);
+			mudlog(buf2);
 			load_zones(i);
 			break;
 		}

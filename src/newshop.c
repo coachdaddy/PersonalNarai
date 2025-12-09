@@ -9,6 +9,8 @@
 
 /* constants */
 
+void mudlog(const char *str);
+
 /* virtual number of room */
 int used_shop_rooms[] =
 {
@@ -46,7 +48,7 @@ int used_shop(struct char_data *ch, int cmd, char *arg)
 
 	shop_num = find_shop_index(world[ch->in_room].number)
 	    if (shop_num == 0) {
-		log("ERROR in find_shop_index!");
+		mudlog("ERROR in find_shop_index!");
 		send_to_char("Ooops. bug???\n\r", ch);
 		return TRUE;
 	}

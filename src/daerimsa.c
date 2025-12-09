@@ -45,7 +45,7 @@ void do_drop(struct char_data *ch, char *argument, int cmd);
 void do_wear(struct char_data *ch, char *argument, int cmd);
 void do_give(struct char_data *ch, char *argument, int cmd);
 int number(int from, int to);
-void log(char *str);
+void mudlog(const char *str);
 void do_look(struct char_data *ch, char *argument, int cmd);
 
 int son_ogong_func(struct char_data *ch, int cmd, char *arg)
@@ -166,7 +166,7 @@ int son_ogong_func(struct char_data *ch, int cmd, char *arg)
 
 /*
 snprintf(buf, sizeof(buf), "son_special : %s(%d)\n", GET_NAME(ch), cmd);
-log(buf);
+mudlog(buf);
 */
 	return 0;
 }
@@ -335,7 +335,7 @@ int teleport_daerimsa_tower(struct char_data *ch, int cmd, char *arg)
 				if (world[i].number == TOWER_IN_DAERIMSA)
 					break;
 			if (i == top_of_world) {
-				log("NO-EXIST ROOM");
+				mudlog("NO-EXIST ROOM");
 				return 0;
 			}
 

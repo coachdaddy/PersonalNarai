@@ -46,7 +46,7 @@ void gbisland_move_seashore(struct char_data *ch)
 
     // 범위 검사
     if (sect_type < 0 || sect_type >= 9) {
-        log("SYSERR: Invalid sector type in gbisland..."); // 필요하면 로그 남기기
+        mudlog("SYSERR: Invalid sector type in gbisland..."); // 필요하면 로그 남기기
         sect_type = 0; 
     }
 
@@ -438,6 +438,7 @@ int gbisland_lanessa(struct char_data *ch, int cmd, char *arg)
 
 				obj_to_room(obj, ch->in_room);
 
+				DEBUG_LOG("gbisland.c lanessa(%s)", ch->player.name);
 				extract_char(ch, TRUE);
 			} else if (paper1 || paper2) {
 				do_say(ch,

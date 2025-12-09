@@ -26,6 +26,8 @@
 extern struct room_data *world;
 extern struct index_data *mob_index;
 
+void do_look(struct char_data *ch, char *argument, int cmd);
+
 struct {
 	int virtual;
 	int level;
@@ -284,7 +286,7 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 			QM[num].name);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &U%s&Y? 어디 있는 걸까? 모르겠는데...&n\n\r",
 			QM[num].name);
-		log("QUEST : INVALID mobile (or zone not found).");
+		mudlog("QUEST : INVALID mobile (or zone not found).");
 	} else { 
 		char qbuf[100];
 		strncpy(qbuf, QM[num].name, strlen(QM[num].name));
@@ -353,7 +355,7 @@ void init_quest(void)
 	int num, size;
 
 	if (!(fp = fopen(QUEST_FILE, "r"))) {
-		log("(init_quest) Initializing quests (quest_file)");
+		mudlog("init quest (quest_file)");
 		exit(0);
 	}
 

@@ -30,7 +30,7 @@ void cast_burning_hands(byte level, struct char_data *ch, char *arg, int type,
 		spell_burning_hands(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in burning hands!");
+		mudlog("Serious screw-up in burning hands!");
 		break;
 	}
 }
@@ -72,7 +72,7 @@ void cast_call_lightning(byte level, struct char_data *ch, char *arg, int type,
 		}
 		break;
 	default:
-		log("Serious screw-up in call lightning!");
+		mudlog("Serious screw-up in call lightning!");
 		break;
 	}
 }
@@ -85,7 +85,7 @@ void cast_chill_touch(byte level, struct char_data *ch, char *arg, int type,
 		spell_chill_touch(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in chill touch!");
+		mudlog("Serious screw-up in chill touch!");
 		break;
 	}
 }
@@ -98,7 +98,7 @@ void cast_shocking_grasp(byte level, struct char_data *ch, char *arg, int type,
 		spell_shocking_grasp(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in shocking grasp!");
+		mudlog("Serious screw-up in shocking grasp!");
 		break;
 	}
 }
@@ -121,7 +121,7 @@ void cast_color_spray(byte level, struct char_data *ch, char *arg, int type,
 			spell_color_spray(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in color spray!");
+		mudlog("Serious screw-up in color spray!");
 		break;
 	}
 }
@@ -136,7 +136,7 @@ void cast_earthquake(byte level, struct char_data *ch, char *arg, int type,
 		spell_earthquake(level, ch, 0, 0);
 		break;
 	default:
-		log("Serious screw-up in earthquake!");
+		mudlog("Serious screw-up in earthquake!");
 		break;
 	}
 }
@@ -151,7 +151,7 @@ void cast_all_heal(byte level, struct char_data *ch, char *arg, int type,
 		spell_all_heal(level, ch, 0, 0);
 		break;
 	default:
-		log("Serious screw-up in all_heal!");
+		mudlog("Serious screw-up in all_heal!");
 		break;
 	}
 }
@@ -167,7 +167,7 @@ void cast_sanctuary_cloud(byte level, struct char_data *ch, char *arg, int
 		spell_sanctuary_cloud(level, ch, 0, 0);
 		break;
 	default:
-		log("Serious screw-up in all_heal!");
+		mudlog("Serious screw-up in all_heal!");
 		break;
 	}
 }
@@ -182,7 +182,7 @@ void cast_hand_of_god(byte level, struct char_data *ch, char *arg, int type,
 		spell_hand_of_god(level, ch, 0, 0);
 		break;
 	default:
-		log("Serious screw-up in hand of god!");
+		mudlog("Serious screw-up in hand of god!");
 		break;
 	}
 }
@@ -197,7 +197,7 @@ void cast_fire_storm(byte level, struct char_data *ch, char *arg, int type,
 		spell_fire_storm(level, ch, 0, 0);
 		break;
 	default:
-		log("Serious screw-up in fire storm!");
+		mudlog("Serious screw-up in fire storm!");
 		break;
 	}
 }
@@ -229,7 +229,7 @@ void cast_energy_drain(byte level, struct char_data *ch, char *arg, int type,
 				spell_energy_drain(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in energy drain!");
+		mudlog("Serious screw-up in energy drain!");
 		break;
 	}
 }
@@ -242,7 +242,7 @@ void cast_disintegrate(byte level, struct char_data *ch, char *arg, int type,
 		spell_disintegrate(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in disintegrate!");
+		mudlog("Serious screw-up in disintegrate!");
 		break;
 	}
 }
@@ -255,7 +255,7 @@ void cast_sunburst(byte level, struct char_data *ch, char *arg, int type,
 		spell_sunburst(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in sunburst!");
+		mudlog("Serious screw-up in sunburst!");
 		break;
 	}
 }
@@ -267,7 +267,7 @@ void cast_energyflow(byte level, struct char_data *ch, char *arg, int type,
 		spell_energyflow(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in energyflow!");
+		mudlog("Serious screw-up in energyflow!");
 		break;
 	}
 }
@@ -298,7 +298,7 @@ void cast_full_fire(byte level, struct char_data *ch, char *arg, int type,
 		send_to_char("You are exhausted.\n\r", ch);
 		break;
 	default:
-		log("Serious screw-up in full fire!");
+		mudlog("Serious screw-up in full fire!");
 		break;
 	}
 }
@@ -317,7 +317,7 @@ void cast_throw(byte level, struct char_data *ch, char *arg, int type,
 		spell_throw(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in throw!");
+		mudlog("Serious screw-up in throw!");
 		break;
 	}
 }
@@ -340,7 +340,7 @@ void cast_fireball(byte level, struct char_data *ch, char *arg, int type,
 			spell_fireball(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in fireball!");
+		mudlog("Serious screw-up in fireball!");
 		break;
 
 	}
@@ -364,7 +364,7 @@ void cast_corn_of_ice(byte level, struct char_data *ch, char *arg, int type,
 			spell_corn_of_ice(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in corn_of_ice!");
+		mudlog("Serious screw-up in corn_of_ice!");
 		break;
 
 	}
@@ -387,7 +387,7 @@ void cast_harm(byte level, struct char_data *ch, char *arg, int type,
 				spell_harm(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in harm!");
+		mudlog("Serious screw-up in harm!");
 		break;
 
 	}
@@ -411,7 +411,7 @@ void cast_lightning_bolt(byte level, struct char_data *ch, char *arg, int type,
 			spell_lightning_bolt(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in lightning bolt!");
+		mudlog("Serious screw-up in lightning bolt!");
 		break;
 
 	}
@@ -435,7 +435,7 @@ void cast_magic_missile(byte level, struct char_data *ch, char *arg, int type,
 			spell_magic_missile(level, ch, victim, 0);
 		break;
 	default:
-		log("Serious screw-up in magic missile!");
+		mudlog("Serious screw-up in magic missile!");
 		break;
 
 	}

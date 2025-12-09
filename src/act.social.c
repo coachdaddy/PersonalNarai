@@ -27,7 +27,7 @@ void parse_string(char *input, char *output, struct char_data *ch1,
 		  struct char_data *ch2, struct char_data *to);
 int action(int cmd);
 char *fread_action(FILE * fl);
-void log(char *str);
+void mudlog(const char *str);
 
 struct social_messg {
 	int act_nr;
@@ -60,7 +60,7 @@ char *fread_action(FILE * fl)
 	for (;;) {
 		fgets(buf, MAX_STRING_LENGTH, fl);
 		if (feof(fl)) {
-			log("Fread_action - unexpected EOF.");
+			mudlog("Fread_action - unexpected EOF.");
 			exit(0);
 		}
 

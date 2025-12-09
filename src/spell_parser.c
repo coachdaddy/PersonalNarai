@@ -828,8 +828,9 @@ void SPELLO(int nr, byte beat, byte pos, int l0, int l1, int l2, int l3,
 	spell_info[nr].max_skill[3] = (s3);
 	spell_info[nr].targets = (tar);
 
-	if( prev != -1) { 
-		DEBUG_LOG("spell number(%d): %s prev(%d): %s.", nr, spells[nr-1], prev, spells[prev-1]);
+	if( prev != -1)
+	{ 
+		DEBUG_LOG("%s (%d)'s previous spell: %s (%d).", spells[nr-1], nr, spells[prev-1], prev);
 	}
 }
 
@@ -908,7 +909,7 @@ void assign_spell_pointers(void)
 	       TAR_CHAR_ROOM | TAR_FIGHT_VICT | TAR_SELF_NONO, cast_shocking_grasp);
 	SPELLO(33, 12, POSITION_STANDING, 20, 8, 30, IMO, 70, 95, 60, 30, 70, -1, -1,
 	       TAR_CHAR_ROOM | TAR_SELF_NONO | TAR_OBJ_INV, cast_poison);
-	SPELLO(34, 12, POSITION_STANDING, 20, 6, IMO, IMO, 60, 95, 30, 30, 50, -1, -1,
+	SPELLO(34, 12, POSITION_STANDING, 20, 6, IMO, IMO, 60, 95, 30, 30, 50, 18, -1,
 	       TAR_SELF_ONLY, cast_protection_from_evil);
 	SPELLO(35, 12, POSITION_STANDING, IMO, 12, IMO, IMO, 30, 95, 30, 30, 50, -1, -1,
 	       TAR_CHAR_ROOM | TAR_OBJ_INV | TAR_OBJ_ROOM, cast_remove_curse);
@@ -1038,7 +1039,7 @@ void assign_spell_pointers(void)
 	       TAR_CHAR_ROOM, cast_mana_transfer);	/* by process */
 	SPELLO(116, 12, POSITION_FIGHTING, 17, 13, 20, 20, 80, 95, 70, 70, 100, -1, -1,
 	       TAR_SELF_ONLY, cast_self_heal);	/* by process */
-	SPELLO(117, 12, POSITION_STANDING, IMO, 40, IMO, IMO, 30, 80, 30, 30, 120, -1, -1,
+	SPELLO(117, 12, POSITION_STANDING, IMO, 40, IMO, IMO, 30, 80, 30, 30, 120, 34, -1,
 	       TAR_SELF_ONLY, cast_holy_shield);	/* by process */
 	SPELLO(118, 12, POSITION_FIGHTING, IMO, IMO, 30, 40, 30, 30, 49, 30, 200, -1, -1,
 	       TAR_SELF_ONLY, cast_restore_move);	/* by ares */

@@ -153,10 +153,10 @@ struct char_data *
 	if (mode == MODE_RANDOM) {
 		tmp = number(0, count - 1);
 		if (tmp < 0 || tmp >= count)
-			log("number error in choose victim");
+			mudlog("number error in choose victim");
 		snprintf(buf, sizeof(buf), "choose mob: count = %d, rnd # %d, (%s)", count, tmp,
 			victims[tmp]->player.name);
-		log(buf);
+		mudlog(buf);
 		return (victims[tmp]);
 	}
 

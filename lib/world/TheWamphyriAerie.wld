@@ -438,6 +438,7 @@ door~
 S
 #4227
 A dark passage~
+
 ~
 42 9 0
 D0
@@ -934,6 +935,8 @@ door~
 S
 #4258
 A dark passage~
+    You are in a dark passage.  The walls do not look like stone.  They almost
+appear to be skeletal in nature.
 ~
 42 8 0
 D0

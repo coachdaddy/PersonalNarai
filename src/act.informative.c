@@ -48,12 +48,15 @@ struct time_info_data age(struct char_data *ch);
 void page_string(struct descriptor_data *d, char *str, int keep_internal);
 int number(int from, int to);
 int strn_cmp(char *arg1, char *arg2, int n);
-void log(char *str);
-int move_stashfile_safe(const char *victim);
+
+int move_stashfile_safe (const char *victim);
 void close_socket(struct descriptor_data *d);
 void sprintbit(long vektor, char *names[], char *result);
 void weather_change(int);
 void prune_crlf(char *txt);			/* in utility.c 251130 */
+
+void DEBUG_LOG(const char *format, ...);
+void mudlog(const char *str);
 
 /* intern functions */
 void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode,
@@ -1884,7 +1887,7 @@ void load_news_if_changed() {
 
     // 파일이 바뀌었다면 다시 읽음
     if (!(fl = fopen(filename, "r"))) {
-        log("SYSERR: 뉴스 파일을 열 수 없습니다.");
+        mudlog("SYSERR: 뉴스 파일을 열 수 없습니다.");
         return;
     }
 
@@ -1898,7 +1901,7 @@ void load_news_if_changed() {
     news_last_mod = file_info.st_mtime;
     
     fclose(fl);
-    log("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
+    mudlog("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
 }
 
 void do_news(struct char_data *ch, char *argument, int cmd)
@@ -2158,6 +2161,7 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 						wipe_obj(d->character->carrying);
 					d->character->carrying = 0;
 					close_socket(d);
+					DEBUG_LOG("act.informative. c extract char(%s)", d->character);
 					extract_char(d->character, TRUE);
 				}
 			} else {

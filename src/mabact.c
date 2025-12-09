@@ -18,8 +18,8 @@ extern struct room_data *world;
 extern struct str_app_type str_app[];
 
 void hit(struct char_data *ch, struct char_data *victim, int type);
-void log(char *str);
 int number(int from, int to);
+void mudlog(const char *str);
 void obj_from_room(struct obj_data *o);
 void obj_to_char(struct obj_data *o, struct char_data *ch);
 bool saves_spell(struct char_data *ch, int type);
@@ -138,7 +138,7 @@ void mobile_activity(void)
 					snprintf(buf, sizeof(buf),
 						"Attempting to call a non-existing MOB func.\n (mobact.c) %s",
 						ch->player.short_descr);
-					log(buf);
+					mudlog(buf);
 					REMOVE_BIT(ch->specials.act, ACT_SPEC);
 				} else {
 					if ((*mob_index[ch->nr].func) (ch, 0,

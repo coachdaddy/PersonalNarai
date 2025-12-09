@@ -661,7 +661,7 @@ int command_interpreter(struct char_data *ch, char *argument)
 
 		if (IS_SET(ch->specials.act, PLR_XYZZY)) {
 			snprintf(buf, sizeof(buf), "%s: %s", ch->player.name, argument);
-			log(buf);
+			mudlog(buf);
 		}
 		return (1);
 	}
@@ -1269,8 +1269,8 @@ void nanny(struct descriptor_data *d, char *arg)
 				SEND_TO_Q("Name : ", d);
 				return;
 			}
-			snprintf(new_connection, sizeof(new_connection), "%s is trying to play", tmp_name);
-			log(new_connection);
+			sprintf(new_connection, "%s is trying to play", tmp_name);
+			mudlog(new_connection);
 			/* Check if already playing */
 			for (k = descriptor_list; k; k = k->next) {
 				if ((k->character != d->character) && k->character) {
@@ -1370,7 +1370,7 @@ void nanny(struct descriptor_data *d, char *arg)
 						"%s(%d)[%s] has reconnected.",
 						GET_NAME(d->character),
 						GET_LEVEL(d->character), d->host);
-					log(buf);
+					mudlog(buf);
 					return;
 				}
 			}
@@ -1478,7 +1478,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		if (STATE(d) != CON_QCLASS) {
 			snprintf(buf, sizeof(buf), "%s [%s] new player.", GET_NAME(d->character),
 				d->host);
-			log(buf);
+			mudlog(buf);
 			SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
 		}
 		break;
@@ -1704,7 +1704,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		}
 		break;
 	default:
-		log("Nanny: illegal state of con'ness");
+		mudlog("Nanny: illegal state of con'ness");
 		abort();
 		break;
 	}

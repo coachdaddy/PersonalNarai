@@ -31,7 +31,7 @@ void stash_char(struct char_data *ch);
 void wipe_stash(char *filename);
 void hit(struct char_data *ch, struct char_data *victim, int type);
 void do_shout(struct char_data *ch, char *argument, int cmd);
-void log(char *str);
+void mudlog(const char *str);
 void close_socket(struct descriptor_data *d);
 int number(int from, int to);
 int str_cmp(char *arg1, char *arg2);
@@ -42,7 +42,9 @@ bool saves_spell(struct char_data *ch, int type);
 void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
 int MIN(int a, int b);
 
+int move_stashfile_safe (const char *victim);
 
+void DEBUG_LOG(const char *format, ...);
 
 void do_quit(struct char_data *ch, char *argument, int cmd)
 {
@@ -67,10 +69,12 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 	save_char(ch, world[ch->in_room].number);
 
 	act("Goodbye, friend.. Come back soon!", FALSE, ch, 0, 0, TO_CHAR);
-	snprintf(cyb, sizeof(cyb), "%s closed connection. (quit)", GET_NAME(ch));
-	log(cyb);
+	sprintf(cyb, "%s closed connect(quit)", GET_NAME(ch));
+	mudlog(cyb);
 	if (ch->desc)
 		close_socket(ch->desc);
+
+	DEBUG_LOG("act.other.c extract char(%s)", ch->player.name);
 	extract_char(ch, FALSE);
 }
 
@@ -612,7 +616,7 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 
 	/* by ares */
 	snprintf(buf, sizeof(buf), "Use log : %s uses %s", ch->player.name, argument);
-	log(buf);
+	mudlog(buf);
 
 	stick = ch->equipment[HOLD];
 

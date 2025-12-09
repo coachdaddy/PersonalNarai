@@ -41,7 +41,7 @@ struct board_data *init_a_board(struct char_data *ch);
 struct board_data *find_board(struct char_data *ch);
 void load_board(struct board_data *cb);
 void save_board(struct board_data *cb);
-void log(char *str);
+void mudlog(const char *str);
 int show_board(struct char_data *ch, struct board_data *cb, char *arg);
 int post_board(struct char_data *ch, struct board_data *cb, char *arg);
 int remove_board(struct char_data *ch, struct board_data *cb, char *arg);
@@ -111,7 +111,7 @@ void load_board(struct board_data *cb)
 		fread(&size, sizeof(int), 1, cb->fp);
 		cb->head[ind] = (char *)malloc(size + 1);
 		if (!cb->head[ind]) {
-			log("malloc failure in board.c");
+			mudlog("malloc failure in board.c");
 			return;
 		}
 		fread(cb->head[ind], size, 1, cb->fp);
@@ -120,7 +120,7 @@ void load_board(struct board_data *cb)
 		fread(&size, sizeof(int), 1, cb->fp);
 		cb->msgs[ind] = (char *)malloc(size + 1);
 		if (!cb->msgs[ind]) {
-			log("malloc failure in board.c");
+			mudlog("malloc failure in board.c");
 			return;
 		}
 		fread(cb->msgs[ind], size, 1, cb->fp);
@@ -138,13 +138,13 @@ void save_board(struct board_data *cb)
 	int ind, m_num, size;
 
 	if (cb->m_num == 0) {
-		log("cb->m_num is infeasible (board.c save_board())");
+		mudlog("cb->m_num is infeasible (board.c save_board())");
 		return;
 	}
 
 	cb->fp = fopen(cb->bfile, "w");
 	if (!cb->fp) {
-		log("unable to open board file.\n\r");
+		mudlog("unable to open board file.\n\r");
 		return;
 	}
 
@@ -174,7 +174,7 @@ int board(struct char_data *ch, int cmd, char *arg)
 
 	cur_board = find_board(ch);
 	if (!cur_board) {
-		log("malloc failure in board.c");
+		mudlog("malloc failure in board.c");
 		return FALSE;
 	}
 
@@ -190,7 +190,7 @@ int board(struct char_data *ch, int cmd, char *arg)
 	case 63:
 		return read_board(ch, cur_board, arg);
 	default:
-		log("cmd is infeasible! (board.c)");
+		mudlog("cmd is infeasible! (board.c)");
 		return FALSE;
 	}
 }

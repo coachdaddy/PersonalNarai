@@ -1306,7 +1306,7 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 			}
 			i = find_name(ch->player.name);
 			if (i == -1) {
-				log("이럴루가!!!");
+				mudlog("이럴루가!!!");
 				send_to_char("ING? Then, how can i be here?\n\r", ch);
 				return TRUE;
 			}
