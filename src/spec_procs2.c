@@ -22,7 +22,6 @@
 #include "mob_magic.h"		/* cyb */
 
 /*   external vars  */
-
 extern struct room_data *world;
 extern struct char_data *character_list;
 extern struct descriptor_data *descriptor_list;
@@ -31,57 +30,6 @@ extern struct time_info_data time_info;
 extern struct title_type titles[4][IMO + 4];
 extern struct index_data *mob_index;
 
-/* extern procedures */
-
-void do_look(struct char_data *ch, char *argument, int cmd);
-void DEBUG_LOG(const char *format, ...);
-void mudlog(const char *str);
-
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void gain_exp(struct char_data *ch, int gain);
-void stop_fighting(struct char_data *ch);
-void set_title(struct char_data *ch);
-int number(int from, int to);
-void do_say(struct char_data *ch, char *str, int cmd);
-void die(struct char_data *ch, int level, struct char_data *who);
-int dice(int num, int size);
-void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
-void wear(struct char_data *ch, struct obj_data *o, int keyword);
-void shoot(struct char_data *ch, struct char_data *victim, int type);
-void add_follower(struct char_data *ch, struct char_data *leader);
-int str_cmp(char *arg1, char *arg2);
-int find_name(char *name);
-int MIN(int a, int b);
-void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode,
-		      bool show);
-void list_char_to_char(struct char_data *list, struct char_data *ch, int mode);
-void do_kick(struct char_data *ch, char *arg, int cmd);
-void do_bash(struct char_data *ch, char *arg, int cmd);
-
-void do_start(struct char_data *ch);
-
-void cast_cure_light(byte level, struct char_data *ch, char *arg, int type,
-		     struct char_data *victim, struct obj_data *tar_obj);
-void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type,
-		      struct char_data *victim, struct obj_data *tar_obj);
-void cast_heal(byte level, struct char_data *ch, char *arg, int type,
-	       struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
-		    struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_sunburst(byte level, struct char_data *ch, char *arg, int type,
-		   struct char_data *victim, struct obj_data *tar_obj);
-void cast_fireball(byte level, struct char_data *ch, char *arg, int type,
-		   struct char_data *victim, struct obj_data *tar_obj);
-void cast_color_spray(byte level, struct char_data *ch, char *arg, int type,
-		      struct char_data *victim, struct obj_data *tar_obj);
-void cast_all_heal(byte level, struct char_data *ch, char *arg, int si,
-		   struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_corn_of_ice(byte level, struct char_data *ch, char *arg, int si,
-		      struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_sanctuary(byte level, struct char_data *ch, char *arg, int si,
-		    struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_haste(byte level, struct char_data *ch, char *arg, int si,
-		struct char_data *tar_ch, struct obj_data *tar_obj);
 
 /* ********************************************************************
 *  Special procedures for mobiles                                      *
@@ -119,7 +67,7 @@ int super_deathcure(struct char_data *ch, int cmd, char *arg)
 	int h, real_number, ran_num;
 	if (cmd)
 		return (0);
-	/* cyb vict=world[ch->in_room].people; */
+	
 	vict = choose_victim(ch, VIC_ALL, MODE_MOVE_MAX);
 
 	h = GET_HIT(ch);
@@ -207,21 +155,21 @@ int deathcure(struct char_data *ch, int cmd, char *arg)
 	}
 	if (vict && !IS_NPC(vict)) {
 		if (number(1, 10) > 7) {
-			act("$n control your body ZERO.", 1, ch, 0, 0, TO_ROOM);
+			act("$n controls your body ZERO.", 1, ch, 0, 0, TO_ROOM);
 			vict->points.hit = 1;
 			vict->points.move = 0;
-			act("$n Wuhhhhhh...... thank you very much ? .", 1,
+			act("$n Wuhhhhhh...... thank you very much ?", 1,
 			    ch, 0, 0, TO_ROOM);
 			return TRUE;
 		} else if (number(1, 10) > 8) {
 			vict->points.hit += 60 * (1 + GET_LEVEL(vict) / 7);
-			act("$n Wuhhhhhh...... that's too bad ! ? .", 1, ch,
+			act("$n Wuhhhhhh...... that's too bad ! ?", 1, ch,
 			    0, 0, TO_ROOM);
 			return TRUE;
 		} else if (number(1, 10) > 5) {
-			act("$n control your mana ZERO.", 1, ch, 0, 0, TO_ROOM);
+			act("$n controls your mana ZERO.", 1, ch, 0, 0, TO_ROOM);
 			vict->points.mana = 0;
-			act("$n hmmmmm.... great miracle !!! ", 1, ch, 0, 0, TO_ROOM);
+			act("$n hmmmmm.... great miracle !!!", 1, ch, 0, 0, TO_ROOM);
 			return TRUE;
 		} else if (number(1, 10) > 9) {
 			act("$n hmmmmm.... miracle !!!", 1, ch, 0, 0, TO_ROOM);
@@ -237,11 +185,10 @@ int deathcure(struct char_data *ch, int cmd, char *arg)
 		do_say(ch, "HaHaHa ......", 0);
 		return (1);
 	case 2:
-		do_say(ch, "You are insect me !! ......", 0);
+		do_say(ch, "You are an insect to me !! ......", 0);
 		return (1);
 	case 3:
-		do_say(ch,
-		       "if you give me 50000 coins , i forgive me your crime ...", 0);
+		do_say(ch, "If you give me 50,000 coins, I'll forgive your crime...", 0);
 		return (1);
 	case 4:
 		do_say(ch, "I can make your body Zero ! ", 0);
@@ -275,7 +222,7 @@ int deathcure(struct char_data *ch, int cmd, char *arg)
 		    0, TO_ROOM);
 		return (1);
 	case 10:
-		act("$n try to steal your inventory .", 1, ch, 0, 0, TO_ROOM);
+		act("$n tries to steal your inventory.", 1, ch, 0, 0, TO_ROOM);
 		return (1);
 	default:
 		return (0);
@@ -327,23 +274,6 @@ int perhaps(struct char_data *ch, int cmd, char *arg)
 			die(vict, GET_LEVEL(ch), ch);
 			continue;
 		}
-		/*
-		   if( vict&&((vict->points.armor)>1) )
-		   {
-		   act("$n hugs $N.",1,ch,0,vict,TO_ROOM);
-		   vict->points.armor=1;
-		   }
-		   if( vict&&((vict->points.hitroll) < GET_LEVEL(vict))&&GET_LEVEL(vict)<IMO )
-		   {
-		   act("$n pats $N.",1,ch,0,vict,TO_ROOM);
-		   vict->points.hitroll=GET_LEVEL(vict);
-		   }
-		   if( vict&&((vict->points.damroll) < GET_LEVEL(vict))&&GET_LEVEL(vict)<IMO )
-		   {
-		   act("$n raises $s POWER!!!",1,ch,0,vict,TO_ROOM);
-		   vict->points.damroll=GET_LEVEL(vict);
-		   }
-		 */
 	}
 	switch (number(0, 500)) {
 	case 1:
@@ -378,6 +308,9 @@ int perhaps(struct char_data *ch, int cmd, char *arg)
 	case 9:
 		do_say(ch, "초보자 이시면, 'help'를 쳐보세요.", 0);
 		return 1;
+	case 10:
+		do_say(ch, "'bow narai'를 입력하시면 마법을 걸어드려요.", 0);
+		return 1;
 	default:
 		return 1;
 	}
@@ -398,8 +331,6 @@ int Quest_bombard(struct char_data *ch, int cmd, char *arg)
 
 /* bombard like sword 2702 */
 /* bombard room is 3035 and other room is 3094 */
-/* if ch->in_room == real_room(3035)  .... */
-
 	if (ch->in_room == real_room(3035))
 		newnum = 3027;
 	else if (ch->in_room == real_room(3094))
@@ -908,11 +839,11 @@ int mom(struct char_data *ch, int cmd, char *arg)
 		return (1);
 
 	case 4:
-		do_say(ch, "누가 여기 쓰레기 치우지 않았지 ?", 0);
+		do_say(ch, "누가 여기 쓰레기 치우지 않았지?", 0);
 		return (1);
 
 	case 5:
-		do_say(ch, "얘 ! 방좀 가서 치워라.", 0);
+		do_say(ch, "얘! 방 좀 가서 치워라.", 0);
 		return (1);
 
 	case 6:
@@ -920,20 +851,19 @@ int mom(struct char_data *ch, int cmd, char *arg)
 		return (1);
 
 	case 7:
-		do_say(ch, "밤늦게 까지 오락 하지 말랬지 !", 0);
+		do_say(ch, "밤 늦게까지 오락하지 말랬지!", 0);
 		return (1);
 
 	case 8:
-		do_say(ch,
-		       "넌 집에서 가정교육을 좀 더 받아야해", 0);
+		do_say(ch, "넌 집에서 가정교육을 좀 더 받아야해.", 0);
 		return (1);
 
 	case 9:
-		do_say(ch, "보고서 다 썼니 ?", 0);
+		do_say(ch, "보고서 다 썼니?", 0);
 		return (1);
 
 	case 10:
-		do_say(ch, "숙제 다 했어 ?", 0);
+		do_say(ch, "숙제 다 했어?", 0);
 		return (1);
 
 	default:
@@ -1157,7 +1087,7 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 		arg = one_argument(arg, pet_name);
 		/* Pet_Name is for later use when I feel like it */
 		if (!(pet = get_char_room(buf, pet_room))) {
-			send_to_char("아 그런 동물은 없는데요 ?\n\r", ch);
+			send_to_char("아? 그런 동물은 없는데요 ?\n\r", ch);
 			return (TRUE);
 		}
 		if (!IS_NPC(pet)) {
@@ -1195,7 +1125,7 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 		char_to_room(pet, ch->in_room);
 		add_follower(pet, ch);
 
-		/* Be certain that pet's can't get/carry/use/wield/wear items */
+		/* Be certain that pets can't get/carry/use/wield/wear items */
 /*
     And why not?
 
@@ -1438,11 +1368,7 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 			send_to_char
 			    ("하! 이름 바꾼다고 잘 살수 있을거 같지?\n\r", ch);
 			send_to_char("어림 반 푼어치도 없다!!!!!!!!!!!!!!\n\r", ch);
-#ifdef  RETURN_TO_QUIT
-			save_char(ch, world[ch->in_room].number);
-#else
 			save_char(ch, ch->in_room);
-#endif
 			return TRUE;
 		default:
 			send_to_char("뭐요?\n\r", ch);
@@ -1491,11 +1417,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 	} else if (cmd == 56) {	/* Buy */
 		half_chop(arg, buf, buf2);
 		opt = atoi(buf);
-		// mult = 1 ;
-
-		/*
-		   if (1 <= opt && opt <= 6) {
-		 */
+	
 		/* remove 5, 6 */
 		if (1 <= opt && opt <= 4) {
 			switch (opt) {
@@ -1661,9 +1583,6 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 					send_to_char(buf2, ch);
 					break;
 				case 7993:	/* ticket for DR */
-					/*
-					   GET_DAMROLL(ch) += number(1, 2);
-					 */
 					k = GET_DAMROLL(ch);
 					GET_DAMROLL(ch)++;
 					GET_EXP(ch) -= 250000000;
@@ -1917,7 +1836,6 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 
 int jale_room(struct char_data *ch, int cmd, char *arg)
 {
-	/* if(IS_AFFECTED(ch, AFF_ARREST)){ */
 	if (GET_LEVEL(ch) < IMO) {
 		switch (cmd) {
 		case 15:	/* look */
@@ -1942,38 +1860,9 @@ int safe_house(struct char_data *ch, int cmd, char *arg)
 {
 	if (GET_LEVEL(ch) >= (IMO + 2))
 		return FALSE;
+
 	switch (cmd) {
-//  case 25:    /* kill */
-//  case 70:    /* hit */
-//  case 84:    /* cast Perhaps modified */
-//  case 87:    /* order */
-//  case 154:   /* backstab */
-//  case 156:   /* steal */
-//  case 157:   /* bash */
-//  case 159:   /* kick */
-//  case 172:   /* use */
-//  case 192:   /* shoot */
-//  case 207:   /* recite */
-//  case 234:   /* tornado */
-//  case 239:   /* flash */
-//  case 268:   /* disarm by chase*/
-//  case 269:   /* shouryuken by chase */
-//  case 270:   /* throw object */
-//  case 271:   /* punch */
-//  case 272:  /* assault by process*/
-//  case 280:
-//  case 281:
-//  case 282:
-//  case 283:
-//  case 284:
-//  case 287:
-//  case 288:
-//  case 289:
-//  case 290:
-//  case 292:
-//  case 293:
-//  case 298:   /* spin bird kick */
-	case 9:		/* kill */
+	case 9:			/* kill */
 	case 70:		/* hit */
 	case 84:		/* cast Perhaps modified */
 	case 87:		/* order */
@@ -2003,7 +1892,6 @@ int safe_house(struct char_data *ch, int cmd, char *arg)
 	case 292:
 	case 293:
 	case 298:		/* spin bird kick */
-/* by Moon */
 		send_to_char("You cannot do that here.\n\r", ch);
 		act("$n attempts to misbehave here.", FALSE, ch, 0, 0, TO_ROOM); // send_to_room_except 대체
 		return TRUE;
@@ -2248,8 +2136,7 @@ int archmage(struct char_data *ch, int cmd, char *arg)
 	if (!ch->specials.fighting)
 		return FALSE;
 	do_shout(ch, "SUNFIRE", 0);
-	act
-	    ("The outside sun flares brightly, flooding the room with searing rays.",
+	act("The outside sun flares brightly, flooding the room with searing rays.",
 	     TRUE, ch, 0, 0, TO_ROOM);
 	for (vict = world[ch->in_room].people; vict; vict = vict->next_in_room) {
 		if (vict->specials.fighting == ch) {
@@ -2350,8 +2237,7 @@ int magicseed(struct char_data *ch, int cmd, char *arg)
 
 	do {
 		skno = number(0, MAX_SKILLS - 1);
-		if (ch->skills[skno].learned > 50 && ch->skills[skno].learned
-		    < 99) {
+		if (ch->skills[skno].learned > 50 && ch->skills[skno].learned < 99) {
 			ch->skills[skno].learned = 99;
 			send_to_char("자욱한 연기가 눈앞을 가립니다.\n\r", ch);
 			if (GET_COND(ch, FULL) >= 0)

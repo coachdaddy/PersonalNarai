@@ -18,6 +18,8 @@
 
 #include "guild_list.h"
 
+#define MAX_NPC_CORPSE_TIME 15
+#define MAX_PC_CORPSE_TIME 40
 #define QUEST_ROOM_VNUM	3081  // 퀘스트 룸 VNUM
 
 /* Structures */
@@ -32,33 +34,19 @@ extern struct obj_data *object_list;
 extern struct index_data *obj_index;
 extern struct index_data *mob_index;
 
-/* External procedures */
 
-void DEBUG_LOG(const char *format, ...);
-void mudlog(const char *str);
-
-char *fread_string(FILE * f1);
-void stop_follower(struct char_data *ch);
-void do_flee(struct char_data *ch, char *argument, int cmd);
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void wipe_stash(char *filename);
-int number(int from, int to);
-int MAX(int a, int b);
-int MIN(int a, int b);
-void gain_exp(struct char_data *ch, int gain);
-int dice(int num, int size);
-void save_char_nocon(struct char_data *ch, sh_int load_room);
-
-void do_look(struct char_data *ch, char *argument, int cmd);
-
-/* quest */
-void check_quest_mob_die(struct char_data *ch, int mob);
 /* Challenge Room Quest System  */
 extern struct {
     int virtual;
     int level;
     char *name;
 } QM[];
+
+struct dam_weapon_type {
+    char *to_room;
+    char *to_char;
+    char *to_victim;
+};
 
 /* Weapon attack texts */
 struct attack_hit_type attack_hit_text[] =
@@ -169,9 +157,6 @@ void update_pos(struct char_data *victim)
 /* start one char fighting another (yes, it is horrible, I know... )  */
 void set_fighting(struct char_data *ch, struct char_data *vict)
 {
-	/*
-	   assert(!ch->specials.fighting); */
-
 	ch->next_fighting = combat_list;
 	combat_list = ch;
 
@@ -189,9 +174,7 @@ void stop_fighting(struct char_data *ch)
 
 	if (!ch)
 		return;
-	/*
-	   assert(ch->specials.fighting);
-	 */
+	
 	if (!ch->specials.fighting)
 		return;
 
@@ -219,9 +202,6 @@ void stop_fighting(struct char_data *ch)
 	GET_POS(ch) = POSITION_STANDING;
 	update_pos(ch);
 }
-
-#define MAX_NPC_CORPSE_TIME 15
-#define MAX_PC_CORPSE_TIME 40
 
 void make_corpse(struct char_data *ch, int level)
 {
@@ -254,7 +234,6 @@ void make_corpse(struct char_data *ch, int level)
 	corpse->obj_flags.type_flag = ITEM_CONTAINER;
 	corpse->obj_flags.wear_flags = ITEM_TAKE;
 	corpse->obj_flags.value[0] = 0;		/* You can't store stuff in a corpse */
-/* corpse->obj_flags.value[3] = 1; */ /* corpse identifyer */
 	corpse->obj_flags.weight = GET_WEIGHT(ch) + IS_CARRYING_W(ch);
 
 	/* norent */
@@ -292,9 +271,7 @@ void make_corpse(struct char_data *ch, int level)
 	for (o = corpse->contains; o; o->in_obj = corpse, o = o->next_content) ;
 	object_list_new_owner(corpse, 0);
 
-	/*
-	   삼장법사(11111) (put 금테(11127), 성수병(11134) Into corpse)
-	 */
+	/* 삼장법사(11111) (put 금테(11127), 성수병(11134) Into corpse) */
 	if (mob_index[ch->nr].virtual == 11111) {
 		o = read_object(11127, VIRTUAL);
 		obj_to_obj(o, corpse);
@@ -303,9 +280,7 @@ void make_corpse(struct char_data *ch, int level)
 	}
 
 	/* GoodBadIsland */
-	/*
-	   IRON GOLEM(23323)
-	 */
+	/* IRON GOLEM(23323) */
 	if (mob_index[ch->nr].virtual == 23323) {
 		act
 		    ("거대한 철문이 열리고, 위층으로 올라가는 계단이 보입니다.",
@@ -314,23 +289,13 @@ void make_corpse(struct char_data *ch, int level)
 		REMOVE_BIT(EXIT(ch, 4)->exit_info, EX_CLOSED);
 	}
 
-	/*
-	   KAALM(23301)
-	 */
+	/* KAALM(23301) */
 	if (mob_index[ch->nr].virtual == 23301) {
 		o = read_object(23309, VIRTUAL);
 		obj_to_obj(o, corpse);
 	}
 
 	obj_to_room(corpse, ch->in_room);
-
-	/* ch is freed in extact_char */
-	/*
-	   if (IS_NPC(ch) && ch != NULL) {
-	   free(ch);
-	   ch = NULL;
-	   }
-	 */
 }
 
 /* When ch kills victim */
@@ -338,10 +303,6 @@ void change_alignment(struct char_data *ch, struct char_data *victim)
 {
 	int al, al_v;
 
-	/*
-	   al=(7*GET_ALIGNMENT(ch)-GET_ALIGNMENT(victim))/8;
-	   al=(al-GET_ALIGNMENT(ch))/10;
-	 */
 	al_v = -GET_ALIGNMENT(victim);
 	al = al_v / 200;
 	if (al_v > 0) {
@@ -624,12 +585,6 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 	/* assert(no_members) for divide by zero */
 	no_members = MAX(1, no_members);
 
-	/*
-	   money = GET_GOLD(victim) * ((no_members >> 1) + 1);
-	   money += (GET_LEVEL(victim) * GET_LEVEL(victim) * GET_LEVEL(victim));
-	   money /= no_members;
-	   level_exp = GET_EXP(victim) * ((no_members >> 1) + 1) / total_level;       */
-
 	/* group advantage */
 	money = GET_GOLD(victim) * ((no_members >> 1) + 1);
 	money += (GET_LEVEL(victim) * GET_LEVEL(victim) * GET_LEVEL(victim));
@@ -710,11 +665,6 @@ char *replace_string(char *str, char *weapon)
 	return (rtn);
 }
 
-struct dam_weapon_type {
-	char *to_room;
-	char *to_char;
-	char *to_victim;
-};
 
 void dam_message(int dam, struct char_data *ch, struct char_data *victim,
 		 int w_type)
@@ -1600,9 +1550,6 @@ void perform_violence(void)
 					    + GET_SKILLED(ch, SKILL_DOUBLE)
 					    + 3 * GET_LEVEL(ch);
 					if (percent > number(1, 200)) {
-						/*
-						   if(ch->skills[SKILL_DOUBLE].learned>number(1,200)-4*GET_LEVEL(ch))
-						 */
 						hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
 						INCREASE_SKILLED1(ch, ch, SKILL_DOUBLE);
 					}

@@ -3,6 +3,7 @@
 *  Usage: Loading/Saving chars, booting world, resetting etc.             *
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ***************************************************************************/
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <unistd.h>
@@ -10,6 +11,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <signal.h>
+#include <errno.h>
 
 #include "structs.h"
 #include "utils.h"
@@ -60,6 +62,10 @@ int top_of_helpt;		/* top of help index table         */
 struct time_info_data time_info;	/* the infomation about the time   */
 struct weather_data weather_info;	/* the infomation about the weather */
 
+/* comm.c에서 이동, Komo */
+int regen_percent = 50;
+int regen_time_percent = 66;
+int regen_time = 200;
 /* local procedures */
 void boot_zones(void);
 void setup_dir(FILE * fl, int room, int dir);
@@ -79,9 +85,6 @@ void clear_char(struct char_data *ch);
 
 /* external refs */
 extern struct descriptor_data *descriptor_list;
-extern int regen_percent;
-extern int regen_time_percent;
-extern int regen_time;
 void load_messages(void);
 void weather_and_time(int mode);
 void assign_command_pointers(void);
@@ -94,8 +97,6 @@ struct help_index_element *build_help_index(FILE * fl, int *num);
 void assign_mobiles(void);
 void assign_objects(void);
 void assign_rooms(void);
-int MIN(int a, int b);
-int MAX(int a, int b);
 int str_cmp(char *arg1, char *arg2);
 char *one_argument(char *arg, char *first_arg);
 void wear(struct char_data *ch, struct obj_data *obj, int where_flag);
@@ -127,12 +128,12 @@ void boot_db(void)
 	int i;
 	extern int no_specials;
 
-	mudlog("Boot db -- BEGIN.");
+	log("(boot_db) Booting DB -- BEGIN.");
 
-	mudlog("Resetting the game time:");
+    log("(boot_db) Resetting the game time:");
 	reset_time();
 
-	mudlog("Reading news, credits, help-page, plan, wizards, and motd.");
+	log("(boot_db) Reading news, credits, help-page, plan, wizards, and motd.");
 	file_to_string(NEWS_FILE, news);
 	file_to_string(CREDITS_FILE, credits);
 	file_to_string(IMOTD_FILE, imotd);
@@ -141,66 +142,118 @@ void boot_db(void)
 	file_to_string(PLAN_FILE, plan);
 	file_to_string(WIZARDS_FILE, wizards);
 
-	mudlog("Opening mobile, object and help files.");
-	if (!(mob_f = fopen(MOB_FILE, "r"))) {
-		perror("boot");
-		exit(0);
-	}
-	mudlog("Mob done");
+	log("(boot_db) Opening mobile, object and help files.");
+    if (!(mob_f = fopen(MOB_FILE, "r"))) {
+        perror("boot");
+        exit(0);
+    }
+    log("(boot_db)   Mob done");
 
-	if (!(obj_f = fopen(OBJ_FILE, "r"))) {
-		perror("boot");
-		exit(0);
-	}
-	mudlog("Obj done");
-	if (!(help_fl = fopen(HELP_KWRD_FILE, "r")))
-		mudlog("   Could not open help file.");
-	else
-		help_index = build_help_index(help_fl, &top_of_helpt);
-	mudlog("help index done.");
+    if (!(obj_f = fopen(OBJ_FILE, "r"))) {
+        perror("boot");
+        exit(0);
+    }
+    log("(boot_db)   Obj done");
+    if (!(help_fl = fopen(HELP_KWRD_FILE, "r")))
+        log("(boot_db)    Could not open help file.");
+    else
+        help_index = build_help_index(help_fl, &top_of_helpt);
+    log("(boot_db)   help index done.");
 
-	init_quest();
+    log("(boot_db) Initializing quest system.");
+    init_quest();
+    log("(boot_db) Quest system initialized.");
 
-	mudlog("quest manager : initialize.");
-
-	mudlog("Loading zone table.");
+    log("(boot_db) Loading zone table.");
 	boot_zones();
 
-	mudlog("Loading rooms.");
-	boot_world();
-	mudlog("Renumbering rooms.");
-	renum_world();
+	log("(boot_db) Loading rooms(world).");
+    boot_world();
+    log("(boot_db) Renumbering rooms.");
+    renum_world();
 
-	mudlog("Generating index tables for mobile files.");
-	mob_index = generate_indices(mob_f, &top_of_mobt);
-	mudlog("Generating index tables for object files.");
+    log("(boot_db) Generating index tables for mobile files.");
+    mob_index = generate_indices(mob_f, &top_of_mobt);
+
+    /* Quest Modernization: Pre-load mob level and act flags ---
+     * --- Komo, 251102
+     */
+    log("(boot_db) Pre-loading mob level and act flags into index.");
+    { /* Create a local scope for temporary variables */
+        long tmp_act;
+        long tmp_level;
+        int i;
+    
+        for (i = 0; i <= top_of_mobt; i++) {
+            /* Go to the file position for this monster */
+            if (fseek(mob_f, mob_index[i].pos, 0) != 0) {
+                char err_buf[256];
+                snprintf(err_buf, sizeof(err_buf), "Quest Pre-load: fseek error on mob VNUM %d", mob_index[i].virtual);
+                log(err_buf);
+                mob_index[i].level = -1; /* Mark as invalid */
+                mob_index[i].act = 0;
+                continue; /* Skip this mob */
+            }
+    
+            /* String data (Store name, discard others) */
+            mob_index[i].name = fread_string(mob_f); /* 1. name (STORE) */
+            free(fread_string(mob_f)); /* 2. short_descr */
+            free(fread_string(mob_f)); /* 3. long_descr */
+            free(fread_string(mob_f)); /* 4. description */
+    
+            /* Numeric data (read and store/discard) */
+            
+            /* act */
+            fscanf(mob_f, "%ld ", &tmp_act);
+            mob_index[i].act = tmp_act;
+    
+            /* affected_by (discard) */
+            fscanf(mob_f, " %*d ");
+    
+            /* alignment (discard) */
+            fscanf(mob_f, " %*d \n");
+    
+            /* class (discard) */
+            fscanf(mob_f, " %*c "); 
+    
+            /* level */
+            fscanf(mob_f, " %ld ", &tmp_level);
+            mob_index[i].level = tmp_level;
+            
+            mob_index[i].func = 0;
+        }
+        rewind(mob_f); /* Rewind file pointer for safety */
+    }
+    log("(boot_db) Mob index pre-load complete.");
+    
+    log("(boot_db) Generating index tables for object files.");
 	obj_index = generate_indices(obj_f, &top_of_objt);
 
-	mudlog("Renumbering zone table.");
-	renum_zone_table();
+	log("(boot_db) Renumbering zone table.");
+    renum_zone_table();
 
-	mudlog("Generating player index.");
-	build_player_index();
+    log("(boot_db) Generating player index.");
+    build_player_index();
 
-	mudlog("Loading fight messages.");
-	load_messages();
+    log("(boot_db) Loading fight messages.");
+    load_messages();
 
-	mudlog("Loading social messages.");
-	boot_social_messages();
+    log("(boot_db) Loading social messages.");
+    boot_social_messages();
 
-	mudlog("Assigning function pointers:");
-	if (!no_specials) {
-		mudlog("   Mobiles.");
-		assign_mobiles();
-		mudlog("   Objects.");
-		assign_objects();
-		mudlog("   Room.");
-		assign_rooms();
-	}
+    log("(boot_db) Assigning function pointers:");
+    if (!no_specials) {
+        log("(boot_db)    Mobiles.");
+        assign_mobiles();
+        log("(boot_db)    Objects.");
+        assign_objects();
+        log("(boot_db)    Room.");
+        assign_rooms();
+    }
 
-	mudlog("   Commands.");
-	assign_command_pointers();
-	mudlog("   Spells.");
+    log("(boot_db)    Commands.");
+    assign_command_pointers();
+    log("(boot_db)    Spells.");
 	assign_spell_pointers();
 
 	for (i = 0; i <= top_of_zone_table; i++) {
@@ -212,7 +265,7 @@ void boot_db(void)
 		reset_zone(i);
 	}
 	reset_q.head = reset_q.tail = 0;
-	mudlog("Boot db -- DONE.");
+	log("(boot_db) Booting DB -- DONE.");
 }
 
 /* reset the time in the game from file */
@@ -303,7 +356,7 @@ void build_player_index(void)
 	FILE *fl;
 
 	if (!(fl = fopen(PLAYER_FILE, "rb+"))) {
-		perror("build player index");
+		perror("build player index.");
 		exit(0);
 	}
 	for (; !feof(fl);) {
@@ -320,7 +373,7 @@ void build_player_index(void)
 						      player_index_element *)
 				      realloc(player_table, (++nr + 1) *
 					      sizeof(struct player_index_element)))) {
-					perror("generate index");
+					perror("generate index.");
 					exit(0);
 				}
 			}
@@ -345,8 +398,7 @@ void build_player_index(void)
 }
 
 /* generate index table for object or monster file */
-struct index_data *
- generate_indices(FILE * fl, int *top)
+struct index_data *generate_indices(FILE * fl, int *top)
 {
 	int i = 0;
 	struct index_data *index = NULL;
@@ -366,7 +418,7 @@ struct index_data *
 									(i +
 									1) * sizeof
 									(struct index_data)))) {
-					perror("load indices");
+					perror("load indices.");
 					exit(0);
 				}
 				sscanf(buf, "#%d", &index[i].virtual);
@@ -595,28 +647,35 @@ void clean_memory_for_room(int rnum)
 /* .wld 파일을 열어 기존 방들의 내용을 업데이트함 251121 by Komo */
 void reload_world_file(FILE *fl, int zone_rnum)
 {
-    int virtual_nr, flag, tmp, rnum;
-    char *temp, chk[256];
+    int virtual_nr, flag, rnum;
+    char chk[256];
     struct extra_descr_data *new_descr;
+    char *new_name, *new_desc;
     
     do {
         fscanf(fl, " #%d\n", &virtual_nr);
-        
-        temp = fread_string(fl); // 방 이름 읽기
-        if ((flag = (*temp != '$'))) { // $가 아니면 유효한 방
+        new_name = fread_string(fl); // 방 이름 읽기
+
+        if ((flag = (*new_name != '$'))) { // $가 아니면 유효한 방
             rnum = real_room(virtual_nr);
 
             if (rnum != -1) {
+                new_desc = fread_string(fl);
+
+                int legacy_zone; fscanf(fl, " %d ", &legacy_zone);
+                int room_flags, sector;
+                fscanf(fl, " %d ", &room_flags);
+                fscanf(fl, " %d ", &sector);
+            
+                // 기존 데이터 청소
                 clean_memory_for_room(rnum);
 
-                world[rnum].name = temp;
-                world[rnum].description = fread_string(fl);
-                world[rnum].zone = zone_rnum; // 존 번호 재확인
-
-                int ignore; fscanf(fl, " %d ", &ignore);
-
-                fscanf(fl, " %d ", &tmp); world[rnum].room_flags = tmp;
-                fscanf(fl, " %d ", &tmp); world[rnum].sector_type = tmp;
+                // 새 데이터 연결 Swap
+                world[rnum].name = new_name;
+                world[rnum].description = new_desc;
+                world[rnum].zone = zone_rnum;
+                world[rnum].room_flags = room_flags;
+                world[rnum].sector_type = sector;
                 
                 // 출구 및 엑스트라 파싱
                 while (1) {
@@ -630,10 +689,9 @@ void reload_world_file(FILE *fl, int zone_rnum)
                         world[rnum].ex_description = new_descr;
                     } else if (*chk == 'S') break;
                 }
-
             } else {
                 /* 존재하지 않는 방 (새로 추가된 방?): Skip */
-                if (temp) free(temp);
+                if (new_name) free(new_name);
                 char *trash = fread_string(fl); free(trash);
                 
                 int ignore; fscanf(fl, " %d ", &ignore); // 존
@@ -654,7 +712,7 @@ void reload_world_file(FILE *fl, int zone_rnum)
                 }
             }
         } else {
-            if (temp) free(temp); // $를 만났을 때 temp 해제
+            if (new_name) free(new_name); // $를 만났을 때 해제
         }
     } while (flag);
 }
@@ -930,109 +988,12 @@ void boot_zones(void)
 }
 #undef ALL_ZONE_FILE
 
-/* original boot_zone : read tinyworld.zon */
-/* load the zone table and command tables */
-/*
-void boot_zones(void)
-{
-  FILE *fl;
-  int zon = 0, cmd_no = 0, ch, expand, tmp;
-  char *check, buf[81];
-
-  if (!(fl = fopen(ZONE_FILE, "r")))
-  {
-    perror("boot_zones");
-    exit(0);
-  }
-
-  for (;;)
-  {
-    fscanf(fl, " #%*d\n");
-    check = fread_string(fl);
-
-    if (*check == '$')
-      break; 
-
-    if (!zon)
-      CREATE(zone_table, struct zone_data, 1);
-    else
-      if (!(zone_table = (struct zone_data *) realloc(zone_table,
-        (zon + 1) * sizeof(struct zone_data))))
-        {
-          perror("boot_zones realloc");
-          exit(0);
-        }
-
-    zone_table[zon].name = check;
-    fscanf(fl, " %d ", &zone_table[zon].top);
-    fscanf(fl, " %d ", &zone_table[zon].lifespan);
-    fscanf(fl, " %d ", &zone_table[zon].reset_mode);
-
-    cmd_no = 0;
-
-    for (expand = 1;;)
-    {
-      if (expand)
-        if (!cmd_no)
-          CREATE(zone_table[zon].cmd, struct reset_com, 1);
-        else
-          if (!(zone_table[zon].cmd =
-            (struct reset_com *) realloc(zone_table[zon].cmd, 
-            (cmd_no + 1) * sizeof(struct reset_com))))
-          {
-            perror("reset command load");
-            exit(0);
-          }
-
-      expand = 1;
-
-      fscanf(fl, " ");
-      fscanf(fl, "%c", 
-        &zone_table[zon].cmd[cmd_no].command);
-      
-      if (zone_table[zon].cmd[cmd_no].command == 'S')
-        break;
-
-      if (zone_table[zon].cmd[cmd_no].command == '*')
-      {
-        expand = 0;
-        fgets(buf, 80, fl);
-        continue;
-      }
-
-      fscanf(fl, " %d %d %d", 
-        &tmp,
-        &zone_table[zon].cmd[cmd_no].arg1,
-        &zone_table[zon].cmd[cmd_no].arg2);
-
-      zone_table[zon].cmd[cmd_no].if_flag = tmp;
-
-      if (zone_table[zon].cmd[cmd_no].command == 'M' ||
-        zone_table[zon].cmd[cmd_no].command == 'O' ||
-        zone_table[zon].cmd[cmd_no].command == 'E' ||
-        zone_table[zon].cmd[cmd_no].command == 'P' ||
-        zone_table[zon].cmd[cmd_no].command == 'D')
-        fscanf(fl, " %d", &zone_table[zon].cmd[cmd_no].arg3);
-
-      fgets(buf, 80, fl);
-
-      cmd_no++;
-    }
-    zon++;
-  }
-  top_of_zone_table = --zon;
-  free(check);
-  fclose(fl);
-}
-*/
-
 /*************************************************************************
 *  procedures for resetting, both play-time and boot-time      *
 *********************************************************************** */
 
 /* read a mobile from MOB_FILE */
-struct char_data *
- read_mobile(int nr, int type)
+struct char_data *read_mobile(int nr, int type)
 {
 	int i;
 	struct char_data *mob;
@@ -1041,22 +1002,25 @@ struct char_data *
 	int level, level2, level3, abil, class;
 	char buf[256];
 	extern struct spell_info_type spell_info[];
+	int r_num;
 
 	i = nr;
-	if (type == VIRTUAL)
-		if ((nr = real_mobile(nr)) < 0) {
-			snprintf(buf, sizeof(buf),
-				"Mobile (V) %d does not exist in database.", i);
-			mudlog(buf);
-			return (0);
-		}
+	if (type == VIRTUAL) {
+        r_num = real_mobile(nr);
+        if (r_num < 0) {
+            snprintf(buf, sizeof(buf), "read_mobile: Invalid virtual number %d. Mobile not loaded.", nr);
+            log(buf);
+            return(0);
+        }
+    } else {
+        r_num = nr;
+    }
 
-	fseek(mob_f, mob_index[nr].pos, 0);
+	fseek(mob_f, mob_index[r_num].pos, 0); // nr 대신 r_num 사용
 	CREATE(mob, struct char_data, 1);
 	clear_char(mob);
 
 	/***** String data *** */
-
 	mob->player.name = fread_string(mob_f);
 	mob->player.short_descr = fread_string(mob_f);
 	mob->player.long_descr = fread_string(mob_f);
@@ -1064,7 +1028,6 @@ struct char_data *
 	mob->player.title = 0;
 
 	/* *** Numeric data *** */
-
 	fscanf(mob_f, "%ld ", &tmp);
 	mob->specials.act = tmp;
 	SET_BIT(mob->specials.act, ACT_ISNPC);
@@ -1285,7 +1248,7 @@ struct char_data *
 	for (i = 0; i < MAX_WEAR; i++)	/* Initialisering Ok */
 		mob->equipment[i] = 0;
 
-	mob->nr = nr;
+	mob->nr = r_num; // nr에서 r_num으로 수정
 	mob->desc = 0;
 
 	for (i = 0; i < MAX_SKILLS; i++) {
@@ -1318,11 +1281,11 @@ struct char_data *
 	mob->next = character_list;
 	character_list = mob;
 
-	mob_index[nr].number++;
+	mob_index[r_num].number++; // nr에서 r_num으로 수정
 
-	if (mob_index[nr].virtual == SON_OGONG)
-		son_ogong = mob;
-	else if (mob_index[nr].virtual == FOURTH_JANGRO)
+    if (mob_index[r_num].virtual == SON_OGONG) // nr에서 r_num으로 수정
+        son_ogong = mob;
+    else if (mob_index[r_num].virtual == FOURTH_JANGRO) // nr에서 r_num으로 수정
 		fourth_jangro = mob;
 
 	mob->regened = 0;
@@ -1331,372 +1294,27 @@ struct char_data *
 	return (mob);
 }
 
-#ifdef OldMobileFormat
-struct char_data *
- read_mobile(int nr, int type)
-{
-	int i;
-	long tmp, tmp2, tmp3;
-	struct char_data *mob;
-	char buf[100];
-	char letter;
-	int data;
-	int abil;
-	static int mob_abil[44] =
-	{
-		4,
-		5, 5, 5, 6, 6, 6, 7, 7, 7, 7,
-		8, 8, 8, 9, 9, 9, 10, 10, 10, 10,
-		11, 11, 12, 12, 13, 13, 14, 14, 15, 15,
-		15, 15, 15, 16, 16, 16, 17, 17, 18, 18,
-		18, 18, 18};
-
-	i = nr;
-	if (type == VIRTUAL)
-		if ((nr = real_mobile(nr)) < 0) {
-			snprintf(buf, sizeof(buf),
-				"Mobile (V) %d does not exist in database.", i);
-			return (0);
-		}
-
-	fseek(mob_f, mob_index[nr].pos, 0);
-
-	CREATE(mob, struct char_data, 1);
-	clear_char(mob);
-
-	/***** String data *** */
-
-	mob->player.name = fread_string(mob_f);
-	mob->player.short_descr = fread_string(mob_f);
-	mob->player.long_descr = fread_string(mob_f);
-	mob->player.description = fread_string(mob_f);
-	mob->player.title = 0;
-
-	/* *** Numeric data *** */
-
-	fscanf(mob_f, "%d ", &tmp);
-	mob->specials.act = tmp;
-	SET_BIT(mob->specials.act, ACT_ISNPC);
-
-	fscanf(mob_f, " %d ", &tmp);
-	mob->specials.affected_by = tmp;
-
-	fscanf(mob_f, " %d ", &tmp);
-	mob->specials.alignment = tmp;
-
-	fscanf(mob_f, " %c \n", &letter);
-
-	/* new easy monster, for easy balancing */
-	if (letter == 'X') {
-		/* set mob's class */
-		fscanf(mob_f, " %c ", &letter);
-		switch (letter) {
-		case 'M':
-			mob->player.class = CLASS_MAGIC_USER;
-			break;
-		case 'C':
-			mob->player.class = CLASS_CLERIC;
-			break;
-		case 'T':
-			mob->player.class = CLASS_THIEF;
-			break;
-		case 'W':
-			mob->player.class = CLASS_WARRIOR;
-			break;
-		default:
-			mudlog("mob must have a class.");
-			exit(1);
-		}
-
-		/* set mob's level */
-		fscanf(mob_f, " %ld ", &tmp);
-		tmp = MIN(43, tmp);
-		GET_LEVEL(mob) = tmp;
-
-		/* level dependent data */
-		abil = mob_abil[tmp];
-		mob->abilities.str = number(abil >> 1, abil);
-		mob->abilities.str_add = 0;
-		mob->abilities.intel = number(abil >> 1, abil);
-		mob->abilities.wis = number(abil >> 1, abil);
-		mob->abilities.dex = number(abil >> 1, abil);
-		mob->abilities.con = number(abil >> 1, abil);
-
-		mob->points.mana = mob->points.max_mana =
-		    number(GET_LEVEL(mob) * 10, GET_LEVEL(mob) * 20);
-		mob->points.move = mob->points.max_move =
-		    number(GET_LEVEL(mob) * 20, GET_LEVEL(mob) * 30);
-		/* end of level dependent data */
-
-		/* set hardness */
-		fscanf(mob_f, " %c \n", &letter);
-		switch (letter) {
-			/* A : most hard, E : mose easy */
-		case 'A':
-			abil = dice(GET_LEVEL(mob), 3);
-			mob->points.hitroll = abil;
-			mob->points.damroll = abil;
-			abil = dice(GET_LEVEL(mob), 5);
-			mob->points.armor = 100 - abil;
-			if (GET_LEVEL(mob) < 10)
-				abil = GET_LEVEL(mob);
-			else if (GET_LEVEL(mob) < 20)
-				abil = GET_LEVEL(mob) << 1;
-			else if (GET_LEVEL(mob) < 30)
-				abil = GET_LEVEL(mob) << 2;
-			else if (GET_LEVEL(mob) < 40)
-				abil = GET_LEVEL(mob) << 3;
-			else
-				abil = GET_LEVEL(mob) << 4;
-			abil = dice(abil, 200);
-			GET_PLAYER_MAX_HIT(mob) = GET_HIT(mob) = abil;
-			abil = MAX(5, GET_LEVEL(mob) >> 1);
-			abil = number(5, abil);
-			mob->specials.damnodice = abil;
-			mob->specials.damsizedice = abil;
-			break;
-		case 'B':
-			abil = dice(GET_LEVEL(mob), 2);
-			mob->points.hitroll = abil;
-			mob->points.damroll = abil;
-			abil = dice(GET_LEVEL(mob), 4);
-			mob->points.armor = 100 - abil;
-			if (GET_LEVEL(mob) < 10)
-				abil = GET_LEVEL(mob);
-			else if (GET_LEVEL(mob) < 20)
-				abil = GET_LEVEL(mob) << 1;
-			else if (GET_LEVEL(mob) < 30)
-				abil = GET_LEVEL(mob) << 2;
-			else if (GET_LEVEL(mob) < 40)
-				abil = GET_LEVEL(mob) << 3;
-			else
-				abil = GET_LEVEL(mob) << 4;
-			abil = dice(abil, 100);
-			GET_PLAYER_MAX_HIT(mob) = GET_HIT(mob) = abil;
-			abil = MAX(4, GET_LEVEL(mob) >> 2);
-			abil = number(4, abil);
-			mob->specials.damnodice = abil;
-			mob->specials.damsizedice = abil;
-			break;
-		case 'C':
-			abil = GET_LEVEL(mob);
-			mob->points.hitroll = abil;
-			mob->points.damroll = abil;
-			abil = dice(GET_LEVEL(mob), 4);
-			mob->points.armor = 100 - abil;
-			if (GET_LEVEL(mob) < 10)
-				abil = GET_LEVEL(mob);
-			else if (GET_LEVEL(mob) < 20)
-				abil = GET_LEVEL(mob) << 1;
-			else if (GET_LEVEL(mob) < 30)
-				abil = GET_LEVEL(mob) << 2;
-			else if (GET_LEVEL(mob) < 40)
-				abil = GET_LEVEL(mob) << 3;
-			else
-				abil = GET_LEVEL(mob) << 4;
-			abil = dice(abil, 50);
-			GET_PLAYER_MAX_HIT(mob) = GET_HIT(mob) = abil;
-			abil = MAX(1, GET_LEVEL(mob) >> 3);
-			abil = number(1, abil);
-			mob->specials.damnodice = abil;
-			mob->specials.damsizedice = abil;
-			break;
-		case 'D':
-			abil = number(GET_LEVEL(mob) >> 1, GET_LEVEL(mob));
-			mob->points.hitroll = abil;
-			mob->points.damroll = abil;
-			abil = dice(GET_LEVEL(mob), 3);
-			mob->points.armor = 100 - abil;
-			if (GET_LEVEL(mob) < 10)
-				abil = GET_LEVEL(mob);
-			else if (GET_LEVEL(mob) < 20)
-				abil = GET_LEVEL(mob) << 1;
-			else if (GET_LEVEL(mob) < 30)
-				abil = GET_LEVEL(mob) << 2;
-			else if (GET_LEVEL(mob) < 40)
-				abil = GET_LEVEL(mob) << 3;
-			else
-				abil = GET_LEVEL(mob) << 4;
-			abil = dice(abil, 30);
-			GET_PLAYER_MAX_HIT(mob) = GET_HIT(mob) = abil;
-			abil = MAX(1, GET_LEVEL(mob) >> 3);
-			abil = number(1, abil);
-			mob->specials.damnodice = abil;
-			abil >>= 1;
-			abil = MAX(1, abil);
-			mob->specials.damsizedice = abil;
-			break;
-		case 'E':
-			abil = number(1, GET_LEVEL(mob));
-			mob->points.hitroll = abil;
-			mob->points.damroll = abil;
-			abil = dice(GET_LEVEL(mob), 2);
-			mob->points.armor = 100 - abil;
-			if (GET_LEVEL(mob) < 10)
-				abil = GET_LEVEL(mob);
-			else if (GET_LEVEL(mob) < 20)
-				abil = GET_LEVEL(mob) << 1;
-			else if (GET_LEVEL(mob) < 30)
-				abil = GET_LEVEL(mob) << 2;
-			else if (GET_LEVEL(mob) < 40)
-				abil = GET_LEVEL(mob) << 3;
-			else
-				abil = GET_LEVEL(mob) << 4;
-			abil = dice(abil, 20);
-			GET_PLAYER_MAX_HIT(mob) = GET_HIT(mob) = abil;
-			abil = MAX(1, GET_LEVEL(mob) >> 3);
-			abil = number(1, abil);
-			abil >>= 1;
-			abil = MAX(1, abil);
-			mob->specials.damnodice = abil;
-			mob->specials.damsizedice = abil;
-			break;
-		default:
-			mudlog("mob's hardness is unknown.");
-			exit(1);
-		}
-
-		fscanf(mob_f, " %ld ", &tmp);
-		mob->points.gold = tmp;
-		fscanf(mob_f, " %ld \n", &tmp);
-		GET_EXP(mob) = tmp;
-		fscanf(mob_f, " %ld ", &tmp);
-		mob->specials.position = tmp;
-		fscanf(mob_f, " %ld ", &tmp);
-		mob->specials.default_pos = tmp;
-		fscanf(mob_f, " %ld \n", &tmp);
-		mob->player.sex = tmp;
-
-		mob->player.guild = 0;
-		mob->player.pk_num = 0;
-		mob->player.pked_num = 0;
-
-		mob->player.weight = number(100, 200);
-		mob->player.height = number(100, 200);
-
-		for (i = 0; i < 3; i++)
-			GET_COND(mob, i) = -1;
-		for (i = 0; i < 5; i++)
-			mob->specials.apply_saving_throw[i] =
-			    100 - number(GET_LEVEL(mob) >> 1, GET_LEVEL(mob)
-					 << 1);
-	} else if (letter == 'S') {
-		/* set mob's level */
-		fscanf(mob_f, " %ld ", &tmp);
-		tmp = MIN(43, tmp);
-		GET_LEVEL(mob) = tmp;
-
-		abil = mob_abil[tmp];
-		mob->abilities.str = number(abil >> 1, abil);
-		mob->abilities.str_add = 0;
-		mob->abilities.intel = number(abil >> 1, abil);
-		mob->abilities.wis = number(abil >> 1, abil);
-		mob->abilities.dex = number(abil >> 1, abil);
-		mob->abilities.con = number(abil >> 1, abil);
-		/*
-		   mob->abilities.str   = 18;
-		   mob->abilities.intel = 11; 
-		   mob->abilities.wis   = 11;
-		   mob->abilities.dex   = 18;
-		   mob->abilities.con   = 11;
-		 */
-
-		mob->player.guild = 0;
-		mob->player.pk_num = 0;
-		mob->player.pked_num = 0;
-		fscanf(mob_f, " %ld ", &tmp);
-		mob->points.hitroll = 20 - tmp;
-
-		fscanf(mob_f, " %ld ", &tmp);
-		mob->points.armor = 10 * tmp;
-
-		fscanf(mob_f, " %ldd%ld+%ld ", &tmp, &tmp2, &tmp3);
-		mob->points.max_hit = dice(tmp, tmp2) + tmp3;
-		mob->points.hit = mob->points.max_hit;
-
-		fscanf(mob_f, " %ldd%ld+%ld \n", &tmp, &tmp2, &tmp3);
-		mob->points.damroll = tmp3;
-		mob->specials.damnodice = tmp;
-		mob->specials.damsizedice = tmp2;
-
-		mob->points.mana = mob->points.max_mana =
-		    number(GET_LEVEL(mob) * 10, GET_LEVEL(mob) * 20);
-		mob->points.move = mob->points.max_move =
-		    number(GET_LEVEL(mob) * 20, GET_LEVEL(mob) * 30);
-
-		fscanf(mob_f, " %ld ", &tmp);
-		mob->points.gold = tmp;
-		fscanf(mob_f, " %ld \n", &tmp);
-		GET_EXP(mob) = tmp;
-		fscanf(mob_f, " %ld ", &tmp);
-		mob->specials.position = tmp;
-		fscanf(mob_f, " %ld ", &tmp);
-		mob->specials.default_pos = tmp;
-		fscanf(mob_f, " %ld \n", &tmp);
-		mob->player.sex = tmp;
-		mob->player.class = number(1, 4);
-		mob->player.weight = 200;
-		mob->player.height = 198;
-		for (i = 0; i < 3; i++)
-			GET_COND(mob, i) = -1;
-		for (i = 0; i < 5; i++)
-			mob->specials.apply_saving_throw[i] =
-			    100 - number(GET_LEVEL(mob) >> 1, GET_LEVEL(mob)
-					 << 1);
-	} else {		/* The old monsters are down below here */
-		perror("Old monster exit! (db.c, read_mobile)");
-		mudlog("Old monster exit in mob file! (db.c, read_mobile)");
-		exit(0);
-	}
-
-	mob->tmpabilities = mob->abilities;
-
-	mob->player.time.birth = time(0);
-	mob->player.time.played = 0;
-	mob->player.time.logon = time(0);
-
-	for (i = 0; i < MAX_WEAR; i++)	/* Initialisering Ok */
-		mob->equipment[i] = 0;
-
-	mob->nr = nr;
-	mob->desc = 0;
-
-	data = MIN(95, GET_LEVEL(mob) * 2);
-	for (i = 0; i < MAX_SKILLS; i++) {
-		mob->skills[i].learned = data;
-		mob->skills[i].recognise = 0;
-	}
-	mob->regeneration = 0;
-
-	/* insert in list */
-
-	mob->next = character_list;
-	character_list = mob;
-
-	mob_index[nr].number++;
-
-	return (mob);
-}
-#endif				/* OldMobileFormat */
-
 /* read an object from OBJ_FILE */
-struct obj_data *
- read_object(int nr, int type)
+struct obj_data *read_object(int nr, int type)
 {
 	struct obj_data *obj;
 	int tmp, i;
 	char chk[50], buf[100];
 	struct extra_descr_data *new_descr;
+	int r_num;
 
 	i = nr;
-	if (type == VIRTUAL)
-		if ((nr = real_object(nr)) < 0) {
-			snprintf(buf, sizeof(buf),
-				"Object (V) %d does not exist in database.", i);
-			return (0);
+	if (type == VIRTUAL) {
+        r_num = real_object(nr);
+        if (r_num < 0) {
+            snprintf(buf, sizeof(buf), "read_object: Invalid virtual number %d. Object not loaded.", nr);
+            log(buf);
+            return(0);
 		}
-
-	fseek(obj_f, obj_index[nr].pos, 0);
+    } else {
+        r_num = nr; // 타입이 REAL이면 nr을 그대로 사용
+    }
+	fseek(obj_f, obj_index[r_num].pos, 0); // nr 대신 r_num으로 인덱스 접근
 
 	CREATE(obj, struct obj_data, 1);
 
@@ -1764,12 +1382,12 @@ struct obj_data *
 	obj->carried_by = 0;
 	obj->in_obj = 0;
 	obj->contains = 0;
-	obj->item_number = nr;
+	obj->item_number = r_num; // nr 대신 r_num
 
 	obj->next = object_list;
 	object_list = obj;
 
-	obj_index[nr].number++;
+	obj_index[r_num].number++; // nr 대신 r_num
 
 	return (obj);
 }
@@ -1835,13 +1453,10 @@ void zone_update(void)
 		}
 }
 
-#ifndef OLD_ZONE_SYSTEM
-
 /*
 	index : real number
 */
-struct char_data *
- get_mobile_index(int index)
+struct char_data *get_mobile_index(int index)
 {
 	struct char_data *ch;
 
@@ -2023,117 +1638,6 @@ void reset_zone(int zone)
 
 #undef ZCMD
 
-#else				// OLD_ZONE_SYSTEM
-
-#define ZCMD zone_table[zone].cmd[cmd_no]
-
-/* execute the reset command table of a given zone */
-void reset_zone(int zone)
-{
-	int cmd_no, last_cmd = 1;
-	char buf[256];
-	struct char_data *f, *mob;
-	struct obj_data *obj, *obj_to;
-
-	for (cmd_no = 0;; cmd_no++) {
-		if (ZCMD.command == 'S')
-			break;
-
-		if (last_cmd || !ZCMD.if_flag)
-			switch (ZCMD.command) {
-			case 'M':	/* read a mobile */
-				if (mob_index[ZCMD.arg1].number < ZCMD.arg2) {
-					mob = read_mobile(ZCMD.arg1, REAL);
-					char_to_room(mob, ZCMD.arg3);
-					last_cmd = 1;
-				} else
-					last_cmd = 0;
-				break;
-
-			case 'O':	/* read an object */
-				if (obj_index[ZCMD.arg1].number <
-				    ZCMD.arg2)
-					if (ZCMD.arg3 >= 0) {
-						if (!get_obj_in_list_num(
-										ZCMD.arg1,
-										world[ZCMD.arg3].contents)) {
-							obj =
-									  read_object(ZCMD.arg1, REAL);
-							obj_to_room(obj, ZCMD.arg3);
-							last_cmd = 1;
-						} else
-							last_cmd = 0;
-					} else {
-						obj = read_object(ZCMD.arg1, REAL);
-						obj->in_room = NOWHERE;
-						last_cmd = 1;
-				} else
-					last_cmd = 0;
-				break;
-
-			case 'P':	/* object to object */
-				obj = get_obj_num(ZCMD.arg1);
-				obj_to = get_obj_num(ZCMD.arg2);
-				obj_to_obj(obj, obj_to);
-				last_cmd = 1;
-				break;
-
-			case 'G':	/* obj_to_char */
-				obj = get_obj_num(ZCMD.arg1);
-				mob = get_char_num(ZCMD.arg2);
-				obj_to_char(obj, mob);
-				last_cmd = 1;
-				break;
-
-			case 'E':	/* object to equipment list */
-				obj = get_obj_num(ZCMD.arg1);
-				mob = get_char_num(ZCMD.arg2);
-				equip_char(mob, obj, ZCMD.arg3);
-				last_cmd = 1;
-				break;
-
-			case 'D':	/* set state of door */
-				switch (ZCMD.arg3) {
-				case 0:
-					REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						   EX_LOCKED);
-					REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						   EX_CLOSED);
-					break;
-				case 1:
-					SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						EX_CLOSED);
-					REMOVE_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						   EX_LOCKED);
-					break;
-				case 2:
-					SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						EX_LOCKED);
-					SET_BIT(world[ZCMD.arg1].dir_option[ZCMD.arg2]->exit_info,
-						EX_CLOSED);
-					break;
-				}
-				break;
-
-			default:
-				snprintf(buf, sizeof(buf),
-					"Undefd cmd in reset table; zone %d cmd %d.\n\r",
-					zone, cmd_no);
-				mudlog(buf);
-				exit(0);
-				break;
-		} else
-			last_cmd = 0;
-
-	}
-
-	zone_table[zone].age = 0;
-}
-
-#undef ZCMD
-
-#endif
-
 /* for use in reset_zone; return TRUE if zone 'nr' is free of PC's  */
 int is_empty(int zone_nr)
 {
@@ -2190,8 +1694,7 @@ void store_to_char(struct char_file_u *st, struct char_data *ch)
 	} else
 		GET_TITLE(ch) = 0;
 	if (*st->description) {
-		CREATE(ch->player.description, char,
-		       strlen(st->description) + 1);
+		CREATE(ch->player.description, char, strlen(st->description) + 1);
 		strcpy(ch->player.description, st->description);
 	} else
 		ch->player.description = 0;
@@ -2283,8 +1786,7 @@ void store_to_char_for_transform(struct char_file_u *st, struct char_data *ch)
 	} else
 		GET_TITLE(ch) = 0;
 	if (*st->description) {
-		RECREATE(ch->player.description, char,
-			 strlen(st->description) + 1);
+		RECREATE(ch->player.description, char, strlen(st->description) + 1);
 		strcpy(ch->player.description, st->description);
 	} else
 		ch->player.description = 0;
@@ -2451,7 +1953,7 @@ int create_entry(char *name)
 	CREATE(player_table[top_of_p_table].name, char, strlen(name) + 1);
 	/* copy lowercase equivalent of name to table field */
 	for (i = 0;
-	     (*(player_table[top_of_p_table].name + i) = LOWER(*(name + i)));
+	     (*(player_table[top_of_p_table].name + i) = tolower(*(name + i)));
 	     i++) ;
 	player_table[top_of_p_table].nr = top_of_p_table;
 	return (top_of_p_table);
@@ -2588,8 +2090,7 @@ int remove_entry(struct char_data *ch)
 	return 1;
 }
 
-int compare(struct player_index_element *arg1, struct player_index_element
-	    *arg2)
+int compare(struct player_index_element *arg1, struct player_index_element *arg2)
 {
 	return (str_cmp(arg1->name, arg2->name));
 }
@@ -2599,74 +2100,110 @@ int compare(struct player_index_element *arg1, struct player_index_element
 ********************************************************************** */
 
 /* read and allocate space for a '~'-terminated string from a given file */
-char *fread_string(FILE * fl)
+/* ~ 문자로 끝나는 문자열을 파일에서 읽고 앞뒤 공백을 제거한 후 메모리를 할당
+ *  by Komo, 251121                              */
+char *fread_string(FILE *fl)
 {
-	char buf[MAX_STRING_LENGTH], tmp[MAX_STRING_LENGTH];
-	char *rslt;
-	register char *point;
-	int flag;
+    char buf[MAX_STRING_LENGTH] = {0}; 
+    char tmp[512];
+    char *rslt;
+    char *point;
+    char *start_ptr; 
+    int flag = 0;
+    
+    if (fl == NULL) {
+        log("fread_string: CRITICAL - Passed NULL file pointer.");
+        exit(1);
+    }
 
-	bzero(buf, MAX_STRING_LENGTH);
-	do {
-		if (!fgets(tmp, MAX_STRING_LENGTH, fl)) {
-			perror("fread_str");
-			exit(0);
-		}
-		if (strlen(tmp) + strlen(buf) > MAX_STRING_LENGTH) {
-			mudlog("fread_string: string too large (db.c)");
-			buf[70] = 0;
-			fprintf(stderr, "%s\n", buf);
-			exit(0);
-		} else
-			strcat(buf, tmp);
+    do {
+        if (!fgets(tmp, sizeof(tmp), fl)) {
+            
+            if (ferror(fl) && errno == EINTR) {
+                clearerr(fl); // 에러 플래그 초기화
+                continue;     // 루프 재시작 (다시 읽기)
+            }
 
-		for (point = buf + strlen(buf) - 2; point >= buf && isspace(*point);
-		     point--) ;
-		if ((flag = (*point == '~')))
-			if (*(buf + strlen(buf) - 3) == '\n') {
-				*(buf + strlen(buf) - 2) = '\r';
-				*(buf + strlen(buf) - 1) = '\0';
-			} else
-				*(buf + strlen(buf) - 2) = '\0';
-		else {
-			*(buf + strlen(buf) + 1) = '\0';
-			*(buf + strlen(buf)) = '\r';
-		}
-	}
-	while (!flag);
+            /* 진짜 에러이거나 EOF인 경우 */
+            log("fread_string: fgets failed (EOF or Error).");
+            perror("fread_string");
+            exit(1);
+        }
 
-	/* do the allocate boogie  */
+        /* 버퍼 오버플로우 방지 검사 */
+        if (strlen(buf) + strlen(tmp) >= MAX_STRING_LENGTH) {
+            log("SYSERR: fread_string: string too large (db.c)");
+            strncat(buf, tmp, MAX_STRING_LENGTH - strlen(buf) - 1);
+            flag = 1; 
+        } else {
+            strcat(buf, tmp);
+        }
 
-	if (strlen(buf) > 0) {
-		CREATE(rslt, char, strlen(buf) + 1);
-		strcpy(rslt, buf);
-	} else
-		rslt = 0;
-	return (rslt);
+        /* 문자열 끝에서 '~' 문자 검색 */
+        if ((point = strchr(buf, '~')) != NULL) {
+            *point = '\0';
+            flag = 1;
+        }
+
+    } while (!flag);
+
+    // 뒤쪽 공백 제거
+    point = buf + strlen(buf) - 1;
+    while (point >= buf && isspace(*point)) {
+        *point-- = '\0';
+    }
+
+    // 앞쪽 공백 건너뛰기
+    start_ptr = buf;
+    while (*start_ptr && isspace(*start_ptr)) {
+        start_ptr++;
+    }
+
+    /* 메모리 할당 및 복사 */
+    if (strlen(start_ptr) > 0) {
+        CREATE(rslt, char, strlen(start_ptr) + 1);
+        strcpy(rslt, start_ptr);
+    } else {
+        CREATE(rslt, char, 1);
+        rslt[0] = '\0';
+    }
+
+    return rslt;
 }
 
 /* release memory allocated for a char struct */
+/* modified by Komo */
 void free_char(struct char_data *ch)
 {
-	struct affected_type *af;
+    struct affected_type *af, *next_af;
+    struct obj_data *obj, *next_obj;
+    int i;
 
-	free(GET_NAME(ch));
+    if (!ch) return;
 
-	if (ch->player.title) {
-		free(ch->player.title);
-	}
-	if (ch->player.short_descr) {
-		free(ch->player.short_descr);
-	}
-	if (ch->player.long_descr) {
-		free(ch->player.long_descr);
-	}
-	if (ch->player.description) {
-		free(ch->player.description);
-	}
+    for (obj = ch->carrying; obj; obj = next_obj) {
+        next_obj = obj->next_content;
+        extract_obj(obj);
+    }
+    ch->carrying = NULL;
 
-	for (af = ch->affected; af; af = af->next)
-		affect_remove(ch, af);
+    for (i = 0; i < MAX_WEAR; i++) {
+        if (ch->equipment[i]) {
+            extract_obj(ch->equipment[i]);
+            ch->equipment[i] = NULL;
+        }
+    }
+
+    for (af = ch->affected; af; af = next_af) {
+        next_af = af->next; // 다음 노드 미리 저장 (안전한 루프)
+        affect_remove(ch, af); 
+    }
+
+    if (ch->player.name)       free(ch->player.name);
+    if (ch->player.title)      free(ch->player.title);
+    if (ch->player.short_descr) free(ch->player.short_descr);
+    if (ch->player.long_descr)  free(ch->player.long_descr);
+    if (ch->player.description) free(ch->player.description);
 
 	free(ch);
 }
@@ -2706,7 +2243,7 @@ int file_to_string(char *name, char *buf)
 	*buf = '\0';
 
 	if (!(fl = fopen(name, "r"))) {
-		perror("file-to-string");
+		perror(name);
 		*buf = '\0';
 		return (-1);
 	}
@@ -2727,8 +2264,7 @@ int file_to_string(char *name, char *buf)
 			*(buf + strlen(buf) + 1) = '\0';
 			*(buf + strlen(buf)) = '\r';
 		}
-	}
-	while (!feof(fl));
+	} while (!feof(fl));
 
 	fclose(fl);
 
@@ -2740,7 +2276,7 @@ void reset_char(struct char_data *ch)
 {
 	int i;
 
-	for (i = 0; i < MAX_WEAR; i++)	/* Initialisering */
+	for (i = 0; i < MAX_WEAR; i++)	/* Initializing */
 		ch->equipment[i] = 0;
 	ch->followers = 0;
 	ch->master = 0;
@@ -2785,8 +2321,7 @@ void clear_object(struct obj_data *obj)
 void init_char(struct char_data *ch)
 {
 	int i;
-	int remortal[4] =
-	{1, 2, 4, 8};
+	int remortal[4] = {1, 2, 4, 8};
 
 	/* *** if this is our first player --- he be God *** */
 	if (top_of_p_table < 0) {
@@ -2808,46 +2343,7 @@ void init_char(struct char_data *ch)
 	roll_abilities(ch);
 
 	ch->player.remortal = remortal[GET_CLASS(ch) - 1];
-/*
-	switch (GET_CLASS(ch)) {
-		case CLASS_MAGIC_USER:
-			ch->abilities.str = number(7, 11);
-			ch->abilities.str_add = 0;
-			ch->abilities.intel = number(13, 15);
-			ch->abilities.wis = number(13, 15);
-			ch->abilities.dex = number(7, 11);
-			ch->abilities.con = number(8, 11);
-			ch->points.armor = number(95, 100);
-			break;
-		case CLASS_CLERIC:
-			ch->abilities.str = number(8, 12);
-			ch->abilities.str_add = 0;
-			ch->abilities.intel = number(12, 14);
-			ch->abilities.wis = number(12, 14);
-			ch->abilities.dex = (8, 12);
-			ch->abilities.con = (8, 12);
-			ch->points.armor = number(95, 100);
-			break;
-		case CLASS_THIEF:
-			ch->abilities.str = number(10, 13);
-			ch->abilities.str_add = 0;
-			ch->abilities.intel = number(7, 10);
-			ch->abilities.wis = number(7, 10);
-			ch->abilities.dex = number(13, 15);
-			ch->abilities.con = number(10, 13);
-			ch->points.armor = number(90, 95);
-			break;
-		case CLASS_WARRIOR:
-			ch->abilities.str = number(11, 15);
-			ch->abilities.str_add = 0;
-			ch->abilities.intel = number(7, 10);
-			ch->abilities.wis = number(7, 10);
-			ch->abilities.dex = number(10, 13);
-			ch->abilities.con = number(10, 15);
-			ch->points.armor = number(90, 95);
-			break;
-	}
-*/
+
 	GET_HIT(ch) = GET_PLAYER_MAX_HIT(ch) = 0;
 	GET_MANA(ch) = GET_PLAYER_MAX_MANA(ch) = 0;
 	GET_MOVE(ch) = GET_PLAYER_MAX_MOVE(ch) = 0;
@@ -2992,7 +2488,7 @@ int real_zone_by_number(int virtual)
 // re-work by komoyon@gmail.com, 251016
 /* * 안전하게 stash 파일 이동 - 성공 시 0, 실패 시 -1 반환
  */
-int move_stashfile_safe (const char *victim)
+int move_stashfile_safe(const char *victim)
 {
     char sf1[256], sf2[256], name[100];
     int i;
@@ -3044,14 +2540,22 @@ void stash_char(struct char_data *ch)
 	char stashfile[256], name[100];
 	FILE *fl;
 	int i;
-	unsigned int mask;
+	sigset_t mask, orig_mask; /* 251121 by Komo */
 	void stash_contents(FILE * fl, struct obj_data *p, int wear_flag);
 	char buf[MAX_OUTPUT_LENGTH];
 
-	mask = sigmask(SIGUSR1) | sigmask(SIGUSR2) | sigmask(SIGINT) |
-	    sigmask(SIGBUS) | sigmask(SIGSEGV) |
-	    sigmask(SIGPIPE) | sigmask(SIGALRM) | sigmask(SIGTERM) |
-	    sigmask(SIGURG) | sigmask(SIGXCPU) | sigmask(SIGHUP);
+	sigemptyset(&mask);
+    sigaddset(&mask, SIGUSR1);
+    sigaddset(&mask, SIGUSR2);
+    sigaddset(&mask, SIGINT);
+    sigaddset(&mask, SIGBUS);
+    sigaddset(&mask, SIGSEGV);
+    sigaddset(&mask, SIGPIPE);
+    sigaddset(&mask, SIGALRM);
+    sigaddset(&mask, SIGTERM);
+    sigaddset(&mask, SIGURG);
+    sigaddset(&mask, SIGXCPU);
+    sigaddset(&mask, SIGHUP);
 
 	if (!ch)
 		return;
@@ -3066,15 +2570,15 @@ void stash_char(struct char_data *ch)
 		if (isupper(name[i]))
 			name[i] = tolower(name[i]);
 	// 최종 파일(.x.y) 대신 임시 파일(.x)의 경로 생성, 251016
-    sprintf (stashfile, "%s/%c/%s.x", STASH, name[0], name); // 확장자를 .x 로 변경
+    snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x", STASH, name[0], name); // 확장자를 .x 로 변경
 
     sprintf (buf, "Saving character data to stash : %s", stashfile);
 	mudlog(buf);
 
-	sigsetmask(mask);
+	sigprocmask(SIG_BLOCK, &mask, &orig_mask); /* by Komo */
 	if (!(fl = fopen(stashfile, "w"))) {	/* remove all data if exist */
 		perror("saving PC's stash");
-		sigsetmask(0);
+		sigprocmask(SIG_SETMASK, &orig_mask, NULL);
 		return;
 	}
 
@@ -3089,7 +2593,7 @@ void stash_char(struct char_data *ch)
 
 	fflush(fl);
 	fclose(fl);
-	sigsetmask(0);
+	sigprocmask(SIG_SETMASK, &orig_mask, NULL);
 }
 
 void stash_contentsII(FILE * fp, struct obj_data *o, int wear_flag)
@@ -3179,7 +2683,7 @@ void unstash_char(struct char_data *ch, char *filename)
 	int item_stack[MAX_RENT_ITEM];
 	int stack_count = 0;
 	int where;
-	unsigned int mask;
+	sigset_t mask, orig_mask; /* by Komo */
 	static int loc_to_where[22] =
 	{
 		0, 1, 1, 2, 2, 3, 4, 5, 6, 7,
@@ -3187,10 +2691,19 @@ void unstash_char(struct char_data *ch, char *filename)
 		16, 17};
 #undef MAX_RENT_ITEM
 
-	mask = sigmask(SIGUSR1) | sigmask(SIGUSR2) | sigmask(SIGINT) |
-	    sigmask(SIGBUS) | sigmask(SIGSEGV) |
-	    sigmask(SIGPIPE) | sigmask(SIGALRM) | sigmask(SIGTERM) |
-	    sigmask(SIGURG) | sigmask(SIGXCPU) | sigmask(SIGHUP);
+	sigemptyset(&mask);
+    sigaddset(&mask, SIGUSR1);
+    sigaddset(&mask, SIGUSR2);
+    sigaddset(&mask, SIGINT);
+    sigaddset(&mask, SIGBUS);
+    sigaddset(&mask, SIGSEGV);
+    sigaddset(&mask, SIGPIPE);
+    sigaddset(&mask, SIGALRM);
+    sigaddset(&mask, SIGTERM);
+    sigaddset(&mask, SIGURG);
+    sigaddset(&mask, SIGXCPU);
+    sigaddset(&mask, SIGHUP);
+
 	if (!ch)
 		return;
 	if (IS_NPC(ch) || !ch->desc)
@@ -3202,12 +2715,13 @@ void unstash_char(struct char_data *ch, char *filename)
 	for (i = 0; name[i]; ++i)
 		if (isupper(name[i]))
 			name[i] = tolower(name[i]);
-	sigsetmask(mask);
+
+	sigprocmask(SIG_BLOCK, &mask, &orig_mask);
 	snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x.y", STASH, name[0], name);
 	if (!(fl = fopen(stashfile, "r"))) {
 		snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x", STASH, name[0], name);
 		if (!(fl = fopen(stashfile, "r"))) {
-			sigsetmask(0);
+			sigprocmask(SIG_SETMASK, &orig_mask, NULL);
 			return;
 		}
 	}
@@ -3217,8 +2731,8 @@ void unstash_char(struct char_data *ch, char *filename)
 
 	fscanf(fl, "%d", &n);
 	if (n != KJHRENT) {
-		mudlog("File format error in unstash_char. (db.c)");
-		sigsetmask(0);
+		log("File format error in unstash_char. (db.c)");
+		sigprocmask(SIG_SETMASK, &orig_mask, NULL);
 		fclose(fl);
 		return;
 	}
@@ -3293,128 +2807,8 @@ void unstash_char(struct char_data *ch, char *filename)
 	}
 
 	fclose(fl);
-	sigsetmask(0);
-
-	/*
-	   sprintf(sf2,"%s/%c/%s.x.tmp",STASH,name[0],name);
-	   rename(stashfile,sf2);
-	   wipe_stash(name);
-	 */
-	/* delete file.x and file.x.y */
+	sigprocmask(SIG_SETMASK, &orig_mask, NULL);
 }
-
-#ifdef NEW_STASH		/* fail */
-void stash_contents(FILE * fp, struct obj_data *o, int wear_flag)
-{
-	struct obj_data *oc;
-	int i;
-
-	if (!o)
-		return;
-	if (o->obj_flags.type_flag != ITEM_KEY && !IS_OBJ_STAT(o, ITEM_NORENT)) {
-		if (oc = o->contains)
-			stash_contents(fp, oc, wear_flag >= 0 ? -2 : wear_flag
-				       - 1);
-		if (oc = o->next_content)
-			stash_contents(fp, oc, wear_flag);
-		fprintf(fp, "%d", obj_index[o->item_number].virtual);
-		fprintf(fp, " %d", wear_flag);
-		for (i = 0; i < 4; i++)
-			fprintf(fp, " %d", o->obj_flags.value[i]);
-		for (i = 0; i < 2; i++)
-			fprintf(fp, " %d %d", o->affected[i].location,
-				o->affected[i].modifier);
-		fprintf(fp, "\n");
-	}
-}
-
-/* Read stash file and load objects to player. and remove stash files */
-void unstash_char(struct char_data *ch, char *filename)
-{
-#define MAX_RENT_ITEM 1000
-	struct obj_data *item_stackp[MAX_RENT_ITEM];
-	int item_stack[MAX_RENT_ITEM];
-#undef MAX_RENT_ITEM
-	FILE *fp;
-	struct obj_data *obj;
-	int i;
-	int value[4];
-	int virtual_n;
-	int magic_num;
-	char fname[256];
-	char name[256];
-
-	int stack_count = 0;
-	int where;
-	static int loc_to_where[22] =
-	{
-		0, 1, 1, 2, 2, 3, 4, 5, 6, 7,
-		8, 14, 9, 10, 11, 11, 12, 13, 15, 15,
-		16, 17};
-
-	if (GET_NAME(ch))
-		strcpy(name, filename ? filename : GET_NAME(ch));
-	else
-		return;
-
-	for (i = 0; name[i]; i++)
-		name[i] = tolower(name[i]);
-	sprintf(fname, "%s/%c/%s.x.y", STASH, name[0], name);
-
-	if (!(fp = fopen(fname, "rb"))) {
-		mudlog("Can't open file in unstash_char. (db.c)");
-		return;
-	}
-
-	fscanf(fp, "%d\n", &magic_num);
-	if (magic_num != KJHRENT) {
-		mudlog("File format error in unstash_char. (db.c)");
-		fclose(fp);
-		return;
-	}
-
-	while (1) {
-		if (fscanf(fp, "%d", &virtual_n) <= 0)
-			break;
-
-		fscanf(fp, "%d", &where);
-		for (i = 0; i < 4; i++)
-			fscanf(fp, "%d", &value[i]);
-		obj = read_object(virtual_n, VIRTUAL);
-		if (!obj) {
-			mudlog("Obj's virtual number doesn't exist. (db.c)");
-			fclose(fp);
-			return;
-		}
-		for (i = 0; i < 4; i++)
-			obj->obj_flags.value[i] = value[i];
-		for (i = 0; i < 4; i++)
-			fscanf(fp, "%d", &value[i]);
-		for (i = 0; i < 2; i++) {
-			obj->affected[i].location = value[i << 1];
-			obj->affected[i].modifier = value[(i << 1) + 1];
-		}
-		while (stack_count && item_stack[stack_count - 1] < -1 &&
-		       item_stack[stack_count - 1] < where) {
-			stack_count--;
-			obj_to_obj(item_stackp[stack_count], obj);
-		}
-		item_stackp[stack_count] = obj;
-		item_stack[stack_count] = where;
-		stack_count++;
-	}
-	while (stack_count > 0) {
-		stack_count--;
-		obj_to_char(item_stackp[stack_count], ch);
-		if (item_stack[stack_count] >= 0) {
-			where = loc_to_where[item_stack[stack_count]];
-			wear(ch, item_stackp[stack_count], where);
-		}
-	}
-	fclose(fp);
-}
-
-#endif
 
 void wipe_stash(char *filename)	/* delete id.x and id.x.y */
 {
@@ -3433,14 +2827,16 @@ void wipe_stash(char *filename)	/* delete id.x and id.x.y */
 
 void do_checkrent(struct char_data *ch, char *argument, int cmd)
 {
-	char stashfile[256], name[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
-	char str[255];
+	char stashfile[MAX_STRING_LENGTH], name[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
+	char str[256];
 	FILE *fl;
 	int i, j, n;
 
 	one_argument(argument, name);
-	if (!*name)
-		return;
+	if (!*name) {
+        send_to_char("Check whose rent file?\n\r", ch);
+        return;
+    }
 	for (i = 0; name[i]; ++i)
 		if (isupper(name[i]))
 			name[i] = tolower(name[i]);
@@ -3450,7 +2846,7 @@ void do_checkrent(struct char_data *ch, char *argument, int cmd)
 		send_to_char(buf, ch);
 		return;
 	}
-	buf[0] = 0;
+	buf[0] = '\0';
 	fscanf(fl, "%d", &n);
 	for (i = j = 0;;) {
 		if (fscanf(fl, "%d", &n) <= 0)
@@ -3460,17 +2856,22 @@ void do_checkrent(struct char_data *ch, char *argument, int cmd)
 		if (n > 99999)
 			continue;
 		++j;
-		sprintf(buf + i, "%5d%c", n, (j == 10) ? '\n' : ' ');
-		if (j == 10)
-			j = 0;
-		i += 5;
-		fgets(str, 255, fl);
-		fgets(str, 255, fl);
-		fgets(str, 255, fl);
-		fgets(str, 255, fl);
+		if (sizeof(buf) - i <= 1) break;
+
+        written = snprintf(buf + i, sizeof(buf) - i, "%5d%c", n, (j == 10) ? '\n' : ' ');
+        if (written > 0)
+            i += written;
+
+        if (j == 10)
+            j = 0;
+        
+        if (!fgets(str, sizeof(str), fl)) break;
+        if (!fgets(str, sizeof(str), fl)) break;
+        if (!fgets(str, sizeof(str), fl)) break;
+        if (!fgets(str, sizeof(str), fl)) break;
 	}
 	fclose(fl);
-	strcat(buf, "\n\r");
+	strlcat(buf, "\n\r", sizeof(buf));
 	send_to_char(buf, ch);
 	return;
 }
@@ -3500,7 +2901,7 @@ void do_replacerent(struct char_data *ch, char *argument, int cmd)
 	mudlog(buf);
 }
 
-void do_rent(struct char_data *ch, int cmd, char *arg)
+void do_rent(struct char_data *ch, char *arg, int cmd)
 {
 	// sh_int save_room;
 	int i;

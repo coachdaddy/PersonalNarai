@@ -25,26 +25,6 @@ extern struct obj_data *object_list;
 extern struct char_data *character_list;
 extern struct index_data *mob_index;
 
-/* Extern procedures */
-
-void DEBUG_LOG(const char *format, ...);
-void mudlog(const char *str);
-
-void damage(struct char_data *ch, struct char_data *victim,
-	    int damage, int weapontype);
-bool saves_spell(struct char_data *ch, sh_int spell);
-void weight_change_object(struct obj_data *obj, int weight);
-int dice(int number, int size);
-void do_look(struct char_data *ch, char *argument, int cmd);
-int number(int from, int to);
-int MIN(int a, int b);
-int MAX(int a, int b);
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void sprinttype(int type, char *name[], char *res);
-void sprintbit(long vector, char *name[], char *res);
-void spell_sanctuary(byte level, struct char_data *ch,
-		     struct char_data *victim, struct obj_data *obj);
-
 /* Offensive Spells */
 
 /* modified by atre */
@@ -192,10 +172,8 @@ void spell_energy_drain(byte level, struct char_data *ch,
 
 	void gain_exp(struct char_data *ch, int gain);
 
-	if (!ch)
-		return;
-	if (!victim)
-		return;
+	if (!ch)	 return;
+	if (!victim) return;
 
 	INCREASE_SKILLED2(ch, victim, SPELL_ENERGY_DRAIN);
 
@@ -256,8 +234,7 @@ void spell_disintegrate(byte level, struct char_data *ch,
 {
 	int dam;
 
-	if (!ch || !victim)
-		return;
+	if (!ch || !victim) return;
 
 	INCREASE_SKILLED2(ch, victim, SPELL_DISINTEGRATE);
 
@@ -276,8 +253,7 @@ void spell_corn_of_ice(byte level, struct char_data *ch,
 {
 	int dam;
 
-	if (!ch || !victim)
-		return;
+	if (!ch || !victim) return;
 
 	INCREASE_SKILLED2(ch, victim, SPELL_CORN_OF_ICE);
 	 
@@ -293,9 +269,6 @@ void spell_sunburst(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
-	void spell_blindness(byte level, struct char_data *ch,
-			     struct char_data *victim, struct obj_data *obj);
-	// char buf[MAX_STRING_LENGTH];
 
 	static int dam_each[] =
 	{0,
@@ -307,8 +280,7 @@ void spell_sunburst(byte level, struct char_data *ch,
 	 640, 640, 640, 640, 640, 680, 680, 680, 680, 680
 	};
 
-	if (!ch || !victim)
-		return;
+	if (!ch || !victim) return;
 
 	INCREASE_SKILLED2(ch, victim, SPELL_SUNBURST);
 	dam = number(dam_each[(int)level], dam_each[(int)level] << 1);
@@ -316,8 +288,7 @@ void spell_sunburst(byte level, struct char_data *ch,
 	if (saves_spell(victim, SAVING_SPELL))
 		dam >>= 1;
 
-	if (number(1, 15) == 1)
-	{ 
+	if (number(1, 15) == 1) { 
 		spell_blindness(level, ch, victim, 0);
 		DEBUG_LOG("DEBUG: sunburst: %d ", dam);
 	}
@@ -332,7 +303,7 @@ void spell_energyflow(byte level, struct char_data *ch,
 	int dam;
 	int exp;
 
-	if (GET_EXP(ch) > 2000000) {
+	if (GET_EXP(ch) > 2000000) { // 2M exp
 		INCREASE_SKILLED2(ch, victim, SPELL_ENERGY_FLOW);
 
 		dam = dice(level, (level >> 1) + GET_SKILLED(ch, SPELL_ENERGY_FLOW));
@@ -411,7 +382,7 @@ void spell_throw(byte level, struct char_data *ch,
 	}
 
 	damage(ch, victim, dam, SPELL_THROW);
-	send_to_char("Light Solar  guooooooooroorooorooorooooaaaaaaaaaaa!\n\r", ch);
+	send_to_char("Light Solar guooooooooroorooorooorooooaaaaaaaaaaa!\n\r", ch);
 }
 
 /* modified by atre */
@@ -455,8 +426,6 @@ void spell_all_heal(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
 	struct char_data *tmp_victim, *temp;
-	void spell_heal(byte level, struct char_data *ch,
-			struct char_data *victim, struct obj_data *obj);
 
 	INCREASE_SKILLED2(ch, ch, SPELL_ALL_HEAL);
 
@@ -478,8 +447,6 @@ void spell_sanctuary_cloud(byte level, struct char_data *ch,
 			   struct char_data *victim, struct obj_data *obj)
 {
 	struct char_data *tmp_victim, *temp;
-	void spell_heal(byte level, struct char_data *ch,
-			struct char_data *victim, struct obj_data *obj);
 
 	INCREASE_SKILLED2(ch, ch, SPELL_SANCTUARY_CLOUD);
 
@@ -504,15 +471,14 @@ void spell_hand_of_god(byte level, struct char_data *ch,
 
 	dam = dice(level, level + GET_SKILLED(ch, SPELL_HAND_OF_GOD));
 	send_to_char("Thousand hands are filling all your sight.\n\r", ch);
-	act("$n summoned unnumerable hands.\n\r", FALSE, ch, 0, 0, TO_ROOM);
-	act("Your face is slapped by hands. BLOOD ALL OVER!\n\r",
+	act("$n summoned unnumerable hands.", FALSE, ch, 0, 0, TO_ROOM);
+	act("Your face is slapped by hands. BLOOD ALL OVER!",
 	    FALSE, ch, 0, 0, TO_ROOM);
 	for (tmp_victim = character_list; tmp_victim; tmp_victim = temp) {
 		temp = tmp_victim->next;
-		if ((ch->in_room == tmp_victim->in_room) && (ch != tmp_victim)) {
+		if ((ch->in_room == tmp_victim->in_room) && (ch != tmp_victim) && !is_same_group(ch, tmp_victim)) {
 			damage(ch, tmp_victim, dam, SPELL_HAND_OF_GOD);
-		} else if (world[ch->in_room].zone ==
-			   world[tmp_victim->in_room].zone) {
+		} else if (world[ch->in_room].zone == world[tmp_victim->in_room].zone) {
 			send_to_char("Dirty hands with long nail is ", tmp_victim);
 			send_to_char("going and coming all over sky.\n\r", tmp_victim);
 		}
@@ -618,7 +584,7 @@ void spell_call_lightning(byte level, struct char_data *ch,
 		dam <<= (weather_info.sky - 1);
 		damage(ch, victim, dam, SPELL_CALL_LIGHTNING);
 	} else
-		act("Hmm...is it rainy?", FALSE, ch, 0, 0, TO_CHAR);
+		act("Hmm... is it rainy?", FALSE, ch, 0, 0, TO_CHAR);
 }
 
 /* modified by atre */
@@ -810,10 +776,6 @@ void spell_identify(byte level, struct char_data *ch,
 				case WEAPON_DISINTEGRATE:
 					snprintf(buf, sizeof(buf), "disintegrate\n\r");
 					break;
-					/*
-					   case WEAPON_GOD:
-					   snprintf(buf, sizeof(buf),"god blessed\n\r"); break;
-					 */
 				case WEAPON_ANY_MAGIC:
 					snprintf(buf, sizeof(buf), "random magic\n\r");
 					break;
@@ -924,8 +886,7 @@ void spell_fire_breath(byte level, struct char_data *ch,
 	if (number(0, IMO) < GET_LEVEL(ch)) {
 		if (!saves_spell(victim, SAVING_BREATH)) {
 			for (burn = victim->carrying;
-			     burn && (burn->obj_flags.type_flag !=
-			     ITEM_SCROLL) &&
+			     burn && (burn->obj_flags.type_flag != ITEM_SCROLL) &&
 			     (burn->obj_flags.type_flag != ITEM_WAND) &&
 			     (burn->obj_flags.type_flag != ITEM_STAFF) &&
 			     (burn->obj_flags.type_flag != ITEM_NOTE) &&
