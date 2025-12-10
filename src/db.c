@@ -221,9 +221,10 @@ void boot_db(void)
             /* level */
             fscanf(mob_f, " %d ", &tmp_level);
 
-			if(tmp_level > 43) {
-				DEBUG_LOG("mob load: %d-th  %s lv(%d)", i, mob_index[i].name , tmp_level);
+			if(tmp_level > 60 && mob_index[i].virtual != 1000) {
+				DEBUG_LOG("mob load err: vnum#%d %s lv(%d)", mob_index[i].virtual, mob_index[i].name , tmp_level);
                 mob_index[i].level = -1; /* Mark as invalid */
+                tmp_level = -1; /* Mark as invalid */
                 mob_index[i].act = 0;
                 continue; /* Skip this mob */
 			}
