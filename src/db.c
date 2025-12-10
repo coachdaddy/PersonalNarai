@@ -159,6 +159,7 @@ void boot_db(void)
         mudlog("(boot_db)    Could not open help file.");
     else
         help_index = build_help_index(help_fl, &top_of_helpt);
+
     mudlog("(boot_db)   help index done.");
 
     mudlog("(boot_db) Initializing quest system.");
@@ -182,7 +183,7 @@ void boot_db(void)
     mudlog("(boot_db) Pre-loading mob level and act flags into index.");
     { /* Create a local scope for temporary variables */
         long tmp_act;
-        long tmp_level;
+        int tmp_level = -1;
         int i;
     
         for (i = 0; i <= top_of_mobt; i++) {
@@ -218,10 +219,17 @@ void boot_db(void)
             fscanf(mob_f, " %*c "); 
     
             /* level */
-            fscanf(mob_f, " %ld ", &tmp_level);
+            fscanf(mob_f, " %d ", &tmp_level);
+
+			if(tmp_level > 43) {
+				DEBUG_LOG("mob load: %d-th  %s lv(%d)", i, mob_index[i].name , tmp_level);
+                mob_index[i].level = -1; /* Mark as invalid */
+                mob_index[i].act = 0;
+                continue; /* Skip this mob */
+			}
             mob_index[i].level = tmp_level;
             
-            mob_index[i].func = 0;
+            mob_index[i].func = 0; 
         }
         rewind(mob_f); /* Rewind file pointer for safety */
     }
