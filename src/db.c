@@ -223,7 +223,7 @@ void boot_db(void)
             fscanf(mob_f, " %*c "); 
     
             /* level */
-            fscanf(mob_f, " %ld ", &tmp_level);
+            fscanf(mob_f, " %d ", &tmp_level);
 
 			mob_index[i].level = tmp_level;
             
@@ -2367,6 +2367,8 @@ int real_room(int virtual)
 		else
 			bot = mid + 1;
 	}
+
+	return -1;
 }
 
 /* returns the real number of the monster with given virtual number */
@@ -2390,6 +2392,8 @@ int real_mobile(int virtual)
 		else
 			bot = mid + 1;
 	}
+
+	return -1;
 }
 
 /* returns the real number of the object with given virtual number */
@@ -2413,6 +2417,8 @@ int real_object(int virtual)
 		else
 			bot = mid + 1;
 	}
+
+	return -1;
 }
 
 /*
@@ -2747,8 +2753,7 @@ void do_checkrent(struct char_data *ch, char *argument, int cmd)
 	char str[256];
 	FILE *fl;
 	int i, j, n;
-	int written; 
-
+	
 	one_argument(argument, name);
 	if (!*name) {
         send_to_char("Check whose rent file?\n\r", ch);

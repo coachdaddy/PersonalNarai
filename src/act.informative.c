@@ -707,9 +707,11 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 					snprintf(buffer, sizeof(buffer), "%s\n\r",
 						world[ch->in_room].name);
 				send_to_char(buffer, ch);
-				if (!IS_SET(ch->specials.act, PLR_BRIEF))
+
+				if (!IS_SET(ch->specials.act, PLR_BRIEF)) {
 					send_to_char(world[ch->in_room].description, ch);
 					send_to_char("\r\n", ch);
+				}
 				snprintf(buffer, sizeof(buffer), "[ EXITS : ");
 				
 				if (EXIT(ch, 0)) 

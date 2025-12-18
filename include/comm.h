@@ -18,7 +18,7 @@ void acthan(char *seng, char *shan, int hide_invisible, struct char_data *ch,
 void write_to_q(char *txt, struct txt_q *queue);
 int write_to_descriptor(int desc, char *txt);
 void process_color_string(const char *input, char *output, int max_out_len); // utility.c
-
+void send_to_q_color(const char *messg, struct descriptor_data *desc);
 
 #define TO_ROOM    0
 #define TO_VICT    1
@@ -26,6 +26,7 @@ void process_color_string(const char *input, char *output, int max_out_len); // 
 #define TO_CHAR    3
 
 /* SEND_TO_Q 단순 함수 호출로 변경 */
+
 #define SEND_TO_Q(messg, desc)  send_to_q_color((messg), (desc))
 
 #endif /* _COMM_H_ */

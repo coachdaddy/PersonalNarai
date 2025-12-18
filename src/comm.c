@@ -287,7 +287,7 @@ void game_loop(int s)
 	static struct timeval opt_time;
 	char comm[MAX_INPUT_LENGTH];
 	struct descriptor_data *point, *next_point;
-	struct char_data *ch;
+	// struct char_data *ch;
 	int pulse = 0;
 	char prmpt[32];
 	int pulse_per_mud_hour;

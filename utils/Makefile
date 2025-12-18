@@ -3,13 +3,17 @@
 #
 # For GNU make only. For BSD make, use Makefile-bsdmake.
 
+PROG    = personal-narai
 INCDIR  = ../include
-UTLSRC  = .
+UTLSRC  = ../utils
 OBJDIR  = ./obj
 INSTDIR = ../bin
 VPATH   = .:$(INCDIR):$(UTLSRC):
 
-CC      = gcc
+VCS_HEADER = $(INCDIR)/vcs_track.h
+VCS_SCRIPT = $(UTLSRC)/vcs_track.sh
+
+CC      = cc
 
 MAKE    = make
 LD      = $(CC)
@@ -36,7 +40,9 @@ PROG_BIN    = $(OBJDIR)/$(PROG)
 U_BINS      = $(UTILS:%=$(OBJDIR)/%)
 CTAGS_SRC   = $(SRCS) $(INCDIR)/*.h
 
-$(OBJDIR)/%.o :  %.c
+# $(OBJDIR)/%.o :  %.c
+#	$(CC) -c $(CFLAGS) -o $@ $<
+$(OBJDIR)/%.o :  %.c $(VCS_HEADER)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(OBJDIR)/% :  %.o
@@ -58,6 +64,17 @@ install : $(U_BINS)
 ctags :
 	- ctags $(CTAGS_SRC)
 
+# 251218 added
+.PHONY: FORCE
+FORCE:
+
+$(VCS_HEADER): FORCE
+	@if [ -f $(VCS_SCRIPT) ]; then \
+		chmod +x $(VCS_SCRIPT); \
+		$(VCS_SCRIPT); \
+	else \
+		echo "Warning: $(VCS_SCRIPT) not found."; \
+	fi
 #======================================================================
 
 # DO NOT DELETE

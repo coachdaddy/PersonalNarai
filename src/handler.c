@@ -1137,16 +1137,19 @@ struct char_data *get_char_room_vis(struct char_data *ch, char *name)
 
     tmp = tmpname;
 
-    if (!(number = get_number(&tmp)))
+    if (!(number = get_number(&tmp))) {
         return (0);
+	}
 
-	for (i = world[ch->in_room].people, j = 1; i && (j <= number); i = i->next_in_room)
-		if (isname(tmp, GET_NAME(i)))
+	for (i = world[ch->in_room].people, j = 1; i && (j <= number); i = i->next_in_room) {
+		if (isname(tmp, GET_NAME(i))) {
 			if (CAN_SEE(ch, i)) {
 				if (j == number)
 					return (i);
 				j++;
 			}
+		}
+	}
 
 	return (0);
 }

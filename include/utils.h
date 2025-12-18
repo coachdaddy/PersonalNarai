@@ -219,3 +219,8 @@ long int hit_limit(struct char_data *ch);
             }	\
         } \
     } while(0)
+
+/* Unit Macros, 251218 */
+#define K(x) ((long)(x) * 1000)         /* Kilo, 1천 */
+#define M(x) ((long)(x) * 1000000)      /* Mega, 백만 */
+#define G(x) ((long)(x) * 1000000000)   /* Giga, 10억 */
