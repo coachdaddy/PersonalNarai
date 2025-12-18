@@ -1,4 +1,4 @@
-
+#pragma once
 /*
 used goods shop:
 made by Process(wdshin@eve.kaist.ac.kr)

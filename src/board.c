@@ -10,7 +10,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "db.h"
 
 #define MAX_MSGS 100

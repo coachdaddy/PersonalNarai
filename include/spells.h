@@ -1,5 +1,4 @@
-#ifndef _SPELLS_H_
-#define _SPELLS_H_
+#pragma once
 /* ************************************************************************
 *  file: spells.h , Implementation of magic spells.       Part of DIKUMUD *
 *  Usage : Spells                                                         *
@@ -208,5 +207,3 @@ struct attack_hit_type {
 	char *singular;
 	char *plural;
 };
-
-#endif /* _SPELLS_H_ */

@@ -27,8 +27,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
-#include "comm2.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
@@ -80,6 +78,8 @@ int no_specials = 0;		/* Suppress ass. of special routines */
 int nostealflag = 0;
 int noshoutflag = 0;
 
+int baddoms = 0;
+char baddomain[16][32];
 
 /* *********************************************************************
 *  main game loop and related stuff               *

@@ -8,7 +8,6 @@
 #include <string.h>
 
 #include "structs.h"
-#include "comm.h"
 #include "handler.h"
 #include "db.h"
 #include "interpreter.h"

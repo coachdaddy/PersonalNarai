@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "spells.h"
 #include "handler.h"
 #include "limit.h"

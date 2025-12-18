@@ -8,7 +8,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "db.h"
 #include "interpreter.h"
 #include "spells.h"

@@ -1,12 +1,8 @@
 /* include/globals.h */
-#ifndef __GLOBALS_H__
-#define __GLOBALS_H__
+#pragma once
 
 #include "structs.h"
-
-#ifndef _SPELLS_H_
 #include "spells.h" /* for spell_info_type */
-#endif
 
 /* ========================================================
    Global Variables Declarations
@@ -46,6 +42,9 @@ extern struct weather_data weather_info;
 extern int regen_percent;
 extern int regen_time_percent;
 extern int regen_time;
+
+/* --- db2.h --- */
+extern struct reset_q_type reset_q;
 
 /* --- comm.c --- */
 extern struct descriptor_data *descriptor_list;
@@ -138,5 +137,3 @@ extern char fileid[];
 
 /* --- guild_constant.c --- */
 extern char *guild_names[];
-
-#endif /* __GLOBALS_H__ */

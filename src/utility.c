@@ -11,7 +11,6 @@
 #include <stdarg.h>
 
 #include "structs.h"
-#include "comm.h"
 #include "utils.h"
 #include "colors.h"
 

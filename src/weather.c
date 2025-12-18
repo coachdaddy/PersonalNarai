@@ -10,7 +10,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "handler.h"
 #include "interpreter.h"
 #include "db.h"

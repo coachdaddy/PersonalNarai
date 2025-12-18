@@ -14,7 +14,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
@@ -2079,9 +2078,6 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 	}
 }
 
-#ifndef BADDOMS
-#define BADDOMS 16
-#endif
 
 /*
  * 함수명: do_siteban (구 do_wizlock), 251121 by Komo

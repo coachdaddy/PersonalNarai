@@ -1,5 +1,4 @@
 #include "structs.h"
-#include "comm.h"
 #include "magic_weapon.h"
 #include "utils.h"
 #include "spells.h"

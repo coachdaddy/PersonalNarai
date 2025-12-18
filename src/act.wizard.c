@@ -16,19 +16,11 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
 #include "limit.h"
-
-
-
-#ifndef BADDOMS
-#define BADDOMS 16
-#endif
-
 
 char history[20][MAX_STRING_LENGTH];
 int his_start = 0, his_end = 0;

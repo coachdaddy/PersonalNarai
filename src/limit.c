@@ -7,12 +7,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+
 #include "structs.h"
 #include "limit.h"
 #include "utils.h"
 #include "spells.h"
-#include "comm.h"
-
 #include "guild_list.h"
 
 #define SPELL_LEARN_MAX	120

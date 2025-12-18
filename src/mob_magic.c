@@ -9,7 +9,6 @@
 #include <assert.h>
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "spells.h"
 #include "handler.h"
 #include "limits.h"

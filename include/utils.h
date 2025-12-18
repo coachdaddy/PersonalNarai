@@ -1,41 +1,15 @@
-
+#pragma once
 /* ************************************************************************
 *  file: utils.h, Utility module.                         Part of DIKUMUD *
 *  Usage: Utility macros                                                  *
 ************************************************************************* */
-#ifndef _UTILS_H_
-#define _UTILS_H_
 
 #include <ctype.h>
 #include <string.h>
-#include <stddef.h>  /* for size_t */
 
-#define ISLETTER(c) (isgraph((unsigned char)(c)))
-
-/* LOWER, UPPER, ISDIGIT 모두 삭제, by Komo */
-#define CAP(st)  (*(st) = toupper(*(st)))
-#endif
-#define RETURN_TO_QUIT
-#define MID_HELPER	"narai"
-
-#define REBOOT_TIME	(4*86400)
-
-#define TIME_ZONE	(9*3600)
-#define REBOOT_WHEN	(9*60-5)
-
-#pragma GCC diagnostic ignored "-Wunused-result"
-
-// To avoid name conflict with built-in log(x) function
-#define log(s) mudlog(s)
-
-#ifndef HAVE_STRLCAT
-size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 안전한 문자열 연결 함수, 251125 by Komo */
-#endif
-
-// Don't use NULL pointer for null character ('\0')
-#define NUL '\0'
-#define TRUE  1
-#define FALSE 0
+// comm.h에서 이동
+/* SEND_TO_Q 단순 함수 호출로 변경 */
+#define SEND_TO_Q(messg, desc)  send_to_q_color((messg), (desc))
 
 #ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -60,6 +34,8 @@ size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 
         } \
     } while(0)
 
+#define CAP(st)  (*(st) = toupper(*(st)))
+
 #define IS_SET(flag,bit)  ((flag) & (bit))
 #define IS_AFFECTED(ch,skill) ( IS_SET((ch)->specials.affected_by, (skill)) )
 #define IS_DARK(room)  (!world[room].light && IS_SET(world[room].room_flags, DARK))
@@ -67,7 +43,7 @@ size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 
 #define SET_BIT(var,bit)  ((var) = (var) | (bit))
 #define REMOVE_BIT(var,bit)  ((var) = (var) & ~(bit) )
 
-
+#define ISLETTER(c) (isgraph((unsigned char)(c)))
 #define IF_STR(st)  ((st) ? (st) : "\0")
 #define ISNEWL(ch)  ((ch) == '\n' || (ch) == '\r')
 
@@ -173,11 +149,8 @@ size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 
 #define GET_LEARNED(ch, sk_no)		((ch)->skills[(int)(sk_no)].learned)
 #define GET_SKILLED(ch, sk_no)		((ch)->skills[(int)(sk_no)].skilled)
 
-
 /* max skilled = 100 */
-
 /* jhpark, skilled increase시 같은 길드멤버가 아닌지 확인 */
-
 #define INCREASE_SKILLED(ch, victim, sk_no)	\
     do { \
         if((IS_NPC(victim) || ch == victim) || (ch->player.guild != victim->player.guild)) {	\

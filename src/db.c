@@ -16,8 +16,6 @@
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
-#include "db2.h"
-#include "comm.h"
 #include "handler.h"
 #include "limit.h"
 #include "spells.h"
@@ -63,6 +61,8 @@ int top_of_helpt;		/* top of help index table         */
 
 struct time_info_data time_info;	/* the infomation about the time   */
 struct weather_data weather_info;	/* the infomation about the weather */
+
+struct reset_q_type reset_q;
 
 /* comm.c에서 이동, Komo */
 int regen_percent = 50;

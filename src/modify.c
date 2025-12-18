@@ -15,7 +15,6 @@
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
-#include "comm.h"
 
 #define TP_MOB    0
 #define TP_OBJ     1

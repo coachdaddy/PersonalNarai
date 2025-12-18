@@ -29,8 +29,8 @@
 #include <arpa/inet.h>
 #define	TELOPTS
 #include <arpa/telnet.h>
+
 #include "structs.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "db.h"
 #include "utils.h"

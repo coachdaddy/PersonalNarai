@@ -12,7 +12,6 @@
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
-#include "comm.h" // acthan, send_to_char_han 등
 
 #define MaxQuest		10000
 #define QUEST_FILE		"mob.quest"

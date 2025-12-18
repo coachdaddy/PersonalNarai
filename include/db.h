@@ -2,6 +2,7 @@
 *  file: db.h , Database module.                          Part of DIKUMUD *
 *  Usage: Loading/Saving chars booting world.                             *
 ************************************************************************* */
+#pragma once
 
 #include <errno.h>
 
@@ -33,32 +34,13 @@
 /* db.c에서 옮겨옴 */
 #define KJHRENT      66666	/* kjh number to tell new rent format */
 
-#define NEW_ZONE_SYSTEM
 #define ALL_WORLD_FILE "world/world_files.new" /* by Komo, 251124 */
 #define ALL_ZONE_FILE "zone/zone_files.new"   /* by Komo, 251120 */
 #define ZO_DEAD  999
 
-/* public procedures in db.c */
-void boot_db(void);
-void save_char(struct char_data *ch, sh_int load_room);
-void zone_update(void);
-void init_char(struct char_data *ch);
-void clear_char(struct char_data *ch);
-void clear_object(struct obj_data *obj);
-void reset_char(struct char_data *ch);
-void free_char(struct char_data *ch);
-int create_entry(char *name);
-int real_room(int virtual);
-int real_object(int virtual);
-int real_mobile(int virtual);
-int real_zone_by_number(int virtual);   /* Komo, 251121 */
-char *fread_string(FILE *fl);
 
 #define REAL 0
 #define VIRTUAL 1
-
-struct obj_data *read_object(int nr, int type);
-struct char_data *read_mobile(int nr, int type);
 
 
 /* 
@@ -104,8 +86,8 @@ struct char_data *read_mobile(int nr, int type);
 
 /* structure for the reset commands */
 struct reset_com {
-	char command;		/* current command                      */
-	bool if_flag;		/* if TRUE: exe only if preceding exe'd */
+	char command;	/* current command                      */
+	bool if_flag;	/* if TRUE: exe only if preceding exe'd */
 	int arg1;		/*                                      */
 	int arg2;		/* Arguments to the command             */
 	int arg3;		/*                                      */
@@ -125,12 +107,12 @@ struct reset_com {
 /* zone definition structure. for the 'zone-table'   */
 struct zone_data {
 	int number;         /* 존 고유 번호 (VNUM), 251120 */
-	char *name;		/* name of this zone                  */
-	char *filename;		/* zone file name                                         */
+	char *name;			/* name of this zone                  */
+	char *filename;		/* zone file name                        */
 	int lifespan;		/* how long between resets (minutes)  */
 	char *wld_filename; /* 이 존에 매핑된 .wld 파일 이름, 251121 */
-    int age;		/* current age of this zone (minutes) */
-	int top;		/* upper limit for rooms in this zone */
+    int age;			/* current age of this zone (minutes) */
+	int top;			/* upper limit for rooms in this zone */
 
 	int reset_mode;		/* conditions for reset (see below)   */
 	struct reset_com *cmd;	/* command table for reset                */
@@ -146,22 +128,12 @@ struct zone_data {
 /* element in monster and object index-tables   */
 struct index_data {
 	int virtual;		/* virtual number of this mob/obj           */
-	long pos;		/* file position of this field              */
-	int number;		/* number of existing units of this mob/obj     */
+	long pos;			/* file position of this field              */
+	int number;			/* number of existing units of this mob/obj     */
 	int (*func) ();		/* special procedure for this mob/obj       */
 
 	/* 퀘스트 시스템 개편을 위해 추가 */
-    char *name;      /* Monster name */
-    int level;       /* Monster level */
-    long act;        /* Monster act flags */
-};
-
-struct player_index_element {
-	char *name;
-	int nr;
-};
-
-struct help_index_element {
-	char *keyword;
-	long pos;
+    char *name;      	/* Monster name */
+    int level;       	/* Monster level */
+    long act;        	/* Monster act flags */
 };

@@ -13,7 +13,6 @@
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "spells.h"

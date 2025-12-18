@@ -7,14 +7,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "spells.h"
 #include "handler.h"
 #include "limit.h"
 #include "db.h"
-
 #include "guild_list.h"
 
 
