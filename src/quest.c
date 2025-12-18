@@ -26,6 +26,16 @@
 extern struct room_data *world;
 extern struct index_data *mob_index;
 
+int number(int from, int to);
+void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch);
+
+void half_chop(char *string, char *arg1, char *arg2);
+struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name, struct obj_data *list);
+void send_to_char(char *messg, struct char_data *ch);
+void extract_obj(struct obj_data *obj);
+void obj_to_char(struct obj_data *o, struct char_data *ch);
+void char_to_room(struct char_data *ch, int room);
+void char_from_room(struct char_data *ch);
 void do_look(struct char_data *ch, char *argument, int cmd);
 
 struct {
@@ -36,8 +46,7 @@ struct {
 
 int topQM;
 
-int level_quest[IMO + 4] =
-{
+int level_quest[IMO + 4] = {
 	0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,           /* 10 */
     2, 3, 4, 5, 6, 7, 8, 9, 10, 11,         /* 20 */
@@ -66,15 +75,10 @@ struct QuestReward {
     int probability; // 1000을 기준으로 한 확률 (예: 100 = 10%)
 };
 
-
-extern struct index_data *mob_index;
-
-#define ZONE_NUMBER 47
 static struct {
 	int number;
 	char *name;
 } zone_data[ZONE_NUMBER] = {
-
 	{ 99, "the LIMBO" },
 	{ 299, "the East Castle" },
 	{ 1399, "the Mel's Dog-House" },
@@ -138,35 +142,33 @@ char *find_zone(int number)
 
 int get_quest(struct char_data *ch)
 {
-	static int width[8] =
-	{
-		0,		/* 0 */ /* 10 level */
-		88,		/* 10 */ /* 4215 16 boris */
-		130,		/* 20 */ /* 9727 20 pisces */
-		222,		/* 30 */ /* 15009 31 mine robocop */
-		251,		/* 33 */ /* 30016 33 poor nimpus */
-		347,		/* 37 */ /* 1465 37 roy slade */
-		437,		/* 40 */ /* 15117 40 super magnet */
-		526,		/* 60 */ /* 18010 40 2nd apprenciate mudang SongCheongSeo */
-	};
-#define END_QUEST_MOBILE 631
+	static int width[8] = {
+        0,          /* 0 */ /* 10 level */
+        88,         /* 10 */ /* 4215 16 boris */
+        130,        /* 20 */ /* 9727 20 pisces */
+        222,        /* 30 */ /* 15009 31 mine robocop */
+        251,        /* 33 */ /* 30016 33 poor nimpus */
+        347,        /* 37 */ /* 1465 37 roy slade */
+        437,        /* 40 */ /* 15117 40 super magnet */
+        526,        /* 60 */ /* 18010 40 2nd apprenciate mudang SongCheongSeo */
+    };
 
 	int low, high;
 	int t;
 	int num;
 
 	if (GET_LEVEL(ch) == 60) {
-		low = 345;	/* 9531 36 son adle second */
-		high = END_QUEST_MOBILE;
-	} else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) {
-		low = 347;	/* 1465 37 roy slade    */
-		high = 437;	/* 15117 40 super magnet        */
-	} else if (GET_LEVEL(ch) > 49 && GET_LEVEL(ch) < 60) {
-		low = 367;	/* 15092 38 sick robot */
-		high = 539;	/* 13784 41 zeus god    */
-	} else if (ch->quest.solved >= 70) {
-		low = 448;	/* 2928 40 amyrok minotaur mage master */
-		high = 528;	/* 1990 41 brontosaurus bronto          */
+		low = 345; /* 9531 36 son adle second */
+        high = END_QUEST_MOBILE;
+    } else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) {
+        low = 347;  /* 1465 37 roy slade	*/
+        high = 437; /* 15117 40 super magnet	*/
+    } else if (GET_LEVEL(ch) > 49 && GET_LEVEL(ch) < 60) {
+        low = 367;  /* 15092 38 sick robot */
+        high = 539; /* 13784 41 zeus god	*/
+    } else if (ch->quest.solved >= 60) {
+        low = 448;  /* 2928 40 amyrok minotaur mage master */
+        high = 528; /* 1990 41 brontosaurus bronto		*/
 	} else {
 		t = ch->quest.solved / 10;
 		low = width[t];
@@ -186,12 +188,12 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 	int num;
 	char buf1[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
 
-	if (GET_LEVEL(ch) >= IMO) {	/* IMO */
+	if (GET_LEVEL(ch) >= IMO) { /* IMO */
 		send_to_char_han("&CQUEST&n : &YYou can do anything.&n\n\r", "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
 		return;
 	}
 
-	if (IS_MOB(ch)) {	/* MOBILE */
+	if (IS_MOB(ch)) { /* MOBILE */
 		return;
 	}
 
@@ -255,12 +257,13 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 	char buf1[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
 	char *zone;
 
-	if (GET_LEVEL(ch) >= IMO) {	/* IMO */
-		send_to_char_han("&CQUEST&n : &YYou can do anything, Sir!&n\n\r", "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
-		return;
-	}
+	if (GET_LEVEL(ch) >= IMO) { /* IMO */
+        send_to_char_han("&CQUEST&n : &YYou can do anything, Sir!&n\n\r",
+                         "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
+        return;
+    }
 
-	if (IS_MOB(ch)) {	/* MOBILE */
+    if (IS_MOB(ch)) { /* MOBILE */
 		return;
 	}
 
@@ -286,16 +289,12 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 			QM[num].name);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &U%s&Y? 어디 있는 걸까? 모르겠는데...&n\n\r",
 			QM[num].name);
-		mudlog("QUEST : INVALID mobile (or zone not found).");
+		log("QUEST : INVALID mobile.");
 	} else { 
-		char qbuf[100];
-		strncpy(qbuf, QM[num].name, strlen(QM[num].name));
-//		choppy(qbuf);
-
 		snprintf(buf1, sizeof(buf1), "&CQUEST&n : &U%s&Y is in &#%s&Y probably.&n\n\r",
-			qbuf, zone);
+			QM[num].name, zone);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &Y아마도 &U%s&Y는 &#%s&Y에 있을 걸요.&n\n\r",
-			qbuf, zone);
+			QM[num].name, zone);
 	}
 
 	send_to_char_han(buf1, buf2, ch);
@@ -306,12 +305,13 @@ void do_quest(struct char_data *ch, char *arg, int cmd)
 	int num;
 	char buf1[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
 
-	if (GET_LEVEL(ch) >= IMO) {	/* IMO */
-		send_to_char_han("&CQUEST&n : &YYou can do anything, Sir!&n\n\r", "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
+	if (GET_LEVEL(ch) >= IMO) { /* IMO */
+		send_to_char_han("&CQUEST&n : &YYou can do anything, Sir!&n\n\r",
+						 "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
 		return;
 	}
 
-	if (IS_MOB(ch)) {	/* MOBILE */
+	if (IS_MOB(ch)) { /* MOBILE */
 		return;
 	}
 
@@ -355,14 +355,14 @@ void init_quest(void)
 	int num, size;
 
 	if (!(fp = fopen(QUEST_FILE, "r"))) {
-		mudlog("init quest (quest_file)");
+		log("(init_quest) Initializing quests (quest_file)");
 		exit(0);
 	}
 
 	topQM = 0;
 	while (1) {
 		fscanf(fp, "%s", buf);
-		if (buf[0] == '$') {	/* end of file */
+		if (buf[0] == '$') { /* end of file */
 			fclose(fp);
 			return;
 		}
@@ -388,11 +388,10 @@ void init_quest(void)
 		topQM++;
 
 		if (topQM > MaxQuest) {
-			mudlog("(init_quest) Quest Mobiles are overflown.");
+			log("(init_quest) Quest Mobiles are overflown.");
 			fclose(fp);
 			return;
 		}
-
 	}
 }
 
@@ -518,7 +517,7 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 		return FALSE;
 	}
 
-	if (cmd == 172) {
+	if (cmd == 172) { // use
 		half_chop(arg, buf, buf2);
 		if (*buf) {
 			if (strncmp("tickets", buf, strlen(buf))) {
@@ -528,12 +527,9 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 
 			tmp_obj = get_obj_in_list_vis(ch, buf, ch->carrying);
 			if (tmp_obj) {
-				if ((ch->player.level >= (IMO - 1)) &&
-				    (ch->player.remortal >= 15))
+				if ((ch->player.level >= (IMO - 1)) && (ch->player.remortal >= 15))
 					send_to_char("You can't use that ticket .\n\r", ch);
-				else if
-					    (obj_index[tmp_obj->item_number].virtual
-					     == 7994) {
+				else if (obj_index[tmp_obj->item_number].virtual == 7994) {
 					ch->quest.type = 0;
 					do_quest(ch, arg, 302);
 					extract_obj(tmp_obj);
@@ -550,16 +546,16 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
 		return FALSE;
 	}
 
-	if (GET_LEVEL(ch) >= IMO) {	/* IMO */
-		send_to_char_han("&CQUEST&n : &YYou can do anything, Sir!&n\n\r", "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
+	if (GET_LEVEL(ch) >= IMO) { /* IMO */
+		send_to_char_han("&CQUEST&n : &YYou can do anything, Sir!&n\n\r",
+						 "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
 		return TRUE;
 	}
 
 	if (ch->quest.type < 0) {
 		switch (give_reward_for_quest(GET_LEVEL(ch))) {
 		case 1:	/* some gold */
-			GET_GOLD(ch) += number(100000, (500000 *
-							GET_LEVEL(ch)) >> 2);
+			GET_GOLD(ch) += number(100000, (500000 * GET_LEVEL(ch)) >> 2);
 			send_to_char_han("&CQUEST&n : &YQM gives some coins for your success.&n\n\r",
                              "&CQUEST&n : &Y당신의 성공을 축하하며 QM이 돈을 줍니다.&n\n\r", ch);
 			break;
@@ -977,53 +973,4 @@ void do_rejoin(struct char_data *ch, char *argument, int cmd)
             }
         }
     }
-}
-
-
-void do_challenge_abort(struct char_data *ch, char *argument, int cmd)
-{
-    struct char_data *mob, *next_mob;
-    int challenge_room_rnum;
-    int mob_vnum;
-
-    if (IS_NPC(ch)) return;
-
-    /* 예외 처리 : 전투 중인지 확인 */
-    if (ch->specials.fighting) {
-        send_to_char_han("&cCHALLENGE&n : &yThink about quitting AFTER the battle! You don't even know if you'll survive yet!&n\n\r",
-                         "&cCHALLENGE&n : &y도전 포기를 하는 건 당장의 전투를 마무리한 뒤 생각해보시지! 죽지도 살지도 모르는 주제에!&n\n\r", ch);
-        return;
-    }
-
-    /* 도전 중이 아닌 경우 */
-    if (ch->specials.challenge_room_vnum <= 0) {
-        send_to_char_han("&cCHALLENGE&n : &yYou are not currently in a challenge.&n\n\r", 
-                         "&cCHALLENGE&n : &y현재 진행 중인 도전이 없습니다.&n\n\r", ch);
-        return;
-    }
-
-    challenge_room_rnum = real_room(ch->specials.challenge_room_vnum);
-    mob_vnum = ch->specials.challenge_quest_mob_vnum;
-
-    /* 도전의 방에 남아있는 퀘스트 몬스터 제거 */
-    if (challenge_room_rnum != NOWHERE && world[challenge_room_rnum].people) {
-        for (mob = world[challenge_room_rnum].people; mob; mob = next_mob) {
-            next_mob = mob->next_in_room;
-            
-            if (IS_NPC(mob) && mob_index[mob->nr].virtual == mob_vnum) {
-                if (mob->in_room == ch->in_room) {
-                    act("&cCHALLENGE&n : &y$n fades away as the challenge is aborted.&n", TRUE, mob, 0, 0, TO_ROOM);
-                }
-                extract_char(mob, FALSE);
-            }
-        }
-    }
-
-    /* 도전 상태 변수 초기화 */
-    ch->specials.challenge_room_vnum = 0;
-    ch->specials.return_room_vnum = 0;
-    ch->specials.challenge_quest_mob_vnum = 0;
-
-    send_to_char_han("&cCHALLENGE&n : &yYou have aborted the challenge. Challenge state reset.&n\n\r",
-                     "&cCHALLENGE&n : &y도전을 포기했습니다. 상태가 초기화되었습니다.&n\n\r", ch);
 }

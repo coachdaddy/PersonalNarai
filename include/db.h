@@ -41,18 +41,18 @@
 /* public procedures in db.c */
 void boot_db(void);
 void save_char(struct char_data *ch, sh_int load_room);
-int create_entry(char *name);
 void zone_update(void);
 void init_char(struct char_data *ch);
 void clear_char(struct char_data *ch);
 void clear_object(struct obj_data *obj);
 void reset_char(struct char_data *ch);
 void free_char(struct char_data *ch);
+int create_entry(char *name);
 int real_room(int virtual);
-char *fread_string(FILE * fl);
 int real_object(int virtual);
 int real_mobile(int virtual);
-int real_zone_by_number(int virtual);
+int real_zone_by_number(int virtual);   /* Komo, 251121 */
+char *fread_string(FILE *fl);
 
 #define REAL 0
 #define VIRTUAL 1

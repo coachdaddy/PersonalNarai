@@ -30,6 +30,36 @@ extern struct time_info_data time_info;
 extern struct title_type titles[4][IMO + 4];
 extern struct index_data *mob_index;
 
+/* extern procedures */
+void hit(struct char_data *ch, struct char_data *victim, int type);
+void gain_exp(struct char_data *ch, int gain);
+void advance_level(struct char_data *ch, int level_up);
+void stop_fighting(struct char_data *ch);
+void set_title(struct char_data *ch);
+int number(int from, int to);
+int dice(int num, int size);								/* in utility.c */
+void page_string(struct descriptor_data *d, char *str, int keep);
+int do_simple_move(struct char_data *ch, int cmd, int following);
+void do_flash(struct char_data *ch, char *arg, int cmd);
+void do_cast(struct char_data *ch, char *arg, int cmd);
+void do_shouryuken(struct char_data *ch, char *arg, int cmd);
+void do_spin_bird_kick(struct char_data *ch, char *arg, int cmd);
+void do_backstab(struct char_data *ch, char *arg, int cmd);
+void do_punch(struct char_data *ch, char *argument, int cmd);
+void do_bash(struct char_data *ch, char *arg, int cmd);
+void do_light_move(struct char_data *ch, char *argument, int cmd);
+
+
+void cast_sleep(byte level, struct char_data *ch, char *arg, int si, struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_cure_light(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
+void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
+void cast_heal(byte level, struct char_data *ch, char *arg, int type, struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_full_heal(byte level, struct char_data *ch, char *arg, int type, struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_sunburst(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
+void cast_fireball(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
+void cast_color_spray(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
+
+
 char *how_good(int p1, int p2)
 {
 	static char buf[64];
@@ -38,21 +68,18 @@ char *how_good(int p1, int p2)
 	return (buf);
 }
 
-/* ASan, 251204 */
 int guild(struct char_data *ch, int cmd, char *arg)
 {
 	char buf[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
-    static char buf3[MAX_STRING_LENGTH * 2]; // 스택 보호를 위해 적당한 크기로 조정
-    char tmp[MAX_STRING_LENGTH];
-    int number, i, percent;
-    int lev, cla;
-    int pskill = -1; // moved
+	char buf3[MAX_STRING_LENGTH * MAX_SKILLS];
+	char tmp[MAX_STRING_LENGTH];
+	int number, i, percent;
+	int lev, cla;
+	extern char *spells[];
+	extern struct spell_info_type spell_info[MAX_SPL_LIST];
+	extern struct int_app_type int_app[26];
 
-    extern char *spells[];
-    extern struct spell_info_type spell_info[MAX_SPL_LIST];
-    extern struct int_app_type int_app[26];
-
-    *buf3 = '\0'; // 버퍼 초기화
+	strcpy(buf3, "");
 
 	if ((cmd != 164) && (cmd != 170)) // cmd 164, 170 : practice
 		return (FALSE);
@@ -61,25 +88,18 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	cla = GET_CLASS(ch) - 1;
 	for (; *arg == ' '; arg++) ;
 	if (!*arg) {
-		send_to_char_han("You can practice any of these skills:\n\r",
-				 		 "당신은 다음과 같은 기술을 익힐 수 있습니다:\n\r", ch);
+		send_to_char_han("You can practice any of these skills:\n\r", "당신은 다음과 같은 기술을 익힐 수 있습니다:\n\r", ch);
 
 		for (i = 0; *spells[i] != '\n'; i++) {
-            if (*spells[i] && (spell_info[i + 1].min_level[cla] <= lev)) {
-                snprintf(tmp, sizeof(tmp), "%-20s %-4s\n\r", spells[i],
-                        how_good(ch->skills[i + 1].learned, ch->skills[i + 1].skilled));
-                
-                if (strlcat(buf3, tmp, sizeof(buf3)) >= sizeof(buf3)) {
-                    strlcat(buf3, "** LIST TRUNCATED **\n\r", sizeof(buf3));
-                    break;
-                }
-            }
-        }
+			if (*spells[i] && (spell_info[i + 1].min_level[cla] <= lev)) {
+				sprintf(tmp, "%-20s %-4s\n\r", spells[i], 
+								how_good(ch->skills[i + 1].learned, ch->skills[i + 1].skilled));
+				strcat(buf3, tmp);
+			}
+		}
 
-		snprintf(buf, sizeof(buf), "You have %d practices left.\n\r",
-			ch->specials.spells_to_learn);
-		snprintf(buf2, sizeof(buf2), "지금 %d 번 기술을 연마(practice)할 수 있습니다. \n\r",
-			ch->specials.spells_to_learn);
+		sprintf(buf, "You have %d practices left.\n\r", ch->specials.spells_to_learn);
+		sprintf(buf2, "지금 %d 번 기술을 연마(practice)할 수 있습니다. \n\r", ch->specials.spells_to_learn);
 
 		send_to_char_han(buf, buf2, ch);
 		page_string(ch->desc, buf3, 0);
@@ -88,47 +108,32 @@ int guild(struct char_data *ch, int cmd, char *arg)
 
 	number = old_search_block(arg, 0, strlen(arg), spells, FALSE);
 
-	if (number == -1) {
-        send_to_char_han("You do not know of this spell...\n\r", "그런 기술은 모르는데요 ...\n\r", ch);
-        return (TRUE);
-    }
-
-    number++;
-
-    // 범위 검사 및 로그 출력 수정
-    if (number <= 0 || number >= MAX_SPL_LIST) {
-        snprintf(buf, sizeof(buf), "SYSERR: guild - skill number out of range: %d", number);
-        mudlog(buf);
-        
-        send_to_char("Error in skill data.\r\n", ch);
-        return (TRUE);
-    }
-
+	int pskill = -1;
 	pskill = spell_info[number].prev;
 
+	if (number == -1) {
+		send_to_char_han("You do not know of this spell...\n\r", "그런 기술은 모르는데요 ...\n\r", ch);
+		return (TRUE);
+	}
+
 	if (lev < spell_info[number].min_level[cla]) {
-		send_to_char_han("Your level is too low.\n\r",
-				 		 "아직은 레벨이 낮아 안됩니다...\n\r", ch);
+		send_to_char_han("Your level is too low.\n\r", "아직은 레벨이 낮아 안됩니다...\n\r", ch);
 		return (TRUE);
 	}
 
 	if (ch->specials.spells_to_learn <= 0) {
-		send_to_char_han("You do not seem to be able to practice now.\n\r",
-				 		 "지금은 더이상 배울 수 없습니다.\n\r", ch);
+		send_to_char_han("You do not seem to be able to practice now.\n\r", "지금은 더이상 배울 수 없습니다.\n\r", ch);
 		return (TRUE);
 	}
 
 	if (ch->skills[number].learned >= spell_info[number].max_skill[cla]) {
-		send_to_char_han("You know this area as well as possible.\n\r",
-				 		 "그 분야는 배울 수 있는만큼 배웠습니다.\n\r", ch);
+		send_to_char_han("You know this area as well as possible.\n\r", "그 분야는 배울 수 있는만큼 배웠습니다.\n\r", ch);
 		return (TRUE);
 	}
 
-	if (pskill > 0 && pskill < MAX_SKILLS && ch->skills[pskill].learned < 30) {
-		snprintf(buf, sizeof(buf), "First, you need to learn %s .\n\r",
-			spells[pskill]);
-		snprintf(buf2, sizeof(buf2), "먼저 %s 기술을 배워야 합니다. \n\r",
-			spells[pskill]);
+	if (pskill > 0 && ch->skills[pskill].learned < 30) {
+		sprintf(buf, "First, You you need to learn %s .\n\r", spells[pskill]);
+		sprintf(buf2, "먼저 %s 기술을 배워야 합니다. \n\r", spells[pskill]);
 
 		send_to_char_han(buf, buf2, ch);
 		DEBUG_LOG("Player %s try to learn skill %d .", GET_NAME(ch), pskill );
@@ -137,16 +142,16 @@ int guild(struct char_data *ch, int cmd, char *arg)
 
 	send_to_char_han("You Practice for a while...\n\r", "기술이 늘고 있습니다...\n\r", ch);
 
+	// inherite portion skilled of previsous skills
+	// GET_SKILLED(ch,number) += GET_SKILLED(ch,pskill) / 10;
+
 	ch->specials.spells_to_learn--;
 
-	percent = ch->skills[number].learned + 1 +
-	    ((int)int_app[GET_INT(ch)].learn
-	     * (int)spell_info[number].max_skill[cla]) / FUDGE;
-	ch->skills[number].learned =
-	    MIN(spell_info[number].max_skill[cla], percent);
+	percent = ch->skills[number].learned + 1 + ((int)int_app[GET_INT(ch)].learn
+	     					* (int)spell_info[number].max_skill[cla]) / FUDGE;
+	ch->skills[number].learned = MIN(spell_info[number].max_skill[cla], percent);
 	if (ch->skills[number].learned >= spell_info[number].max_skill[cla]) {
-		send_to_char_han("You're now as proficient as possible.\n\r",
-						 "이 분야에는 이미 배울만큼 다 배웠습니다.\n\r", ch);
+		send_to_char_han("You're now as proficient as possible.\n\r", "이 분야에는 이미 배울만큼 다 배웠습니다.\n\r", ch);
 		return (TRUE);
 	}
 	return TRUE;

@@ -16,18 +16,15 @@
 #include "spells.h"
 
 /* extern variables */
-
 extern struct room_data *world;
 extern struct descriptor_data *descriptor_list;
 extern struct room_data *world;
 
 /* extern functions */
-
 void parse_string(char *input, char *output, struct char_data *ch1,
 		  struct char_data *ch2, struct char_data *to);
 int action(int cmd);
-char *fread_action(FILE * fl);
-void mudlog(const char *str);
+char *fread_action(FILE *fl);
 
 struct social_messg {
 	int act_nr;
@@ -53,14 +50,14 @@ struct social_messg {
 
 static int list_top = -1;
 
-char *fread_action(FILE * fl)
+char *fread_action(FILE *fl)
 {
 	char buf[MAX_STRING_LENGTH], *rslt;
 
 	for (;;) {
 		fgets(buf, MAX_STRING_LENGTH, fl);
 		if (feof(fl)) {
-			mudlog("Fread_action - unexpected EOF.");
+			log("Fread_action - unexpected EOF.");
 			exit(0);
 		}
 
@@ -111,7 +108,6 @@ void boot_social_messages(void)
 
 		soc_mess_list[list_top].char_no_arg = fread_action(fl);
 		soc_mess_list[list_top].others_no_arg = fread_action(fl);
-
 		soc_mess_list[list_top].char_found = fread_action(fl);
 
 		/* if no char_found, the rest is to be ignored */
@@ -120,11 +116,8 @@ void boot_social_messages(void)
 
 		soc_mess_list[list_top].others_found = fread_action(fl);
 		soc_mess_list[list_top].vict_found = fread_action(fl);
-
 		soc_mess_list[list_top].not_found = fread_action(fl);
-
 		soc_mess_list[list_top].char_auto = fread_action(fl);
-
 		soc_mess_list[list_top].others_auto = fread_action(fl);
 	}
 	fclose(fl);

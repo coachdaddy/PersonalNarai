@@ -31,9 +31,6 @@ extern int drink_aff[][3];
 struct obj_data *get_object_in_equip_vis(struct char_data *ch,
 					 char *arg, struct obj_data
 					 **equipment, int *j);
-/* char *strdup(char *source); */
-void mudlog(const char *str);
-
 void cast_cure_critic(byte level, struct char_data *ch, char *arg, int si,
 		      struct char_data *tar_ch, struct obj_data *tar_obj);
 void cast_heal(byte level, struct char_data *ch, char *arg, int si,
@@ -46,7 +43,7 @@ int dice(int num, int size);
 void update_pos(struct char_data *ch);
 int str_cmp(char *arg1, char *arg2);
 
-// int MIN(int a, int b);
+
 
 void weight_change_object(struct obj_data *obj, int weight)
 {
@@ -64,7 +61,7 @@ void weight_change_object(struct obj_data *obj, int weight)
 		GET_OBJ_WEIGHT(obj) += weight;
 		obj_to_obj(obj, tmp_obj);
 	} else {
-		mudlog("Unknown attempt to subtract weight from an object.");
+		log("Unknown attempt to subtract weight from an object.");
 	}
 }
 
@@ -88,8 +85,10 @@ void name_to_drinkcon(struct obj_data *obj, int type)
 	char *new_name;
 	extern char *drinknames[];
 
-	CREATE(new_name, char, strlen(obj->name) + strlen(drinknames[type]) + 2);
-	snprintf(new_name, sizeof(new_name), "%s %s", drinknames[type], obj->name);
+	size_t len = strlen(obj->name) + strlen(drinknames[type]) + 2;
+
+	CREATE(new_name, char, len);
+	snprintf(new_name, len, "%s %s", drinknames[type], obj->name);
 	free(obj->name);
 	obj->name = new_name;
 }
@@ -142,13 +141,8 @@ void do_drink(struct char_data *ch, char *argument, int cmd)
 				cast_cure_critic(GET_LEVEL(ch), ch, "",
 						 SPELL_TYPE_POTION, ch, 0);
 			if (temp->obj_flags.value[2] == LIQ_GOLDEN_NECTAR)
-				cast_heal(GET_LEVEL(ch), ch, "",
-					  SPELL_TYPE_POTION, ch, 0);
+				cast_heal(GET_LEVEL(ch), ch, "", SPELL_TYPE_POTION, ch, 0);
 
-/*      if (drink_aff[temp->obj_flags.value[2]][DRUNK] > 0 )
-        amount = (25-GET_COND(ch,THIRST))/drink_aff[temp->obj_flags.value[2]][DRUNK];
-      else
-        amount = number(3,10);   */
 			amount = 15;
 
 			amount = MIN(amount, temp->obj_flags.value[1]);
@@ -1020,7 +1014,7 @@ void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
 		break;
 	default:
 		{
-			mudlog("Unknown type called in wear.");
+			log("Unknown type called in wear.");
 		}
 		break;
 	}

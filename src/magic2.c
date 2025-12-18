@@ -18,7 +18,9 @@
 #include "magic_weapon.h"
 
 #include "guild_list.h"
-#include "prototypes.h"
+
+#define REAL 0
+#define VIRTUAL 1
 
 /* Extern structures */
 extern struct room_data *world;
@@ -27,6 +29,18 @@ extern struct char_data *character_list;
 extern struct index_data *mob_index;
 extern int noenchantflag;
 
+/* Extern procedures */
+int number(int from, int to);
+int dice(int number, int size);             /* in utility.c */
+bool saves_spell(struct char_data *ch, int spell);
+void stop_fighting(struct char_data *ch);
+void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype);
+void weight_change_object(struct obj_data *obj, int weight);
+// char *strdup(char *source);
+void do_look(struct char_data *ch, char *argument, int cmd);
+void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode, bool show);
+void list_char_to_char(struct char_data *list, struct char_data *ch, int mode);
+void update_pos(struct char_data *ch);
 
 /* spells2.c - Not directly offensive spells */
 
@@ -236,13 +250,13 @@ void spell_blindness(byte level, struct char_data *ch,
 
 	af.type = SPELL_BLINDNESS;
 	af.location = APPLY_HITROLL;
-	af.modifier = -level / 2;	/* Make hitroll worse */
+	af.modifier = -level / 2; /* Make hitroll worse */
 	af.duration = 1;
 	af.bitvector = AFF_BLIND;
 	affect_to_char(victim, &af);
 
 	af.location = APPLY_AC;
-	af.modifier = 40;	/* Make AC Worse! */
+	af.modifier = 40; /* Make AC Worse! */
 	affect_to_char(victim, &af);
 }
 
@@ -321,6 +335,9 @@ void spell_create_nectar(byte level, struct char_data *ch,
 			 struct char_data *victim, struct obj_data *obj)
 {
 	int nectar;
+	
+    void name_to_drinkcon(struct obj_data * obj, int type);
+    void name_from_drinkcon(struct obj_data * obj);
 
 	assert(ch && obj);
 
@@ -354,6 +371,9 @@ void spell_create_golden_nectar(byte level, struct char_data *ch,
 				struct char_data *victim, struct obj_data *obj)
 {
 	int nectar;
+	
+    void name_to_drinkcon(struct obj_data * obj, int type);
+    void name_from_drinkcon(struct obj_data * obj);
 
 	assert(ch && obj);
 
@@ -516,7 +536,7 @@ void spell_curse(byte level, struct char_data *ch,
 		affect_to_char(victim, &af);
 
 		af.location = APPLY_SAVING_SPELL;
-		af.modifier = level / 2;	/* Make worse */
+		af.modifier = level / 2; /* Make worse */
 		affect_to_char(victim, &af);
 
 		act("$n briefly reveal a red aura!", FALSE, victim, 0, 0, TO_ROOM);
@@ -694,7 +714,7 @@ void spell_enchant_weapon(byte level, struct char_data *ch,
 		if (obj == tmp) {
 			send_to_char("You cannot enchant it while you are wielding.", ch);
 			return;
-		}		/* by process */
+		} /* by process */
 	}
 
 	if (GET_ITEM_TYPE(obj) == ITEM_WEAPON) {
@@ -731,29 +751,26 @@ void spell_enchant_weapon(byte level, struct char_data *ch,
 		}
 		/* if(ITEM_MAGIC) end */
 		else {
-			if (ONE_IN(1800)) {
-				obj->obj_flags.value[1] *= (2 + number(0, 4));
-				act("$p laughs evily. 'FU HA HA HA'", FALSE,
-				    ch, obj, 0, TO_CHAR);
-				GET_HIT(ch) = -3;
-
-			}
-
-			if (ONE_IN(18000)) {
-				obj->obj_flags.value[2] *= (6 + number(0, 8));
-				act("$p laughs evily. 'HMM.. HA HA'", FALSE,
-				    ch, obj, 0, TO_CHAR);
-				GET_HIT(ch) = -3;
-			}
-			
-			if (ONE_IN(25000)) { /* 2/50000 */
-				obj->obj_flags.value[1] *= (6 + number(0, 8));
-				obj->obj_flags.value[2] *= (8 + number(0, 10));
-				act("$p IS BLESSED BY SAINT XARK.", FALSE, ch,
-				    obj, 0, TO_CHAR);
-				GET_HIT(ch) = 10000;
-			}
-			if (ONE_IN(20000)) { /* 5/100K = 1/20k,  if (number(0, 1000) < 5 )       */
+			/*      if (number(0,18000) == 444) {           */
+            if (number(0, 1800) == 444) {
+                obj->obj_flags.value[1] *= (2 + number(0, 4));
+                act("$p laughs evily. 'FU HA HA HA'", FALSE, ch, obj, 0, TO_CHAR);
+                GET_HIT(ch) = -3;
+            }
+            if (number(0, 18000) == 888) {
+                /*      if (number(0,1800) == 888) {    */
+                obj->obj_flags.value[2] *= (6 + number(0, 8));
+                act("$p laughs evily. 'HMM.. HA HA'", FALSE, ch, obj, 0, TO_CHAR);
+                GET_HIT(ch) = -3;
+            }
+            /*      if (number(0, 4999)==1234 || number(0,4999) == 3456) {  */
+            if (number(0, 49999) == 1234 || number(0, 49999) == 3456) {
+                obj->obj_flags.value[1] *= (6 + number(0, 8));
+                obj->obj_flags.value[2] *= (8 + number(0, 10));
+                act("$p IS BLESSED BY SAINT XARK.", FALSE, ch, obj, 0, TO_CHAR);
+                GET_HIT(ch) = 10000;
+            }
+            if (number(0, 100000) < 5) { /* if (number(0, 1000) < 5 )  */
 				SET_BIT(obj->obj_flags.extra_flags, ITEM_MAGIC);
 				type = number(0, 14);
 				if (type & 0x0001)
@@ -766,10 +783,6 @@ void spell_enchant_weapon(byte level, struct char_data *ch,
 					SET_BIT(obj->obj_flags.extra_flags, ITEM_ANTI_WARRIOR);
 				
 				type = number(1, 19);
-				/* memory leak 방지 */
-				#define REPLACE_STR(dest, new_str) \
-                    do { if (dest) free(dest); dest = strdup(new_str); } while(0)
-				
 				switch (type) {
 					case WEAPON_SMASH:
                     case WEAPON_FLAME:
@@ -779,32 +792,32 @@ void spell_enchant_weapon(byte level, struct char_data *ch,
                     case WEAPON_DRAGON_SLAYER:
                         obj->obj_flags.value[0] = type;
                         obj->obj_flags.value[3] = 3;
-                        REPLACE_STR(obj->name, "dragon slayer");
-                        REPLACE_STR(obj->short_description, "Mystic Dragon Slayer");
-                        REPLACE_STR(obj->description, "Mystic Dragon Slayer lies here.\n\r");
+                        obj->name = "dragon slayer";
+                        obj->short_description = "Mystic Dragon Slayer";
+                        obj->description = "Mystic Dragon Slayer lies here.\n\r";
                         break;
                     case WEAPON_ANTI_EVIL_WEAPON:
                         SET_BIT(obj->obj_flags.extra_flags, ITEM_ANTI_EVIL);
                         obj->obj_flags.value[0] = type;
                         obj->obj_flags.value[3] = 3;
-                        REPLACE_STR(obj->name, "silver spear");
-                        REPLACE_STR(obj->short_description, "Silver Spear");
-                        REPLACE_STR(obj->description, "Silver Spear lies here.\n\r");
+                        obj->name = "silver spear";
+                        obj->short_description = "Silver Spear";
+                        obj->description = "Silver Spear lies here.\n\r";
                         break;
                     case WEAPON_ANTI_GOOD_WEAPON:
                         SET_BIT(obj->obj_flags.extra_flags, ITEM_ANTI_GOOD);
                         obj->obj_flags.value[0] = type;
                         obj->obj_flags.value[3] = 3;
-                        REPLACE_STR(obj->name, "demon blade");
-                        REPLACE_STR(obj->short_description, "Mighty Demon Blade");
-                        REPLACE_STR(obj->description, "Mighty Demon Blade lies here.\n\r");
+                        obj->name = "demon blade";
+                        obj->short_description = "Mighty Demon Blade";
+                        obj->description = "Mighty Demon Blade lies here.\n\r";
                         break;
                     case WEAPON_DISINTEGRATE:
                         obj->obj_flags.value[0] = type;
                         obj->obj_flags.value[3] = 3;
-                        REPLACE_STR(obj->name, "sword disintegrate");
-                        REPLACE_STR(obj->short_description, "runed longsword");
-                        REPLACE_STR(obj->description, "Longsword runed by a word 'Disintergrate' lies here.\n\r");
+                        obj->name = "sword disintegrate";
+                        obj->short_description = "runed longsword";
+                        obj->description = "Longsword runed by a word 'Disintergrate' lies here.\n\r";
                         break;
                     case WEAPON_LIGHTNING:
                     case WEAPON_CALL_LIGHTNING:
@@ -826,48 +839,44 @@ void spell_enchant_weapon(byte level, struct char_data *ch,
 				act("New object appeared.", FALSE, ch, obj, 0, TO_CHAR);
 			}
 
-			if (PERCENT(22) || GET_LEVEL(ch) >= IMO) {
-				if (ONE_IN(9000)) { /* 2/18000 */
-					if (IS_SET(obj->obj_flags.extra_flags, ITEM_NORENT)) {
-                        REMOVE_BIT(obj->obj_flags.extra_flags, ITEM_NORENT);
-                        act("$p is blessed by ThunderBolt and becomes PERMANENT!", FALSE, ch, obj, 0, TO_CHAR);
-                    } else {
-                        act("$p shines with ThunderBolt's energy!", FALSE, ch, obj, 0, TO_CHAR);
-                    }
-				}
-				obj->affected[0].modifier *= number(1, 2);
-				act("$p gain new energy.", FALSE, ch, obj, 0, TO_CHAR);
-				if (PERCENT(67)) /* dr */
+			if (number(0, 8) < 2 || GET_LEVEL(ch) >= IMO) {
+                if (number(0, 18000) == 900 || number(0, 18000) == 176) {
+                    obj->obj_flags.extra_flags ^= ITEM_NORENT;
+                    act("$p is blessed by ThunderBolt.", FALSE, ch, obj, 0, TO_CHAR);
+                }
+                obj->affected[0].modifier *= number(1, 2);
+                act("$p gain new energy.", FALSE, ch, obj, 0, TO_CHAR);
+                if (number(0, 8) < 6)
                     obj->affected[1].modifier *= number(1, 3);
-                if (PERCENT(56)) /* ldice */
+                if (number(0, 8) < 5)
                     obj->obj_flags.value[1] += number(1, level / 10 + 1);
-                if (PERCENT(44)) { /* rdice */
+                if (number(0, 8) < 4) {
                     obj->obj_flags.value[2] += number(1, level / 10 + 1);
                     act("$p BRIGHTS WITH LIGHT.", FALSE, ch, obj, 0, TO_CHAR);
                 }
 
-				if (PERCENT(1)) { /* ldice */
+				if (number(0, 99) == 13) {
                     obj->obj_flags.value[1] += number(1, level / 10 + 1) * 3;
                     act("$p BRIGHTS WITH GLOWING AURA.", FALSE, ch, obj, 0, TO_CHAR);
-                } else if (PERCENT(1)) {
+                } else if (number(0, 99) == 29) {
                     obj->obj_flags.value[2] += number(1, level / 10 + 1) * 3;
                     act("$p BRIGHTS WITH GLOWING LIGHT.", FALSE, ch, obj, 0, TO_CHAR);
-                } else if (PERCENT(3)) {
+                } else if (number(0, 99) == 57 || number(0, 99) == 91 || number(0, 99) == 71) {
                     obj->affected[0].modifier *= number(2, 4);
                     obj->affected[1].modifier *= number(2, 4);
                     act("$p BRIGHTS WITH DARKLIGHT.", FALSE, ch, obj, 0, TO_CHAR);
                 }
 
-				if (PERCENT(20)) {
-					obj->obj_flags.value[1] += (1 + number(0, 1));
-					obj->obj_flags.value[2] += (1 + number(0, 1));
-					act("$p IS SHARPENED BY EVIL XARK.", FALSE, ch, obj, 0, TO_CHAR);
-				}
+                if (number(0, 9) > 7) {
+                    obj->obj_flags.value[1] += (1 + number(0, 1));
+                    obj->obj_flags.value[2] += (1 + number(0, 1));
+                    act("$p IS SHARPENED BY EVIL XARK.", FALSE, ch, obj, 0, TO_CHAR);
+                }
 			} else {
-				if (PERCENT(10)) {
-					act("Ba..n..$p nearly explodes, but quiet.", FALSE, ch, obj, 0, TO_CHAR);
-				} else { /* ASAN, 251208*/
-					/* 순서 변경: act -> extract_obj */
+				if (!number(0, 9)) {
+                    act("Ba..n..$p nearly explodes, but quiet.",
+                        FALSE, ch, obj, 0, TO_CHAR);
+				} else {
 					act("BANG!!!! $p explodes. It hurts!", FALSE, ch, obj, 0, TO_CHAR);
 					extract_obj(obj);
 					GET_HIT(ch) -= GET_HIT(ch) / number(5, 20);
@@ -1119,6 +1128,7 @@ void spell_heal(byte level, struct char_data *ch,
 		struct char_data *victim, struct obj_data *obj)
 {
 	int hit;
+	void gain_exp(struct char_data * ch, int gain);
 	
 	assert(victim);
 
@@ -1149,6 +1159,7 @@ void spell_full_heal(byte level, struct char_data *ch,
 		     struct char_data *victim, struct obj_data *obj)
 {
 	int hit;
+	void gain_exp(struct char_data * ch, int gain);
 	
 	assert(victim);
 
@@ -1695,6 +1706,10 @@ void spell_charm_person(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 	char buf[200];
+	
+    void add_follower(struct char_data * ch, struct char_data * leader);
+    bool circle_follow(struct char_data * ch, struct char_data * victim);
+    void stop_follower(struct char_data * ch);
 
 	assert(ch && victim);
 
@@ -1812,14 +1827,12 @@ void spell_sense_life(byte level, struct char_data *ch,
 	}
 }
 
-#define REAL 0
-#define VIRTUAL 1
-
 void spell_reanimate(byte level, struct char_data *ch,
 		     struct char_data *victim, struct obj_data *obj)
 {
-	struct char_data *mob;
-	struct char_data *read_mobile(int nr, int type);
+	void add_follower(struct char_data *ch, struct char_data *leader);
+    struct char_data *read_mobile(int nr, int type);
+    struct char_data *mob;
 
 	if ((obj->obj_flags.value[3] != 1) && (obj->obj_flags.value[3] != 2)) {
 		send_to_char("There do not appear to be any corpses hereabouts?\n\r",

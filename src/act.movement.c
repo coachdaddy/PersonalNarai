@@ -43,12 +43,11 @@ void death_cry(struct char_data *ch);
 struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name,
 				     struct obj_data *list);
 void do_look(struct char_data *ch, char *arg, int cmd);
+void stop_fighting(struct char_data *ch);
 int number(int from, int to);
 int str_cmp(char *arg1, char *arg2);
 bool circle_follow(struct char_data *ch, struct char_data *victim);
 
-void DEBUG_LOG(const char *format, ...);
-void mudlog(const char *str);
 
 int do_simple_move(struct char_data *ch, int cmd, int following)
 /* Assumes, 
@@ -56,58 +55,30 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
   2. That the direction exists. 
 
    Returns :
-   1 : If succes.
-   0 : If fail
+   1 : If success.
+   0 : If fail.
   -1 : If dead.
 */
 {
 	char tmp[80];
-    int need_movement;
+    int was_in;
+	int need_movement;
     struct obj_data *obj;
     bool has_boat, has_wing;
     int special(struct char_data *ch, int cmd, char *arg);
     int obj_number;
-    int dest_room_rnum; // 목적지 방 RNUM 저장용
-        
-    int sect_from, sect_to; // 섹터 타입 가져오기용
+    
+    if (special(ch, cmd + 1, ""))	/* Check for special routines (North is 1) */
+		return (FALSE);
 
-    if (special(ch, cmd + 1, "")) /* Check for special routines (North is 1) */
-        return (FALSE);
+	need_movement = (movement_loss[world[ch->in_room].sector_type] +
+			movement_loss[world[world[ch->in_room].dir_option[cmd]->to_room].sector_type]) / 2;
 
-    // 목적지 방 번호 미리 확보 및 검증
-    if (!world[ch->in_room].dir_option[cmd] || 
-        (dest_room_rnum = world[ch->in_room].dir_option[cmd]->to_room) == NOWHERE ||
-        dest_room_rnum > top_of_world) {
-        
-        send_to_char("Alas, you cannot go that way.\r\n", ch);
-        return (FALSE);
-    }
-
-    // ASan : 섹터 타입 유효성 검사 및 보정
-    sect_from = world[ch->in_room].sector_type;
-    sect_to   = world[dest_room_rnum].sector_type;
-																			 //
-	if (sect_from < 0 || sect_from >= 9) {
-        char log_buf[256];
-        sprintf(log_buf, "SYSERR: Invalid source sector type %d in room %d, clamping to SECT_FIELD", 
-                sect_from, world[ch->in_room].number);
-        mudlog(log_buf);
-        sect_from = SECT_FIELD;
-    }
-    if (sect_to < 0 || sect_to >= 9) {
-        char log_buf[256];
-        sprintf(log_buf, "SYSERR: Invalid dest sector type %d in room %d, clamping to SECT_FIELD", 
-                sect_to, world[dest_room_rnum].number);
-        mudlog(log_buf);
-        sect_to = SECT_FIELD;
-    }
-
-    need_movement = (movement_loss[sect_from] + movement_loss[sect_to]) / 2; // 필요 move 계산
-
-    // boat 체크
-    if (sect_from == SECT_WATER_NOSWIM || sect_to == SECT_WATER_NOSWIM) {
+	if ((world[ch->in_room].sector_type == SECT_WATER_NOSWIM) ||
+		(world[world[ch->in_room].dir_option[cmd]->to_room].sector_type == SECT_WATER_NOSWIM)) {
         has_boat = FALSE;
-        for (obj = ch->carrying; obj; obj = obj->next_content)
+        /* See if char is carrying a boat */
+			for (obj = ch->carrying; obj; obj = obj->next_content)
             if (obj->obj_flags.type_flag == ITEM_BOAT)
                 has_boat = TRUE;
         if (!has_boat && GET_LEVEL(ch) < IMO) {
@@ -116,51 +87,59 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
         }
     }
 
-	// wing 체크
-    if (sect_from == SECT_SKY || sect_to == SECT_SKY) {
-        has_wing = FALSE;
-        for (obj = ch->carrying; obj; obj = obj->next_content) {
-            obj_number = obj_index[obj->item_number].virtual;
-			if (obj_number == VNUM_WINGS_1 || obj_number == VNUM_WINGS_2)
-                has_wing = TRUE;
-        }
-        if (!has_wing && (GET_LEVEL(ch) < IMO + 3)) {
-            send_to_char("You need wings to fly there.\n\r", ch);
-            return (FALSE);
-        }
-    }
+	if ((world[ch->in_room].sector_type == SECT_SKY) ||
+		(world[world[ch->in_room].dir_option[cmd]->to_room].sector_type == SECT_SKY)) {
+		has_wing = FALSE;
+		/* See if char is carrying a wing */
+		for (obj = ch->carrying; obj; obj = obj->next_content) {
+			obj_number = obj_index[obj->item_number].virtual;
+			if (obj_number == 9703 || obj_number == 2700)
+				/* Wings of Pegasus and feather */
+				has_wing = TRUE;
+		}
+		if (!has_wing && (GET_LEVEL (ch) < IMO + 3)) {
+			send_to_char ("You need wings to fly there.\n\r", ch);
+			return (FALSE);
+		}
+	}
 
-	// mv 부족 체크
-    if (GET_MOVE(ch) < need_movement && !IS_NPC(ch) && GET_LEVEL(ch) < IMO) {
-        if (!following)
-            send_to_char("You are too exhausted.\n\r", ch);
-        else
-            send_to_char("You are too exhausted to follow.\n\r", ch);
-        return (FALSE);
-    }
+	if (GET_MOVE (ch) < need_movement && !IS_NPC (ch) && GET_LEVEL (ch) < IMO) {
+		if (!following)
+			send_to_char ("You are too exhausted.\n\r", ch);
+		else
+			send_to_char ("You are too exhausted to follow.\n\r", ch);
+
+		return (FALSE);
+	}
 
 	/* (temp) 플레이어가 지정된 도전의 방을 떠나는 경우, 본인 도전의 방 상태만 초기화 */
     if (!IS_NPC(ch) && ch->specials.challenge_room_vnum > 0 && world[ch->in_room].number == ch->specials.challenge_room_vnum) {
+        
+		was_in = ch->in_room;
+		
 		DEBUG_LOG("Player %s leaving Challenge Room %d.", GET_NAME(ch), world[ch->in_room].number);
-        send_to_char_han("&cCHALLENGE&n : &yYou leave the Room of Challenge.&n\n\r", 
-						 "&cCHALLENGE&n : &y당신은 도전을 완료하지 않고 방을 나갑니다.&n\n\r", ch);
+        send_to_char_han("&cCHALLENGE&n : &yYou leave the Room of Challenge.&n\n\r", "&cCHALLENGE&n : &y당신은 도전을 완료하지 않고 방을 나갑니다.&n\n\r", ch);
+    } else {
+        was_in = ch->in_room;
     }
 
-	if (GET_LEVEL(ch) < IMO && !IS_NPC(ch))
-		GET_MOVE(ch) -= need_movement;
+	if (GET_LEVEL (ch) < IMO && !IS_NPC (ch))
+		GET_MOVE (ch) -= need_movement;
 
 	if (!IS_AFFECTED (ch, AFF_SNEAK)) {
-		snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[cmd]);
-		act(tmp, TRUE, ch, 0, 0, TO_ROOM);
+		sprintf (tmp, "$n leaves %s.", dirs[cmd]);
+		act (tmp, TRUE, ch, 0, 0, TO_ROOM);
 	}
 
-	char_from_room(ch);
-	char_to_room(ch, dest_room_rnum);
+	was_in = ch->in_room;
 
-	if (!IS_AFFECTED(ch, AFF_SNEAK))
+	char_from_room (ch);
+	char_to_room (ch, world[was_in].dir_option[cmd]->to_room);
+
+	if (!IS_AFFECTED (ch, AFF_SNEAK))
 		act ("$n has arrived.", TRUE, ch, 0, 0, TO_ROOM);
 
-	do_look(ch, "\0", 15);
+	do_look (ch, "\0", 15);
 	return (1);
 }
 
@@ -194,11 +173,9 @@ void do_move(struct char_data *ch, char *argument, int cmd)
 				    ("The thought of leaving your master makes you weep.\n\r", ch);
 				act("$n bursts into tears.", FALSE, ch, 0, 0, TO_ROOM);
 			} else {
-
 				was_in = ch->in_room;
 				if (do_simple_move(ch, cmd, TRUE) == 1) {	/* Move the character */
 					if (ch->followers) {	/* If succes move followers */
-
 						for (k = ch->followers; k; k = next_dude) {
 							next_dude = k->next;
 							if ((was_in ==

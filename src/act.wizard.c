@@ -77,7 +77,6 @@ void sprinttype(int type, char *names[], char *result);
 void sprintbit(long vektor, char *names[], char *result);
 void unstash_char(struct char_data *ch, char *filename);
 void page_string(struct descriptor_data *d, char *str, int keep);
-// int MIN(int a, int b);
 void gain_exp_regardless(struct char_data *ch, int gain);
 void store_to_char_for_transform(struct char_file_u *st, struct char_data *ch);
 extern void do_look(struct char_data *ch, char *argument, int cmd);
@@ -106,130 +105,77 @@ int his_start = 0, his_end = 0;
     } while (0)
 
 
-void do_emote(struct char_data *ch, char *argument, int cmd)
+void do_advance(struct char_data *ch, char *argument, int cmd)
 {
-	int i;
-	static char buf[MAX_STRING_LENGTH];
+	struct char_data *victim;
+	char name[100], level[100];
+	int i, newlevel;
 
-	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
-		return;
-	}
+	void gain_exp(struct char_data *ch, int gain);
+	void init_char(struct char_data *ch);
+
 	if (IS_NPC(ch))
 		return;
-	for (i = 0; *(argument + i) == ' '; i++) ;
-	if (!*(argument + i))
-		send_to_char("Yes.. But what?\n\r", ch);
-	else {
-		snprintf(buf, sizeof(buf), "$n %s", argument + i);
-		act(buf, FALSE, ch, 0, 0, TO_ROOM);
 
-		snprintf(buf, sizeof(buf), "You %s.\n\r", argument + i);
-		send_to_char(buf, ch);
+	if (GET_LEVEL(ch) < (IMO + 3)) {
+		send_to_char("You can only do that in a guild.\n\r", ch);
+		return;
 	}
-}
-
-void do_transform(struct char_data *ch, char *argument, int cmd)
-{
-	struct char_data *tmp_ch;
-	struct char_file_u tmp;
-	int i_player;
-	char buf[200];
-
-	return;
-	if (IS_NPC(ch))
+	argument_interpreter(argument, name, level);
+	if (*name) {
+		if (!(victim = get_char_room_vis(ch, name))) {
+			send_to_char("That player is not here.\n\r", ch);
+			return;
+		}
+	} else {
+		send_to_char("Advance who?\n\r", ch);
 		return;
-	one_argument(argument, buf);
-	if (*buf)
+	}
+
+	if (IS_NPC(victim)) {
+		send_to_char("NO! Not on NPC's.\n\r", ch);
 		return;
-	for (tmp_ch = character_list; tmp_ch; tmp_ch = tmp_ch->next) {
-		if (!strcmp(buf, GET_NAME(tmp_ch)) && !IS_NPC(tmp_ch)) {
-			send_to_char("Body already in game.\n\r", ch);
+	}
+
+	if (!*level) {
+		send_to_char("You must supply a level number.\n\r", ch);
+		return;
+	} else {
+		if (!isdigit(*level)) {
+			send_to_char("Second argument must be a positive integer.\n\r", ch);
+			return;
+		}
+		if ((newlevel = atoi(level)) < GET_LEVEL(victim)) {
+			if (GET_LEVEL(ch) <= GET_LEVEL(victim)) {
+				send_to_char("Very amusing.\n\r", ch);
+				return;
+			}
+			victim->player.level = newlevel;
+			if (newlevel < IMO) {
+				for (i = 0; i < 3; ++i)
+					victim->specials.conditions[i] = 0;
+			}
+			victim->tmpabilities = victim->abilities;
+			send_to_char("The poor soul...\n\r", ch);
+			send_to_char("You have been punished.\n\r", victim);
 			return;
 		}
 	}
-	if ((i_player = load_char(buf, &tmp)) < 0) {
-		send_to_char("No such player\n\r", ch);
+
+	if (newlevel > IMO) {
+		send_to_char("Too high a level.\n\r", ch);
 		return;
 	}
-	store_to_char_for_transform(&tmp, ch->desc->original);
-	store_to_char_for_transform(&tmp, ch);
-	ch->desc->pos = player_table[i_player].nr;
-	unstash_char(ch, 0);
-	stash_char(ch);
-}
+	send_to_char("You feel generous.\n\r", ch);
 
-/* send_to_room_except 대체 및 출력 방식 등 수정, by Komo */
-void do_echo(struct char_data *ch, char *argument, int cmd)
-{
-	struct char_data *k;
-	char buf[MAX_STRING_LENGTH];
-
-	if (IS_NPC(ch)) return;
-
-	for (; *argument == ' '; argument++) ;
-
-	if (!*argument) {
-		send_to_char("&c[ECHO]&n &YYour divine voice needs words to reach the mortals.&n\n\r", ch);
-        send_to_char("       &WUsage: echo <message>&n\n\r", ch);
+	if (GET_LEVEL(victim) == 0) {
+		init_char(victim);
+		do_start(victim);
 	} else {
-		snprintf(buf, sizeof(buf), "%s\n\r", argument);
-		for (k = world[ch->in_room].people; k; k = k->next_in_room) {
-            if (k != ch) {
-                send_to_char(buf, k);
-            }
-        }
-		snprintf(buf, sizeof(buf), "&c[ECHO]&n %s\n\r", argument);
-        send_to_char(buf, ch);
-	}
-}
-void do_trans(struct char_data *ch, char *argument, int cmd)
-{
-	struct descriptor_data *i;
-	struct char_data *victim;
-	char buf[100];
-	int target;
-
-	if (IS_NPC(ch))
-		return;
-
-	one_argument(argument, buf);
-	if (!*buf)
-		send_to_char("Who do you wich to transfer?\n\r", ch);
-	else if (str_cmp("all", buf)) {
-		if (!(victim = get_char_vis(ch, buf)))
-			send_to_char("No-one by that name around.\n\r", ch);
-		else {
-			if (GET_LEVEL(ch) < IMO + 3 && GET_LEVEL(victim) > GET_LEVEL
-			    (ch)) {
-				send_to_char("That might not be appreciated.\n\r", ch);
-				return;
-			}
-			act("$n disappears in a mushroom cloud.", FALSE,
-			    victim, 0, 0, TO_ROOM);
-			target = ch->in_room;
-			char_from_room(victim);
-			char_to_room(victim, target);
-			act("$n arrives from a puff of smoke.", FALSE, victim,
-			    0, 0, TO_ROOM);
-			act("$n has transferred you!", FALSE, ch, 0, victim, TO_VICT);
-			do_look(victim, "", 15);
-			send_to_char("Ok.\n\r", ch);
-		}
-	} else {		/* Trans All */
-		if (ch->player.level >= (IMO + 3))
-			for (i = descriptor_list; i; i = i->next)
-				if (i->character != ch && !i->connected) {
-					target = ch->in_room;
-					victim = i->character;
-					char_from_room(victim);
-					char_to_room(victim, target);
-					act("$n arrives from a puff of smoke.",
-					    FALSE, victim, 0, 0, TO_ROOM);
-					act("$n has transferred you!", FALSE,
-					    ch, 0, victim, TO_VICT);
-					do_look(victim, "", 15);
-				}
-		send_to_char("Ok.\n\r", ch);
+		victim->points.exp = 1;
+		gain_exp_regardless(victim, (titles[GET_CLASS(victim) - 1][
+										  newlevel].exp)
+				    - GET_EXP(victim));
 	}
 }
 
@@ -289,6 +235,292 @@ void do_at(struct char_data *ch, char *argument, int cmd)
 			char_from_room(ch);
 			char_to_room(ch, original_loc);
 		}
+}
+
+void do_banish(struct char_data *ch, char *argument, int cmd)
+{
+	struct char_data *vict;
+	struct obj_data *dummy;
+	char buf[MAX_INPUT_LENGTH];
+	int location;
+	extern int top_of_world;
+
+	if (IS_NPC(ch))
+		return;
+	one_argument(argument, buf);
+	if (!*buf)
+		send_to_char("Banish whom?\n\r", ch);
+	else if (!generic_find(argument, FIND_CHAR_WORLD, ch, &vict, &dummy))
+		send_to_char("Couldn't find any such creature.\n\r", ch);
+	else if (IS_NPC(vict))
+		send_to_char("Can't do that to a beast.\n\r", ch);
+	else if (GET_LEVEL(vict) >= IMO)
+		send_to_char("It's pointless to banish an immortal.\n\r", ch);
+	else if (IS_SET(vict->specials.act, PLR_BANISHED)) {
+		REMOVE_BIT(vict->specials.act, PLR_BANISHED);
+		send_to_char("You feel forgiven?\n\r", vict);
+		act("$N is forgiven.", FALSE, ch, 0, vict, TO_CHAR);
+	} else {
+		SET_BIT(vict->specials.act, PLR_BANISHED);
+		for (location = 0; location <= top_of_world; location++)
+			if (world[location].number == 6999)
+				break;
+		if (location == top_of_world) {
+			send_to_char("Death Room is gone?\n\r", ch);
+		} else {
+			act("$n disappears in a puff of smoke.", FALSE, vict,
+			    0, 0, TO_ROOM);
+			char_from_room(vict);
+			char_to_room(vict, location);
+			act("$n appears with an ear-splitting bang.", FALSE,
+			    vict, 0, 0, TO_ROOM);
+		}
+		send_to_char("You smell fire and brimstone?\n\r", vict);
+		act("$N is banished.", FALSE, ch, 0, vict, TO_CHAR);
+	}
+	send_to_char("OK.\n\r", ch);
+}
+
+/* do_chat -> act.comm.c로 이동, 251124 by Komo */
+
+void do_demote(struct char_data *ch, char *argument, int cmd)
+{
+	struct char_data *victim;
+	char name[100], buf[BUFSIZ];
+	void init_char(struct char_data *ch);
+	void do_start(struct char_data *ch);
+
+	snprintf(buf, sizeof(buf), "%s demoted %s", GET_NAME(ch), argument);
+	mudlog(buf);
+
+	if (IS_NPC(ch))
+		return;
+
+	one_argument(argument, name);
+	if (*name) {
+		if (!(victim = get_char_room_vis(ch, name))) {
+			send_to_char("That player is not here.\n\r", ch);
+			return;
+		}
+	} else {
+		send_to_char("Demote who?\n\r", ch);
+		return;
+	}
+	if (IS_NPC(victim)) {
+		send_to_char("NO! Not on NPC's.\n\r", ch);
+		return;
+	}
+	if (GET_LEVEL(victim) > GET_LEVEL(ch)) {
+		send_to_char("Impossible!\n\r", ch);
+		return;
+	}
+
+	GET_AC(ch) += GET_LEVEL(ch);
+	GET_HITROLL(ch) -= GET_LEVEL(ch);
+	GET_DAMROLL(ch) -= GET_LEVEL(ch);
+
+	init_char(victim);
+	do_start(victim);
+}
+void do_echo(struct char_data *ch, char *argument, int cmd)
+{
+	struct char_data *k;
+	char buf[MAX_STRING_LENGTH];
+
+	if (IS_NPC(ch)) return;
+
+	for (; *argument == ' '; argument++) ;
+
+	if (!*argument) {
+		send_to_char("&c[ECHO]&n &YYour divine voice needs words to reach the mortals.&n\n\r", ch);
+        send_to_char("       &WUsage: echo <message>&n\n\r", ch);
+	} else {
+		snprintf(buf, sizeof(buf), "%s\n\r", argument);
+		for (k = world[ch->in_room].people; k; k = k->next_in_room) {
+            if (k != ch) {
+                send_to_char(buf, k);
+            }
+        }
+		snprintf(buf, sizeof(buf), "&c[ECHO]&n %s\n\r", argument);
+        send_to_char(buf, ch);
+	}
+}
+
+void do_emote(struct char_data *ch, char *argument, int cmd)
+{
+	char buf[MAX_STRING_LENGTH];
+
+	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
+		return;
+	}
+	if (IS_NPC(ch))	return;
+
+	for (; *argument == ' '; argument++) ;
+
+	if (!*argument)
+		send_to_char("Yes, sir... But what?\n\r", ch);
+	else {
+		snprintf(buf, sizeof(buf), "$n %s", argument);
+		act(buf, FALSE, ch, 0, 0, TO_ROOM);
+
+		snprintf(buf, sizeof(buf), "You %s.\n\r", argument);
+		send_to_char(buf, ch);
+	}
+}
+
+void do_invis(struct char_data *ch, char *argument, int cmd)
+{
+	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 4))
+		return;
+	if (IS_SET(ch->specials.act, PLR_WIZINVIS)) {
+		REMOVE_BIT(ch->specials.act, PLR_WIZINVIS);
+		send_to_char("You are visible again.\n\r", ch);
+	} else {
+		SET_BIT(ch->specials.act, PLR_WIZINVIS);
+		send_to_char("You vanish.\n\r", ch);
+	}
+	send_to_char("Ok.\n\r", ch);
+}
+
+void do_flag(struct char_data *ch, char *argument, int cmd)
+{
+	struct char_data *vict;
+	struct obj_data *dummy;
+	char buf[MAX_INPUT_LENGTH];
+	int f;
+
+	if (IS_NPC(ch))
+		return;
+	one_argument(argument, buf);
+	if (!*buf)
+		send_to_char("Flag whom?\n\r", ch);
+	else if (!generic_find(argument, FIND_CHAR_WORLD, ch, &vict, &dummy))
+		send_to_char("Couldn't find any such creature.\n\r", ch);
+	else if (IS_NPC(vict))
+		send_to_char("Can't do that to a beast.\n\r", ch);
+	else if ((GET_LEVEL(vict) >= IMO) && (cmd != 231))
+		send_to_char("It's pointless to flag an immortal.\n\r", ch);
+	else {
+		f = (cmd == 231) ? IS_SET(vict->specials.act, PLR_XYZZY) :
+		    IS_SET(vict->specials.act, PLR_CRIMINAL);
+		if (f) {
+			if (cmd == 231) {
+				REMOVE_BIT(vict->specials.act, PLR_XYZZY);
+				send_to_char("Log removed.\n\r", ch);
+			} else {
+				if (cmd != 297) {
+					REMOVE_BIT(vict->specials.act, PLR_CRIMINAL);
+					send_to_char("Flag removed.\n\r", ch);
+				}
+			}
+		} else {
+			if (cmd == 231) {
+				SET_BIT(vict->specials.act, PLR_XYZZY);
+				send_to_char("Log set.\n\r", ch);
+			} else {
+				if (cmd != 297) {
+					SET_BIT(vict->specials.act, PLR_CRIMINAL);
+					send_to_char("Flag set.\n\r", ch);
+				}
+			}
+		}
+		if (cmd == 297)	/* wizdumb */
+		{
+			if (IS_SET(vict->specials.act, PLR_DUMB_BY_WIZ)) {
+				REMOVE_BIT(vict->specials.act, PLR_DUMB_BY_WIZ);
+				send_to_char("DUMB removed.\n\r", ch);
+			} else {
+				SET_BIT(vict->specials.act, PLR_DUMB_BY_WIZ);
+				send_to_char("DUMB set.\n\r", ch);
+			}
+		}
+	}
+}
+void do_flick(struct char_data *ch, char *argument, int cmd)
+{
+	struct char_data *victim;
+	struct obj_data *obj;
+	char victim_name[240];
+	char obj_name[240];
+	int eq_pos;
+
+	argument = one_argument(argument, obj_name);
+	one_argument(argument, victim_name);
+	if (!(victim = get_char_vis(ch, victim_name))) {
+		send_to_char("Who?\n\r", ch);
+		return;
+	} else if (victim == ch) {
+		send_to_char("Odd?\n\r", ch);
+		return;
+	} else if (GET_LEVEL(ch) <= GET_LEVEL(victim)) {
+		send_to_char("Bad idea.\n\r", ch);
+		return;
+	}
+	if (!(obj = get_obj_in_list_vis(victim, obj_name, victim->carrying))) {
+		for (eq_pos = 0; (eq_pos < MAX_WEAR); eq_pos++)
+			if (victim->equipment[eq_pos] &&
+			    (isname(obj_name, victim->equipment[eq_pos]->name))) {
+				obj = victim->equipment[eq_pos];
+				break;
+			}
+		if (!obj) {
+			send_to_char("Can't find that item.\n\r", ch);
+			return;
+		} else {	/* It is equipment */
+			obj_to_char(unequip_char(victim, eq_pos), ch);
+			send_to_char("Done.\n\r", ch);
+		}
+	} else {		/* obj found in inventory */
+		obj_from_char(obj);
+		obj_to_char(obj, ch);
+		send_to_char("Done.\n\r", ch);
+	}
+}
+
+void do_force(struct char_data *ch, char *argument, int cmd)
+{
+	struct descriptor_data *i;
+	struct char_data *vict;
+	char name[100], to_force[100], buf[200];
+	int diff;
+
+	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 3))
+		return;
+
+	half_chop(argument, name, to_force);
+
+	if (!*name || !*to_force)
+		send_to_char("Who do you wish to force to do what?\n\r", ch);
+	else if (str_cmp("all", name)) {
+		if (!(vict = get_char_vis(ch, name)))
+			send_to_char("No-one by that name here..\n\r", ch);
+		else {
+			diff = GET_LEVEL(ch) - GET_LEVEL(vict);
+			if ((!IS_NPC(vict)) && (diff <= 0)) {
+				send_to_char("Oh no you don't!!\n\r", ch);
+			} else {
+				if (GET_LEVEL(ch) < (IMO + 3))
+					snprintf(buf, sizeof(buf),
+						"$n has forced you to '%s'.", to_force);
+				else
+					buf[0] = 0;
+				act(buf, FALSE, ch, 0, vict, TO_VICT);
+				send_to_char("Ok.\n\r", ch);
+				command_interpreter(vict, to_force);
+			}
+		}
+	} else {		/* force all */
+		if (GET_LEVEL(ch) < (IMO + 3)) {
+			send_to_char("Force all's are a bad idea these days.\n\r", ch);
+			return;
+		}
+		for (i = descriptor_list; i; i = i->next)
+			if (i->character != ch && !i->connected) {
+				vict = i->character;
+				command_interpreter(vict, to_force);
+			}
+		send_to_char("Ok.\n\r", ch);
+	}
 }
 
 void do_goto(struct char_data *ch, char *argument, int cmd)
@@ -357,500 +589,22 @@ void do_goto(struct char_data *ch, char *argument, int cmd)
 	do_look(ch, "", 15);
 }
 
-void do_demote(struct char_data *ch, char *argument, int cmd)
+static char *load_one_argument(char *argument, char *first_arg)
 {
-	struct char_data *victim;
-	char name[100], buf[BUFSIZ];
-	void init_char(struct char_data *ch);
-	void do_start(struct char_data *ch);
+    if (!argument) return NULL;
 
-	snprintf(buf, sizeof(buf), "%s demoted %s", GET_NAME(ch), argument);
-	mudlog(buf);
+    while (isspace(*argument))
+        argument++;
 
-	if (IS_NPC(ch))
-		return;
+    while (*argument && !isspace(*argument)) {
+        *first_arg = *argument;
+        first_arg++;
+        argument++;
+    }
 
-	one_argument(argument, name);
-	if (*name) {
-		if (!(victim = get_char_room_vis(ch, name))) {
-			send_to_char("That player is not here.\n\r", ch);
-			return;
-		}
-	} else {
-		send_to_char("Demote who?\n\r", ch);
-		return;
-	}
-	if (IS_NPC(victim)) {
-		send_to_char("NO! Not on NPC's.\n\r", ch);
-		return;
-	}
-	if (GET_LEVEL(victim) > GET_LEVEL(ch)) {
-		send_to_char("Impossible!\n\r", ch);
-		return;
-	}
-
-	GET_AC(ch) += GET_LEVEL(ch);
-	GET_HITROLL(ch) -= GET_LEVEL(ch);
-	GET_DAMROLL(ch) -= GET_LEVEL(ch);
-
-	init_char(victim);
-	do_start(victim);
-}
-
-
-
-/* 
- * do_stat refactoring, 251125 by Komo
- * --- 1. 방 정보 출력 함수 --- 
- */
-void perform_stat_room(struct char_data *ch, struct room_data *rm, char *buf, size_t size)
-{
-    size_t len = 0;
-    int i;
-    struct extra_descr_data *desc;
-    struct char_data *k;
-    struct obj_data *j;
-    char sbuf[256], sbuf2[256];
-
-    SAFE_PRINTF("Room: %s, Zone: %d. V-Num: %d, R-num: %d, Light: %d.\n\r", 
-                rm->name, rm->zone, rm->number, ch->in_room, rm->light);
-
-    sprinttype(rm->sector_type, sector_types, sbuf2);
-    SAFE_PRINTF("Sector type : %s\n\r", sbuf2);
+    *first_arg = '\0'; /* 문자열의 끝을 표시 */
     
-    SAFE_PRINTF("Special procedure : %s", (rm->funct) ? "Exists\n\r" : "No\n\r");
-
-    sprintbit((long)rm->room_flags, room_bits, sbuf);
-    SAFE_PRINTF("Room flags: %s\n\r", sbuf);
-
-    SAFE_PRINTF("Description:\n\r%s", rm->description);
-
-    SAFE_PRINTF("Extra description keywords(s): ");
-    if (rm->ex_description) {
-        SAFE_PRINTF("\n\r");
-        for (desc = rm->ex_description; desc; desc = desc->next)
-            SAFE_PRINTF("%s\n\r", desc->keyword);
-        SAFE_PRINTF("\n\r");
-    } else {
-        SAFE_PRINTF("None\n\r");
-    }
-
-    SAFE_PRINTF("Chars present:\n\r");
-    for (k = rm->people; k; k = k->next_in_room) {
-        if (CAN_SEE(ch, k)) {
-            SAFE_PRINTF("%s%s", GET_NAME(k),
-                (!IS_NPC(k) ? "(PC)\n\r" : (!IS_MOB(k) ? "(NPC)\n\r" : "(MOB)\n\r")));
-        }
-    }
-    SAFE_PRINTF("\n\r");
-
-    SAFE_PRINTF("Contents:\n\r");
-    for (j = rm->contents; j; j = j->next_content) {
-        SAFE_PRINTF("%s\n\r", j->name);
-    }
-    SAFE_PRINTF("\n\r");
-
-    SAFE_PRINTF("Exits:\n\r");
-    for (i = 0; i <= 5; i++) {
-        if (rm->dir_option[i]) {
-            SAFE_PRINTF("Direction %s. Keyword : %s\n\r", dirs[i], rm->dir_option[i]->keyword);
-            SAFE_PRINTF("Description:\n\r  %s", 
-                rm->dir_option[i]->general_description ? rm->dir_option[i]->general_description : "UNDEFINED\n\r");
-            
-            sprintbit(rm->dir_option[i]->exit_info, exit_bits, sbuf2);
-            SAFE_PRINTF("Exit flag: %s\n\rKey #: %d\n\r", sbuf2, rm->dir_option[i]->key);
-            SAFE_PRINTF("To room(R-Num): %d\n\r", rm->dir_option[i]->to_room);
-        }
-    }
-}
-
-/* 
- * do_stat refactoring, 251125 by Komo
- * --- 2. 아이템 정보 출력 함수
- */
-void perform_stat_object(struct char_data *ch, struct obj_data *j, char *buf, size_t size)
-{
-    size_t len = 0;
-    int i, virtual;
-    struct extra_descr_data *desc;
-    char sbuf[256], sbuf2[256];
-    extern struct index_data *obj_index;
-
-    virtual = (j->item_number >= 0) ? obj_index[j->item_number].virtual : 0;
-
-    SAFE_PRINTF("Object name: [%s], R-num: [%d], V-number: [%d]\n\r", j->name, j->item_number, virtual);
-    
-    sprinttype(GET_ITEM_TYPE(j), item_types, sbuf2);
-    SAFE_PRINTF("Item type: %s\n\r", sbuf2);
-
-    SAFE_PRINTF("Short desc: %s\n\rLong desc:\n\r%s\n\r",
-                ((j->short_description) ? j->short_description : "None"),
-                ((j->description) ? j->description : "None"));
-
-    SAFE_PRINTF("\n\rExtra desc keyword(s):\n\r");
-    if (j->ex_description) {
-        for (desc = j->ex_description; desc; desc = desc->next)
-            SAFE_PRINTF("%s\n\r", desc->keyword);
-    } else {
-        SAFE_PRINTF("None\n\r");
-    }
-
-    sprintbit(j->obj_flags.wear_flags, wear_bits, sbuf);
-    SAFE_PRINTF("\n\rCan be worn on : %s\n\r", sbuf);
-
-    sprintbit(j->obj_flags.extra_flags, extra_bits, sbuf);
-    SAFE_PRINTF("Extra flags: %s\n\r\n\r", sbuf);
-
-    SAFE_PRINTF("Weight: %d, Value: %d, Timer: %d\n\r", j->obj_flags.weight, j->obj_flags.cost, j->obj_flags.timer);
-    SAFE_PRINTF("Values 0-3 : [%d] [%d] [%d] [%d]\n\r",
-                j->obj_flags.value[0], j->obj_flags.value[1],
-                j->obj_flags.value[2], j->obj_flags.value[3]);
-
-    SAFE_PRINTF("Can affect char :\n\r");
-    for (i = 0; i < MAX_OBJ_AFFECT; ++i) {
-        sprinttype(j->affected[i].location, apply_types, sbuf2);
-        SAFE_PRINTF("  Affects: %s by %d\n\r", sbuf2, j->affected[i].modifier);
-    }
-}
-
-/* 
- * do_stat refactoring, 251125 by Komo
- * --- 3. 캐릭터 정보 출력 함수 --- 
- * */
-void perform_stat_char(struct char_data *ch, struct char_data *k, char *buf, size_t size)
-{
-    size_t len = 0;
-    int i, i2, t;
-    struct follow_type *fol;
-    struct affected_type *aff;
-    char sbuf[256], sbuf2[256];
-    struct obj_data *j;
-
-    SAFE_PRINTF("Sex: %d, %s, Name: %s\n\r", 
-        k->player.sex, (!IS_NPC(k) ? "PC" : (!IS_MOB(k) ? "NPC" : "MOB")), GET_NAME(k));
-
-    if (IS_NPC(k)) {
-        SAFE_PRINTF("V-Number [%d]\n\r", mob_index[k->nr].virtual);
-        SAFE_PRINTF("Short desc: %s\n\r", (k->player.short_descr ? k->player.short_descr : "None"));
-        SAFE_PRINTF("Long desc: %s", (k->player.long_descr ? k->player.long_descr : "None.\n\r"));
-    } else {
-        SAFE_PRINTF("Title: %s\n\r", (k->player.title ? k->player.title : "None"));
-    }
-
-    sprinttype(k->player.class, pc_class_types, sbuf2);
-    SAFE_PRINTF("Class: %s  Level [%d] Alignment[%d]\n\r", sbuf2, k->player.level, k->specials.alignment);
-
-    /* 시간 출력 안전하게 처리 */
-    t = k->player.time.birth;
-    SAFE_PRINTF("Birth: %.24s, Logon: ", ctime((time_t *)&t));
-    t = k->player.time.logon;
-    SAFE_PRINTF("%.24s", ctime((time_t *)&t));
-
-    t = k->player.time.played;
-    i = t % 86400;
-    SAFE_PRINTF("\n\rPlayed: %d days, %d:%02d\n\r", t / 86400, i / 3600, (i + 30) % 60);
-
-    SAFE_PRINTF("Age: %d Y, %d M, %d D, %d H.  Ht: %d cm, Wt: %d lbs\n\r",
-        age(k).year, age(k).month, age(k).day, age(k).hours, GET_HEIGHT(k), GET_WEIGHT(k));
-
-    SAFE_PRINTF("Str:[%d/%d]  Int:[%d]  Wis:[%d]  Dex:[%d]  Con:[%d]\n\r",
-                GET_STR(k), GET_ADD(k), GET_INT(k), GET_WIS(k), GET_DEX(k), GET_CON(k));
-
-    SAFE_PRINTF("Mana: %ld/%ld+%d, Hits: %ld/%ld+%d, Moves: %ld/%ld+%d\n\r",
-                GET_MANA(k), mana_limit(k), mana_gain(k),
-                GET_HIT(k), hit_limit(k), hit_gain(k),
-                GET_MOVE(k), move_limit(k), move_gain(k));
-
-    SAFE_PRINTF("AC: %d/10, Hitroll: %d, Damroll: %d, Regen: %d\n\r",
-                GET_AC(k), k->points.hitroll, k->points.damroll, k->regeneration);
-    
-    SAFE_PRINTF("Gold: %lld, Bank: %lld, Exp: %lld\n\r", GET_GOLD(k), k->bank, GET_EXP(k));
-
-    if (IS_NPC(k)) {
-        SAFE_PRINTF("Special: %s", (mob_index[k->nr].func ? "Exists\n\r" : "None\n\r"));
-    }
-
-    /* Remortal 표시 */
-    SAFE_PRINTF("Remortal : ");
-    if (k->player.remortal & REMORTAL_MAGIC_USER) SAFE_PRINTF("M");
-    if (k->player.remortal & REMORTAL_CLERIC)     SAFE_PRINTF("C");
-    if (k->player.remortal & REMORTAL_THIEF)      SAFE_PRINTF("T");
-    if (k->player.remortal & REMORTAL_WARRIOR)    SAFE_PRINTF("W");
-    SAFE_PRINTF("\n\r");
-
-    SAFE_PRINTF("Bare Hand Damage %dd%d.\n\r", k->specials.damnodice, k->specials.damsizedice);
-    SAFE_PRINTF("Carried weight: %d   Carried items: %d\n\r", IS_CARRYING_W(k), IS_CARRYING_N(k));
-
-    for (i = 0, j = k->carrying; j; j = j->next_content, i++);
-    SAFE_PRINTF("Items in inv: %d, ", i);
-
-    for (i = 0, i2 = 0; i < MAX_WEAR; i++)
-        if (k->equipment[i]) i2++;
-    SAFE_PRINTF("Items in equ: %d\n\r", i2);
-
-    if (k->desc) {
-        sprinttype(k->desc->connected, connected_types, sbuf2);
-        SAFE_PRINTF("Connected: %s %s (%d)\n\r", sbuf2, k->desc->host, k->desc->descriptor);
-    }
-
-    if (IS_NPC(k)) {
-        sprintbit(k->specials.act, action_bits, sbuf2);
-        SAFE_PRINTF("NPC flags: %s\n\r", sbuf2);
-    } else {
-        sprintbit(k->specials.act, player_bits, sbuf2);
-        SAFE_PRINTF("PC flags: %s\n\r", sbuf2);
-    }
-
-    if (!IS_NPC(k)) {
-        SAFE_PRINTF("Thirst: %d, Hunger: %d, Drunk: %d\n\r",
-            k->specials.conditions[THIRST], k->specials.conditions[FULL], k->specials.conditions[DRUNK]);
-        SAFE_PRINTF("Practices: %d\n\r", k->specials.spells_to_learn);
-    }
-
-    SAFE_PRINTF("Master is '%s'\n\r", ((k->master) ? GET_NAME(k->master) : "NOBODY"));
-    
-    SAFE_PRINTF("Followers are:\n\r");
-    for (fol = k->followers; fol; fol = fol->next) {
-        SAFE_PRINTF("  %s", GET_NAME(fol->follower));
-    }
-    
-    sprintbit(k->specials.affected_by, affected_bits, sbuf);
-    SAFE_PRINTF("\n\rAffected by: %s\n\r", sbuf);
-
-    if (k->affected) {
-        SAFE_PRINTF("Affecting Spells:\n\r");
-        for (aff = k->affected; aff; aff = aff->next) {
-            const char *spell_name = "Unknown"; /* spells 배열 인덱스 검사 */
-            if (aff->type > 0 && aff->type <= MAX_SPL_LIST)
-                spell_name = spells[aff->type - 1];
-            
-            sprintbit(aff->bitvector, affected_bits, sbuf2);
-            SAFE_PRINTF("%s: %s by %d, %d hrs, bits: %s\n\r", 
-                spell_name, apply_types[(int)aff->location], aff->modifier, aff->duration, sbuf2);
-        }
-    }
-}
-
-/* --- 메인 do_stat 함수 --- */
-void do_stat(struct char_data *ch, char *argument, int cmd)
-{
-    char arg1[MAX_INPUT_LENGTH];
-    char page_buffer[16384]; /* page_buffer를 static으로 선언하지 않고, 넉넉하게 16KB 할당 */
-    struct room_data *rm = NULL;
-    struct char_data *k = NULL;
-    struct obj_data *j = NULL;
-    struct char_data *get_specific_vis(struct char_data * ch, char *name, int type);
-
-    if (IS_NPC(ch)) return;
-
-    one_argument(argument, arg1);
-
-    /* 도움말 추가 */
-    if (!*arg1) {
-        send_to_char("&W[STAT] Usage: stat <room | object | character name>&n\n\r", ch);
-        send_to_char("&W[STAT]   stat room      : 현재 있는 방의 정보 확인&n\n\r", ch);
-        send_to_char("&W[STAT]   stat <name>    : PC/NPC/아이템 정보 확인&n\n\r", ch);
-        return;
-    }
-
-    /* 초기화 */
-    page_buffer[0] = '\0';
-
-    /* ROOM 처리 */
-    if ((cmd != 232) && (cmd != 233) && (!str_cmp("room", arg1))) {
-        rm = &world[ch->in_room];
-        perform_stat_room(ch, rm, page_buffer, sizeof(page_buffer));
-    }
-    /* OBJECT 처리 */
-    else if ((cmd != 232) && (cmd != 233) && (j = get_obj_vis(ch, arg1))) {
-        perform_stat_object(ch, j, page_buffer, sizeof(page_buffer));
-    }
-    /* CHAR 처리 */
-    else {
-        if (cmd == 233)      k = get_specific_vis(ch, arg1, 0); /* PC only */
-        else if (cmd == 232) k = get_specific_vis(ch, arg1, 1); /* Mob only */
-        else                 k = get_char_vis(ch, arg1);        /* Both */
-
-        if (k) {
-            perform_stat_char(ch, k, page_buffer, sizeof(page_buffer));
-        } else {
-            send_to_char("[STAT] No mobile or object by that name in the world.\n\r", ch);
-            return;
-        }
-    }
-
-    /* 최종 출력 */
-    page_string(ch->desc, page_buffer, 1);
-}
-
-void do_shutdow(struct char_data *ch, char *argument, int cmd)
-{
-	send_to_char("If you want to shut something down - say so!\n\r", ch);
-}
-
-void do_shutdown(struct char_data *ch, char *argument, int cmd)
-{
-	extern int shutdowngame;
-	char arg[MAX_INPUT_LENGTH];
-
-	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 3))
-		return;
-	one_argument(argument, arg);
-	if (!*arg) {
-		send_to_all("Shutting down immediately.\n\r");
-		shutdowngame = 1;
-	} else
-		send_to_char("Go shut down someone your own size.\n\r", ch);
-}
-void do_snoop(struct char_data *ch, char *argument, int cmd)
-{
-	static char arg[MAX_STRING_LENGTH];
-	struct char_data *victim;
-	int diff;
-
-	if (!ch->desc)
-		return;
-	if (IS_NPC(ch))
-		return;
-	one_argument(argument, arg);
-	if (!*arg) {
-		victim = ch;
-	} else if (!(victim = get_char_vis(ch, arg))) {
-		send_to_char("No such person around.\n\r", ch);
-		return;
-	}
-	if (!victim->desc) {
-		send_to_char("There's no link.. nothing to snoop.\n\r", ch);
-		return;
-	}
-	if (victim == ch) {
-		send_to_char("Ok, you just snoop yourself.\n\r", ch);
-		if (ch->desc->snoop.snooping) {
-			ch->desc->snoop.snooping->desc->snoop.snoop_by = 0;
-			ch->desc->snoop.snooping = 0;
-		}
-		return;
-	}
-	if (victim->desc->snoop.snoop_by) {
-		send_to_char("Busy already. \n\r", ch);
-		return;
-	}
-	diff = GET_LEVEL(victim) - GET_LEVEL(ch);
-	if (diff >= 0) {
-		send_to_char("You failed.\n\r", ch);
-		return;
-	}
-	send_to_char("Ok. \n\r", ch);
-	if (ch->desc->snoop.snooping)
-		ch->desc->snoop.snooping->desc->snoop.snoop_by = 0;
-	ch->desc->snoop.snooping = victim;
-	victim->desc->snoop.snoop_by = ch;
-	return;
-}
-void do_switch(struct char_data *ch, char *argument, int cmd)
-{
-	static char arg[MAX_STRING_LENGTH];
-	struct char_data *victim;
-
-	if (IS_NPC(ch))
-		return;
-	one_argument(argument, arg);
-	if (!*arg) {
-		send_to_char("Switch with who?\n\r", ch);
-	} else {
-		if (!(victim = get_char(arg)))
-			send_to_char("They aren't here.\n\r", ch);
-		else {
-			if (ch == victim) {
-				send_to_char("He he he... We are jolly funny today, eh?\n\r", ch);
-				return;
-			}
-			if (!ch->desc || ch->desc->snoop.snoop_by ||
-			    ch->desc->snoop.snooping) {
-				send_to_char(
-						    "You can't do that, the body is already in use.\n\r", ch);
-				return;
-			}
-			if (victim->desc || (!IS_NPC(victim))) {
-				if (GET_LEVEL(victim) > GET_LEVEL(ch))
-					send_to_char("They aren't here.\n\r", ch);
-				else
-					send_to_char(
-							    "You can't do that, the body is already in use!\n\r", ch);
-			} else {
-				send_to_char("Ok.\n\r", ch);
-				ch->desc->character = victim;
-				ch->desc->original = ch;
-				victim->desc = ch->desc;
-				ch->desc = 0;
-			}
-		}
-	}
-}
-
-void do_return(struct char_data *ch, char *argument, int cmd)
-{
-	if (!ch->desc)
-		return;
-
-	if (!ch->desc->original) {
-		send_to_char("Eh?\n\r", ch);
-		return;
-	} else {
-		send_to_char("You return to your originaly body.\n\r", ch);
-
-		ch->desc->character = ch->desc->original;
-		ch->desc->original = 0;
-
-		ch->desc->character->desc = ch->desc;
-		ch->desc = 0;
-	}
-}
-
-void do_force(struct char_data *ch, char *argument, int cmd)
-{
-	struct descriptor_data *i;
-	struct char_data *vict;
-	char name[100], to_force[100], buf[200];
-	int diff;
-
-	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 3))
-		return;
-
-	half_chop(argument, name, to_force);
-
-	if (!*name || !*to_force)
-		send_to_char("Who do you wish to force to do what?\n\r", ch);
-	else if (str_cmp("all", name)) {
-		if (!(vict = get_char_vis(ch, name)))
-			send_to_char("No-one by that name here..\n\r", ch);
-		else {
-			diff = GET_LEVEL(ch) - GET_LEVEL(vict);
-			if ((!IS_NPC(vict)) && (diff <= 0)) {
-				send_to_char("Oh no you don't!!\n\r", ch);
-			} else {
-				if (GET_LEVEL(ch) < (IMO + 3))
-					snprintf(buf, sizeof(buf),
-						"$n has forced you to '%s'.", to_force);
-				else
-					buf[0] = 0;
-				act(buf, FALSE, ch, 0, vict, TO_VICT);
-				send_to_char("Ok.\n\r", ch);
-				command_interpreter(vict, to_force);
-			}
-		}
-	} else {		/* force all */
-		if (GET_LEVEL(ch) < (IMO + 3)) {
-			send_to_char("Force all's are a bad idea these days.\n\r", ch);
-			return;
-		}
-		for (i = descriptor_list; i; i = i->next)
-			if (i->character != ch && !i->connected) {
-				vict = i->character;
-				command_interpreter(vict, to_force);
-			}
-		send_to_char("Ok.\n\r", ch);
-	}
+    return argument;
 }
 
 /* rework by Komo, 251118 */
@@ -871,9 +625,9 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         return;
     }
 
-//    argument = load_one_argument(argument, arg1); /* type: char/obj */
-//    argument = load_one_argument(argument, arg2); /* vnum */
-//    argument = load_one_argument(argument, arg3); /* quantity (optional) */
+    argument = load_one_argument(argument, arg1); /* type: char/obj */
+    argument = load_one_argument(argument, arg2); /* vnum */
+	argument = load_one_argument(argument, arg3); /* quantity (optional) */
 
 
     /* 도움말 개선 */
@@ -952,7 +706,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         send_to_char(feedback_buf, ch);
 
         snprintf(log_buf, sizeof(log_buf), "%s loaded %d x char %d (%s)", ch->player.name, quantity, vnum, mob_name);
-        mudlog(log_buf);
+        log(log_buf);
 
     /* --- 아이템(obj) 생성 --- */
     } else if (is_abbrev(arg1, "obj")) {
@@ -1004,11 +758,78 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         send_to_char(feedback_buf, ch);
 
         snprintf(log_buf, sizeof(log_buf), "%s loaded %d x object %d (%s)", ch->player.name, quantity, vnum, obj_name);
-        mudlog(log_buf);
+        log(log_buf);
 
     } else {
         send_to_char("That'll have to be either 'char' or 'obj'.\n\r", ch);
     }
+}
+
+void do_noaffect(struct char_data *ch, char *argument, int cmd)
+{
+	struct char_data *vict;
+	struct obj_data *dummy;
+	struct affected_type *hjp;
+	char buf[MAX_INPUT_LENGTH];
+
+	if (IS_NPC(ch)) return;
+
+	one_argument(argument, buf);
+	if (!*buf) {
+		send_to_char("Remove affects from whom?\n\r", ch);
+		return;
+	} else {
+		if (!generic_find(argument, FIND_CHAR_WORLD, ch, &vict, &dummy))
+			send_to_char("Couldn't find any such creature.\n\r", ch);
+		else if (IS_NPC(vict) && vict->in_room != ch->in_room)
+			send_to_char("Only can do that to a mob in same room.\n\r", ch);
+		else if (!IS_NPC(vict) && GET_LEVEL(vict) > GET_LEVEL(ch))
+			act("$E might object to that.. better not.", 0, ch, 0,
+			    vict, TO_CHAR);
+		else {
+			send_to_char("You are normal again.\n\r", vict);
+			for (hjp = vict->affected; hjp; hjp = hjp->next)
+				affect_remove(vict, hjp);
+		}
+	}
+	send_to_char("Ok.\n\r", ch);
+}
+void do_noshout(struct char_data *ch, char *argument, int cmd)
+{
+	struct char_data *vict;
+	struct obj_data *dummy;
+	char buf[MAX_INPUT_LENGTH];
+
+	if (IS_NPC(ch))
+		return;
+	one_argument(argument, buf);
+	if (!*buf) {
+		if (IS_SET(ch->specials.act, PLR_EARMUFFS)) {
+			send_to_char("You can now hear shouts again.\n\r", ch);
+			REMOVE_BIT(ch->specials.act, PLR_EARMUFFS);
+		} else {
+			send_to_char("From now on, you won't hear shouts.\n\r", ch);
+			SET_BIT(ch->specials.act, PLR_EARMUFFS);
+		}
+		return;
+	}
+	if (GET_LEVEL(ch) < IMO)
+		return;
+	if (!generic_find(argument, FIND_CHAR_WORLD, ch, &vict, &dummy))
+		send_to_char("Couldn't find any such creature.\n\r", ch);
+	else if (IS_NPC(vict))
+		send_to_char("Can't do that to a mobile.\n\r", ch);
+	else if (GET_LEVEL(vict) > GET_LEVEL(ch))
+		act("$E might object to that.. better not.", 0, ch, 0, vict, TO_CHAR);
+	else if (IS_SET(vict->specials.act, PLR_NOSHOUT)) {
+		send_to_char("You can shout again.\n\r", vict);
+		send_to_char("NOSHOUT removed.\n\r", ch);
+		REMOVE_BIT(vict->specials.act, PLR_NOSHOUT);
+	} else {
+		send_to_char("The gods take away your ability to shout!\n\r", vict);
+		send_to_char("NOSHOUT set.\n\r", ch);
+		SET_BIT(vict->specials.act, PLR_NOSHOUT);
+	}
 }
 
 /* clean a room of all mobiles and objects */
@@ -1079,7 +900,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 			
 			// "confirm"이 입력된 경우, 플레이어 삭제 절차 진행
 			snprintf(buf, sizeof(buf), "PURGE: %s permanently deleted player %s.", ch->player.name, vict->player.name);
-			mudlog(buf); // 로그 기록
+			log(buf); // 로그 기록
 
 			stash_char(vict);
 			move_stashfile_safe(vict->player.name); 
@@ -1114,180 +935,6 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 			return;
 		}
 		send_to_char("Ok.\n\r", ch);
-	}
-}
-
-// qsort 정렬을 위한 비교 함수 - 내림차순
-int compare_to_descending_order(const void *a, const void *b) {
-    return (*(ubyte *)b - *(ubyte *)a);
-}
-
-/* Give pointers to the five abilities */
-// FIXME: db.c t
-void roll_abilities(struct char_data *ch)
-{
-    int i, result;
-    ubyte table[5];
-
-    // 능력치 5개 생성
-    for (i = 0; i < 5; i++) {
-        /* 1~7 사이의 숫자 4개를 더하는 원래의 로직을 dice 함수로 수정(4D7), by Komo */
-        result = dice(4, 7);
-        
-        if (result > 18) result = 18;
-        
-        table[i] = (ubyte)result;
-    }
-
-    // 가장 높은 값이 table[0]에 오도록 내림차순 정렬, qsort here:
-    qsort(table, 5, sizeof(ubyte), compare_to_descending_order);
-
-    ch->abilities.str_add = 0;
-
-    // 직업별로 가장 높은 스탯부터 중요도 순으로 할당
-    switch (GET_CLASS(ch)) {
-        case CLASS_MAGIC_USER:
-            ch->abilities.intel = table[0]; // 1순위
-            ch->abilities.wis   = table[1];
-            ch->abilities.dex   = table[2];
-            ch->abilities.str   = table[3];
-            ch->abilities.con   = table[4]; // 5순위
-            break;
-
-        case CLASS_CLERIC:
-            ch->abilities.wis   = table[0];
-            ch->abilities.intel = table[1];
-            ch->abilities.str   = table[2];
-            ch->abilities.dex   = table[3];
-            ch->abilities.con   = table[4];
-            break;
-
-        case CLASS_THIEF:
-            ch->abilities.dex   = table[0];
-            ch->abilities.str   = table[1];
-            ch->abilities.con   = table[2];
-            ch->abilities.intel = table[3];
-            ch->abilities.wis   = table[4];
-            break;
-
-        case CLASS_WARRIOR:
-            ch->abilities.str   = table[0];
-            ch->abilities.dex   = table[1];
-            ch->abilities.con   = table[2];
-            ch->abilities.wis   = table[3];
-            ch->abilities.intel = table[4];
-
-            // W이고 힘이 18이면 str_add도 랜덤 부여
-            if (ch->abilities.str == 18)
-                ch->abilities.str_add = number(0, 100);
-            break;
-            
-        default:
-            // 혹시 모를 예외 처리 (W 세팅으로)
-            ch->abilities.str = table[0];
-            ch->abilities.dex = table[1];
-            ch->abilities.con = table[2];
-            ch->abilities.wis = table[3];
-            ch->abilities.intel = table[4];
-            break;
-    }
-
-    ch->tmpabilities = ch->abilities;
-}
-
-void do_start(struct char_data *ch)
-{
-	void advance_level(struct char_data * ch, int level_up);
-
-	GET_LEVEL(ch) = 1;
-	GET_EXP(ch) = 1;
-	set_title(ch);
-	advance_level(ch, 1);
-
-	GET_HIT(ch) = GET_PLAYER_MAX_HIT(ch);
-	GET_MANA(ch) = GET_PLAYER_MAX_MANA(ch);
-	GET_MOVE(ch) = GET_PLAYER_MAX_MOVE(ch);
-
-	GET_COND(ch, THIRST) = 24;
-	GET_COND(ch, FULL) = 24;
-	GET_COND(ch, DRUNK) = 0;
-
-	ch->specials.spells_to_learn = 3;
-	ch->player.time.played = 0;
-	ch->player.time.logon = time(0);
-}
-
-void do_advance(struct char_data *ch, char *argument, int cmd)
-{
-	struct char_data *victim;
-	char name[100], level[100];
-	int i, newlevel;
-
-	void gain_exp(struct char_data *ch, int gain);
-	void init_char(struct char_data *ch);
-
-	if (IS_NPC(ch))
-		return;
-
-	if (GET_LEVEL(ch) < (IMO + 3)) {
-		send_to_char("You can only do that in a guild.\n\r", ch);
-		return;
-	}
-	argument_interpreter(argument, name, level);
-	if (*name) {
-		if (!(victim = get_char_room_vis(ch, name))) {
-			send_to_char("That player is not here.\n\r", ch);
-			return;
-		}
-	} else {
-		send_to_char("Advance who?\n\r", ch);
-		return;
-	}
-
-	if (IS_NPC(victim)) {
-		send_to_char("NO! Not on NPC's.\n\r", ch);
-		return;
-	}
-
-	if (!*level) {
-		send_to_char("You must supply a level number.\n\r", ch);
-		return;
-	} else {
-		if (!isdigit(*level)) {
-			send_to_char("Second argument must be a positive integer.\n\r", ch);
-			return;
-		}
-		if ((newlevel = atoi(level)) < GET_LEVEL(victim)) {
-			if (GET_LEVEL(ch) <= GET_LEVEL(victim)) {
-				send_to_char("Very amusing.\n\r", ch);
-				return;
-			}
-			victim->player.level = newlevel;
-			if (newlevel < IMO) {
-				for (i = 0; i < 3; ++i)
-					victim->specials.conditions[i] = 0;
-			}
-			victim->tmpabilities = victim->abilities;
-			send_to_char("The poor soul...\n\r", ch);
-			send_to_char("You have been punished.\n\r", victim);
-			return;
-		}
-	}
-
-	if (newlevel > IMO) {
-		send_to_char("Too high a level.\n\r", ch);
-		return;
-	}
-	send_to_char("You feel generous.\n\r", ch);
-
-	if (GET_LEVEL(victim) == 0) {
-		init_char(victim);
-		do_start(victim);
-	} else {
-		victim->points.exp = 1;
-		gain_exp_regardless(victim, (titles[GET_CLASS(victim) - 1][
-										  newlevel].exp)
-				    - GET_EXP(victim));
 	}
 }
 
@@ -1359,162 +1006,24 @@ void do_restore(struct char_data *ch, char *argument, int cmd)
 	}
 }
 
-void do_noshout(struct char_data *ch, char *argument, int cmd)
+void do_return(struct char_data *ch, char *argument, int cmd)
 {
-	struct char_data *vict;
-	struct obj_data *dummy;
-	char buf[MAX_INPUT_LENGTH];
-
-	if (IS_NPC(ch))
+	if (!ch->desc)
 		return;
-	one_argument(argument, buf);
-	if (!*buf) {
-		if (IS_SET(ch->specials.act, PLR_EARMUFFS)) {
-			send_to_char("You can now hear shouts again.\n\r", ch);
-			REMOVE_BIT(ch->specials.act, PLR_EARMUFFS);
-		} else {
-			send_to_char("From now on, you won't hear shouts.\n\r", ch);
-			SET_BIT(ch->specials.act, PLR_EARMUFFS);
-		}
-		return;
-	}
-	if (GET_LEVEL(ch) < IMO)
-		return;
-	if (!generic_find(argument, FIND_CHAR_WORLD, ch, &vict, &dummy))
-		send_to_char("Couldn't find any such creature.\n\r", ch);
-	else if (IS_NPC(vict))
-		send_to_char("Can't do that to a beast.\n\r", ch);
-	else if (GET_LEVEL(vict) > GET_LEVEL(ch))
-		act("$E might object to that.. better not.", 0, ch, 0, vict, TO_CHAR);
-	else if (IS_SET(vict->specials.act, PLR_NOSHOUT)) {
-		send_to_char("You can shout again.\n\r", vict);
-		send_to_char("NOSHOUT removed.\n\r", ch);
-		REMOVE_BIT(vict->specials.act, PLR_NOSHOUT);
-	} else {
-		send_to_char("The gods take away your ability to shout!\n\r", vict);
-		send_to_char("NOSHOUT set.\n\r", ch);
-		SET_BIT(vict->specials.act, PLR_NOSHOUT);
-	}
-}
 
-void do_wiznet(struct char_data *ch, char *argument, int cmd)
-{
-	struct descriptor_data *i;
-	struct char_data *victim;
-	char buf[MAX_STRING_LENGTH];
-
-	if (IS_NPC(ch))
-		return;
-	snprintf(buf, sizeof(buf), "[WIZNET]&T %s: %s&n\n\r", ch->player.name, argument);
-	send_to_char(buf, ch);
-
-	for (i = descriptor_list; i; i = i->next)
-		if (!i->connected) {
-			if (i->original)
-				continue;
-			victim = i->character;
-			if ((GET_LEVEL(victim) >= IMO) && (GET_LEVEL(victim) <= (IMO + 4)))
-				send_to_char(buf, victim);
-		}
-}
-
-FILE *chatlogfp = NULL;
-void do_chat(struct char_data *ch, char *argument, int cmd)
-{
-	struct descriptor_data *i;
-	struct char_data *victim;
-	char buf[MAX_STRING_LENGTH];
-	int j;
-
-	extern int nochatflag;
-
-	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
-		return;
-	}
-	if (nochatflag) {
-		send_to_char("chat is forbidened now.\n\r", ch);
-		return;
-	}
-	if (IS_NPC(ch))
-		return;
-	if (strcmp(" /last", argument)) {
-		time_t tt = time(NULL);
-		strftime(buf, 127, "%F %H:%M", localtime(&tt));
-		sprintf(buf + strlen(buf), " %s >%s\n\r", GET_NAME(ch), argument);
-		assert(his_end >= 0 && his_end < 20);
-		strcpy(history[his_end], &buf[5]);	// omit year part
-		his_end++;
-		if ((his_end % 20) == (his_start % 20)) {
-			his_end = his_start % 20;
-			his_start = (his_start + 1) % 20;
-		}
-#ifdef CHATLOG
-		if (chatlogfp == NULL)
-			chatlogfp = fopen(CHATLOG, "a");
-		fputs(buf, chatlogfp);
-		fflush(chatlogfp);
-		/* 20110117 by Moon */
-#endif
-
-	} else {
-		for (j = his_start; j != his_end; j = (j + 1) % 20) {
-			assert(history[j]);
-			send_to_char(history[j], ch);
-		}
-		return;
-	}
-	snprintf(buf, sizeof(buf), "%s> %s\n\r", ch->player.name, argument);
-	for (i = descriptor_list; i; i = i->next)
-		if (!i->connected) {
-			if (i->original)
-				continue;
-			victim = i->character;
-			if (!IS_SET(victim->specials.act, PLR_NOCHAT))
-				send_to_char(buf, victim);
-		}
-}
-
-void do_noaffect(struct char_data *ch, char *argument, int cmd)
-{
-	struct char_data *vict;
-	struct obj_data *dummy;
-	struct affected_type *hjp;
-	char buf[MAX_INPUT_LENGTH];
-
-	if (IS_NPC(ch)) return;
-
-	one_argument(argument, buf);
-	if (!*buf) {
-		send_to_char("Remove affects from whom?\n\r", ch);
+	if (!ch->desc->original) {
+		send_to_char("Eh?\n\r", ch);
 		return;
 	} else {
-		if (!generic_find(argument, FIND_CHAR_WORLD, ch, &vict, &dummy))
-			send_to_char("Couldn't find any such creature.\n\r", ch);
-		else if (IS_NPC(vict) && vict->in_room != ch->in_room)
-			send_to_char("Only can do that to a mob in same room.\n\r", ch);
-		else if (!IS_NPC(vict) && GET_LEVEL(vict) > GET_LEVEL(ch))
-			act("$E might object to that.. better not.", 0, ch, 0,
-			    vict, TO_CHAR);
-		else {
-			send_to_char("You are normal again.\n\r", vict);
-			for (hjp = vict->affected; hjp; hjp = hjp->next)
-				affect_remove(vict, hjp);
-		}
+		send_to_char("You return to your originaly body.\n\r", ch);
+
+		ch->desc->character = ch->desc->original;
+		ch->desc->original = 0;
+
+		ch->desc->character->desc = ch->desc;
+		ch->desc = 0;
 	}
-	send_to_char("Ok.\n\r", ch);
 }
-
-void do_wall(struct char_data *ch, char *argument, int cmd)
-{
-	char buf[MAX_STRING_LENGTH];
-
-	if (IS_NPC(ch) || (!*argument) || GET_LEVEL(ch) > (IMO + 3))
-		return;
-	snprintf(buf, sizeof(buf), "%s\n\r", argument + 1);
-	send_to_all(buf);
-	send_to_char("Ok.\n\r", ch);
-}
-
 
 /* modified by Komo */
 void do_set(struct char_data *ch, char *argument, int cmd)
@@ -1868,156 +1377,419 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 		}
 	}
 }
-void do_invis(struct char_data *ch, char *argument, int cmd)
-{
-	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 4))
-		return;
-	if (IS_SET(ch->specials.act, PLR_WIZINVIS)) {
-		REMOVE_BIT(ch->specials.act, PLR_WIZINVIS);
-		send_to_char("You are visible again.\n\r", ch);
-	} else {
-		SET_BIT(ch->specials.act, PLR_WIZINVIS);
-		send_to_char("You vanish.\n\r", ch);
-	}
-	send_to_char("Ok.\n\r", ch);
-}
-void do_banish(struct char_data *ch, char *argument, int cmd)
-{
-	struct char_data *vict;
-	struct obj_data *dummy;
-	char buf[MAX_INPUT_LENGTH];
-	int location;
-	extern int top_of_world;
 
-	if (IS_NPC(ch))
-		return;
-	one_argument(argument, buf);
-	if (!*buf)
-		send_to_char("Banish whom?\n\r", ch);
-	else if (!generic_find(argument, FIND_CHAR_WORLD, ch, &vict, &dummy))
-		send_to_char("Couldn't find any such creature.\n\r", ch);
-	else if (IS_NPC(vict))
-		send_to_char("Can't do that to a beast.\n\r", ch);
-	else if (GET_LEVEL(vict) >= IMO)
-		send_to_char("It's pointless to banish an immortal.\n\r", ch);
-	else if (IS_SET(vict->specials.act, PLR_BANISHED)) {
-		REMOVE_BIT(vict->specials.act, PLR_BANISHED);
-		send_to_char("You feel forgiven?\n\r", vict);
-		act("$N is forgiven.", FALSE, ch, 0, vict, TO_CHAR);
-	} else {
-		SET_BIT(vict->specials.act, PLR_BANISHED);
-		for (location = 0; location <= top_of_world; location++)
-			if (world[location].number == 6999)
-				break;
-		if (location == top_of_world) {
-			send_to_char("Death Room is gone?\n\r", ch);
-		} else {
-			act("$n disappears in a puff of smoke.", FALSE, vict,
-			    0, 0, TO_ROOM);
-			char_from_room(vict);
-			char_to_room(vict, location);
-			act("$n appears with an ear-splitting bang.", FALSE,
-			    vict, 0, 0, TO_ROOM);
-		}
-		send_to_char("You smell fire and brimstone?\n\r", vict);
-		act("$N is banished.", FALSE, ch, 0, vict, TO_CHAR);
-	}
-	send_to_char("OK.\n\r", ch);
-}
-void do_flag(struct char_data *ch, char *argument, int cmd)
+void do_shutdow(struct char_data *ch, char *argument, int cmd)
 {
-	struct char_data *vict;
-	struct obj_data *dummy;
-	char buf[MAX_INPUT_LENGTH];
-	int f;
+	send_to_char("If you want to shut something down - say so!\n\r", ch);
+}
 
-	if (IS_NPC(ch))
-		return;
-	one_argument(argument, buf);
-	if (!*buf)
-		send_to_char("Flag whom?\n\r", ch);
-	else if (!generic_find(argument, FIND_CHAR_WORLD, ch, &vict, &dummy))
-		send_to_char("Couldn't find any such creature.\n\r", ch);
-	else if (IS_NPC(vict))
-		send_to_char("Can't do that to a beast.\n\r", ch);
-	else if ((GET_LEVEL(vict) >= IMO) && (cmd != 231))
-		send_to_char("It's pointless to flag an immortal.\n\r", ch);
-	else {
-		f = (cmd == 231) ? IS_SET(vict->specials.act, PLR_XYZZY) :
-		    IS_SET(vict->specials.act, PLR_CRIMINAL);
-		if (f) {
-			if (cmd == 231) {
-				REMOVE_BIT(vict->specials.act, PLR_XYZZY);
-				send_to_char("Log removed.\n\r", ch);
-			} else {
-				if (cmd != 297) {
-					REMOVE_BIT(vict->specials.act, PLR_CRIMINAL);
-					send_to_char("Flag removed.\n\r", ch);
-				}
-			}
-		} else {
-			if (cmd == 231) {
-				SET_BIT(vict->specials.act, PLR_XYZZY);
-				send_to_char("Log set.\n\r", ch);
-			} else {
-				if (cmd != 297) {
-					SET_BIT(vict->specials.act, PLR_CRIMINAL);
-					send_to_char("Flag set.\n\r", ch);
-				}
-			}
-		}
-		if (cmd == 297)	/* wizdumb */
-		{
-			if (IS_SET(vict->specials.act, PLR_DUMB_BY_WIZ)) {
-				REMOVE_BIT(vict->specials.act, PLR_DUMB_BY_WIZ);
-				send_to_char("DUMB removed.\n\r", ch);
-			} else {
-				SET_BIT(vict->specials.act, PLR_DUMB_BY_WIZ);
-				send_to_char("DUMB set.\n\r", ch);
-			}
-		}
-	}
-}
-void do_flick(struct char_data *ch, char *argument, int cmd)
+void do_shutdown(struct char_data *ch, char *argument, int cmd)
 {
+	extern int shutdowngame;
+	char arg[MAX_INPUT_LENGTH];
+
+	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 3))
+		return;
+	one_argument(argument, arg);
+	if (!*arg) {
+		send_to_all("Shutting down immediately.\n\r");
+		shutdowngame = 1;
+	} else
+		send_to_char("Go shut down someone your own size.\n\r", ch);
+}
+void do_snoop(struct char_data *ch, char *argument, int cmd)
+{
+	char arg[MAX_STRING_LENGTH];
 	struct char_data *victim;
-	struct obj_data *obj;
-	char victim_name[240];
-	char obj_name[240];
-	int eq_pos;
+	int diff;
 
-	argument = one_argument(argument, obj_name);
-	one_argument(argument, victim_name);
-	if (!(victim = get_char_vis(ch, victim_name))) {
-		send_to_char("Who?\n\r", ch);
+	if (!ch->desc)
 		return;
-	} else if (victim == ch) {
-		send_to_char("Odd?\n\r", ch);
+	if (IS_NPC(ch))
 		return;
-	} else if (GET_LEVEL(ch) <= GET_LEVEL(victim)) {
-		send_to_char("Bad idea.\n\r", ch);
+	one_argument(argument, arg);
+	if (!*arg) {
+		victim = ch;
+	} else if (!(victim = get_char_vis(ch, arg))) {
+		send_to_char("No such person around.\n\r", ch);
 		return;
 	}
-	if (!(obj = get_obj_in_list_vis(victim, obj_name, victim->carrying))) {
-		for (eq_pos = 0; (eq_pos < MAX_WEAR); eq_pos++)
-			if (victim->equipment[eq_pos] &&
-			    (isname(obj_name, victim->equipment[eq_pos]->name))) {
-				obj = victim->equipment[eq_pos];
-				break;
-			}
-		if (!obj) {
-			send_to_char("Can't find that item.\n\r", ch);
-			return;
-		} else {	/* It is equipment */
-			obj_to_char(unequip_char(victim, eq_pos), ch);
-			send_to_char("Done.\n\r", ch);
+	if (!victim->desc) {
+		send_to_char("There's no link.. nothing to snoop.\n\r", ch);
+		return;
+	}
+	if (victim == ch) {
+		send_to_char("Ok, you just snoop yourself.\n\r", ch);
+		if (ch->desc->snoop.snooping) {
+			ch->desc->snoop.snooping->desc->snoop.snoop_by = 0;
+			ch->desc->snoop.snooping = 0;
 		}
-	} else {		/* obj found in inventory */
-		obj_from_char(obj);
-		obj_to_char(obj, ch);
-		send_to_char("Done.\n\r", ch);
+		return;
+	}
+	if (victim->desc->snoop.snoop_by) {
+		send_to_char("Busy already. \n\r", ch);
+		return;
+	}
+	diff = GET_LEVEL(victim) - GET_LEVEL(ch);
+	if (diff >= 0) {
+		send_to_char("You failed.\n\r", ch);
+		return;
+	}
+	send_to_char("Ok. \n\r", ch);
+	if (ch->desc->snoop.snooping)
+		ch->desc->snoop.snooping->desc->snoop.snoop_by = 0;
+	ch->desc->snoop.snooping = victim;
+	victim->desc->snoop.snoop_by = ch;
+	return;
+}
+
+void do_start(struct char_data *ch)
+{
+	void advance_level(struct char_data * ch, int level_up);
+
+	GET_LEVEL(ch) = 1;
+	GET_EXP(ch) = 1;
+	set_title(ch);
+	advance_level(ch, 1);
+
+	GET_HIT(ch) = GET_PLAYER_MAX_HIT(ch);
+	GET_MANA(ch) = GET_PLAYER_MAX_MANA(ch);
+	GET_MOVE(ch) = GET_PLAYER_MAX_MOVE(ch);
+
+	GET_COND(ch, THIRST) = 24;
+	GET_COND(ch, FULL) = 24;
+	GET_COND(ch, DRUNK) = 0;
+
+	ch->specials.spells_to_learn = 3;
+	ch->player.time.played = 0;
+	ch->player.time.logon = time(0);
+}
+
+
+/* 
+ * do_stat refactoring, 251125 by Komo
+ * --- 1. 방 정보 출력 함수 --- 
+ */
+void perform_stat_room(struct char_data *ch, struct room_data *rm, char *buf, size_t size)
+{
+    size_t len = 0;
+    int i;
+    struct extra_descr_data *desc;
+    struct char_data *k;
+    struct obj_data *j;
+    char sbuf[256], sbuf2[256];
+
+    SAFE_PRINTF("Room: %s, Zone: %d. V-Num: %d, R-num: %d, Light: %d.\n\r", 
+                rm->name, rm->zone, rm->number, ch->in_room, rm->light);
+
+    sprinttype(rm->sector_type, sector_types, sbuf2);
+    SAFE_PRINTF("Sector type : %s\n\r", sbuf2);
+    
+    SAFE_PRINTF("Special procedure : %s", (rm->funct) ? "Exists\n\r" : "No\n\r");
+
+    sprintbit((long)rm->room_flags, room_bits, sbuf);
+    SAFE_PRINTF("Room flags: %s\n\r", sbuf);
+
+    SAFE_PRINTF("Description:\n\r%s", rm->description);
+
+    SAFE_PRINTF("Extra description keywords(s): ");
+    if (rm->ex_description) {
+        SAFE_PRINTF("\n\r");
+        for (desc = rm->ex_description; desc; desc = desc->next)
+            SAFE_PRINTF("%s\n\r", desc->keyword);
+        SAFE_PRINTF("\n\r");
+    } else {
+        SAFE_PRINTF("None\n\r");
+    }
+
+    SAFE_PRINTF("Chars present:\n\r");
+    for (k = rm->people; k; k = k->next_in_room) {
+        if (CAN_SEE(ch, k)) {
+            SAFE_PRINTF("%s%s", GET_NAME(k),
+                (!IS_NPC(k) ? "(PC)\n\r" : (!IS_MOB(k) ? "(NPC)\n\r" : "(MOB)\n\r")));
+        }
+    }
+    SAFE_PRINTF("\n\r");
+
+    SAFE_PRINTF("Contents:\n\r");
+    for (j = rm->contents; j; j = j->next_content) {
+        SAFE_PRINTF("%s\n\r", j->name);
+    }
+    SAFE_PRINTF("\n\r");
+
+    SAFE_PRINTF("Exits:\n\r");
+    for (i = 0; i <= 5; i++) {
+        if (rm->dir_option[i]) {
+            SAFE_PRINTF("Direction %s. Keyword : %s\n\r", dirs[i], rm->dir_option[i]->keyword);
+            SAFE_PRINTF("Description:\n\r  %s", 
+                rm->dir_option[i]->general_description ? rm->dir_option[i]->general_description : "UNDEFINED\n\r");
+            
+            sprintbit(rm->dir_option[i]->exit_info, exit_bits, sbuf2);
+            SAFE_PRINTF("Exit flag: %s\n\rKey #: %d\n\r", sbuf2, rm->dir_option[i]->key);
+            SAFE_PRINTF("To room(R-Num): %d\n\r", rm->dir_option[i]->to_room);
+        }
+    }
+}
+
+/* 
+ * do_stat refactoring, 251125 by Komo
+ * --- 2. 아이템 정보 출력 함수
+ */
+void perform_stat_object(struct char_data *ch, struct obj_data *j, char *buf, size_t size)
+{
+    size_t len = 0;
+    int i, virtual;
+    struct extra_descr_data *desc;
+    char sbuf[256], sbuf2[256];
+    extern struct index_data *obj_index;
+
+    virtual = (j->item_number >= 0) ? obj_index[j->item_number].virtual : 0;
+
+    SAFE_PRINTF("Object name: [%s], R-num: [%d], V-number: [%d]\n\r", j->name, j->item_number, virtual);
+    
+    sprinttype(GET_ITEM_TYPE(j), item_types, sbuf2);
+    SAFE_PRINTF("Item type: %s\n\r", sbuf2);
+
+    SAFE_PRINTF("Short desc: %s\n\rLong desc:\n\r%s\n\r",
+                ((j->short_description) ? j->short_description : "None"),
+                ((j->description) ? j->description : "None"));
+
+    SAFE_PRINTF("\n\rExtra desc keyword(s):\n\r");
+    if (j->ex_description) {
+        for (desc = j->ex_description; desc; desc = desc->next)
+            SAFE_PRINTF("%s\n\r", desc->keyword);
+    } else {
+        SAFE_PRINTF("None\n\r");
+    }
+
+    sprintbit(j->obj_flags.wear_flags, wear_bits, sbuf);
+    SAFE_PRINTF("\n\rCan be worn on : %s\n\r", sbuf);
+
+    sprintbit(j->obj_flags.extra_flags, extra_bits, sbuf);
+    SAFE_PRINTF("Extra flags: %s\n\r\n\r", sbuf);
+
+    SAFE_PRINTF("Weight: %d, Value: %d, Timer: %d\n\r", j->obj_flags.weight, j->obj_flags.cost, j->obj_flags.timer);
+    SAFE_PRINTF("Values 0-3 : [%d] [%d] [%d] [%d]\n\r",
+                j->obj_flags.value[0], j->obj_flags.value[1],
+                j->obj_flags.value[2], j->obj_flags.value[3]);
+
+    SAFE_PRINTF("Can affect char :\n\r");
+    for (i = 0; i < MAX_OBJ_AFFECT; ++i) {
+        sprinttype(j->affected[i].location, apply_types, sbuf2);
+        SAFE_PRINTF("  Affects: %s by %d\n\r", sbuf2, j->affected[i].modifier);
+    }
+}
+
+/* 
+ * do_stat refactoring, 251125 by Komo
+ * --- 3. 캐릭터 정보 출력 함수 --- 
+ * */
+void perform_stat_char(struct char_data *ch, struct char_data *k, char *buf, size_t size)
+{
+    size_t len = 0;
+    int i, i2, t;
+    struct follow_type *fol;
+    struct affected_type *aff;
+    char sbuf[256], sbuf2[256];
+    struct obj_data *j;
+
+    SAFE_PRINTF("Sex: %d, %s, Name: %s\n\r", 
+        k->player.sex, (!IS_NPC(k) ? "PC" : (!IS_MOB(k) ? "NPC" : "MOB")), GET_NAME(k));
+
+    if (IS_NPC(k)) {
+        SAFE_PRINTF("V-Number [%d]\n\r", mob_index[k->nr].virtual);
+        SAFE_PRINTF("Short desc: %s\n\r", (k->player.short_descr ? k->player.short_descr : "None"));
+        SAFE_PRINTF("Long desc: %s", (k->player.long_descr ? k->player.long_descr : "None.\n\r"));
+    } else {
+        SAFE_PRINTF("Title: %s\n\r", (k->player.title ? k->player.title : "None"));
+    }
+
+    sprinttype(k->player.class, pc_class_types, sbuf2);
+    SAFE_PRINTF("Class: %s  Level [%d] Alignment[%d]\n\r", sbuf2, k->player.level, k->specials.alignment);
+
+    /* 시간 출력 안전하게 처리 */
+    t = k->player.time.birth;
+    SAFE_PRINTF("Birth: %.24s, Logon: ", ctime((time_t *)&t));
+    t = k->player.time.logon;
+    SAFE_PRINTF("%.24s", ctime((time_t *)&t));
+
+    t = k->player.time.played;
+    i = t % 86400;
+    SAFE_PRINTF("\n\rPlayed: %d days, %d:%02d\n\r", t / 86400, i / 3600, (i + 30) % 60);
+
+    SAFE_PRINTF("Age: %d Y, %d M, %d D, %d H.  Ht: %d cm, Wt: %d lbs\n\r",
+        age(k).year, age(k).month, age(k).day, age(k).hours, GET_HEIGHT(k), GET_WEIGHT(k));
+
+    SAFE_PRINTF("Str:[%d/%d]  Int:[%d]  Wis:[%d]  Dex:[%d]  Con:[%d]\n\r",
+                GET_STR(k), GET_ADD(k), GET_INT(k), GET_WIS(k), GET_DEX(k), GET_CON(k));
+
+    SAFE_PRINTF("Mana: %ld/%ld+%d, Hits: %ld/%ld+%d, Moves: %ld/%ld+%d\n\r",
+                GET_MANA(k), mana_limit(k), mana_gain(k),
+                GET_HIT(k), hit_limit(k), hit_gain(k),
+                GET_MOVE(k), move_limit(k), move_gain(k));
+
+    SAFE_PRINTF("AC: %d/10, Hitroll: %d, Damroll: %d, Regen: %d\n\r",
+                GET_AC(k), k->points.hitroll, k->points.damroll, k->regeneration);
+    
+    SAFE_PRINTF("Gold: %lld, Bank: %lld, Exp: %lld\n\r", GET_GOLD(k), k->bank, GET_EXP(k));
+
+    if (IS_NPC(k)) {
+        SAFE_PRINTF("Special: %s", (mob_index[k->nr].func ? "Exists\n\r" : "None\n\r"));
+    }
+
+    /* Remortal 표시 */
+    SAFE_PRINTF("Remortal : ");
+    if (k->player.remortal & REMORTAL_MAGIC_USER) SAFE_PRINTF("M");
+    if (k->player.remortal & REMORTAL_CLERIC)     SAFE_PRINTF("C");
+    if (k->player.remortal & REMORTAL_THIEF)      SAFE_PRINTF("T");
+    if (k->player.remortal & REMORTAL_WARRIOR)    SAFE_PRINTF("W");
+    SAFE_PRINTF("\n\r");
+
+    SAFE_PRINTF("Bare Hand Damage %dd%d.\n\r", k->specials.damnodice, k->specials.damsizedice);
+    SAFE_PRINTF("Carried weight: %d   Carried items: %d\n\r", IS_CARRYING_W(k), IS_CARRYING_N(k));
+
+    for (i = 0, j = k->carrying; j; j = j->next_content, i++);
+    SAFE_PRINTF("Items in inv: %d, ", i);
+
+    for (i = 0, i2 = 0; i < MAX_WEAR; i++)
+        if (k->equipment[i]) i2++;
+    SAFE_PRINTF("Items in equ: %d\n\r", i2);
+
+    if (k->desc) {
+        sprinttype(k->desc->connected, connected_types, sbuf2);
+        SAFE_PRINTF("Connected: %s %s (%d)\n\r", sbuf2, k->desc->host, k->desc->descriptor);
+    }
+
+    if (IS_NPC(k)) {
+        sprintbit(k->specials.act, action_bits, sbuf2);
+        SAFE_PRINTF("NPC flags: %s\n\r", sbuf2);
+    } else {
+        sprintbit(k->specials.act, player_bits, sbuf2);
+        SAFE_PRINTF("PC flags: %s\n\r", sbuf2);
+    }
+
+    if (!IS_NPC(k)) {
+        SAFE_PRINTF("Thirst: %d, Hunger: %d, Drunk: %d\n\r",
+            k->specials.conditions[THIRST], k->specials.conditions[FULL], k->specials.conditions[DRUNK]);
+        SAFE_PRINTF("Practices: %d\n\r", k->specials.spells_to_learn);
+    }
+
+    SAFE_PRINTF("Master is '%s'\n\r", ((k->master) ? GET_NAME(k->master) : "NOBODY"));
+    
+    SAFE_PRINTF("Followers are:\n\r");
+    for (fol = k->followers; fol; fol = fol->next) {
+        SAFE_PRINTF("  %s", GET_NAME(fol->follower));
+    }
+    
+    sprintbit(k->specials.affected_by, affected_bits, sbuf);
+    SAFE_PRINTF("\n\rAffected by: %s\n\r", sbuf);
+
+    if (k->affected) {
+        SAFE_PRINTF("Affecting Spells:\n\r");
+        for (aff = k->affected; aff; aff = aff->next) {
+            const char *spell_name = "Unknown"; /* spells 배열 인덱스 검사 */
+            if (aff->type > 0 && aff->type <= MAX_SPL_LIST)
+                spell_name = spells[aff->type - 1];
+            
+            sprintbit(aff->bitvector, affected_bits, sbuf2);
+            SAFE_PRINTF("%s: %s by %d, %d hrs, bits: %s\n\r", 
+                spell_name, apply_types[(int)aff->location], aff->modifier, aff->duration, sbuf2);
+        }
+    }
+}
+
+/* --- 메인 do_stat 함수 --- */
+void do_stat(struct char_data *ch, char *argument, int cmd)
+{
+    char arg1[MAX_INPUT_LENGTH];
+    char page_buffer[16384]; /* page_buffer를 static으로 선언하지 않고, 넉넉하게 16KB 할당 */
+    struct room_data *rm = NULL;
+    struct char_data *k = NULL;
+    struct obj_data *j = NULL;
+    struct char_data *get_specific_vis(struct char_data * ch, char *name, int type);
+
+    if (IS_NPC(ch)) return;
+
+    one_argument(argument, arg1);
+
+    /* 도움말 추가 */
+    if (!*arg1) {
+        send_to_char("&W[STAT] Usage: stat <room | object | character name>&n\n\r", ch);
+        send_to_char("&W[STAT]   stat room      : 현재 있는 방의 정보 확인&n\n\r", ch);
+        send_to_char("&W[STAT]   stat <name>    : PC/NPC/아이템 정보 확인&n\n\r", ch);
+        return;
+    }
+
+    /* 초기화 */
+    page_buffer[0] = '\0';
+
+    /* ROOM 처리 */
+    if ((cmd != 232) && (cmd != 233) && (!str_cmp("room", arg1))) {
+        rm = &world[ch->in_room];
+        perform_stat_room(ch, rm, page_buffer, sizeof(page_buffer));
+    }
+    /* OBJECT 처리 */
+    else if ((cmd != 232) && (cmd != 233) && (j = get_obj_vis(ch, arg1))) {
+        perform_stat_object(ch, j, page_buffer, sizeof(page_buffer));
+    }
+    /* CHAR 처리 */
+    else {
+        if (cmd == 233)      k = get_specific_vis(ch, arg1, 0); /* PC only */
+        else if (cmd == 232) k = get_specific_vis(ch, arg1, 1); /* Mob only */
+        else                 k = get_char_vis(ch, arg1);        /* Both */
+
+        if (k) {
+            perform_stat_char(ch, k, page_buffer, sizeof(page_buffer));
+        } else {
+            send_to_char("[STAT] No mobile or object by that name in the world.\n\r", ch);
+            return;
+        }
+    }
+
+    /* 최종 출력 */
+    page_string(ch->desc, page_buffer, 1);
+}
+
+
+void do_switch(struct char_data *ch, char *argument, int cmd)
+{
+	char arg[MAX_STRING_LENGTH];
+	struct char_data *victim;
+
+	if (IS_NPC(ch))
+		return;
+	one_argument(argument, arg);
+	if (!*arg) {
+		send_to_char("&W[SWITCH]&n Switch with who?\n\r", ch);
+	} else {
+		if (!(victim = get_char(arg)))
+			send_to_char("&W[SWITCH]&n They aren't here.\n\r", ch);
+		else {
+			if (ch == victim) {
+				send_to_char("&W[SWITCH]&n He he he... We are jolly funny today, eh?\n\r", ch);
+				return;
+			}
+			if (!ch->desc || ch->desc->snoop.snoop_by ||
+			    ch->desc->snoop.snooping) {
+				send_to_char("&W[SWITCH]&n You can't do that, the body is already in use.\n\r", ch);
+				return;
+			}
+			if (victim->desc || (!IS_NPC(victim))) {
+				if (GET_LEVEL(victim) > GET_LEVEL(ch))
+					send_to_char("&W[SWITCH]&n They aren't here.\n\r", ch);
+				else
+					send_to_char("&W[SWITCH]&n You can't do that, the body is already in use!\n\r", ch);
+			} else {
+				send_to_char("&W[SWITCH]&n Ok.\n\r", ch);
+				ch->desc->character = victim;
+				ch->desc->original = ch;
+				victim->desc = ch->desc;
+				ch->desc = 0;
+			}
+		}
 	}
 }
+
 void do_sys(struct char_data *ch, char *argument, int cmd)
 {
 	struct rusage xru;
@@ -2052,6 +1824,197 @@ void do_sys(struct char_data *ch, char *argument, int cmd)
 	snprintf(buffer, sizeof(buffer), " objects: %d\n\r   chars: %d\n\r players: %d\n\r",
 		nits, nics, nids);
 	send_to_char(buffer, ch);
+}
+
+/* send_to_room_except 대체 및 출력 방식 등 수정, by Komo */
+void do_trans(struct char_data *ch, char *argument, int cmd)
+{
+	struct descriptor_data *i;
+	struct char_data *victim;
+	char buf[100];
+	int target;
+
+	if (IS_NPC(ch))
+		return;
+
+	one_argument(argument, buf);
+	if (!*buf)
+		send_to_char("Who do you wich to transfer?\n\r", ch);
+	else if (str_cmp("all", buf)) {
+		if (!(victim = get_char_vis(ch, buf)))
+			send_to_char("No-one by that name around.\n\r", ch);
+		else {
+			if (GET_LEVEL(ch) < IMO + 3 && GET_LEVEL(victim) > GET_LEVEL
+			    (ch)) {
+				send_to_char("That might not be appreciated.\n\r", ch);
+				return;
+			}
+			act("$n disappears in a mushroom cloud.", FALSE,
+			    victim, 0, 0, TO_ROOM);
+			target = ch->in_room;
+			char_from_room(victim);
+			char_to_room(victim, target);
+			act("$n arrives from a puff of smoke.", FALSE, victim,
+			    0, 0, TO_ROOM);
+			act("$n has transferred you!", FALSE, ch, 0, victim, TO_VICT);
+			do_look(victim, "", 15);
+			send_to_char("Ok.\n\r", ch);
+		}
+	} else {		/* Trans All */
+		if (ch->player.level >= (IMO + 3))
+			for (i = descriptor_list; i; i = i->next)
+				if (i->character != ch && !i->connected) {
+					target = ch->in_room;
+					victim = i->character;
+					char_from_room(victim);
+					char_to_room(victim, target);
+					act("$n arrives from a puff of smoke.",
+					    FALSE, victim, 0, 0, TO_ROOM);
+					act("$n has transferred you!", FALSE,
+					    ch, 0, victim, TO_VICT);
+					do_look(victim, "", 15);
+				}
+		send_to_char("Ok.\n\r", ch);
+	}
+}
+
+void do_transform(struct char_data *ch, char *argument, int cmd)
+{
+	struct char_data *tmp_ch;
+	struct char_file_u tmp;
+	int i_player;
+	char buf[200];
+
+	return;
+	if (IS_NPC(ch))
+		return;
+	one_argument(argument, buf);
+	if (*buf)
+		return;
+	for (tmp_ch = character_list; tmp_ch; tmp_ch = tmp_ch->next) {
+		if (!strcmp(buf, GET_NAME(tmp_ch)) && !IS_NPC(tmp_ch)) {
+			send_to_char("Body already in game.\n\r", ch);
+			return;
+		}
+	}
+	if ((i_player = load_char(buf, &tmp)) < 0) {
+		send_to_char("No such player\n\r", ch);
+		return;
+	}
+	store_to_char_for_transform(&tmp, ch->desc->original);
+	store_to_char_for_transform(&tmp, ch);
+	ch->desc->pos = player_table[i_player].nr;
+	unstash_char(ch, 0);
+	stash_char(ch);
+}
+
+void do_wall(struct char_data *ch, char *argument, int cmd)
+{
+	char buf[MAX_STRING_LENGTH];
+
+	if (IS_NPC(ch) || (!*argument) || GET_LEVEL(ch) > (IMO + 3))
+		return;
+	snprintf(buf, sizeof(buf), "%s\n\r", argument + 1);
+	send_to_all(buf);
+	send_to_char("[WALL] Ok.\n\r", ch);
+}
+
+void do_wiznet(struct char_data *ch, char *argument, int cmd)
+{
+	struct descriptor_data *d;
+	struct char_data *victim;
+	char buf[MAX_STRING_LENGTH];
+
+	if (IS_NPC(ch))
+		return;
+	snprintf(buf, sizeof(buf), "[WIZNET]&T %s: %s&n\n\r", ch->player.name, argument);
+	send_to_char(buf, ch);
+
+	for (d = descriptor_list; d; d = d->next) {
+		if (!d->connected || d->original) continue;
+		victim = d->character;
+		if(victim == ch) continue;
+
+		if ((GET_LEVEL(victim) >= IMO) && (GET_LEVEL(victim) <= (IMO + 4)))
+			send_to_char(buf, victim);
+	}
+}
+// qsort 정렬을 위한 비교 함수 - 내림차순
+int compare_to_descending_order(const void *a, const void *b) {
+    return (*(ubyte *)b - *(ubyte *)a);
+}
+
+/* Give pointers to the five abilities */
+// FIXME: db.c t
+void roll_abilities(struct char_data *ch)
+{
+    int i, result;
+    ubyte table[5];
+
+    // 능력치 5개 생성
+    for (i = 0; i < 5; i++) {
+        /* 1~7 사이의 숫자 4개를 더하는 원래의 로직을 dice 함수로 수정(4D7), by Komo */
+        result = dice(4, 7);
+        
+        if (result > 18) result = 18;
+        
+        table[i] = (ubyte)result;
+    }
+
+    // 가장 높은 값이 table[0]에 오도록 내림차순 정렬, qsort here:
+    qsort(table, 5, sizeof(ubyte), compare_to_descending_order);
+
+    ch->abilities.str_add = 0;
+
+    // 직업별로 가장 높은 스탯부터 중요도 순으로 할당
+    switch (GET_CLASS(ch)) {
+        case CLASS_MAGIC_USER:
+            ch->abilities.intel = table[0]; // 1순위
+            ch->abilities.wis   = table[1];
+            ch->abilities.dex   = table[2];
+            ch->abilities.str   = table[3];
+            ch->abilities.con   = table[4]; // 5순위
+            break;
+
+        case CLASS_CLERIC:
+            ch->abilities.wis   = table[0];
+            ch->abilities.intel = table[1];
+            ch->abilities.str   = table[2];
+            ch->abilities.dex   = table[3];
+            ch->abilities.con   = table[4];
+            break;
+
+        case CLASS_THIEF:
+            ch->abilities.dex   = table[0];
+            ch->abilities.str   = table[1];
+            ch->abilities.con   = table[2];
+            ch->abilities.intel = table[3];
+            ch->abilities.wis   = table[4];
+            break;
+
+        case CLASS_WARRIOR:
+            ch->abilities.str   = table[0];
+            ch->abilities.dex   = table[1];
+            ch->abilities.con   = table[2];
+            ch->abilities.wis   = table[3];
+            ch->abilities.intel = table[4];
+
+            // W이고 힘이 18이면 str_add도 랜덤 부여
+            if (ch->abilities.str == 18)
+                ch->abilities.str_add = number(0, 100);
+            break;
+            
+        default:
+            // 혹시 모를 예외 처리 (W 세팅으로)
+            ch->abilities.str = table[0];
+            ch->abilities.dex = table[1];
+            ch->abilities.con = table[2];
+            ch->abilities.wis = table[3];
+            ch->abilities.intel = table[4];
+            break;
+    }
+
+    ch->tmpabilities = ch->abilities;
 }
 
 
@@ -2098,7 +2061,7 @@ void do_zreload(struct char_data *ch, char *argument, int cmd)
 
     snprintf(buf, sizeof(buf), "[ZRELOAD] (GC) %s reloaded Zone %d (%s).", 
             GET_NAME(ch), target_zone_num, zone_table[zone_rnum].filename);
-    mudlog(buf);
+    log(buf);
 
     load_zones(zone_rnum);
 
@@ -2159,7 +2122,7 @@ void do_wreload(struct char_data *ch, char *argument, int cmd)
 
     /* 로그 및 메시지 */
     snprintf(buf, sizeof(buf), "[WRELOAD] (GC) %s reloaded World file for Zone %d.", GET_NAME(ch), target_zone_num);
-    mudlog(buf);
+    log(buf);
     
     snprintf(buf, sizeof(buf), "&c[WRELOAD]&n 존 %d번 월드 데이터(%s) 업데이트 완료.\r\n"
 				 "&c[WRELOAD]&n 동기화를 위해 zreload 실행을 권장합니다.\r\n"
@@ -2190,17 +2153,17 @@ void do_zonelist(struct char_data *ch, char *argument, int cmd)
 
     for (i = 0; i <= top_of_zone_table; i++) {
         
-        sprintf(zon_name_fmt, "%-30.30s", zone_table[i].name ? zone_table[i].name : "<No Name>");
+        snprintf(zon_name_fmt, sizeof(zon_name_fmt), "%-30.30s", zone_table[i].name ? zone_table[i].name : "<No Name>");
 
         if (zone_table[i].wld_filename && *zone_table[i].wld_filename) {
             char *fname = strrchr(zone_table[i].wld_filename, '/');
-            sprintf(wld_status, "%-25.25s", fname ? fname + 1 : zone_table[i].wld_filename);
+            snprintf(wld_status, sizeof(wld_status), "%-25.25s", fname ? fname + 1 : zone_table[i].wld_filename);
         } else {
-            sprintf(wld_status, "%-25s", "---");
+            snprintf(wld_status, sizeof(wld_status), "%-25s", "---");
         }
 
         char *zname = strrchr(zone_table[i].filename, '/');
-        sprintf(zon_file_display, "%-25.25s", zname ? zname + 1 : zone_table[i].filename);
+        snprintf(zon_file_display, sizeof(zon_file_display), "%-25.25s", zname ? zname + 1 : zone_table[i].filename);
 
         len += snprintf(buf + len, buf_size - len, 
             "[%3d] [%5d] [%5d] %s %s %s\r\n",

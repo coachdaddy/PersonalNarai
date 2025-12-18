@@ -31,13 +31,11 @@ void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
 void set_fighting(struct char_data *ch, struct char_data *victim);
 void stop_fighting(struct char_data *ch);
 void do_say(struct char_data *ch, char *arg, int cmd);
-void mudlog(const char *str);
+
 bool saves_spell(struct char_data *ch, int type);
 int str_cmp(char *arg1, char *arg2);
 int do_simple_move(struct char_data *ch, int cmd, int following);
 int number(int from, int to);
-// int MIN(int a, int b);
-// int MAX(int a, int b);
 void die(struct char_data *ch, int level, struct char_data *v);
 void first_attack(struct char_data *ch, struct char_data *victim);
 
@@ -60,7 +58,6 @@ void do_hit(struct char_data *ch, char *argument, int cmd)
 				act("$n hits $mself, and says OUCH!", FALSE,
 				    ch, 0, victim, TO_ROOM);
 			} else {
-
 				if (nokillflag)
 					if ((!IS_NPC(ch)) && (!IS_NPC(victim)))
 						return;
@@ -91,7 +88,7 @@ void do_hit(struct char_data *ch, char *argument, int cmd)
 						WAIT_STATE(ch, PULSE_VIOLENCE
 							   + 2);	/* HVORFOR DET?? */
 				} else {
-					send_to_char("You do the best you can!\n\r", ch);
+					send_to_char("You're doing the best you can!\n\r", ch);
 				}
 			}
 		} else {
@@ -109,7 +106,7 @@ void do_kill(struct char_data *ch, char *argument, int cmd)
 
 	if (GET_LEVEL(ch) >= IMO && GET_LEVEL(ch) < IMO + 3) {
 		snprintf(buf, sizeof(buf), "Fight IMO:%s v.s. %s", GET_NAME(ch), argument);
-		mudlog(buf);
+		log(buf);
 		return;
 	}
 	if ((GET_LEVEL(ch) < IMO) || IS_NPC(ch)) {
@@ -214,8 +211,7 @@ void do_order(struct char_data *ch, char *argument, int cmd)
 			act("$n gives $N an order.", FALSE, ch, 0, victim, TO_ROOM);
 			if ((victim->master != ch) || (victim &&
 									      !IS_AFFECTED(victim, AFF_CHARM)))
-				act("$n has an indifferent look.", FALSE,
-				    victim, 0, 0, TO_ROOM);
+				act("$n has an indifferent look.", FALSE, victim, 0, 0, TO_ROOM);
 			else {
 				send_to_char("Ok.\n\r", ch);
 				if (!IS_NPC(victim))
@@ -230,8 +226,7 @@ void do_order(struct char_data *ch, char *argument, int cmd)
 
 			for (k = ch->followers; k; k = k->next) {
 				if (org_room == k->follower->in_room)
-					if (k->follower &&
-								       IS_AFFECTED(k->follower, AFF_CHARM)) {
+					if (k->follower && IS_AFFECTED(k->follower, AFF_CHARM)) {
 						found = TRUE;
 						if (!IS_NPC(k->follower))
 							WAIT_STATE(k->follower, PULSE_VIOLENCE);
@@ -260,8 +255,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 		for (i = 0; i < 6; i++) {
 			attempt = number(0, 5);		/* Select a random direction */
 			if (CAN_GO(ch, attempt)) {
-				act("$n panics, and attempts to flee.",
-				    TRUE, ch, 0, 0, TO_ROOM);
+				act("$n panics, and attempts to flee.", TRUE, ch, 0, 0, TO_ROOM);
 				if ((die = do_simple_move(ch, attempt, FALSE)) == 1) {
 					/* The escape has succeded */
 					send_to_char("You flee head over heels.\n\r", ch);
@@ -272,7 +266,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 					return;
 				}
 			}
-		}		/* for */
+		}
 		/* No exits were found */
 		send_to_char("PANIC! You couldn't escape!\n\r", ch);
 		return;
@@ -371,13 +365,14 @@ void do_bash(struct char_data *ch, char *argument, int cmd)
 								      SKILL_BASH)
 							  >> 5)));
 		dam = GET_LEVEL(ch) * (10 + GET_SKILLED(ch, SKILL_BASH));
-		damage(ch, victim, dam, SKILL_BASH);
-
+		
 		percent = number(1, IMO << 1);
 		if (percent < GET_LEVEL(ch))
 			GET_POS(victim) = POSITION_STUNNED;
 		else
 			GET_POS(victim) = POSITION_SITTING;
+
+		damage(ch, victim, dam, SKILL_BASH);
 	}
 	WAIT_STATE(ch, PULSE_VIOLENCE * 2);
 }
@@ -426,8 +421,7 @@ void do_rescue(struct char_data *ch, char *argument, int cmd)
 
 	INCREASE_SKILLED(ch, victim, SKILL_RESCUE);
 	send_to_char("Yaho! To the rescue...\n\r", ch);
-	act("You are rescued by $N, you are confused!",
-	    FALSE, victim, 0, ch, TO_CHAR);
+	act("You are rescued by $N, you are confused!", FALSE, victim, 0, ch, TO_CHAR);
 	act("$n heroically rescues $N.", FALSE, ch, 0, victim, TO_NOTVICT);
 	WAIT_STATE(victim, 2 * PULSE_VIOLENCE);
 	if (victim->specials.fighting == tmp_ch)
@@ -475,8 +469,7 @@ void do_multi_kick(struct char_data *ch, char *argument, int cmd)
 
 	i = 2 + (GET_LEVEL(ch) >> 3) + (GET_SKILLED(ch, SKILL_MULTI_KICK) >> 4);
 	for (; i; i--) {
-		percent = ((200 - GET_AC(victim) - GET_HITROLL(ch)) >> 5) + number
-		    (1, 101);
+		percent = ((200 - GET_AC(victim) - GET_HITROLL(ch)) >> 5) + number(1, 101);
 		if (percent > GET_LEARNED(ch, SKILL_MULTI_KICK)) {
 			damage(ch, victim, 0, SKILL_KICK);
 		} else {
@@ -620,8 +613,7 @@ void do_light_move(struct char_data *ch, char *argument, int cmd)
 
 	WAIT_STATE(ch, PULSE_VIOLENCE / 3);
 	if ((victim = ch->specials.fighting)) {
-		if (ch->skills[SKILL_LIGHT_MOVE].learned > 10 &&
-		    ch->points.mana > 0) {
+		if (ch->skills[SKILL_LIGHT_MOVE].learned > 10 && ch->points.mana > 0) {
 			hit(ch, victim, TYPE_UNDEFINED);
 			ch->points.mana -= (IMO << 1) - GET_LEVEL(ch);
 			if ((GET_LEVEL(ch) + 1) * number(2, 3) +
@@ -673,7 +665,7 @@ void do_flash(struct char_data *ch, char *argument, int cmd)
 		WAIT_STATE(ch, PULSE_VIOLENCE / 2);
 
 	if (percent > ch->skills[SKILL_FLASH].learned) {
-		send_to_char("You can't get chance ...\n\r", ch);
+		send_to_char("You can't get a chance...\n\r", ch);
 		act("$n tried a flash attack $N, but failed."
 		    ,FALSE, ch, 0, victim, TO_NOTVICT);
 		damage(ch, victim, 0, SKILL_FLASH);

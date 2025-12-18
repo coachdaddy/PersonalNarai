@@ -12,10 +12,10 @@
 
 #include "structs.h"
 #include "utils.h"
+#include "db.h"
 #include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
-#include "db.h"
 #include "spells.h"
 
 #include <sys/time.h>
@@ -26,8 +26,6 @@ extern struct descriptor_data *descriptor_list;
 
 /* extern functions */
 int file_to_string(char *name, char *buf);  /* in db.c */
-void prune_crlf(char *txt);                                     /* in utility.c 251130 */
-void utf8_safe_strncpy(char *dest, const char *src, size_t n); /* in utility.c 251130 */
 
 #define MAX_HISTORY_MSG 512  // 넉넉한 크기
 #define HISTORY_SIZE 100     // 20 -> 100으로 확장, 251124 by Komo
@@ -44,7 +42,6 @@ void do_say(struct char_data *ch, char *argument, int cmd)
         return;
     }
 
-    prune_crlf(argument); // 251130 by Komo
     for (; *argument == ' '; argument++);
 
     if (!*argument)
@@ -65,7 +62,6 @@ void do_sayh(struct char_data *ch, char *argument, int cmd)
         return;
     }
 
-    prune_crlf(argument); // 251130 by Komo
     for (; *argument == ' '; argument++);
 
     if (!*argument)
@@ -85,15 +81,16 @@ void do_sayh(struct char_data *ch, char *argument, int cmd)
 /* 채팅 : 히스토리와 로그 파일에 저장하는 공통 함수 */
 void save_chat_history(struct char_data *ch, char *argument)
 {
-    char buf[MAX_HISTORY_MSG];      // 날짜용
-    char temp_msg[MAX_INPUT_LENGTH]; // 전체 메시지 조립용 임시 버퍼
+    char buf[MAX_HISTORY_MSG];
     time_t tt = time(NULL);
     
     strftime(buf, sizeof(buf), "%F %H:%M", localtime(&tt));
     
-    snprintf(temp_msg, sizeof(temp_msg), "%s %s> %s\n\r", &buf[5], GET_NAME(ch), argument);
+    int len = strlen(buf);
+    snprintf(buf + len, sizeof(buf) - len, " %s> %s\n\r", GET_NAME(ch), argument);
 
-    utf8_safe_strncpy(history[his_end], temp_msg, MAX_HISTORY_MSG);
+    strncpy(history[his_end], &buf[5], MAX_HISTORY_MSG - 1); // &buf[5]는 연도(YYYY-)를 떼고 저장
+    history[his_end][MAX_HISTORY_MSG - 1] = '\0'; // 안전장치
 
     his_end = (his_end + 1) % HISTORY_SIZE;
 
@@ -106,7 +103,7 @@ void save_chat_history(struct char_data *ch, char *argument)
         chatlogfp = fopen(CHATLOG, "a");
 
     if (chatlogfp) {
-        fprintf(chatlogfp, "%s %s> %s\n", buf, GET_NAME(ch), argument); 
+        fputs(buf, chatlogfp);
         fflush(chatlogfp);
     }
 }
@@ -132,7 +129,6 @@ void do_shout(struct char_data *ch, char *argument, int cmd)
             return;
         }
     
-    prune_crlf(argument); // 251130 by Komo
     for (; *argument == ' '; argument++);
 
     if (!(*argument))
@@ -152,11 +148,11 @@ void do_shout(struct char_data *ch, char *argument, int cmd)
     }
 }
 
-/*
 void do_chat(struct char_data *ch, char *argument, int cmd)
 {
     struct descriptor_data *d;
     char buf[MAX_STRING_LENGTH];
+    struct char_data *victim, *prefs; /* 메시지를 받을 대상, 설정을 확인할 대상 (본체) */
     
     extern int nochatflag;
 
@@ -169,32 +165,27 @@ void do_chat(struct char_data *ch, char *argument, int cmd)
         send_to_char("The global telepathic channels are currently closed by the Gods.\n\r", ch);
         return;
     }
-    if (IS_NPC(ch)) {
-        send_to_char("몬스터는 채팅 채널을 사용할 수 없습니다.\r\n", ch);
-        return;
-    }
-    if (ch->desc && ch->desc->original) {
-        send_to_char("몬스터 몸에 있을 때에는 이 명령을 사용하실 수 없습니다.\r\n", ch);
-        return;
-    }
+    if (IS_NPC(ch)) return;
 
-    prune_crlf(argument); // 251130 by Komo
     for (; *argument == ' '; argument++);
-    
+
     save_chat_history(ch, argument);
 
     snprintf(buf, sizeof(buf), "%s> %s\n\r", GET_NAME(ch), argument);
     
     for (d = descriptor_list; d; d = d->next) {
-        if (d->connected) continue;
-
-        struct char_data *victim = d->character;
-        if (victim && !IS_SET(victim->specials.act, PLR_NOCHAT)) { // 대상이 존재하고, PLR_NOCHAT 상태가 아니라면 전송
-             send_to_char(buf, victim);
+        if (d->connected != CON_PLAYING) continue;
+        
+        victim = d->character;
+        prefs = (d->original ? d->original : d->character);
+        
+        if (!victim || IS_SET(prefs->specials.act, PLR_NOCHAT)) {
+            continue;
         }
+        
+        send_to_char(buf, victim);
     }
 }
-*/
 
 void do_lastchat(struct char_data *ch, char *argument, int cmd)
 {
@@ -217,7 +208,7 @@ void do_tell(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
-	prune_crlf(argument); // 251130 by Komo
+	
 	half_chop(argument, name, message);
 	if (!*name || !*message)
 		send_to_char("Who do you wish to tell what??\n\r", ch);
@@ -259,7 +250,6 @@ void do_send(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
-	prune_crlf(argument); // 251130 by Komo
 	half_chop(argument, name, message);
 	snprintf(paint_name, sizeof(paint_name), "paints/%s", message);
 	if (!*name || !*message)
@@ -293,7 +283,6 @@ void do_gtell(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
-	prune_crlf(argument); // 251130 by Komo
 	if (!(k = ch->master))
 		k = ch;
 	if (IS_NPC(ch))
@@ -320,7 +309,6 @@ void do_whisper(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
-	prune_crlf(argument); // 251130 by Komo
 	half_chop(argument, name, message);
 
 	if (!*name || !*message)
@@ -349,7 +337,6 @@ void do_ask(struct char_data *ch, char *argument, int cmd)
 	if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
 		return;
 	}
-	prune_crlf(argument); // 251130 by Komo
 	half_chop(argument, name, message);
 
 	if (!*name || !*message)

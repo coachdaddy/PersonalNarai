@@ -1,5 +1,9 @@
 #ifndef _STRUCTS_H_
 #define _STRUCTS_H_
+/************************************************************************
+ *  file: structs.h , structures and defines used by the MUD         *
+ *  Usage: All structs are defined here.                                *
+ ************************************************************************/
 #include <sys/types.h>
 #include <stdlib.h>
 
@@ -13,39 +17,41 @@ typedef unsigned short byte;
 
 typedef long long LONGLONG;
 
-#ifndef TICS_PER_SEC
-#define TICS_PER_SEC 5
-#endif
+#define IMO 61
 
-#define IMO		61
+/*
+#define PULSE_MOBILE    41
+*/
+#define PULSE_MOBILE 39
+#define PULSE_MOBILE2 13
 
-#define PULSE_ZONE      (60 * TICS_PER_SEC) // 1 min
-#define PULSE_VIOLENCE  12
-#define PULSE_MOBILE    39
-#define PULSE_MOBILE2   13
+#define PULSE_ZONE 240
+#define PULSE_VIOLENCE 12
+#define WAIT_SEC 4
+#define WAIT_ROUND 4
 
-#define WAIT_SEC        TICS_PER_SEC
-#define WAIT_ROUND      TICS_PER_SEC
-
-#define MAX_STRING_LENGTH   4096
-#define MAX_OUTPUT_LENGTH   5000
-#define MAX_INPUT_LENGTH    2048
-#define MAX_MESSAGES          61
-#define MAX_ITEMS            153
+// #define MAX_STRING_LENGTH   2000
+#define MAX_STRING_LENGTH 4096
+// #define MAX_OUTPUT_LENGTH 512 -> 251110
+#define MAX_OUTPUT_LENGTH 5000
+// #define MAX_INPUT_LENGTH 500 -> 251027
+#define MAX_INPUT_LENGTH 2048
+#define MAX_MESSAGES 61
+#define MAX_ITEMS 153
 
 #define MESS_ATTACKER 1
-#define MESS_VICTIM   2
-#define MESS_ROOM     3
+#define MESS_VICTIM 2
+#define MESS_ROOM 3
 
-#define SECS_PER_REAL_MIN  60
-#define SECS_PER_REAL_HOUR (60*SECS_PER_REAL_MIN)
-#define SECS_PER_REAL_DAY  (24*SECS_PER_REAL_HOUR)
-#define SECS_PER_REAL_YEAR (365*SECS_PER_REAL_DAY)
+#define SECS_PER_REAL_MIN 60
+#define SECS_PER_REAL_HOUR (60 * SECS_PER_REAL_MIN)
+#define SECS_PER_REAL_DAY (24 * SECS_PER_REAL_HOUR)
+#define SECS_PER_REAL_YEAR (365 * SECS_PER_REAL_DAY)
 
-#define SECS_PER_MUD_HOUR  60
-#define SECS_PER_MUD_DAY   (24*SECS_PER_MUD_HOUR)
-#define SECS_PER_MUD_MONTH (35*SECS_PER_MUD_DAY)
-#define SECS_PER_MUD_YEAR  (17*SECS_PER_MUD_MONTH)
+#define SECS_PER_MUD_HOUR 60
+#define SECS_PER_MUD_DAY (24 * SECS_PER_MUD_HOUR)
+#define SECS_PER_MUD_MONTH (35 * SECS_PER_MUD_DAY)
+#define SECS_PER_MUD_YEAR (17 * SECS_PER_MUD_MONTH)
 
 /* ======================================================================= */
 /* The following defs are for obj_data  */
@@ -687,7 +693,7 @@ struct txt_q {
 };
 
 /* modes of connectedness */
-#define CON_PLYNG   0
+#define CON_PLAYING   0
 #define CON_NME     1
 #define CON_NMECNF  2
 #define CON_PWDNRM  3
@@ -799,12 +805,5 @@ struct con_app_type {
 	int hitp;
 	int shock;
 };
-
-/* prototypes.h 적용 후 */
-struct player_index_element;
-
-#ifndef NO_PROTOTYPES
-#include "prototypes.h"
-#endif
 
 #endif /* _STRUCTS_H_ */

@@ -11,19 +11,200 @@
 #include "structs.h"
 #include "utils.h"
 #include "comm.h"
-#include "handler.h"
-#include "interpreter.h"
 #include "db.h"
+#include "interpreter.h"
 #include "spells.h"
-
-#include "guild_list.h"
-#include "prototypes.h"
-
+#include "handler.h"
 
 /* Global data */
+
 extern struct room_data *world;
 extern struct char_data *character_list;
 extern char *spell_wear_off_msg[];
+
+/* Extern procedures */
+int number(int from, int to);
+int str_cmp(char *arg1, char *arg2);
+
+/* Extern procedures */
+void cast_armor(byte level, struct char_data *ch, char *arg, int si,
+		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_teleport(byte level, struct char_data *ch, char *arg, int si,
+		   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_bless(byte level, struct char_data *ch, char *arg, int si,
+		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_damage_up(byte level, struct char_data *ch, char *arg, int si,
+		    struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_crush_armor(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_blindness(byte level, struct char_data *ch, char *arg, int si,
+		    struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_burning_hands(byte level, struct char_data *ch, char *arg, int si,
+			struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_call_lightning(byte level, struct char_data *ch, char *arg, int si,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_charm_person(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_chill_touch(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_shocking_grasp(byte level, struct char_data *ch, char *arg, int si,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_color_spray(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_create_food(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_create_water(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_cure_blind(byte level, struct char_data *ch, char *arg, int si,
+		     struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_cure_critic(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_cause_critic(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_mana_boost(byte level, struct char_data *ch, char *arg, int si,
+		     struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_vitalize(byte level, struct char_data *ch, char *arg, int si,
+		   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_cure_light(byte level, struct char_data *ch, char *arg, int si,
+		     struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_cause_light(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_curse(byte level, struct char_data *ch, char *arg, int si,
+		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_detect_evil(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_detect_invisibility(byte level, struct char_data *ch, char *arg, int si,
+			      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_recharger(byte level, struct char_data *ch, char *arg, int si,
+		    struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_preach(byte level, struct char_data *ch, char *arg, int si,
+		 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_dispel_evil(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_earthquake(byte level, struct char_data *ch, char *arg, int si,
+		     struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_all_heal(byte level, struct char_data *ch, char *arg, int si,
+		   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_hand_of_god(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_fire_storm(byte level, struct char_data *ch, char *arg, int si,
+		     struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_enchant_weapon(byte level, struct char_data *ch, char *arg, int si,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_enchant_armor(byte level, struct char_data *ch, char *arg, int si,
+			struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_enchant_person(byte level, struct char_data *ch, char *arg, int si,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_pray_for_armor(byte level, struct char_data *ch, char *arg, int si,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_energy_drain(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_fireball(byte level, struct char_data *ch, char *arg, int si,
+		   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_full_fire(byte level, struct char_data *ch, char *arg, int si,
+		    struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_throw(byte level, struct char_data *ch, char *arg, int si,
+		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_energyflow(byte level, struct char_data *ch, char *arg, int si,
+		     struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_sunburst(byte level, struct char_data *ch, char *arg, int si,
+		   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_disintegrate(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_harm(byte level, struct char_data *ch, char *arg, int si,
+	       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_heal(byte level, struct char_data *ch, char *arg, int si,
+	       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_full_heal(byte level, struct char_data *ch, char *arg, int si,
+		    struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_entire_heal(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_invisibility(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_lightning_bolt(byte level, struct char_data *ch, char *arg, int si,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_locate_object(byte level, struct char_data *ch, char *arg, int si,
+			struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_magic_missile(byte level, struct char_data *ch, char *arg, int si,
+			struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_poison(byte level, struct char_data *ch, char *arg, int si,
+		 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_protection_from_evil(byte level, struct char_data *ch, char *arg,
+			       int si, struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_remove_curse(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_sanctuary(byte level, struct char_data *ch, char *arg, int si,
+		    struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_infravision(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_sleep(byte level, struct char_data *ch, char *arg, int si,
+		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_strength(byte level, struct char_data *ch, char *arg, int si,
+		   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_summon(byte level, struct char_data *ch, char *arg, int si,
+		 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_relocate(byte level, struct char_data *ch, char *arg, int si,
+		   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_far_look(byte level, struct char_data *ch, char *arg, int si,
+		   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_ventriloquate(byte level, struct char_data *ch, char *arg, int si,
+			struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_word_of_recall(byte level, struct char_data *ch, char *arg, int si,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_remove_poison(byte level, struct char_data *ch, char *arg, int si,
+			struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_sense_life(byte level, struct char_data *ch, char *arg, int si,
+		     struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_identify(byte level, struct char_data *ch, char *arg, int si,
+		   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_reanimate(byte level, struct char_data *ch, char *arg, int si,
+		    struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_clone(byte level, struct char_data *ch, char *arg, int si,
+		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_trick(byte level, struct char_data *ch, char *arg, int si,
+		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_haste(byte level, struct char_data *ch, char *arg, int si,
+		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_improved_haste(byte level, struct char_data *ch, char *arg, int si,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_create_nectar(byte level, struct char_data *ch, char *arg, int si,
+			struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_create_golden_nectar(byte level, struct char_data *ch, char *arg, int si,
+			       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_corn_of_ice(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_phase(byte level, struct char_data *ch, char *arg, int si,
+		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_mirror_image(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_love(byte level, struct char_data *ch, char *arg, int si,
+	       struct char_data *tar_ch, struct obj_data *tar_obj);
+   /* LOVE spell perhaps written */
+// void cast_reraise(byte level, struct char_data *ch, char *arg, int si,
+// 		  struct char_data *tar_ch, struct obj_data *tar_obj);
+   /* reraise spell chase written */
+// void cast_death(byte level, struct char_data *ch, char *arg, int si,
+// 		struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_spell_block(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_mana_transfer(byte level, struct char_data *ch, char *arg, int si,
+			struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_self_heal(byte level, struct char_data *ch, char *arg, int si,
+		    struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_holy_shield(byte level, struct char_data *ch, char *arg, int si,
+		      struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_restore_move(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+// void cast_kiss_of_process(byte level, struct char_data *ch, char *arg, int si,
+// 			  struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_reflect_damage(byte level, struct char_data *ch, char *arg, int si,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_dumb(byte level, struct char_data *ch, char *arg, int si,
+	       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_thunder_bolt(byte level, struct char_data *ch, char *arg, int si,
+		       struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_sanctuary_cloud(byte level, struct char_data *ch, char *arg, int si,
+			  struct char_data *tar_ch, struct obj_data *tar_obj);
 
 struct spell_info_type spell_info[MAX_SPL_LIST];
 
@@ -829,10 +1010,7 @@ void SPELLO(int nr, byte beat, byte pos, int l0, int l1, int l2, int l3,
 	spell_info[nr].max_skill[3] = (s3);
 	spell_info[nr].targets = (tar);
 
-	if( prev != -1)
-	{ 
-		DEBUG_LOG("%s (%d)'s previous spell: %s (%d).", spells[nr-1], nr, spells[prev-1], prev);
-	}
+	DEBUG_LOG("spell number %d, %s prev: %d side: %d.", nr, spells[nr-1], prev, side );
 }
 
 void assign_spell_pointers(void)
@@ -870,7 +1048,7 @@ void assign_spell_pointers(void)
 	       TAR_OBJ_INV, cast_create_water);
 	SPELLO(14, 12, POSITION_STANDING, 10, 4, IMO, IMO, 80, 95, 30, 30, 80, -1, -1,
 	       TAR_CHAR_ROOM, cast_cure_blind);
-	SPELLO(15, 12, POSITION_FIGHTING, 11, 7, 20, 20, 80, 95, 70, 70, 85, 16, -1,
+	SPELLO(15, 12, POSITION_FIGHTING, 11, 7, 20, 20, 80, 95, 70, 70, 85, -1, -1,
 	       TAR_CHAR_ROOM, cast_cure_critic);
 	SPELLO(16, 12, POSITION_FIGHTING, 4, 1, 10, 10, 80, 95, 70, 70, 55, -1, -1,
 	       TAR_CHAR_ROOM, cast_cure_light);
@@ -910,7 +1088,7 @@ void assign_spell_pointers(void)
 	       TAR_CHAR_ROOM | TAR_FIGHT_VICT | TAR_SELF_NONO, cast_shocking_grasp);
 	SPELLO(33, 12, POSITION_STANDING, 20, 8, 30, IMO, 70, 95, 60, 30, 70, -1, -1,
 	       TAR_CHAR_ROOM | TAR_SELF_NONO | TAR_OBJ_INV, cast_poison);
-	SPELLO(34, 12, POSITION_STANDING, 20, 6, IMO, IMO, 60, 95, 30, 30, 50, 18, -1,
+	SPELLO(34, 12, POSITION_STANDING, 20, 6, IMO, IMO, 60, 95, 30, 30, 50, -1, -1,
 	       TAR_SELF_ONLY, cast_protection_from_evil);
 	SPELLO(35, 12, POSITION_STANDING, IMO, 12, IMO, IMO, 30, 95, 30, 30, 50, -1, -1,
 	       TAR_CHAR_ROOM | TAR_OBJ_INV | TAR_OBJ_ROOM, cast_remove_curse);
@@ -1002,9 +1180,9 @@ void assign_spell_pointers(void)
 	       TAR_OBJ_INV, cast_pray_for_armor);
 	SPELLO(92, 12, POSITION_STANDING, 7, 5, IMO, IMO, 95, 95, 30, 30, 30, -1, -1,
 	       TAR_SELF_ONLY, cast_infravision);
-	SPELLO(93, 12, POSITION_STANDING, IMO, 25, IMO, IMO, 30, 95, 30, 30, 150, 12, -1,
+	SPELLO(93, 12, POSITION_STANDING, IMO, 25, IMO, IMO, 30, 95, 30, 30, 150, -1, -1,
 	       TAR_OBJ_INV, cast_create_nectar);
-	SPELLO(94, 12, POSITION_FIGHTING, IMO, 33, IMO, IMO, 30, 95, 30, 30, 255, 93, -1,
+	SPELLO(94, 12, POSITION_FIGHTING, IMO, 33, IMO, IMO, 30, 95, 30, 30, 255, -1, -1,
 	       TAR_OBJ_INV, cast_create_golden_nectar);
 	SPELLO(95, 12, POSITION_FIGHTING, 30, IMO, IMO, IMO, 95, 30, 30, 30, 150, -1, -1,
 	       TAR_CHAR_ROOM | TAR_FIGHT_VICT | TAR_SELF_NONO, cast_corn_of_ice);
@@ -1040,7 +1218,7 @@ void assign_spell_pointers(void)
 	       TAR_CHAR_ROOM, cast_mana_transfer);	/* by process */
 	SPELLO(116, 12, POSITION_FIGHTING, 17, 13, 20, 20, 80, 95, 70, 70, 100, -1, -1,
 	       TAR_SELF_ONLY, cast_self_heal);	/* by process */
-	SPELLO(117, 12, POSITION_STANDING, IMO, 40, IMO, IMO, 30, 80, 30, 30, 120, 34, -1,
+	SPELLO(117, 12, POSITION_STANDING, IMO, 40, IMO, IMO, 30, 80, 30, 30, 120, -1, -1,
 	       TAR_SELF_ONLY, cast_holy_shield);	/* by process */
 	SPELLO(118, 12, POSITION_FIGHTING, IMO, IMO, 30, 40, 30, 30, 49, 30, 200, -1, -1,
 	       TAR_SELF_ONLY, cast_restore_move);	/* by ares */
