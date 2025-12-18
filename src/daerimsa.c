@@ -17,9 +17,7 @@
 #include "spells.h"
 #include "limit.h"
 
-extern struct index_data *obj_index;
-extern struct room_data *world;
-extern int top_of_world;
+
 
 /* it should be initialized in read_mobile */
 struct char_data *son_ogong;

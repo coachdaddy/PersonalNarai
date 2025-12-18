@@ -23,43 +23,10 @@
 #include "spells.h"
 #include "limit.h"
 
-/*   external vars  */
-
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct title_type titles[4][IMO + 4];
-extern struct index_data *mob_index;
-extern struct index_data *obj_index;
-extern struct int_app_type int_app[26];
-extern struct player_index_element *player_table;
-extern int regen_time_percent;
-extern int regen_time;
-extern int regen_percent;
-extern unsigned long reboot_time;
-extern int top_of_zone_table;
-extern struct zone_data *zone_table;
-/* do_stat에 있던 외부 변수들 이동 */
-extern char *spells[];
-extern char *item_types[];
-extern char *wear_bits[];
-extern char *extra_bits[];
-extern char *dirs[];
-extern char *room_bits[];
-extern char *exit_bits[];
-extern char *sector_types[];
-extern char *affected_bits[];
-extern char *apply_types[];
-extern char *pc_class_types[];
-extern char *action_bits[];
-extern char *player_bits[];
-extern char *connected_types[];
 
 
 #ifndef BADDOMS
 #define BADDOMS 16
-extern int baddoms;
-extern char baddomain[BADDOMS][32];
 #endif
 
 
@@ -154,8 +121,7 @@ void do_at(struct char_data *ch, char *argument, int cmd)
 	int loc_nr, location, original_loc;
 	struct char_data *target_mob;
 	struct obj_data *target_obj;
-	extern int top_of_world;
-
+	
 	if (IS_NPC(ch))
 		return;
 
@@ -212,8 +178,7 @@ void do_banish(struct char_data *ch, char *argument, int cmd)
 	struct obj_data *dummy;
 	char buf[MAX_INPUT_LENGTH];
 	int location;
-	extern int top_of_world;
-
+	
 	if (IS_NPC(ch))
 		return;
 	one_argument(argument, buf);
@@ -498,8 +463,7 @@ void do_goto(struct char_data *ch, char *argument, int cmd)
 	int loc_nr, location, i, flag;
 	struct char_data *target_mob, *pers;
 	struct obj_data *target_obj;
-	extern int top_of_world;
-
+	
 	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 4))
 		return;
 	one_argument(argument, buf);
@@ -1009,9 +973,6 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 	unsigned int k;
 	LONGLONG kk;
 
-	extern int nokillflag, nostealflag, nonewplayers, noshoutflag, nochatflag;
-	extern int nodisarmflag; /* chase written */
-
 	bool target_ok = FALSE;
 	struct obj_data *tar_obj = NULL;
 
@@ -1354,7 +1315,6 @@ void do_shutdow(struct char_data *ch, char *argument, int cmd)
 
 void do_shutdown(struct char_data *ch, char *argument, int cmd)
 {
-	extern int shutdowngame;
 	char arg[MAX_INPUT_LENGTH];
 
 	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 3))
@@ -1510,8 +1470,7 @@ void perform_stat_object(struct char_data *ch, struct obj_data *j, char *buf, si
     int i, virtual;
     struct extra_descr_data *desc;
     char sbuf[256], sbuf2[256];
-    extern struct index_data *obj_index;
-
+    
     virtual = (j->item_number >= 0) ? obj_index[j->item_number].virtual : 0;
 
     SAFE_PRINTF("Object name: [%s], R-num: [%d], V-number: [%d]\n\r", j->name, j->item_number, virtual);
@@ -1763,10 +1722,6 @@ void do_sys(struct char_data *ch, char *argument, int cmd)
 {
 	struct rusage xru;
 	char buffer[256];
-	extern int boottime;
-	extern struct char_data *character_list;
-	extern struct obj_data *object_list;
-	extern struct descriptor_data *descriptor_list;
 	struct char_data *i;
 	struct obj_data *k;
 	struct descriptor_data *d;

@@ -18,10 +18,7 @@
 #define MAX_TRADE 5
 #define MAX_PROD 5
 
-extern struct str_app_type str_app[];
-extern struct index_data *mob_index;
-extern struct room_data *world;
-extern struct time_info_data time_info;
+
 
 struct shop_data *shop_index;
 int number_of_shops;
@@ -317,7 +314,6 @@ void shopping_list(char *arg, struct char_data *ch,
 {
 	char buf[MAX_STRING_LENGTH], buf2[MAX_OUTPUT_LENGTH], buf3[100];
 	struct obj_data *temp1;
-	extern char *drinks[];
 	int found_obj;
 
 	if (!(is_ok(keeper, ch, shop_nr)))

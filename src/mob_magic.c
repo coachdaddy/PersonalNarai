@@ -16,12 +16,6 @@
 #include "db.h"
 #include "mob_magic.h"		/* by cyb */
 
-/* Extern structures */
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-
 
 
 void mob_spell_fire_storm(byte level, struct char_data *ch,

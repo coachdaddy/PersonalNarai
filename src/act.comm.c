@@ -20,9 +20,6 @@
 
 #include <sys/time.h>
 
-/* extern variables */
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
 
 
 #define MAX_HISTORY_MSG 512  // 넉넉한 크기
@@ -111,7 +108,6 @@ void do_shout(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_STRING_LENGTH], buf1[MAX_STRING_LENGTH];
     struct descriptor_data *i;
-    extern int noshoutflag;
 
     if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
         send_to_char("Your mouth moves, but no sound comes out! (You have been silenced by the Gods)\n\r", ch);
@@ -152,8 +148,6 @@ void do_chat(struct char_data *ch, char *argument, int cmd)
     char buf[MAX_STRING_LENGTH];
     struct char_data *victim, *prefs; /* 메시지를 받을 대상, 설정을 확인할 대상 (본체) */
     
-    extern int nochatflag;
-
     // 예외 처리
     if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
         send_to_char("You try to speak into the orb, but it remains dark. (You have been silenced by the Gods)\n\r", ch);

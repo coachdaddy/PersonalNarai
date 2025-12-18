@@ -29,7 +29,6 @@ struct board_data {
 };
 
 struct board_data *board_list;
-extern struct room_data *world;
 
 
 
@@ -325,11 +324,7 @@ int post_board(struct char_data *ch, struct board_data *cb, char *arg)
 {
 	char papername[MAX_INPUT_LENGTH], header[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	struct obj_data *paper;
-	extern struct obj_data *get_obj_in_list_vis(
-							   struct char_data
-							   *ch, char
-							   *name, struct obj_data *list);
-
+	
 	half_chop(arg, papername, header);
 	if (*papername == 0 || *header == 0)
 		return FALSE;

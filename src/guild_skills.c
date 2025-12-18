@@ -17,15 +17,6 @@
 
 #include "guild_list.h"
 
-/* Extern structures */
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-extern struct descriptor_data *descriptor_list;
-
-extern char *guild_names[];
-
 
 
 /* skills of police */
@@ -409,8 +400,7 @@ void do_solace(struct char_data *ch, char *argument, int cmd)
 {
 	int home = ROOM_GUILD_ASSASSIN, location;
 	bool found = FALSE;
-	extern int top_of_world;
-
+	
 	/* remove guild skills by atre */
 	return;
 

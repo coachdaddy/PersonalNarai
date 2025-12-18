@@ -15,10 +15,6 @@
 #include "db.h"
 #include "spells.h"
 
-/* extern variables */
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct room_data *world;
 
 
 

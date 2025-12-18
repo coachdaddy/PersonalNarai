@@ -12,11 +12,6 @@
 #include "spells.h"
 #include "utils.h"
 
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-extern struct room_data *world;
-extern struct str_app_type str_app[];
-
 
 
 int check_stat(struct char_data *ch)
@@ -88,11 +83,6 @@ void mobile_activity(void)
 	struct obj_data *obj, *best_obj;
 	int door, found, max;
 	char buf[100];
-
-	extern int no_specials;
-
-	void do_move(struct char_data *ch, char *argument, int cmd);
-	void do_get(struct char_data *ch, char *argument, int cmd);
 
 	/* son_ogong mirror */
 	ch = character_list;

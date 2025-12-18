@@ -18,13 +18,6 @@
 
 #include "guild_list.h"
 
-extern int top_of_world;
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-extern struct index_data *obj_index;
-extern struct descriptor_data *descriptor_list;
 
 
 
@@ -986,12 +979,6 @@ void extract_char(struct char_data *ch, int drop_items)
     struct affected_type *af;
 
     char for_debug[MAX_STRING_LENGTH];
-
-    extern struct char_data *combat_list;
-
-    void do_save(struct char_data * ch, char *argument, int cmd);
-    void do_return(struct char_data * ch, char *argument, int cmd);
-    void die_follower(struct char_data * ch);
 
     if (!ch) return;
     if (ch->in_room == NOWHERE) {

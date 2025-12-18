@@ -15,13 +15,6 @@
 #include "interpreter.h"
 #include "db.h"
 
-/* uses */
-extern struct time_info_data time_info;
-extern struct weather_data weather_info;
-extern struct descriptor_data *descriptor_list; /* in comm.c, 251126 by Komo */
-extern struct room_data *world;					/* in db.c , 251126 by Komo */
-
-
 
 /* Here comes the code */
 

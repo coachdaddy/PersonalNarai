@@ -52,13 +52,6 @@
 #define SAVE_PERIOD_MINUTES 10 /* 10분마다 플레이어 저장 */
 #define PLAYER_SAVE_PERIOD  (MINUTES(SAVE_PERIOD_MINUTES) * TICS_PER_SEC)
 
-extern int errno;
-extern int no_echo;
-extern struct room_data *world;			/* In db.c */
-extern int top_of_world;				/* In db.c */
-extern struct time_info_data time_info;	/* In db.c */
-extern char help[];
-extern char *connected_types[];
 
 
 /* local globals */

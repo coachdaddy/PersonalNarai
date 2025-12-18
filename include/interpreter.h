@@ -15,8 +15,4 @@ void half_chop(char *string, char *arg1, char *arg2);
 void nanny(struct descriptor_data *d, char *arg);
 int is_abbrev(char *arg1, char *arg2);
 
-struct command_info {
-	void (*command_pointer) (struct char_data * ch, char *argument, int cmd);
-	byte minimum_position;
-	byte minimum_level[4];	/* modified by ares */
-};
+

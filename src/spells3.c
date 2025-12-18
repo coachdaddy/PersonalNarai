@@ -15,12 +15,6 @@
 #include "spells.h"
 #include "handler.h"
 
-/* Global data */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct spell_info_type spell_info[MAX_SPL_LIST];
-extern struct obj_data *object_list;
-
 
 
 /*

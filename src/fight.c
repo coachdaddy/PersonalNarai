@@ -26,21 +26,6 @@
 struct char_data *combat_list = 0;	/* head of l-list of fighting chars */
 struct char_data *combat_next_dude = 0;		/* Next dude global trick           */
 
-/* External structures */
-extern struct room_data *world;
-extern struct message_list fight_messages[MAX_MESSAGES];
-extern struct obj_data *object_list;
-extern struct index_data *obj_index;
-extern struct index_data *mob_index;
-
-
-/* Challenge Room Quest System  */
-extern struct {
-    int virtual;
-    int level;
-    char *name;
-} QM[];
-
 struct dam_weapon_type {
     char *to_room;
     char *to_char;
@@ -878,8 +863,7 @@ void damage(struct char_data *ch, struct char_data *victim,
 	char buf[MAX_STRING_LENGTH];
 	struct message_type *messages;
 	int i, j, nr, max_hit, exp;
-	extern int nokillflag;
-
+	
 	/* for quest */
 	struct follow_type *f, *next_f;
 
@@ -1149,19 +1133,12 @@ void damage(struct char_data *ch, struct char_data *victim,
 void hit(struct char_data *ch, struct char_data *victim, int type)
 {
 	struct obj_data *wielded = 0;
-	//  struct obj_data *held = 0;
 	int w_type;
 	int dam, prf;
 	int parry_num;
 	int miss;
 	int limit_nodice, limit_sizedice;
-	// char buffer[MAX_STRING_LENGTH];
-
-	extern int thaco[4][IMO + 4];
-	extern byte backstab_mult[];
-	extern struct str_app_type str_app[];
-	extern struct dex_app_type dex_app[];
-
+	
 	if (ch == NULL || victim == NULL)
 		return;
 
@@ -1457,7 +1434,6 @@ void perform_violence(void)
 {
     struct char_data *ch;
     int i, dat = 100;
-    extern void magic_weapon_hit(struct char_data *ch, struct char_data *vict, struct obj_data *obj);
     struct obj_data *weapon, *held;
     int percent;
 	int sk_double, sk_quad, sk_octa; /* GET_SKILLED 저장용 */

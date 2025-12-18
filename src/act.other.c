@@ -18,13 +18,6 @@
 
 #include "guild_list.h"
 
-/* extern variables */
-extern struct str_app_type str_app[];
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct room_data *world;
-extern struct dex_skill_type dex_app_skill[];
-extern struct spell_info_type spell_info[];
 
 
 
@@ -179,8 +172,7 @@ void do_steal(struct char_data *ch, char *argument, int cmd)
 	int percent;
 	int gold, eq_pos;
 	bool ohoh = FALSE;
-	extern int nostealflag;
-
+	
 	argument = one_argument(argument, obj_name);
 	one_argument(argument, victim_name);
 
@@ -295,8 +287,6 @@ void do_steal(struct char_data *ch, char *argument, int cmd)
 void do_practice(struct char_data *ch, char *arg, int cmd)
 {
 	int i;
-	extern char *spells[], *how_good();
-	extern struct spell_info_type spell_info[MAX_SPL_LIST];
 	char buf[100 * MAX_SKILLS];
 	char tmp[MAX_STRING_LENGTH];
 	char victim_name[256];
@@ -733,8 +723,7 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
 	struct obj_data *obj;
 	char victim_name[240];
 	int percent;
-	extern int nodisarmflag;
-
+	
 	one_argument(argument, victim_name);
 
 	if (!(victim = get_char_room_vis(ch, victim_name))) {

@@ -27,16 +27,10 @@
 
 // To avoid name conflict with built-in log(x) function
 #define log(s) mudlog(s)
-extern void mudlog(const char *str);    /* in utility.c */
 
-void print_increased_skilled(struct char_data *ch, int sk_no); /* in utility.c */
-void DEBUG_LOG(const char *format, ...);
 #ifndef HAVE_STRLCAT
 size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 안전한 문자열 연결 함수, 251125 by Komo */
 #endif
-
-const char *get_char_name(struct char_data *ch, struct char_data *viewer);  /* in utility.c PERS 매크로 대체 함수, 251125 by Komo */
-long int hit_limit(struct char_data *ch);
 
 // Don't use NULL pointer for null character ('\0')
 #define NUL '\0'

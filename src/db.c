@@ -69,16 +69,11 @@ int regen_percent = 50;
 int regen_time_percent = 66;
 int regen_time = 200;
 
-/* external refs */
-extern struct descriptor_data *descriptor_list;
-
 /* for 대림사 */
 /* these are also defined in spec_procs.c */
 #define FOURTH_JANGRO		11132
 #define SON_OGONG			11101
 
-extern struct char_data *fourth_jangro;
-extern struct char_data *son_ogong;
 
 /*************************************************************************
 *  routines for booting the system                                       *
@@ -88,8 +83,7 @@ extern struct char_data *son_ogong;
 void boot_db(void)
 {
 	int i;
-	extern int no_specials;
-
+	
 	log("(boot_db) Booting DB -- BEGIN.");
 
     log("(boot_db) Resetting the game time:");
@@ -931,7 +925,6 @@ struct char_data *read_mobile(int nr, int type)
 	char letter;
 	int level, level2, level3, abil, class;
 	char buf[256];
-	extern struct spell_info_type spell_info[];
 	int r_num;
 
 	i = nr;

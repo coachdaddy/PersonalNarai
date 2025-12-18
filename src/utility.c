@@ -15,10 +15,6 @@
 #include "utils.h"
 #include "colors.h"
 
-extern struct time_data time_info;
-extern struct room_data *world;      /* In db.c */
-extern char *spells[];               /* defined in spell_parser.c */
-
 
 
 /**************************************************************************

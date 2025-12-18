@@ -21,15 +21,6 @@
 #include "limit.h"
 #include "prototypes.h"
 
-/*   external vars  */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct index_data *obj_index;
-extern struct time_info_data time_info;
-extern struct title_type titles[4][IMO + 4];
-extern struct index_data *mob_index;
-
 
 
 char *how_good(int p1, int p2)
@@ -47,10 +38,7 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	char tmp[MAX_STRING_LENGTH];
 	int number, i, percent;
 	int lev, cla;
-	extern char *spells[];
-	extern struct spell_info_type spell_info[MAX_SPL_LIST];
-	extern struct int_app_type int_app[26];
-
+	
 	strcpy(buf3, "");
 
 	if ((cmd != 164) && (cmd != 170)) // cmd 164, 170 : practice
@@ -472,8 +460,7 @@ int warrior(struct char_data *ch, int cmd, char *arg)
 		298, 269, 298, 269, 298		/* level 50 */
 	};
 	int do_what;
-	extern struct command_info cmd_info[];
-
+	
 	if (cmd)
 		return FALSE;
 

@@ -806,10 +806,35 @@ struct con_app_type {
 	int shock;
 };
 
+/* limit.h에서 이동 */
+struct title_type {
+	char *title_m;
+	char *title_f;
+	long int exp;
+};
+
+/* interpreter.h에서 이동 */
+struct command_info {
+	void (*command_pointer) (struct char_data * ch, char *argument, int cmd);
+	byte minimum_position;
+	byte minimum_level[4];	/* modified by ares */
+};
+
+/* quest.c의 anonymous struct 문제 */
+struct quest_mob_info {
+    int virtual;
+    int level;
+    char *name;
+};
+
+/* 함수 선언 모음 */
 struct player_index_element;
 
 #ifndef NO_PROTOTYPES
 #include "prototypes.h"
 #endif
+
+/* 전역 변수 선언 모음 */
+#include "globals.h"
 
 #endif /* _STRUCTS_H_ */

@@ -53,15 +53,6 @@
 #define MAX_CMD_LIST 350	/*  max command list modified by chase */
 
 int no_echo = 0;
-extern struct title_type titles[4][IMO + 4];
-extern char motd[MAX_STRING_LENGTH];
-extern char imotd[MAX_STRING_LENGTH];
-extern struct char_data *character_list;
-extern struct player_index_element *player_table;
-extern int top_of_p_table;
-extern struct index_data *mob_index;
-extern struct index_data *obj_index;
-extern struct room_data *world;
 struct command_info cmd_info[MAX_CMD_LIST];
 
 
@@ -584,7 +575,6 @@ int improve_status(struct char_data *ch, char arg)
 int command_interpreter(struct char_data *ch, char *argument)
 {
 	int look_at, cmd, begin, lev;
-	extern int no_specials;
 	char buf[MAX_STRING_LENGTH];
 	int ch_class;
 
@@ -1223,11 +1213,6 @@ void nanny(struct descriptor_data *d, char *arg)
 	struct char_file_u tmp_store;
 	struct char_data *tmp_ch;
 	struct descriptor_data *k;
-	extern struct descriptor_data *descriptor_list;
-	extern int nonewplayers;
-	void do_look(struct char_data *ch, char *argument, int cmd);
-    void load_char_objs(struct char_data * ch);
-    int load_char(char *name, struct char_file_u *char_element);
 	char improved_stat[2];
 	int i;
 	char new_connection[180];

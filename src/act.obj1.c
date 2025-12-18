@@ -16,12 +16,7 @@
 #include "db.h"
 #include "spells.h"
 
-/* extern variables */
 
-extern struct str_app_type str_app[];
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct room_data *world;
 
 
 
@@ -612,8 +607,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 	int amount;
 	struct char_data *vict;
 	struct obj_data *obj;
-	extern struct index_data *obj_index;
-
+	
 	argument = one_argument(argument, obj_name);
 	if (is_number(obj_name)) {
 		amount = atoi(obj_name);
@@ -703,8 +697,7 @@ void do_reload(struct char_data *ch, char *argument, int cmd)
 	char arg2[MAX_INPUT_LENGTH];
 	struct obj_data *gun;
 	struct obj_data *ammo;
-	extern struct index_data *obj_index;
-
+	
 	if (GET_POS(ch) < POSITION_STANDING) {
 		send_to_char("You need to be standing still for that.\n\r", ch);
 		return;

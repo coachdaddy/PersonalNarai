@@ -20,23 +20,6 @@
 #define VNUM_WINGS_1  9703
 #define VNUM_WINGS_2  2700
 
-/*   external vars  */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct index_data *obj_index;
-extern struct index_data *mob_index;
-extern int rev_dir[];
-extern int top_of_world;
-extern char *dirs[];
-extern int movement_loss[];
-/* Challenge Room Quest System -- komo, 251017 */
-extern struct {
-    int virtual;
-    int level;
-    char *name;
-} QM[];
-
 
 
 int do_simple_move(struct char_data *ch, int cmd, int following)

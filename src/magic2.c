@@ -22,13 +22,6 @@
 #define REAL 0
 #define VIRTUAL 1
 
-/* Extern structures */
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-extern int noenchantflag;
-
 
 
 /* spells2.c - Not directly offensive spells */
@@ -58,8 +51,7 @@ void spell_teleport(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
 	int to_room;
-	extern int top_of_world;	/* ref to the top element of world */
-
+	
 	assert(ch);
 
 	INCREASE_SKILLED2(ch, victim, SPELL_TELEPORT);
@@ -289,8 +281,6 @@ void spell_create_water(byte level, struct char_data *ch,
 			struct char_data *victim, struct obj_data *obj)
 {
 	int water;
-
-	extern struct weather_data weather_info;
 	
 	assert(ch && obj);
 
@@ -1578,7 +1568,6 @@ void spell_phase(byte level, struct char_data *ch,
 void spell_word_of_recall(byte level, struct char_data *ch,
 			  struct char_data *victim, struct obj_data *obj)
 {
-	extern int top_of_world;
 	int loc_nr, location;
 	bool found = FALSE;
 

@@ -23,16 +23,9 @@
 #define QUEST_ROOM_VNUM 3081           // 퀘스트 룸 VNUM
 #define CHALLENGE_ROOM_START_VNUM 3082 // '도전의 방' 시작 VNUM
 #define CHALLENGE_ROOM_END_VNUM 3089   // '도전의 방' 끝 VNUM (총 8개)
-extern struct room_data *world;
-extern struct index_data *mob_index;
 
 
-
-struct {
-	int virtual;
-	int level;
-	char *name;
-} QM[MaxQuest];
+struct quest_mob_info QM[MaxQuest];
 
 int topQM;
 
@@ -500,8 +493,7 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
     };
 
 	struct obj_data *tmp_obj;
-	extern struct index_data *obj_index;
-
+	
 	/* quest(302) or use(172)  */
 	if (cmd != 302 && cmd != 172) {
 		return FALSE;

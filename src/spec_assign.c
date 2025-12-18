@@ -9,9 +9,6 @@
 #include "db.h"
 #include "guild_list.h"
 
-extern struct room_data *world;
-extern struct index_data *mob_index;
-extern struct index_data *obj_index;
 
 
 /* ********************************************************************

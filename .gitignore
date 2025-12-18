@@ -1,5 +1,6 @@
 OLD/
 bin/
+lib/players
 lib/players* 
 lib/stash
 lib/stash.tar*

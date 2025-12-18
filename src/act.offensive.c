@@ -19,11 +19,6 @@
 
 #include "guild_list.h"
 
-/* extern variables */
-
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct char_data *character_list;
 
 
 
@@ -31,8 +26,7 @@ void do_hit(struct char_data *ch, char *argument, int cmd)
 {
 	char arg[MAX_STRING_LENGTH];
 	struct char_data *victim;
-	extern int nokillflag;
-
+	
 	one_argument(argument, arg);
 
 	if ((GET_LEVEL(ch) == IMO) && (!IS_NPC(ch))) {

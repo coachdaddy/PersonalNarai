@@ -17,12 +17,6 @@
 
 #include "guild_list.h"
 
-/* Extern structures */
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-extern int noenchantflag;
 
 
 
@@ -161,7 +155,6 @@ void spell_kiss_of_process(byte level, struct char_data *ch,
 void spell_thunder_bolt(byte level, struct char_data *ch,
 			struct char_data *victim, struct obj_data *obj)
 {
-	extern struct weather_data weather_info;
 	struct obj_data *tmp_obj = NULL;
 	int percent;
 	int tmp;

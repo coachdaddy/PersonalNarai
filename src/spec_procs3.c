@@ -17,15 +17,6 @@
 #include "limit.h"
 #include "mob_magic.h"		/* by cyb */
 
-/*   external vars  */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct index_data *obj_index;
-extern struct time_info_data time_info;
-extern struct title_type titles[4][IMO + 4];
-extern struct index_data *mob_index;
-
 
 
 int level_gate(struct char_data *ch, int cmd, char *arg)
@@ -146,7 +137,6 @@ int helper(struct char_data *ch, int cmd, char *arg)
 
 int electric_shock(struct char_data *ch, int cmd, char *arg)
 {
-	extern struct weather_data weather_info;
 	char *msg;
 	int weather, shock;
 

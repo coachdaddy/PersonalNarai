@@ -19,23 +19,7 @@
 #include "spells.h"
 #include "limit.h"
 #include "guild_list.h"		/* process */
-/* extern variables */
 
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct char_data *character_list;
-extern struct obj_data *object_list;
-extern char credits[MAX_STRING_LENGTH];
-extern char news[MAX_STRING_LENGTH];
-extern char info[MAX_STRING_LENGTH];
-extern char wizards[MAX_STRING_LENGTH];		/* cyb */
-extern char *dirs[];
-extern char *where[];
-extern char *color_liquid[];
-extern char *fullness[];
-extern char *spells[];
-
-extern char *guild_names[];
 
 void do_cant(struct char_data *ch, char *argument, int cmd)
 {

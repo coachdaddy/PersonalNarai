@@ -17,14 +17,6 @@
 #include "db.h"
 #include "spells.h"
 
-/* extern variables */
-
-extern struct str_app_type str_app[];
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct room_data *world;
-extern char *drinks[];
-extern int drink_aff[][3];
 
 
 
@@ -66,8 +58,7 @@ void name_from_drinkcon(struct obj_data *obj)
 void name_to_drinkcon(struct obj_data *obj, int type)
 {
 	char *new_name;
-	extern char *drinknames[];
-
+	
 	size_t len = strlen(obj->name) + strlen(drinknames[type]) + 2;
 
 	CREATE(new_name, char, len);

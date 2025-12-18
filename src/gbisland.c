@@ -18,12 +18,6 @@
 #include "limit.h"
 #include "prototypes.h"
 
-extern struct char_data *character_list;
-extern struct index_data *obj_index;
-extern struct room_data *world;
-extern int top_of_world;
-extern int movement_loss[];
-extern char *dirs[];
 
 #define GBISLAND_SEASHORE			23302
 #define GBISLAND_MIRROR_SAINT		23321

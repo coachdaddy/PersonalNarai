@@ -23,14 +23,6 @@
 
 #define RESCUER_VICTIM 5
 
-/*   external vars  */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct index_data *obj_index;
-extern struct time_info_data time_info;
-extern struct title_type titles[4][IMO + 4];
-extern struct index_data *mob_index;
 
 
 
@@ -1110,18 +1102,14 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 int hospital(struct char_data *ch, int cmd, char *arg)
 {
 	char buf[MAX_STRING_LENGTH];
-	extern struct descriptor_data *descriptor_list;
-	extern struct player_index_element *player_table;
 	struct descriptor_data *k;
-	// BUG FIX!!!
-	int opt, /* lev, */ cost[7], c = 0;
+	int opt, cost[7], c = 0;
 	int i;
 	char *temp;
 	char stash_file1[100];
 	char stash_file2[100];
 	char stash_name[30];
 
-	// lev = GET_LEVEL(ch);
 	cost[0] = 100 - (40 - GET_LEVEL(ch));
 	cost[1] = cost[0] * (GET_MAX_HIT(ch) - GET_HIT(ch));
 	cost[2] = cost[0] * (GET_MAX_MANA(ch) - GET_MANA(ch));
@@ -2159,7 +2147,6 @@ int spitter(struct char_data *ch, int cmd, char *arg)
 int portal(struct char_data *ch, int cmd, char *arg)
 {
 	int location, ok;
-	extern int top_of_world;
 	
 	if (cmd != 3)		/* specific to Room 2176 */
 		return (FALSE);

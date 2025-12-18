@@ -21,11 +21,6 @@
   titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_m :  \
   titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_f)
 
-extern struct char_data *character_list;
-extern struct obj_data *object_list;
-extern struct title_type titles[4][IMO + 4];
-extern struct room_data *world;
-
 
 
 /* When age < 15 return the value p0 */
@@ -289,7 +284,6 @@ int move_gain(struct char_data *ch)
 void advance_level(struct char_data *ch, int level_up)
 {
 	int add_hp, add_mana, add_move, i;
-	extern struct wis_app_type wis_app[26];
 	int level;
 
 	level = GET_LEVEL(ch);
@@ -496,8 +490,7 @@ void point_update(void)
     struct char_data *i, *next_dude;
     struct obj_data *j, *next_thing, *jj, *next_thing2;
     char buf[100];
-    extern int level_quest[];
-
+    
     /* characters */
     for (i = character_list; i; i = next_dude) {
         next_dude = i->next;

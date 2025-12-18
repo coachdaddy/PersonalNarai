@@ -4,8 +4,7 @@
 #include "utils.h"
 #include "spells.h"
 
-extern struct weather_data weather_info;
-extern struct room_data *world;
+
 
 void magic_weapon_hit(struct char_data *ch, struct char_data *victim,
 		      struct obj_data *weapon)

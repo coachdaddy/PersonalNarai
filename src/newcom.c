@@ -16,13 +16,6 @@
 #include "spells.h"
 #include "limits.h"
 
-/* extern variables */
-
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct char_data *character_list;
-extern int top_of_zone_table;
-extern struct zone_data *zone_table;
 
 
 
@@ -30,7 +23,6 @@ void do_assist(struct char_data *ch, char *argument, int cmd)
 {
 	char arg[MAX_STRING_LENGTH];
 	struct char_data *victim;
-	extern int nokillflag;
 	char cyb[80];
 
 	one_argument(argument, arg);
@@ -136,7 +128,6 @@ void do_ungroup(struct char_data *ch, char *argument, int cmd)
 
 void do_version(struct char_data *ch, char *argument, int cmd)
 {
-	extern char fileid[];
 	send_to_char(fileid, ch);
 }
 
