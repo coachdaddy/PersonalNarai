@@ -14,7 +14,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
@@ -23,40 +22,6 @@
 
 #include "guild_list.h"		/* by process */
 
-/* extern variables */
-
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct char_data *character_list;
-extern struct obj_data *object_list;
-extern char credits[MAX_STRING_LENGTH];
-extern char news[MAX_STRING_LENGTH];
-extern char plan[MAX_STRING_LENGTH];
-extern char wizards[MAX_STRING_LENGTH];		/* cyb */
-extern char *dirs[];
-extern char *where[];
-extern char *color_liquid[];
-extern char *fullness[];
-extern char *spells[];
-
-extern char *guild_names[];
-extern char *connected_types[];
-
-/* extern functions */
-
-struct time_info_data age(struct char_data *ch);
-void page_string(struct descriptor_data *d, char *str, int keep_internal);
-int number(int from, int to);
-int strn_cmp(char *arg1, char *arg2, int n);
-
-int move_stashfile_safe(const char *victim);
-void close_socket(struct descriptor_data *d);
-void sprintbit(long vektor, char *names[], char *result);
-void weather_change(int);
-
-/* intern functions */
-void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode,
-		      bool show);
 
 /* intern vars */
 char *news_content = NULL; // 뉴스 내용을 저장할 메모리, 251119
@@ -695,7 +660,6 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 		case 8:
 			{
 				if (GET_LEVEL(ch) >= IMO) {
-					extern char *room_bits[];
 					snprintf(buffer, sizeof(buffer), "%s  [%5d] [ ",
 						world[ch->in_room].name,
 						world[ch->in_room].number);
@@ -707,9 +671,11 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 					snprintf(buffer, sizeof(buffer), "%s\n\r",
 						world[ch->in_room].name);
 				send_to_char(buffer, ch);
-				if (!IS_SET(ch->specials.act, PLR_BRIEF))
+
+				if (!IS_SET(ch->specials.act, PLR_BRIEF)) {
 					send_to_char(world[ch->in_room].description, ch);
 					send_to_char("\r\n", ch);
+				}
 				snprintf(buffer, sizeof(buffer), "[ EXITS : ");
 				
 				if (EXIT(ch, 0)) 
@@ -900,7 +866,7 @@ void do_exits(struct char_data *ch, char *argument, int cmd)
                 p += written_chars;
                 remaining_space -= written_chars;
             } else if (written_chars >= remaining_space) {
-				log("do_exits: Buffer full, exit list truncated.");
+				mudlog("do_exits: Buffer full, exit list truncated.");
 				break;
 			}
         }
@@ -967,11 +933,8 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 	struct affected_type *aff;
 	struct time_info_data playing_time;
 	char buf[200], buf2[200];
-	struct time_info_data real_time_passed(time_t t2, time_t t1);
 	int tmp;
-	extern byte saving_throws[4][5][IMO + 10];
-	extern struct title_type titles[4][IMO + 4];
-
+	
 	snprintf(buf, sizeof(buf), "You are %d years old.\n\r", GET_AGE(ch));
 	snprintf(buf2, sizeof(buf2), "당신은 %d 살 입니다.\n\r", GET_AGE(ch));
 	send_to_char_han(buf, buf2, ch);
@@ -1130,7 +1093,7 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 			strcpy(buf, "You have enough experience to advance.\n\r");
 			strcpy(buf2, "레벨을 올릴만큼 충분한 경험치가 쌓였습니다.\n\r");
 		} else {
-			snprintf(buf, sizeof(buf), "You need %lld experience to advance\n\r",
+			snprintf(buf, sizeof(buf), "You need %lld experience to advance.\n\r",
 				titles[GET_CLASS(ch) - 1][GET_LEVEL(ch) +
 				1].exp -
 				GET_EXP(ch));
@@ -1145,42 +1108,36 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 
 	switch (GET_POS(ch)) {
 	case POSITION_DEAD:
-		send_to_char_han("You are DEAD!\n\r", "당신은 죽으셨습니다\n\r", ch);
+		send_to_char_han("You are DEAD!\n\r", "당신은 죽으셨습니다!\n\r", ch);
 		break;
 	case POSITION_MORTALLYW:
 		send_to_char("You are mortally wounded!, you should seek help!\n\r",
 			     ch);
 		break;
 	case POSITION_INCAP:
-		send_to_char("You are incapacitated, slowly fading away\n\r", ch);
+		send_to_char("You are incapacitated, slowly fading away.\n\r", ch);
 		break;
 	case POSITION_STUNNED:
-		send_to_char("You are stunned! You can't move\n\r", ch);
+		send_to_char("You are stunned! You can't move!\n\r", ch);
 		break;
 	case POSITION_SLEEPING:
-		send_to_char_han("You are sleeping.\n\r",
-				 "당신은 자고 있습니다.\n\r",
-				 ch);
+		send_to_char_han("You are sleeping.\n\r", "당신은 자고 있습니다.\n\r", ch);
 		break;
 	case POSITION_RESTING:
-		send_to_char_han("You are resting.\n\r",
-				 "당신은 쉬고 있습니다.\n\r", ch);
+		send_to_char_han("You are resting.\n\r", "당신은 쉬고 있습니다.\n\r", ch);
 		break;
 	case POSITION_SITTING:
-		send_to_char_han("You are sitting.\n\r",
-				 "당신은 앉아 있습니다.\n\r", ch);
+		send_to_char_han("You are sitting.\n\r", "당신은 앉아 있습니다.\n\r", ch);
 		break;
 	case POSITION_FIGHTING:
 		if (ch->specials.fighting)
-			acthan("You are fighting $N.\n\r",
-			       "당신은 $N님과 싸우고 있습니다.\n\r",
+			acthan("You are fighting $N.\n\r", "당신은 $N님과 싸우고 있습니다.\n\r",
 			       FALSE, ch, 0, ch->specials.fighting, TO_CHAR);
 		else
 			send_to_char("You are fighting thin air.\n\r", ch);
 		break;
 	case POSITION_STANDING:
-		send_to_char_han("You are standing.\n\r",
-				 "당신은 서있습니다.\n\r", ch);
+		send_to_char_han("You are standing.\n\r", "당신은 서있습니다.\n\r", ch);
 		break;
 	default:
 		send_to_char("You are floating.\n\r", ch);
@@ -1188,8 +1145,7 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 	}
 
 	if (ch->affected) {
-		send_to_char_han("Affecting Spells:\n\r",
-				 "걸려있는 마법들:\n\r", ch);
+		send_to_char_han("Affecting Spells:\n\r", "걸려있는 마법들:\n\r", ch);
 		for (aff = ch->affected; aff; aff = aff->next) {
 			snprintf(buf, sizeof(buf), "%s: %d hrs\n\r", spells[aff->type - 1], aff->duration);
 			snprintf(buf2, sizeof(buf2), "%s: %d 시간\n\r", spells[aff->type -
@@ -1198,13 +1154,13 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 		}
 	}
 
-	snprintf(buf, sizeof(buf), "\n\rYou have killed #%d player(s)", ch->player.pk_num);
+	snprintf(buf, sizeof(buf), "\n\rYou have killed #%d player(s).", ch->player.pk_num);
 	snprintf(buf2, sizeof(buf2), "\n\r당신은 지금까지 %d명을 죽였습니다.", ch->player.pk_num);
 	send_to_char_han(buf, buf2, ch);
-	snprintf(buf, sizeof(buf), "\n\rYou have been killed #%d time(s)", ch->player.pked_num);
+	snprintf(buf, sizeof(buf), "\n\rYou have been killed #%d time(s).", ch->player.pked_num);
 	snprintf(buf2, sizeof(buf2), "\n\r당신은 지금까지 %d번 죽었습니다.", ch->player.pked_num);
 	send_to_char_han(buf, buf2, ch);
-	snprintf(buf, sizeof(buf), "\n\rYou have made  #%ld QUEST(s)", ch->quest.solved);
+	snprintf(buf, sizeof(buf), "\n\rYou have made  #%ld QUEST(s).", ch->quest.solved);
 	snprintf(buf2, sizeof(buf2),
 		"\n\r당신은 지금까지 %ld번 QUEST를 풀었습니다.", ch->quest.solved);
 	send_to_char_han(buf, buf2, ch);
@@ -1225,8 +1181,7 @@ void do_attribute(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_STRING_LENGTH];
 	struct affected_type *aff;
-	extern char *spells[];
-
+	
 	snprintf(buf, sizeof(buf),
 		"You are %d years and %d months, %d cms, and you weigh %d lbs.\n\r",
 		GET_AGE(ch), age(ch).month,
@@ -1289,10 +1244,7 @@ void do_time(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[100], *suf;
 	int weekday, day;
-	extern struct time_info_data time_info;
-	extern char *weekdays[];
-	extern char *month_name[];
-
+	
 	snprintf(buf, sizeof(buf), "It is %d o'clock %s, on ",
 		((time_info.hours % 12 == 0) ? 12 : ((time_info.hours) % 12)),
 		((time_info.hours >= 12) ? "pm" : "am"));
@@ -1333,7 +1285,6 @@ void do_time(struct char_data *ch, char *argument, int cmd)
 
 void do_weather(struct char_data *ch, char *argument, int cmd)
 {
-	extern struct weather_data weather_info;
 	char buf[100], buf2[100];
 	char static *sky_look[4] =
 	{
@@ -1379,11 +1330,6 @@ void do_weather(struct char_data *ch, char *argument, int cmd)
 
 void do_help(struct char_data *ch, char *argument, int cmd)
 {
-	extern int top_of_helpt;
-	extern struct help_index_element *help_index;
-	extern FILE *help_fl;
-	extern char help[MAX_STRING_LENGTH];
-
 	int chk, bot, top, mid, minlen;
 	char buf[MAX_STRING_LENGTH], buffer[MAX_STRING_LENGTH];
 
@@ -1434,9 +1380,7 @@ void do_spells(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[80 * MAX_SKILLS], tmp[MAX_STRING_LENGTH];
 	int no, i;
-	extern char *spells[];
-	extern struct spell_info_type spell_info[];
-
+	
 	if (IS_NPC(ch))
 		return;
 	snprintf(buf, sizeof(buf),
@@ -1482,9 +1426,7 @@ void do_wizhelp(struct char_data *ch, char *argument, int cmd)
 	char buf[MAX_STRING_LENGTH];
 	int no, i, j, is_wizcmd;
 	size_t len = 0;
-	extern char *command[]; 	/* The list of commands (interpreter.c)  */
-	extern struct command_info cmd_info[]; /* cmd_info[1] ~~ commando[0] */
-
+	
 	if (IS_NPC(ch))
 		return;
 	send_to_char("The following privileged commands are available:\n\r", ch);
@@ -1711,7 +1653,6 @@ void do_users(struct char_data *ch, char *argument, int cmd)
     int flag, uptime;
     size_t len = 0;       /* 현재 버퍼에 써진 길이 추적용 */
 	static int most = 0;
-	extern int boottime;
 	
 	one_argument(argument, line);
 	flag = ((GET_LEVEL(ch) < IMO) || (strcmp("-t", line) == 0));
@@ -1849,7 +1790,7 @@ void load_news_if_changed() {
 
     // 파일이 바뀌었다면 다시 읽음
     if (!(fl = fopen(filename, "r"))) {
-        log("SYSERR: 뉴스 파일을 열 수 없습니다.");
+        mudlog("SYSERR: 뉴스 파일을 열 수 없습니다.");
         return;
     }
 
@@ -1863,7 +1804,7 @@ void load_news_if_changed() {
     news_last_mod = file_info.st_mtime;
     
     fclose(fl);
-    log("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
+    mudlog("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
 }
 
 void do_news(struct char_data *ch, char *argument, int cmd)
@@ -2021,8 +1962,7 @@ void do_levels(struct char_data *ch, char *argument, int cmd)
 {
 	int i;
 	char buf[MAX_STRING_LENGTH];
-	extern struct title_type titles[4][IMO + 4];
-
+	
 	if (IS_NPC(ch)) {
 		send_to_char("You ain't nothin' but a hound-dog.\n\r", ch);
 		return;
@@ -2113,7 +2053,7 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 	for (d = descriptor_list; d; d = d->next) {
 		if (target == d->descriptor) {
 			snprintf(name, sizeof(name), "Policed: %d\n", d->descriptor);
-			log(name);
+			mudlog(name);
 			if ((d->connected == CON_PLAYING) && (d->character)) {
 				if (d->character->player.level < ch->player.level) {
 					stash_char(d->character);
@@ -2138,11 +2078,6 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 	}
 }
 
-#ifndef BADDOMS
-#define BADDOMS 16
-extern int baddoms;
-extern char baddomain[BADDOMS][32];
-#endif
 
 /*
  * 함수명: do_siteban (구 do_wizlock), 251121 by Komo

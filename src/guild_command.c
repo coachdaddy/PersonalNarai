@@ -10,7 +10,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
@@ -18,27 +17,8 @@
 #include "limit.h"
 
 #include "guild_list.h"		/* by process */
-/*   external vars  */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct index_data *obj_index;
-extern struct time_info_data time_info;
-extern struct title_type titles[4][IMO + 4];
-extern struct index_data *mob_index;
 
-extern char *guild_names[];
-extern int guild_skill_nums[];
-extern char *police_skills[];
-extern char *outlaw_skills[];
-extern char *assasin_skills[];
-extern int police_skill_costs[];
-extern int outlaw_skill_costs[];
-extern int assasin_skill_costs[];
 
-void do_look(struct char_data *ch, char *arg, int cmd);
-void stash_char(struct char_data *ch);
-void unstash_char(struct char_data *ch, char *filename);
 
 /* shuttle bus to KAIST */
 

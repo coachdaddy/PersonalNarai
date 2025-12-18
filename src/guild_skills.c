@@ -9,7 +9,6 @@
 #include <assert.h>
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "spells.h"
 #include "handler.h"
 #include "limit.h"
@@ -17,26 +16,6 @@
 
 #include "guild_list.h"
 
-/* Extern structures */
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-extern struct descriptor_data *descriptor_list;
-
-extern char *guild_names[];
-
-void damage(struct char_data *ch, struct char_data *victim,
-	     int damage, int weapontype);
-char *one_argument(char *str, char *first);
-void do_say(struct char_data *ch, char *str, int cmd);
-int number(int from, int to);
-void die(struct char_data *ch, int level, struct char_data *who);
-void do_look(struct char_data *ch, char *arg, int cmd);
-void stop_fighting(struct char_data *ch);
-void group_gain(struct char_data *ch, struct char_data *victim);
-void gain_exp(struct char_data *ch, int gain);
-void change_alignment(struct char_data *ch, struct char_data *victim);
 
 
 /* skills of police */
@@ -420,8 +399,7 @@ void do_solace(struct char_data *ch, char *argument, int cmd)
 {
 	int home = ROOM_GUILD_ASSASSIN, location;
 	bool found = FALSE;
-	extern int top_of_world;
-
+	
 	/* remove guild skills by atre */
 	return;
 

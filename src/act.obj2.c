@@ -11,37 +11,11 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
 
-/* extern variables */
-
-extern struct str_app_type str_app[];
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct room_data *world;
-extern char *drinks[];
-extern int drink_aff[][3];
-
-/* extern functions */
-
-struct obj_data *get_object_in_equip_vis(struct char_data *ch,
-					 char *arg, struct obj_data
-					 **equipment, int *j);
-void cast_cure_critic(byte level, struct char_data *ch, char *arg, int si,
-		      struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_heal(byte level, struct char_data *ch, char *arg, int si,
-	       struct char_data *tar_ch, struct obj_data *tar_obj);
-void gain_condition(struct char_data *ch, int condition, int value);
-long int hit_limit(struct char_data *ch);
-long int mana_limit(struct char_data *ch);
-long int move_limit(struct char_data *ch);
-int dice(int num, int size);
-void update_pos(struct char_data *ch);
-int str_cmp(char *arg1, char *arg2);
 
 
 
@@ -61,7 +35,7 @@ void weight_change_object(struct obj_data *obj, int weight)
 		GET_OBJ_WEIGHT(obj) += weight;
 		obj_to_obj(obj, tmp_obj);
 	} else {
-		log("Unknown attempt to subtract weight from an object.");
+		mudlog("Unknown attempt to subtract weight from an object.");
 	}
 }
 
@@ -83,8 +57,7 @@ void name_from_drinkcon(struct obj_data *obj)
 void name_to_drinkcon(struct obj_data *obj, int type)
 {
 	char *new_name;
-	extern char *drinknames[];
-
+	
 	size_t len = strlen(obj->name) + strlen(drinknames[type]) + 2;
 
 	CREATE(new_name, char, len);
@@ -1014,7 +987,7 @@ void wear(struct char_data *ch, struct obj_data *obj_object, int keyword)
 		break;
 	default:
 		{
-			log("Unknown type called in wear.");
+			mudlog("Unknown type called in wear.");
 		}
 		break;
 	}

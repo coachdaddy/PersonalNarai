@@ -1,3 +1,4 @@
+#pragma once
 /* ************************************************************************
 *  file: spells.h , Implementation of magic spells.       Part of DIKUMUD *
 *  Usage : Spells                                                         *

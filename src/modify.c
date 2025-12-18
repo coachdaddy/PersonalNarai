@@ -15,16 +15,12 @@
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
-#include "comm.h"
 
 #define TP_MOB    0
 #define TP_OBJ     1
 #define TP_ERROR  2
 #define MAX_MSGS 100
 #define WRITER_NAME_LEN 20
-
-void show_string(struct descriptor_data *d, char *input);
-int str_cmp(char *arg1, char *arg2);
 
 
 /* board */
@@ -39,8 +35,6 @@ struct board_data {
 	struct board_data *next;	/* next */
 };
 
-struct board_data *find_board(struct char_data *ch);
-int post_board(struct char_data *ch, struct board_data *cb, char *arg);
 
 char *string_fields[] =
 {

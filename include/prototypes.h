@@ -1,5 +1,4 @@
-#ifndef __PROTOTYPES_H__
-#define __PROTOTYPES_H__
+#pragma once
 
 /* 
    코드 정리와 리팩토링을 위해, 
@@ -8,6 +7,7 @@
 */
 
 #include <stdio.h>
+#include <stddef.h>  /* for size_t */
 
 /* --- act.comm.c --- */
 void do_say(struct char_data *ch, char *argument, int cmd);
@@ -813,6 +813,10 @@ void cast_kiss_of_process(byte level, struct char_data *ch, char *arg, int type,
 void cast_thunder_bolt(byte level, struct char_data *ch, char *arg, int type, struct char_data *tar_ch, struct obj_data *tar_obj);
 
 /* --- utility.c --- */
+// To avoid name conflict with built-in log(x) function
+#define log(s) mudlog(s)
+void mudlog(const char *str);
+void DEBUG_LOG(const char *format, ...);
 int number(int from, int to);
 int dice(int number, int size);
 int str_cmp(char *arg1, char *arg2);
@@ -823,18 +827,15 @@ struct time_info_data real_time_passed(time_t t2, time_t t1);
 struct time_info_data mud_time_passed(time_t t2, time_t t1);
 struct time_info_data age(struct char_data *ch);
 void print_increased_skilled(struct char_data *ch, int sk_no);
-void mudlog(const char *str);
-void start_progress_bar(struct char_data *ch);
 void process_color_string(const char *input, char *output, int max_out_len);
 void do_colortest(struct char_data *ch, char *argument, int cmd);
-size_t strlcat(char *dest, const char *src, size_t size);
-void prune_crlf(char *txt);
-void utf8_safe_strncpy(char *dest, const char *src, size_t n);
-size_t strlcpy(char *dst, const char *src, size_t siz);
+const char *get_char_name(struct char_data *ch, struct char_data *viewer);
+
+#ifndef HAVE_STRLCAT
+size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 안전한 문자열 연결 함수, 251125 by Komo */
+#endif
 
 /* --- weather.c --- */
 void weather_and_time(int mode);
 void another_hour(int mode);
 void weather_change(int change);
-
-#endif /* __PROTOTYPES_H__ */

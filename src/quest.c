@@ -12,7 +12,6 @@
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
-#include "comm.h" // acthan, send_to_char_han 등
 
 #define MaxQuest		10000
 #define QUEST_FILE		"mob.quest"
@@ -23,26 +22,9 @@
 #define QUEST_ROOM_VNUM 3081           // 퀘스트 룸 VNUM
 #define CHALLENGE_ROOM_START_VNUM 3082 // '도전의 방' 시작 VNUM
 #define CHALLENGE_ROOM_END_VNUM 3089   // '도전의 방' 끝 VNUM (총 8개)
-extern struct room_data *world;
-extern struct index_data *mob_index;
 
-int number(int from, int to);
-void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch);
 
-void half_chop(char *string, char *arg1, char *arg2);
-struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name, struct obj_data *list);
-void send_to_char(char *messg, struct char_data *ch);
-void extract_obj(struct obj_data *obj);
-void obj_to_char(struct obj_data *o, struct char_data *ch);
-void char_to_room(struct char_data *ch, int room);
-void char_from_room(struct char_data *ch);
-void do_look(struct char_data *ch, char *argument, int cmd);
-
-struct {
-	int virtual;
-	int level;
-	char *name;
-} QM[MaxQuest];
+struct quest_mob_info QM[MaxQuest];
 
 int topQM;
 
@@ -216,7 +198,7 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 			(ch->quest.solved)--;
 		} else {
 			/* 단군의 request penalty */
-			int xp = number(5000000, 10000000);
+			int xp = number(M(5), M(10));
 
 			if (GET_EXP(ch) > xp) {
 				GET_EXP(ch) -= xp;
@@ -289,7 +271,7 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 			QM[num].name);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &U%s&Y? 어디 있는 걸까? 모르겠는데...&n\n\r",
 			QM[num].name);
-		log("QUEST : INVALID mobile.");
+		mudlog("QUEST : INVALID mobile.");
 	} else { 
 		snprintf(buf1, sizeof(buf1), "&CQUEST&n : &U%s&Y is in &#%s&Y probably.&n\n\r",
 			QM[num].name, zone);
@@ -355,7 +337,7 @@ void init_quest(void)
 	int num, size;
 
 	if (!(fp = fopen(QUEST_FILE, "r"))) {
-		log("(init_quest) Initializing quests (quest_file)");
+		mudlog("(init_quest) Initializing quests (quest_file)");
 		exit(0);
 	}
 
@@ -388,7 +370,7 @@ void init_quest(void)
 		topQM++;
 
 		if (topQM > MaxQuest) {
-			log("(init_quest) Quest Mobiles are overflown.");
+			mudlog("(init_quest) Quest Mobiles are overflown.");
 			fclose(fp);
 			return;
 		}
@@ -510,8 +492,7 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
     };
 
 	struct obj_data *tmp_obj;
-	extern struct index_data *obj_index;
-
+	
 	/* quest(302) or use(172)  */
 	if (cmd != 302 && cmd != 172) {
 		return FALSE;

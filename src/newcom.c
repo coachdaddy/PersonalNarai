@@ -9,30 +9,19 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
 #include "limits.h"
 
-/* extern variables */
 
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct char_data *character_list;
-extern int top_of_zone_table;
-extern struct zone_data *zone_table;
 
-extern void load_zones (int i);
-void raw_kill (struct char_data *ch);
-void hit (struct char_data *ch, struct char_data *victim, int type);
 
 void do_assist(struct char_data *ch, char *argument, int cmd)
 {
 	char arg[MAX_STRING_LENGTH];
 	struct char_data *victim;
-	extern int nokillflag;
 	char cyb[80];
 
 	one_argument(argument, arg);
@@ -96,7 +85,7 @@ void stop_group(struct char_data *ch)
 	struct follow_type *j, *k;
 
 	if (!ch->master) {
-		log("No master but called stop_group");
+		mudlog("No master but called stop_group");
 		return;
 	}
 
@@ -138,7 +127,6 @@ void do_ungroup(struct char_data *ch, char *argument, int cmd)
 
 void do_version(struct char_data *ch, char *argument, int cmd)
 {
-	extern char fileid[];
 	send_to_char(fileid, ch);
 }
 
@@ -207,7 +195,7 @@ void do_reloadzone(struct char_data *ch, char *argument, int cmd)
 			snprintf(buf2, sizeof(buf2), "Zone %s is now reloading..\n\r",
 				zone_table[i].name);
 			send_to_char(buf2, ch);
-			log(buf2);
+			mudlog(buf2);
 			load_zones(i);
 		}
 		return;
@@ -218,7 +206,7 @@ void do_reloadzone(struct char_data *ch, char *argument, int cmd)
 		snprintf(buf2, sizeof(buf2), "Zone %s is now reloading..\n\r",
 			zone_table[i].name);
 		send_to_char(buf2, ch);
-		log(buf2);
+		mudlog(buf2);
 		load_zones(i);
 		return;
 	}
@@ -228,7 +216,7 @@ void do_reloadzone(struct char_data *ch, char *argument, int cmd)
 			snprintf(buf2, sizeof(buf2), "Zone %s is now reloading..\n\r",
 				zone_table[i].name);
 			send_to_char(buf2, ch);
-			log(buf2);
+			mudlog(buf2);
 			load_zones(i);
 			break;
 		}

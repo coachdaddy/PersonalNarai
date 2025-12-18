@@ -10,7 +10,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
@@ -18,27 +17,8 @@
 
 #include "guild_list.h"
 
-/* extern variables */
-extern struct str_app_type str_app[];
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct room_data *world;
-extern struct dex_skill_type dex_app_skill[];
-extern struct spell_info_type spell_info[];
 
-/* extern procedures */
-void stash_char(struct char_data *ch);
-void wipe_stash(char *filename);
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void do_shout(struct char_data *ch, char *argument, int cmd);
-void close_socket(struct descriptor_data *d);
-int number(int from, int to);
-int str_cmp(char *arg1, char *arg2);
-int move_stashfile_safe(const char *victim);
-void page_string(struct descriptor_data *d, char *str, int keep);
-void do_say(struct char_data *ch, char *str, int cmd);
-bool saves_spell(struct char_data *ch, int type);
-void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
+
 
 
 void do_quit(struct char_data *ch, char *argument, int cmd)
@@ -65,7 +45,7 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 
 	act("Goodbye, friend.. Come back soon!", FALSE, ch, 0, 0, TO_CHAR);
 	snprintf(cyb, sizeof(cyb), "%s closed connect(quit)", GET_NAME(ch));
-	log(cyb);
+	mudlog(cyb);
 	if (ch->desc)
 		close_socket(ch->desc);
 
@@ -191,8 +171,7 @@ void do_steal(struct char_data *ch, char *argument, int cmd)
 	int percent;
 	int gold, eq_pos;
 	bool ohoh = FALSE;
-	extern int nostealflag;
-
+	
 	argument = one_argument(argument, obj_name);
 	one_argument(argument, victim_name);
 
@@ -307,8 +286,6 @@ void do_steal(struct char_data *ch, char *argument, int cmd)
 void do_practice(struct char_data *ch, char *arg, int cmd)
 {
 	int i;
-	extern char *spells[], *how_good();
-	extern struct spell_info_type spell_info[MAX_SPL_LIST];
 	char buf[100 * MAX_SKILLS];
 	char tmp[MAX_STRING_LENGTH];
 	char victim_name[256];
@@ -606,7 +583,7 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 
 	/* by ares */
 	snprintf(buf, sizeof(buf), "Use log : %s uses %s", ch->player.name, argument);
-	log(buf);
+	mudlog(buf);
 
 	stick = ch->equipment[HOLD];
 
@@ -745,8 +722,7 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
 	struct obj_data *obj;
 	char victim_name[240];
 	int percent;
-	extern int nodisarmflag;
-
+	
 	one_argument(argument, victim_name);
 
 	if (!(victim = get_char_room_vis(ch, victim_name))) {

@@ -16,83 +16,11 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
 #include "limit.h"
-
-/*   external vars  */
-
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct title_type titles[4][IMO + 4];
-extern struct index_data *mob_index;
-extern struct index_data *obj_index;
-extern struct int_app_type int_app[26];
-extern struct player_index_element *player_table;
-extern int regen_time_percent;
-extern int regen_time;
-extern int regen_percent;
-extern unsigned long reboot_time;
-extern int top_of_zone_table;
-extern struct zone_data *zone_table;
-/* do_stat에 있던 외부 변수들 이동 */
-extern char *spells[];
-extern char *item_types[];
-extern char *wear_bits[];
-extern char *extra_bits[];
-extern char *dirs[];
-extern char *room_bits[];
-extern char *exit_bits[];
-extern char *sector_types[];
-extern char *affected_bits[];
-extern char *apply_types[];
-extern char *pc_class_types[];
-extern char *action_bits[];
-extern char *player_bits[];
-extern char *connected_types[];
-
-
-/* external functs */
-int dice(int num, int size);				/* in utility.c */
-int number(int from, int to);
-int str_cmp(char *arg1, char *arg2);
-int mana_gain(struct char_data *ch);
-int hit_gain(struct char_data *ch);
-int move_gain(struct char_data *ch);
-int load_char(char *name, struct char_file_u *char_element);
-int move_stashfile_safe(const char *victim);
-extern int is_number(char *str); // 251118
-long int mana_limit(struct char_data *ch);
-long int hit_limit(struct char_data *ch);
-long int move_limit(struct char_data *ch);
-void set_title(struct char_data *ch);
-void wipe_obj(struct obj_data *o);
-void close_socket(struct descriptor_data *d);
-void stash_char(struct char_data *ch);
-void sprinttype(int type, char *names[], char *result);
-void sprintbit(long vektor, char *names[], char *result);
-void unstash_char(struct char_data *ch, char *filename);
-void page_string(struct descriptor_data *d, char *str, int keep);
-void gain_exp_regardless(struct char_data *ch, int gain);
-void store_to_char_for_transform(struct char_file_u *st, struct char_data *ch);
-extern void do_look(struct char_data *ch, char *argument, int cmd);
-struct time_info_data age(struct char_data *ch);
-void load_zones(int zon);
-void reload_world_file(FILE *fl, int zone_rnum);
-
-#ifndef BADDOMS
-#define BADDOMS 16
-extern int baddoms;
-extern char baddomain[BADDOMS][32];
-#endif
-
-/* to avoid compiler warning */
-void do_start(struct char_data * ch);
-void roll_abilities(struct char_data *ch);
 
 char history[20][MAX_STRING_LENGTH];
 int his_start = 0, his_end = 0;
@@ -185,8 +113,7 @@ void do_at(struct char_data *ch, char *argument, int cmd)
 	int loc_nr, location, original_loc;
 	struct char_data *target_mob;
 	struct obj_data *target_obj;
-	extern int top_of_world;
-
+	
 	if (IS_NPC(ch))
 		return;
 
@@ -243,8 +170,7 @@ void do_banish(struct char_data *ch, char *argument, int cmd)
 	struct obj_data *dummy;
 	char buf[MAX_INPUT_LENGTH];
 	int location;
-	extern int top_of_world;
-
+	
 	if (IS_NPC(ch))
 		return;
 	one_argument(argument, buf);
@@ -529,8 +455,7 @@ void do_goto(struct char_data *ch, char *argument, int cmd)
 	int loc_nr, location, i, flag;
 	struct char_data *target_mob, *pers;
 	struct obj_data *target_obj;
-	extern int top_of_world;
-
+	
 	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 4))
 		return;
 	one_argument(argument, buf);
@@ -706,7 +631,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         send_to_char(feedback_buf, ch);
 
         snprintf(log_buf, sizeof(log_buf), "%s loaded %d x char %d (%s)", ch->player.name, quantity, vnum, mob_name);
-        log(log_buf);
+        mudlog(log_buf);
 
     /* --- 아이템(obj) 생성 --- */
     } else if (is_abbrev(arg1, "obj")) {
@@ -758,7 +683,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         send_to_char(feedback_buf, ch);
 
         snprintf(log_buf, sizeof(log_buf), "%s loaded %d x object %d (%s)", ch->player.name, quantity, vnum, obj_name);
-        log(log_buf);
+        mudlog(log_buf);
 
     } else {
         send_to_char("That'll have to be either 'char' or 'obj'.\n\r", ch);
@@ -900,7 +825,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 			
 			// "confirm"이 입력된 경우, 플레이어 삭제 절차 진행
 			snprintf(buf, sizeof(buf), "PURGE: %s permanently deleted player %s.", ch->player.name, vict->player.name);
-			log(buf); // 로그 기록
+			mudlog(buf); // 로그 기록
 
 			stash_char(vict);
 			move_stashfile_safe(vict->player.name); 
@@ -1039,9 +964,6 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 	int i, j;
 	unsigned int k;
 	LONGLONG kk;
-
-	extern int nokillflag, nostealflag, nonewplayers, noshoutflag, nochatflag;
-	extern int nodisarmflag; /* chase written */
 
 	bool target_ok = FALSE;
 	struct obj_data *tar_obj = NULL;
@@ -1385,7 +1307,6 @@ void do_shutdow(struct char_data *ch, char *argument, int cmd)
 
 void do_shutdown(struct char_data *ch, char *argument, int cmd)
 {
-	extern int shutdowngame;
 	char arg[MAX_INPUT_LENGTH];
 
 	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 3))
@@ -1541,8 +1462,7 @@ void perform_stat_object(struct char_data *ch, struct obj_data *j, char *buf, si
     int i, virtual;
     struct extra_descr_data *desc;
     char sbuf[256], sbuf2[256];
-    extern struct index_data *obj_index;
-
+    
     virtual = (j->item_number >= 0) ? obj_index[j->item_number].virtual : 0;
 
     SAFE_PRINTF("Object name: [%s], R-num: [%d], V-number: [%d]\n\r", j->name, j->item_number, virtual);
@@ -1794,10 +1714,6 @@ void do_sys(struct char_data *ch, char *argument, int cmd)
 {
 	struct rusage xru;
 	char buffer[256];
-	extern int boottime;
-	extern struct char_data *character_list;
-	extern struct obj_data *object_list;
-	extern struct descriptor_data *descriptor_list;
 	struct char_data *i;
 	struct obj_data *k;
 	struct descriptor_data *d;
@@ -2061,7 +1977,7 @@ void do_zreload(struct char_data *ch, char *argument, int cmd)
 
     snprintf(buf, sizeof(buf), "[ZRELOAD] (GC) %s reloaded Zone %d (%s).", 
             GET_NAME(ch), target_zone_num, zone_table[zone_rnum].filename);
-    log(buf);
+    mudlog(buf);
 
     load_zones(zone_rnum);
 
@@ -2122,7 +2038,7 @@ void do_wreload(struct char_data *ch, char *argument, int cmd)
 
     /* 로그 및 메시지 */
     snprintf(buf, sizeof(buf), "[WRELOAD] (GC) %s reloaded World file for Zone %d.", GET_NAME(ch), target_zone_num);
-    log(buf);
+    mudlog(buf);
     
     snprintf(buf, sizeof(buf), "&c[WRELOAD]&n 존 %d번 월드 데이터(%s) 업데이트 완료.\r\n"
 				 "&c[WRELOAD]&n 동기화를 위해 zreload 실행을 권장합니다.\r\n"

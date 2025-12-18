@@ -8,33 +8,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "spells.h"
 #include "handler.h"
 #include "limit.h"
 #include "db.h"
-
 #include "guild_list.h"
 #include "magic_weapon.h"
-#include "prototypes.h"
 
-/* Extern structures */
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-
-/* Extern procedures */
-void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype);
-bool saves_spell(struct char_data *ch, sh_int spell);
-int dice(int number, int size);             /* in utility.c */
-int number(int from, int to);
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void sprinttype(int type, char *name[], char *res);
-void sprintbit (long vector, char *name[], char *res);
-void spell_sanctuary(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
 
 
 /* Offensive Spells */
@@ -228,8 +211,7 @@ void spell_fireball(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
-	extern struct weather_data weather_info;
-
+	
 	if (!ch || !victim)
 		return;
 
@@ -313,7 +295,7 @@ void spell_sunburst(byte level, struct char_data *ch,
 	if (number(1, 15) == 1)
         spell_blindness(level, ch, victim, 0);
     // sprintf(buf, "DEBUG: sunburst: %d", dam);
-    log(buf);
+    mudlog(buf);
 
 	damage(ch, victim, dam, SPELL_SUNBURST);
 }
@@ -596,8 +578,6 @@ void spell_call_lightning(byte level, struct char_data *ch,
 {
 	int dam;
 
-	extern struct weather_data weather_info;
-
 	if (!ch || !victim)
 		return;
 
@@ -642,21 +622,9 @@ void spell_harm(byte level, struct char_data *ch,
 void spell_identify(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
-	int ac_applicable(struct obj_data *obj_object);
 	char buf[MAX_OUTPUT_LENGTH], buf2[256], bufh[MAX_OUTPUT_LENGTH];
 	int i;
 	bool found;
-
-	struct time_info_data age(struct char_data *ch);
-
-	/* Spell Names */
-	extern char *spells[];
-
-	/* For Objects */
-	extern char *item_types[];
-	extern char *extra_bits[];
-	extern char *apply_types[];
-	extern char *affected_bits[];
 
 	INCREASE_SKILLED2(ch, ch, SPELL_IDENTIFY);
 

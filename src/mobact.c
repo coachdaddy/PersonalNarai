@@ -8,39 +8,10 @@
 
 #include "structs.h"
 #include "db.h"
-#include "comm.h"
 #include "spells.h"
 #include "utils.h"
 
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-extern struct room_data *world;
-extern struct str_app_type str_app[];
 
-void hit (struct char_data *ch, struct char_data *victim, int type);
-
-int number (int from, int to);
-void obj_from_room (struct obj_data *o);
-void obj_to_char (struct obj_data *o, struct char_data *ch);
-bool saves_spell (struct char_data *ch, int type);
-int thief (struct char_data *ch, int cmd, char *arg);
-int dragon (struct char_data *ch, int cmd, char *arg);
-int magic_user (struct char_data *ch, int cmd, char *arg);
-int shooter (struct char_data *ch, int cmd, char *arg);
-int kickbasher (struct char_data *ch, int cmd, char *arg);
-int spitter (struct char_data *ch, int cmd, char *arg);
-int cleric (struct char_data *ch, int cmd, char *arg);
-int paladin (struct char_data *ch, int cmd, char *arg);
-int cityguard (struct char_data *ch, int cmd, char *arg);
-int superguard (struct char_data *ch, int cmd, char *arg);
-int rescuer (struct char_data *ch, int cmd, char *arg);
-int helper (struct char_data *ch, int cmd, char *arg);
-int finisher (struct char_data *ch, int cmd, char *arg);
-
-int warrior (struct char_data *ch, int cmd, char *arg);
-void first_attack (struct char_data *ch, struct char_data *victim);
-void do_cast (struct char_data *ch, char *arg, int cmd);
-void extract_char(struct char_data *ch, int drop_items);
 
 int check_stat(struct char_data *ch)
 {
@@ -112,11 +83,6 @@ void mobile_activity(void)
 	int door, found, max;
 	char buf[100];
 
-	extern int no_specials;
-
-	void do_move(struct char_data *ch, char *argument, int cmd);
-	void do_get(struct char_data *ch, char *argument, int cmd);
-
 	/* son_ogong mirror */
 	ch = character_list;
 	while (ch) {
@@ -139,7 +105,7 @@ void mobile_activity(void)
 					snprintf(buf, sizeof(buf),
 						"Attempting to call a non-existing MOB func.\n (mobact.c) %s",
 						ch->player.short_descr);
-					log(buf);
+					mudlog(buf);
 					REMOVE_BIT(ch->specials.act, ACT_SPEC);
 				} else {
 					if ((*mob_index[ch->nr].func) (ch, 0, ""))

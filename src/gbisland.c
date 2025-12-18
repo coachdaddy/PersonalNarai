@@ -10,20 +10,12 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
 #include "limit.h"
-#include "prototypes.h"
 
-extern struct char_data *character_list;
-extern struct index_data *obj_index;
-extern struct room_data *world;
-extern int top_of_world;
-extern int movement_loss[];
-extern char *dirs[];
 
 #define GBISLAND_SEASHORE			23302
 #define GBISLAND_MIRROR_SAINT		23321
@@ -36,15 +28,6 @@ extern char *dirs[];
 
 #define GBISLAND_SEED_EVIL_POWER	23309
 
-int number (int from, int to);
-void wipe_stash (char *filename);
-void save_char_nocon (struct char_data *ch, sh_int load_room);
-void raw_kill (struct char_data *ch, int level);
-void do_look (struct char_data *ch, char *argument, int cmd);
-void do_say (struct char_data *ch, char *str, int cmd);
-void do_open (struct char_data *ch, char *argument, int cmd);
-void do_move (struct char_data *ch, char *argument, int cmd);
-void do_give (struct char_data *ch, char *argument, int cmd);
 
 
 void gbisland_move_seashore(struct char_data *ch)

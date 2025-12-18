@@ -29,8 +29,8 @@
 #include <arpa/inet.h>
 #define	TELOPTS
 #include <arpa/telnet.h>
+
 #include "structs.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "db.h"
 #include "utils.h"
@@ -53,214 +53,8 @@
 #define MAX_CMD_LIST 350	/*  max command list modified by chase */
 
 int no_echo = 0;
-extern struct title_type titles[4][IMO + 4];
-extern char motd[MAX_STRING_LENGTH];
-extern char imotd[MAX_STRING_LENGTH];
-extern struct char_data *character_list;
-extern struct player_index_element *player_table;
-extern int top_of_p_table;
-extern struct index_data *mob_index;
-extern struct index_data *obj_index;
-extern struct room_data *world;
 struct command_info cmd_info[MAX_CMD_LIST];
 
-/* external fcntls */
-void unstash_char(struct char_data *ch, char *name);
-void stash_char(struct char_data *ch);
-void set_title(struct char_data *ch);
-void init_char(struct char_data *ch);
-void store_to_char(struct char_file_u *st, struct char_data *ch);
-int create_entry(char *name);
-int special(struct char_data *ch, int cmd, char *arg);
-int number(int from, int to);
-int str_cmp(char *arg1, char *arg2);
-void char_to_room(struct char_data *ch, int room);
-void do_start(struct char_data *ch);
-int remove_entry(struct char_data *ch);
-void delete_char(struct char_data *ch);
-void close_socket(struct descriptor_data *d);
-
-void do_shoot(struct char_data *ch, char *argument, int cmd);
-void do_wimpy(struct char_data *ch, char *argument, int cmd);
-void do_move(struct char_data *ch, char *argument, int cmd);
-void do_look(struct char_data *ch, char *argument, int cmd);
-void do_read(struct char_data *ch, char *argument, int cmd);
-void do_write(struct char_data *ch, char *argument, int cmd);
-void do_say(struct char_data *ch, char *argument, int cmd);
-// void do_exit (struct char_data *ch, char *argument, int cmd);
-void do_snoop(struct char_data *ch, char *argument, int cmd);
-void do_insult(struct char_data *ch, char *argument, int cmd);
-void do_quit(struct char_data *ch, char *argument, int cmd);
-void do_help(struct char_data *ch, char *argument, int cmd);
-void do_who(struct char_data *ch, char *argument, int cmd);
-void do_emote(struct char_data *ch, char *argument, int cmd);
-void do_echo(struct char_data *ch, char *argument, int cmd);
-void do_trans(struct char_data *ch, char *argument, int cmd);
-void do_kill(struct char_data *ch, char *argument, int cmd);
-void do_stand(struct char_data *ch, char *argument, int cmd);
-void do_sit(struct char_data *ch, char *argument, int cmd);
-void do_rest(struct char_data *ch, char *argument, int cmd);
-void do_sleep(struct char_data *ch, char *argument, int cmd);
-void do_wake(struct char_data *ch, char *argument, int cmd);
-void do_force(struct char_data *ch, char *argument, int cmd);
-void do_get(struct char_data *ch, char *argument, int cmd);
-void do_drop(struct char_data *ch, char *argument, int cmd);
-void do_news(struct char_data *ch, char *argument, int cmd);
-void do_score(struct char_data *ch, char *argument, int cmd);
-void do_title(struct char_data *ch, char *argument, int cmd);
-void do_spells(struct char_data *ch, char *argument, int cmd);
-void do_report(struct char_data *ch, char *argument, int cmd);
-void do_inventory(struct char_data *ch, char *argument, int cmd);
-void do_equipment(struct char_data *ch, char *argument, int cmd);
-void do_shout(struct char_data *ch, char *argument, int cmd);
-void do_not_here(struct char_data *ch, char *argument, int cmd);
-void do_tell(struct char_data *ch, char *argument, int cmd);
-void do_send(struct char_data *ch, char *argument, int cmd);
-void do_gtell(struct char_data *ch, char *argument, int cmd);
-void do_wear(struct char_data *ch, char *argument, int cmd);
-void do_wield(struct char_data *ch, char *argument, int cmd);
-void do_grab(struct char_data *ch, char *argument, int cmd);
-void do_remove(struct char_data *ch, char *argument, int cmd);
-void do_put(struct char_data *ch, char *argument, int cmd);
-void do_shutdown(struct char_data *ch, char *argument, int cmd);
-void do_save(struct char_data *ch, char *argument, int cmd);
-void do_hit(struct char_data *ch, char *argument, int cmd);
-void do_string(struct char_data *ch, char *arg, int cmd);
-void do_give(struct char_data *ch, char *arg, int cmd);
-void do_stat(struct char_data *ch, char *arg, int cmd);
-void do_time(struct char_data *ch, char *arg, int cmd);
-void do_weather(struct char_data *ch, char *arg, int cmd);
-void do_load(struct char_data *ch, char *arg, int cmd);
-void do_purge(struct char_data *ch, char *arg, int cmd);
-void do_shutdow(struct char_data *ch, char *arg, int cmd);
-void do_whisper(struct char_data *ch, char *arg, int cmd);
-void do_cast(struct char_data *ch, char *arg, int cmd);
-void do_at(struct char_data *ch, char *arg, int cmd);
-void do_goto(struct char_data *ch, char *arg, int cmd);
-void do_ask(struct char_data *ch, char *arg, int cmd);
-void do_drink(struct char_data *ch, char *arg, int cmd);
-void do_eat(struct char_data *ch, char *arg, int cmd);
-void do_pour(struct char_data *ch, char *arg, int cmd);
-void do_sip(struct char_data *ch, char *arg, int cmd);
-void do_taste(struct char_data *ch, char *arg, int cmd);
-void do_order(struct char_data *ch, char *arg, int cmd);
-void do_follow(struct char_data *ch, char *arg, int cmd);
-void do_rent(struct char_data *ch, char *arg, int cmd);
-void do_junk(struct char_data *ch, char *arg, int cmd);
-void do_advance(struct char_data *ch, char *arg, int cmd);
-void do_close(struct char_data *ch, char *arg, int cmd);
-void do_open(struct char_data *ch, char *arg, int cmd);
-void do_lock(struct char_data *ch, char *arg, int cmd);
-void do_unlock(struct char_data *ch, char *arg, int cmd);
-void do_exits(struct char_data *ch, char *arg, int cmd);
-void do_enter(struct char_data *ch, char *arg, int cmd);
-void do_leave(struct char_data *ch, char *arg, int cmd);
-void do_flee(struct char_data *ch, char *arg, int cmd);
-void do_sneak(struct char_data *ch, char *arg, int cmd);
-void do_hide(struct char_data *ch, char *arg, int cmd);
-void do_backstab(struct char_data *ch, char *arg, int cmd);
-void do_pick(struct char_data *ch, char *arg, int cmd);
-void do_steal(struct char_data *ch, char *arg, int cmd);
-void do_bash(struct char_data *ch, char *arg, int cmd);
-void do_rescue(struct char_data *ch, char *arg, int cmd);
-void do_kick(struct char_data *ch, char *arg, int cmd);
-void do_punch(struct char_data *ch, char *arg, int cmd);
-void do_examine(struct char_data *ch, char *arg, int cmd);
-void do_users(struct char_data *ch, char *arg, int cmd);
-void do_where(struct char_data *ch, char *arg, int cmd);
-void do_levels(struct char_data *ch, char *arg, int cmd);
-void do_reroll(struct char_data *ch, char *arg, int cmd);
-void do_brief(struct char_data *ch, char *arg, int cmd);
-void do_wiznet(struct char_data *ch, char *arg, int cmd);
-void do_consider(struct char_data *ch, char *arg, int cmd);
-void do_group(struct char_data *ch, char *arg, int cmd);
-void do_restore(struct char_data *ch, char *arg, int cmd);
-void do_return(struct char_data *ch, char *argument, int cmd);
-void do_switch(struct char_data *ch, char *argument, int cmd);
-void do_quaff(struct char_data *ch, char *argument, int cmd);
-void do_recite(struct char_data *ch, char *argument, int cmd);
-void do_use(struct char_data *ch, char *argument, int cmd);
-void do_flag(struct char_data *ch, char *argument, int cmd);
-void do_noshout(struct char_data *ch, char *argument, int cmd);
-void do_wizhelp(struct char_data *ch, char *argument, int cmd);
-void do_credits(struct char_data *ch, char *argument, int cmd);
-void do_compact(struct char_data *ch, char *argument, int cmd);
-void do_action(struct char_data *ch, char *arg, int cmd);
-void do_practice(struct char_data *ch, char *arg, int cmd);
-void do_flick(struct char_data *ch, char *arg, int cmd);
-void do_wall(struct char_data *ch, char *arg, int cmd);
-void do_set(struct char_data *ch, char *arg, int cmd);
-void do_police(struct char_data *ch, char *arg, int cmd);
-void do_siteban(struct char_data *ch, char *arg, int cmd);
-void do_noaffect(struct char_data *ch, char *arg, int cmd);
-void do_invis(struct char_data *ch, char *arg, int cmd);
-void do_notell(struct char_data *ch, char *arg, int cmd);
-void do_banish(struct char_data *ch, char *arg, int cmd);
-void do_reload(struct char_data *ch, char *arg, int cmd);
-void do_data(struct char_data *ch, char *arg, int cmd);
-void do_checkrent(struct char_data *ch, char *arg, int cmd);
-void do_chat(struct char_data *ch, char *arg, int cmd);
-void do_lastchat(struct char_data *ch, char *arg, int cmd);
-void do_bank(struct char_data *ch, char *arg, int cmd);
-void do_sys(struct char_data *ch, char *arg, int cmd);
-void do_extractrent(struct char_data *ch, char *arg, int cmd);
-void do_replacerent(struct char_data *ch, char *arg, int cmd);
-void do_tornado(struct char_data *ch, char *arg, int cmd);
-void do_light_move(struct char_data *ch, char *arg, int cmd);
-void do_flash(struct char_data *ch, char *arg, int cmd);
-void do_multi_kick(struct char_data *ch, char *arg, int cmd);
-void do_demote(struct char_data *ch, char *arg, int cmd);
-void do_nochat(struct char_data *ch, char *arg, int cmd);
-void do_post(struct char_data *ch, char *arg, int cmd);
-void do_sayh(struct char_data *ch, char *argument, int cmd);
-void do_assist(struct char_data *ch, char *argument, int cmd);
-void do_ungroup(struct char_data *ch, char *argument, int cmd);
-void do_wizards(struct char_data *ch, char *argument, int cmd);
-void do_hangul(struct char_data *ch, char *arg, int cmd);
-void do_version(struct char_data *ch, char *arg, int cmd);
-void do_disarm(struct char_data *ch, char *arg, int cmd);         /* chase */
-void do_shouryuken(struct char_data *ch, char *arg, int cmd);     /* chase */
-void do_throw_object(struct char_data *ch, char *arg, int cmd);   /* chase */
-void do_assault(struct char_data *ch, char *arg, int cmd);        /* by process */
-void do_cant(struct char_data *ch, char *arg, int cmd);           /* by process */
-void do_query(struct char_data *ch, char *arg, int cmd);          /* by process */
-void do_whistle(struct char_data *ch, char *arg, int cmd);        /* by process */
-void do_simultaneous(struct char_data *ch, char *arg, int cmd);   /* by process */
-void do_arrest(struct char_data *ch, char *arg, int cmd);         /* by process */
-void do_angry_yell(struct char_data *ch, char *arg, int cmd);     /* by process */
-void do_solace(struct char_data *ch, char *arg, int cmd);         /* by process */
-void do_unwield(struct char_data *ch, char *arg, int cmd);        /* by process */
-void do_unhold(struct char_data *ch, char *arg, int cmd);         /* by process */
-void do_temptation(struct char_data *ch, char *arg, int cmd);     /* by process */
-void do_shadow(struct char_data *ch, char *arg, int cmd);         /* by process */
-void do_smoke(struct char_data *ch, char *arg, int cmd);          /* by process */
-void do_inject(struct char_data *ch, char *arg, int cmd);         /* by process */
-void do_plan(struct char_data *ch, char *arg, int cmd);           /* by process */
-void do_power_bash(struct char_data *ch, char *arg, int cmd);     /* by process */
-void do_evil_strike(struct char_data *ch, char *arg, int cmd);    /* by process */
-void do_charge(struct char_data *ch, char *arg, int cmd);         /* by process */
-void do_solo(struct char_data *ch, char *arg, int cmd);           /* by process */
-void do_auto_assist(struct char_data *ch, char *arg, int cmd);    /* by process */
-void do_spin_bird_kick(struct char_data *ch, char *arg, int cmd); /* by ares */
-void do_reply(struct char_data *ch, char *arg, int cmd);          /* by process */
-
-/* quest */
-void do_quest(struct char_data *ch, char *arg, int cmd);   /* by atre */
-void do_request(struct char_data *ch, char *arg, int cmd); /* by atre */
-void do_hint(struct char_data *ch, char *arg, int cmd);    /* by atre */
-// Challenge Room Quest System, in quest.c
-void do_challenge(struct char_data *ch, char *argument, int cmd); // 251017 by Komo
-void do_begin(struct char_data *ch, char *argument, int cmd);     // 251017 by Komo
-void do_rejoin(struct char_data *ch, char *argument, int cmd);    // 251022 by Komo
-
-// color processing function
-void process_color_string(const char *input, char *output, int max_out_len); // src/utility.c, Komo
-void do_colortest(struct char_data *ch, char *argument, int cmd); // src/utility.c, Komo
-
-// Live Reloading System, 251120
-void do_zreload(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251120 by Komo
-void do_wreload(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251121 by Komo
-void do_zonelist(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251121 by Komo
 
 
 char *command[] = {
@@ -781,7 +575,6 @@ int improve_status(struct char_data *ch, char arg)
 int command_interpreter(struct char_data *ch, char *argument)
 {
 	int look_at, cmd, begin, lev;
-	extern int no_specials;
 	char buf[MAX_STRING_LENGTH];
 	int ch_class;
 
@@ -856,7 +649,7 @@ int command_interpreter(struct char_data *ch, char *argument)
 
 		if (IS_SET(ch->specials.act, PLR_XYZZY)) {
 			snprintf(buf, sizeof(buf), "%s: %s", ch->player.name, argument);
-			log(buf);
+			mudlog(buf);
 		}
 		return (1);
 	}
@@ -1420,11 +1213,6 @@ void nanny(struct descriptor_data *d, char *arg)
 	struct char_file_u tmp_store;
 	struct char_data *tmp_ch;
 	struct descriptor_data *k;
-	extern struct descriptor_data *descriptor_list;
-	extern int nonewplayers;
-	void do_look(struct char_data *ch, char *argument, int cmd);
-    void load_char_objs(struct char_data * ch);
-    int load_char(char *name, struct char_file_u *char_element);
 	char improved_stat[2];
 	int i;
 	char new_connection[180];
@@ -1446,7 +1234,7 @@ void nanny(struct descriptor_data *d, char *arg)
 				return;
 			}
 			snprintf(new_connection, sizeof(new_connection), "%s is trying to play", tmp_name);
-			log(new_connection);
+			mudlog(new_connection);
 			/* Check if already playing */
 			for (k = descriptor_list; k; k = k->next) {
 				if ((k->character != d->character) && k->character) {
@@ -1546,14 +1334,14 @@ void nanny(struct descriptor_data *d, char *arg)
 						"%s(%d)[%s] has reconnected.",
 						GET_NAME(d->character),
 						GET_LEVEL(d->character), d->host);
-					log(buf);
+					mudlog(buf);
 					return;
 				}
 			}
 			snprintf(buf, sizeof(buf), "%s(%d)[%s] has connected.",
 				GET_NAME(d->character),
 				GET_LEVEL(d->character), d->host);
-			log(buf);
+			mudlog(buf);
 			char *msg_ptr = motd; // SEND_TO_Q에 포인터 전달, 251126 by Komo
             SEND_TO_Q(msg_ptr, d);
 			SEND_TO_Q("\n\r\n&C*** PRESS RETURN : &n", d);
@@ -1654,7 +1442,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		if (STATE(d) != CON_QCLASS) {
 			snprintf(buf, sizeof(buf), "%s [%s] new player.", GET_NAME(d->character),
 				d->host);
-			log(buf);
+			mudlog(buf);
 			SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
 		}
 		break;
@@ -1677,34 +1465,41 @@ void nanny(struct descriptor_data *d, char *arg)
 		break;
 
 	case CON_SLCT:		/* get selection from main menu */
-		/* skip whitespaces */
-		for (; isspace(*arg); arg++) ;
+		for (; isspace(*arg); arg++) ;	/* skip whitespaces */
+
 		switch (*arg) {
 		case '0':
 			close_socket(d);
 			break;
 		case '1':
+			int target_room;	// 목적지 방의 rnum 저장
+
 			reset_char(d->character);
 			send_to_char(WELC_MESSG, d->character);
 			d->character->next = character_list;
 			character_list = d->character;
 			if (d->character->in_room == NOWHERE) {
-				if (d->character->player.level < IMO)
+				if (d->character->player.level < IMO) {
 					if (IS_SET(d->character->specials.act, PLR_BANISHED))
-						char_to_room(d->character,
-							     real_room(6999));
+						target_room = real_room(6999);
 					else
-						char_to_room(d->character,
-							     real_room(3001));
-				else
-					char_to_room(d->character, real_room(2));
-			} else {
-				if (real_room(d->character->in_room) > -1)
-					char_to_room(d->character,
-						     real_room(d->character->in_room));
-				else
-					char_to_room(d->character, real_room(3001));
+						target_room = real_room(3001);
+				} else {
+					target_room = real_room(2);
+				}
+			} else { // 기존에 저장된 방이 있는 경우
+				target_room = real_room(d->character->in_room);
 			}
+
+			if (target_room < 0) {
+				DEBUG_LOG("Warning: %s saved in invalid room %d. Moving to MID.", GET_NAME(d->character), d->character->in_room);
+				target_room = real_room(3001);
+				if (target_room < 0)
+					target_room = real_room(0); // the void
+			}
+
+			char_to_room(d->character, target_room);
+
 			unstash_char(d->character, 0);
 			act("$n has entered the game.",
 			    TRUE, d->character, 0, 0, TO_ROOM);
@@ -1879,7 +1674,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		}
 		break;
 	default:
-		log("Nanny: illegal state of con'ness");
+		mudlog("Nanny: illegal state of con'ness");
 		abort();
 		break;
 	}

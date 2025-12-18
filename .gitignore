@@ -1,5 +1,6 @@
 OLD/
 bin/
+lib/players
 lib/players* 
 lib/stash
 lib/stash.tar*
@@ -10,3 +11,5 @@ include/vcs_track.h
 log-*
 run-mud.sh
 .vscode/
+lib/mud-5101.pid
+lib/motd

@@ -13,7 +13,6 @@
 #include <fcntl.h>
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "db.h"
 #include "handler.h"
 #include "interpreter.h"
@@ -34,21 +33,8 @@ struct mbox_data {
 };
 
 struct mbox_data *mbox_list;
-extern struct room_data *world;
 
-void page_string(struct descriptor_data *d, char *str, int keep);
-int number(int from, int to);
 
-void init_mbox();
-struct mbox_data *init_a_mbox(struct char_data *ch);
-struct mbox_data *find_mbox(struct char_data *ch);
-void load_mbox(struct mbox_data *cb);
-void save_mbox(struct mbox_data *cb);
-void mail_error_log(char *str);
-void remove_mail(struct mbox_data *cb, int m_num);
-int show_mail(struct char_data *ch, struct mbox_data *cb, char *arg);
-int post_mail(struct char_data *ch, struct mbox_data *cb, char *arg);
-int get_mail(struct char_data *ch, struct mbox_data *cb, char *arg);
 
 /* this function will be inserted into db.c 
    init all mbox  */
@@ -282,11 +268,7 @@ int post_mail(struct char_data *ch, struct mbox_data *cb, char *arg)
 	char papername[MAX_INPUT_LENGTH], header[MAX_INPUT_LENGTH],
 	buf[MAX_STRING_LENGTH], receiver[MAX_INPUT_LENGTH];
 	struct obj_data *paper;
-	extern struct obj_data *get_obj_in_list_vis(
-							   struct char_data
-							   *ch, char
-							   *name, struct obj_data *list);
-
+	
 	half_chop(arg, receiver, buf);
 	half_chop(buf, papername, header);
 	if (*papername == 0 || *header == 0 || *receiver == 0)

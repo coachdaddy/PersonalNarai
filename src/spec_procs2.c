@@ -13,7 +13,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
@@ -23,61 +22,8 @@
 
 #define RESCUER_VICTIM 5
 
-/*   external vars  */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct index_data *obj_index;
-extern struct time_info_data time_info;
-extern struct title_type titles[4][IMO + 4];
-extern struct index_data *mob_index;
-
-/* extern procedures */
-int number(int from, int to);
-int dice(int num, int size);							/* in utility.c */
-int str_cmp(char *arg1, char *arg2);
-int find_name(char *name);
-
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void gain_exp(struct char_data *ch, int gain);
-void stop_fighting(struct char_data *ch);
-void set_title(struct char_data *ch);
-void do_say(struct char_data *ch, char *str, int cmd);
-void die(struct char_data *ch, int level, struct char_data *who);
-void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
-void wear(struct char_data *ch, struct obj_data *o, int keyword);
-void shoot(struct char_data *ch, struct char_data *victim, int type);
-void add_follower(struct char_data *ch, struct char_data *leader);
-void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode, bool show);
-void list_char_to_char(struct char_data *list, struct char_data *ch, int mode);
-void do_kick(struct char_data *ch, char *arg, int cmd);
-void do_bash(struct char_data *ch, char *arg, int cmd);
-void do_start(struct char_data *ch);
-void do_look(struct char_data *ch, char *argument, int cmd);
 
 
-void cast_cure_light(byte level, struct char_data *ch, char *arg, int type,
-					 struct char_data *victim, struct obj_data *tar_obj);
-void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type,
-					  struct char_data *victim, struct obj_data *tar_obj);
-void cast_heal(byte level, struct char_data *ch, char *arg, int type,
-			   struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
-					struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_sunburst(byte level, struct char_data *ch, char *arg, int type,
-				   struct char_data *victim, struct obj_data *tar_obj);
-void cast_fireball(byte level, struct char_data *ch, char *arg, int type,
-				   struct char_data *victim, struct obj_data *tar_obj);
-void cast_color_spray(byte level, struct char_data *ch, char *arg, int type,
-					  struct char_data *victim, struct obj_data *tar_obj);
-void cast_all_heal(byte level, struct char_data *ch, char *arg, int si,
-				   struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_corn_of_ice(byte level, struct char_data *ch, char *arg, int si,
-					  struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_sanctuary(byte level, struct char_data *ch, char *arg, int si,
-					struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_haste(byte level, struct char_data *ch, char *arg, int si,
-				struct char_data *tar_ch, struct obj_data *tar_obj);
 
 /* ********************************************************************
 *  Special procedures for mobiles                                      *
@@ -1155,25 +1101,21 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 int hospital(struct char_data *ch, int cmd, char *arg)
 {
 	char buf[MAX_STRING_LENGTH];
-	extern struct descriptor_data *descriptor_list;
-	extern struct player_index_element *player_table;
 	struct descriptor_data *k;
-	// BUG FIX!!!
-	int opt, /* lev, */ cost[7], c = 0;
+	int opt, cost[7], c = 0;
 	int i;
 	char *temp;
 	char stash_file1[100];
 	char stash_file2[100];
 	char stash_name[30];
 
-	// lev = GET_LEVEL(ch);
 	cost[0] = 100 - (40 - GET_LEVEL(ch));
 	cost[1] = cost[0] * (GET_MAX_HIT(ch) - GET_HIT(ch));
 	cost[2] = cost[0] * (GET_MAX_MANA(ch) - GET_MANA(ch));
 	cost[3] = cost[0] * (GET_MAX_MOVE(ch) - GET_MOVE(ch));
-	cost[4] = 50000 + cost[0] * 20;
-	cost[5] = 500000000;
-	cost[6] = 4000000 + GET_SEX(ch) * 1000000;
+	cost[4] = K(50) + cost[0] * 20;
+	cost[5] = M(500);
+	cost[6] = M(4) + GET_SEX(ch) * M(1);
 
 	if (cmd == 59) {	/* List */
 		snprintf(buf, sizeof(buf), "1 - Hit points restoration (%d coins)\n\r", cost[1]);
@@ -1317,7 +1259,7 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 			}
 			i = find_name(ch->player.name);
 			if (i == -1) {
-				log("이럴루가!!!");
+				mudlog("이럴루가!!!");
 				send_to_char("ING? Then, how can i be here?\n\r", ch);
 				return TRUE;
 			}
@@ -1405,7 +1347,6 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 	char buf[MAX_STRING_LENGTH];
 	char buf2[MAX_STRING_LENGTH];
 	int k, opt;
-	// int mult;
 	long int cost = 0;
 	struct obj_data *tmp_obj;
 
@@ -1436,7 +1377,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				k = GET_PLAYER_MAX_HIT(ch);
 				cost = k * 200;
 				cost = number(cost, cost << 1);
-				cost = MIN(50000000, cost);
+				cost = MIN(M(50), cost);
 				if (cost <= 0 || cost > GET_EXP(ch)) {
 					send_to_char("Come back when you are ", ch);
 					send_to_char("more experienced.\n\r", ch);
@@ -1456,7 +1397,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				k = ch->points.max_mana;
 				cost = k * 200;
 				cost = number(cost, cost << 1);
-				cost = MIN(50000000, cost);
+				cost = MIN(M(50), cost);
 				if (cost <= 0 || cost > GET_EXP(ch)) {
 					send_to_char("Come back when you are ", ch);
 					send_to_char("more experienced.\n\r", ch);
@@ -1476,7 +1417,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				k = ch->points.max_move;
 				cost = k * 200;
 				cost = number(cost, cost << 1);
-				cost = MIN(50000000, cost);
+				cost = MIN(M(50), cost);
 				if (cost <= 0 || cost > GET_EXP(ch)) {
 					send_to_char("Come back when you are ", ch);
 					send_to_char("more experienced.\n\r", ch);
@@ -1518,7 +1459,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				ch->points.gold += cost * 2 / 3;
 				break;
 			case 6:
-				if (GET_EXP(ch) < 100000000) {
+				if (GET_EXP(ch) < M(100)) {
 					send_to_char
 					    ("Come back when you are more experienced.\n\r", ch);
 					return (TRUE);
@@ -1526,7 +1467,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				ch->specials.conditions[0] = -1;
 				ch->specials.conditions[1] = -1;
 				ch->specials.conditions[2] = -1;
-				cost = 100000000;
+				cost = M(100);
 				send_to_char_han(
 							"You are free from hunger and thirsty from now on!!!\n\r     Worship the God!\n\r",
 							"당신은 이제 배고픔과 목마름으로부터 해방입니다.\n\r신께 경배드리십시요.\n\r", ch);
@@ -1551,7 +1492,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 			}
 			tmp_obj = get_obj_in_list_vis(ch, buf, ch->carrying);
 			if (tmp_obj) {
-				if (GET_EXP(ch) < 250000000) {
+				if (GET_EXP(ch) < M(250)) {
 					send_to_char
 					    ("Come back when you are more experienced.\n\r", ch);
 					return TRUE;
@@ -1570,7 +1511,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				case 7991:	/* ticket for AC */
 					k = GET_AC(ch);
 					GET_AC(ch) -= number(2, 3);
-					GET_EXP(ch) -= 250000000;
+					GET_EXP(ch) -= M(250);
 					if (GET_AC(ch) < -120)
 						ch->quest.solved -= 15;
 					else
@@ -1583,7 +1524,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				case 7992:	/* ticket for HR */
 					k = GET_HITROLL(ch);
 					GET_HITROLL(ch) += number(1, 2);
-					GET_EXP(ch) -= 150000000;
+					GET_EXP(ch) -= M(150);
 					if (GET_HITROLL(ch) > 100)
 						ch->quest.solved -= 10;
 					else
@@ -1596,7 +1537,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 				case 7993:	/* ticket for DR */
 					k = GET_DAMROLL(ch);
 					GET_DAMROLL(ch)++;
-					GET_EXP(ch) -= 250000000;
+					GET_EXP(ch) -= M(250);
 					if (GET_DAMROLL(ch) > 100)
 						ch->quest.solved -= 15;
 					else
@@ -1709,7 +1650,7 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 
     /* --- 올리모 전용 처리 로직 --- */
     if (all_done) {
-        if (GET_EXP(ch) < 1000000000) { 
+        if (GET_EXP(ch) < G(1)) { /* 10억 */
             send_to_char("&c[REMORTAL]&n You need 1,000,000,000 experience to change class as a Grand Master.\n\r", ch);
             return 0;
         }
@@ -1720,7 +1661,7 @@ int remortal(struct char_data *ch, int cmd, char *arg)
         }
 
         /* 처리 수행 */
-        GET_EXP(ch) -= 1000000000;
+        GET_EXP(ch) -= G(1);
         GET_CLASS(ch) = target_class_num;
         
         snprintf(buf, sizeof(buf), "&c[REMORTAL]&n&Y %s has changed class to %s with Grand Master's authority!&n\n\r", 
@@ -2205,7 +2146,6 @@ int spitter(struct char_data *ch, int cmd, char *arg)
 int portal(struct char_data *ch, int cmd, char *arg)
 {
 	int location, ok;
-	extern int top_of_world;
 	
 	if (cmd != 3)		/* specific to Room 2176 */
 		return (FALSE);

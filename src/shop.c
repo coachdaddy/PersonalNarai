@@ -8,7 +8,6 @@
 #include <string.h>
 
 #include "structs.h"
-#include "comm.h"
 #include "handler.h"
 #include "db.h"
 #include "interpreter.h"
@@ -18,10 +17,10 @@
 #define MAX_TRADE 5
 #define MAX_PROD 5
 
-extern struct str_app_type str_app[];
-extern struct index_data *mob_index;
 
-char *fread_string(FILE *fl);
+
+struct shop_data *shop_index;
+int number_of_shops;
 
 struct shop_data {
 	int producing[MAX_PROD]; /* Which item to produce (virtual)      */
@@ -44,17 +43,7 @@ struct shop_data {
 	int close1, close2;      /* When does the shop close?    */
 };
 
-void do_say(struct char_data *ch, char *str, int cmd);
-void do_tell(struct char_data *ch, char *arg, int cmd);
-void do_action(struct char_data *ch, char *arg, int cmd);
-void do_emote(struct char_data *ch, char *arg, int cmd);
-void hit(struct char_data *ch, struct char_data *victim, int type);
 
-extern struct room_data *world;
-extern struct time_info_data time_info;
-
-struct shop_data *shop_index;
-int number_of_shops;
 
 int is_ok(struct char_data *keeper, struct char_data *ch, int shop_nr)
 {
@@ -324,7 +313,6 @@ void shopping_list(char *arg, struct char_data *ch,
 {
 	char buf[MAX_STRING_LENGTH], buf2[MAX_OUTPUT_LENGTH], buf3[100];
 	struct obj_data *temp1;
-	extern char *drinks[];
 	int found_obj;
 
 	if (!(is_ok(keeper, ch, shop_nr)))
@@ -520,7 +508,7 @@ void assign_the_shopkeepers()
             mob_index[shop_index[temp1].keeper].func = shop_keeper;
         } else {
             snprintf(buf, sizeof(buf), "SYSERR: Shop index #%d has invalid keeper RNUM [%d]. Skipped.", temp1, keeper_rnum);
-            log(buf);
+            mudlog(buf);
         }
     }
 }

@@ -9,7 +9,6 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
@@ -20,33 +19,6 @@
 #define VNUM_WINGS_1  9703
 #define VNUM_WINGS_2  2700
 
-/*   external vars  */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct index_data *obj_index;
-extern struct index_data *mob_index;
-extern int rev_dir[];
-extern int top_of_world;
-extern char *dirs[];
-extern int movement_loss[];
-/* Challenge Room Quest System -- komo, 251017 */
-extern struct {
-    int virtual;
-    int level;
-    char *name;
-} QM[];
-
-/* external functs */
-int special(struct char_data *ch, int cmd, char *arg);
-void death_cry(struct char_data *ch);
-struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name,
-				     struct obj_data *list);
-void do_look(struct char_data *ch, char *arg, int cmd);
-void stop_fighting(struct char_data *ch);
-int number(int from, int to);
-int str_cmp(char *arg1, char *arg2);
-bool circle_follow(struct char_data *ch, struct char_data *victim);
 
 
 int do_simple_move(struct char_data *ch, int cmd, int following)

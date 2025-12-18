@@ -9,11 +9,7 @@
 #include "db.h"
 #include "guild_list.h"
 
-extern struct room_data *world;
-extern struct index_data *mob_index;
-extern struct index_data *obj_index;
-void boot_the_shops();
-void assign_the_shopkeepers();
+
 
 /* ********************************************************************
 *  Assignments                                                        *
@@ -22,43 +18,6 @@ void assign_the_shopkeepers();
 /* assign special procedures to mobiles */
 void assign_mobiles(void)
 {
-	int cityguard(struct char_data *ch, int cmd, char *arg);
-	int guild(struct char_data *ch, int cmd, char *arg);
-	int puff(struct char_data *ch, int cmd, char *arg);
-	int fido(struct char_data *ch, int cmd, char *arg);
-	int janitor(struct char_data *ch, int cmd, char *arg);
-	int mayor(struct char_data *ch, int cmd, char *arg);
-	int mud_message(struct char_data *ch, int cmd, char *arg);
-	int Quest_bombard(struct char_data *ch, int cmd, char *arg);
-	int deathcure(struct char_data *ch, int cmd, char *arg);
-	int perhaps(struct char_data *ch, int cmd, char *arg);
-	int super_deathcure(struct char_data *ch, int cmd, char *arg);
-	int mom(struct char_data *ch, int cmd, char *arg);
-	int musashi(struct char_data *ch, int cmd, char *arg);
-	int super_musashi(struct char_data *ch, int cmd, char *arg);
-	int snake(struct char_data *ch, int cmd, char *arg);
-	int singer(struct char_data *ch, int cmd, char *arg);
-	int thief(struct char_data *ch, int cmd, char *arg);
-	int magic_user(struct char_data *ch, int cmd, char *arg);
-	int superguard(struct char_data *ch, int cmd, char *arg);
-	int dragon(struct char_data *ch, int cmd, char *arg);
-	int kickbasher(struct char_data *ch, int cmd, char *arg);
-	int spitter(struct char_data *ch, int cmd, char *arg);
-	int shooter(struct char_data *ch, int cmd, char *arg);
-	int finisher(struct char_data *ch, int cmd, char *arg);
-	int spell_blocker(struct char_data *ch, int cmd, char *arg);
-	int archmage(struct char_data *ch, int cmd, char *arg);
-	int helper(struct char_data *ch, int cmd, char *arg);
-	int great_mazinga(struct char_data *ch, int cmd, char *arg);
-	int son_ogong_func(struct char_data *ch, int cmd, char *arg);
-	int son_ogong_func2(struct char_data *ch, int cmd, char *arg);
-	int fourth_jangro_func(struct char_data *ch, int cmd, char *arg);
-
-	/* GoodBadIsland */
-	int gbisland_saint_mirror(struct char_data *ch, int cmd, char *arg);
-	int gbisland_lanessa(struct char_data *ch, int cmd, char *arg);
-	int gbisland_carpie(struct char_data *ch, int cmd, char *arg);
-
 	mob_index[real_mobile(1)].func = puff;
 
 	/* Moksha */
@@ -136,19 +95,6 @@ void assign_mobiles(void)
 /* assign special procedures to objects */
 void assign_objects(void)
 {
-	int totem(struct char_data *ch, int cmd, char *arg);
-	int board(struct char_data *ch, int cmd, char *arg);
-	int mbox(struct char_data *ch, int cmd, char *arg);
-	int magicseed(struct char_data *ch, int cmd, char *arg);
-	int teleport_daerimsa_tower(struct char_data *ch, int cmd, char *arg);
-	int slot_machine(struct char_data *ch, int cmd, char *arg);
-	int string_machine(struct char_data *ch, int cmd, char *arg);
-	int saint_water(struct char_data *ch, int cmd, char *arg);
-
-	/* GoodBadIsland */
-	int gbisland_magic_paper(struct char_data *ch, int cmd, char *arg);
-	int gbisland_seed_evil_power(struct char_data *ch, int cmd, char *arg);
-
 	obj_index[real_object(3099)].func = board;
 	obj_index[real_object(3098)].func = mbox;
 	obj_index[real_object(1311)].func = totem;
@@ -168,31 +114,6 @@ void assign_objects(void)
 /* assign special procedures to rooms */
 void assign_rooms(void)
 {
-	int dump(struct char_data *ch, int cmd, char *arg);
-	int pet_shops(struct char_data *ch, int cmd, char *arg);
-	int hospital(struct char_data *ch, int cmd, char *arg);
-	int metahospital(struct char_data *ch, int cmd, char *arg);
-	int remortal(struct char_data *ch, int cmd, char *arg);
-	int safe_house(struct char_data *ch, int cmd, char *arg);
-	int level_gate(struct char_data *ch, int cmd, char *arg);
-	int bank(struct char_data *ch, int cmd, char *arg);
-	int portal(struct char_data *ch, int cmd, char *arg);
-	int neverland(struct char_data *ch, int cmd, char *arg);
-	int electric_shock(struct char_data *ch, int cmd, char *arg);
-	int guild_entry(struct char_data *ch, int cmd, char *arg);
-	int locker_room(struct char_data *ch, int cmd, char *arg);
-	int guild_practice_yard(struct char_data *ch, int cmd, char *arg);
-	int taxi(struct char_data *ch, int cmd, char *arg);
-
-	/* quest */
-	int quest_room(struct char_data *ch, int cmd, char *arg);
-
-	/* jale */
-	int jale_room(struct char_data *ch, int cmd, char *arg);
-
-	/* GoodBadIsland */
-	int gbisland_sea(struct char_data *ch, int cmd, char *arg);
-
 	world[real_room(3030)].funct = dump;
 	world[real_room(3002)].funct = bank;
 

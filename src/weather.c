@@ -10,23 +10,10 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "handler.h"
 #include "interpreter.h"
 #include "db.h"
 
-/* uses */
-extern struct time_info_data time_info;
-extern struct weather_data weather_info;
-extern struct descriptor_data *descriptor_list; /* in comm.c, 251126 by Komo */
-extern struct room_data *world;					/* in db.c , 251126 by Komo */
-
-int dice(int num, int size);				/* in utility.c */
-
-/* In this part. */
-void weather_and_time(int mode);
-void another_hour(int mode);
-void weather_change(int);
 
 /* Here comes the code */
 
