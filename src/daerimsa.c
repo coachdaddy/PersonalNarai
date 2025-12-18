@@ -39,14 +39,7 @@ struct char_data *fourth_jangro;
 #define GOLDEN_RIM			11127
 #define SON_OGONG_BONG		11126
 
-void first_attack(struct char_data *ch, struct char_data *victim);
-void wear(struct char_data *ch, struct obj_data *obj, int where_flag);
-void do_drop(struct char_data *ch, char *argument, int cmd);
-void do_wear(struct char_data *ch, char *argument, int cmd);
-void do_give(struct char_data *ch, char *argument, int cmd);
-int number(int from, int to);
 
-void do_look(struct char_data *ch, char *argument, int cmd);
 
 int son_ogong_func(struct char_data *ch, int cmd, char *arg)
 {

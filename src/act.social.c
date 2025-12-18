@@ -20,11 +20,7 @@ extern struct room_data *world;
 extern struct descriptor_data *descriptor_list;
 extern struct room_data *world;
 
-/* extern functions */
-void parse_string(char *input, char *output, struct char_data *ch1,
-		  struct char_data *ch2, struct char_data *to);
-int action(int cmd);
-char *fread_action(FILE *fl);
+
 
 struct social_messg {
 	int act_nr;

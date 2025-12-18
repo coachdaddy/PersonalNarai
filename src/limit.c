@@ -26,22 +26,6 @@ extern struct obj_data *object_list;
 extern struct title_type titles[4][IMO + 4];
 extern struct room_data *world;
 
-/* External procedures */
-int move_stashfile_safe(char *victim);                                                   // 251024
-void update_pos(struct char_data *victim);                                               /* in fight.c */
-void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype); /*    do      */
-struct time_info_data age(struct char_data *ch);
-int number(int from, int to);
-int dice(int num, int size);            /* in utility.c */
-void stop_fighting(struct char_data *ch);
-void char_from_room(struct char_data *ch);
-void char_to_room(struct char_data *ch, int to);
-void do_rent(struct char_data *ch, char *arg, int cmd);
-void close_socket(struct descriptor_data *d);
-void obj_from_obj(struct obj_data *o);
-void obj_to_obj(struct obj_data *o, struct obj_data *to);
-void obj_to_room(struct obj_data *o, int room);
-void save_char(struct char_data *ch, sh_int load_room); /* db.c */
 
 
 /* When age < 15 return the value p0 */

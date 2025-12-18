@@ -42,21 +42,6 @@ extern char *spells[];
 extern char *guild_names[];
 extern char *connected_types[];
 
-/* extern functions */
-
-struct time_info_data age(struct char_data *ch);
-void page_string(struct descriptor_data *d, char *str, int keep_internal);
-int number(int from, int to);
-int strn_cmp(char *arg1, char *arg2, int n);
-
-int move_stashfile_safe(const char *victim);
-void close_socket(struct descriptor_data *d);
-void sprintbit(long vektor, char *names[], char *result);
-void weather_change(int);
-
-/* intern functions */
-void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode,
-		      bool show);
 
 /* intern vars */
 char *news_content = NULL; // 뉴스 내용을 저장할 메모리, 251119

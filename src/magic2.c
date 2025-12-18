@@ -29,20 +29,7 @@ extern struct char_data *character_list;
 extern struct index_data *mob_index;
 extern int noenchantflag;
 
-/* Extern procedures */
-int number(int from, int to);
-int dice(int number, int size);             /* in utility.c */
-bool saves_spell(struct char_data *ch, int spell);
-void stop_fighting(struct char_data *ch);
-void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype);
-void weight_change_object(struct obj_data *obj, int weight);
-// char *strdup(char *source);
-void do_look(struct char_data *ch, char *argument, int cmd);
-void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode, bool show);
-void list_char_to_char(struct char_data *list, struct char_data *ch, int mode);
-void update_pos(struct char_data *ch);
-void name_to_drinkcon(struct obj_data * obj, int type);
-void name_from_drinkcon(struct obj_data * obj);
+
 
 /* spells2.c - Not directly offensive spells */
 

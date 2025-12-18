@@ -19,7 +19,6 @@ extern struct time_data time_info;
 extern struct room_data *world;      /* In db.c */
 extern char *spells[];               /* defined in spell_parser.c */
 
-void send_to_char(char *messg, struct char_data *ch); /* in comm.c */
 
 
 /**************************************************************************

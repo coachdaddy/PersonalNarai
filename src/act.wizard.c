@@ -56,43 +56,12 @@ extern char *player_bits[];
 extern char *connected_types[];
 
 
-/* external functs */
-int dice(int num, int size);				/* in utility.c */
-int number(int from, int to);
-int str_cmp(char *arg1, char *arg2);
-int mana_gain(struct char_data *ch);
-int hit_gain(struct char_data *ch);
-int move_gain(struct char_data *ch);
-int load_char(char *name, struct char_file_u *char_element);
-int move_stashfile_safe(const char *victim);
-extern int is_number(char *str); // 251118
-long int mana_limit(struct char_data *ch);
-long int hit_limit(struct char_data *ch);
-long int move_limit(struct char_data *ch);
-void set_title(struct char_data *ch);
-void wipe_obj(struct obj_data *o);
-void close_socket(struct descriptor_data *d);
-void stash_char(struct char_data *ch);
-void sprinttype(int type, char *names[], char *result);
-void sprintbit(long vektor, char *names[], char *result);
-void unstash_char(struct char_data *ch, char *filename);
-void page_string(struct descriptor_data *d, char *str, int keep);
-void gain_exp_regardless(struct char_data *ch, int gain);
-void store_to_char_for_transform(struct char_file_u *st, struct char_data *ch);
-extern void do_look(struct char_data *ch, char *argument, int cmd);
-struct time_info_data age(struct char_data *ch);
-void load_zones(int zon);
-void reload_world_file(FILE *fl, int zone_rnum);
-
 #ifndef BADDOMS
 #define BADDOMS 16
 extern int baddoms;
 extern char baddomain[BADDOMS][32];
 #endif
 
-/* to avoid compiler warning */
-void do_start(struct char_data * ch);
-void roll_abilities(struct char_data *ch);
 
 char history[20][MAX_STRING_LENGTH];
 int his_start = 0, his_end = 0;

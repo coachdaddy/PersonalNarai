@@ -60,10 +60,6 @@ extern struct time_info_data time_info;	/* In db.c */
 extern char help[];
 extern char *connected_types[];
 
-extern void no_echo_telnet(struct descriptor_data *d);
-extern void echo_telnet(struct descriptor_data *d);
-extern void no_echo_local(int fd);
-extern void weather_and_time(int mode);
 
 /* local globals */
 struct descriptor_data *descriptor_list, *next_to_process;
@@ -91,55 +87,6 @@ int no_specials = 0;		/* Suppress ass. of special routines */
 int nostealflag = 0;
 int noshoutflag = 0;
 
-// 함수 프로토타입
-void game_loop(int s);
-void signal_setup(void);
-void handle_graceful_shutdown(int sig);
-void handle_immediate_shutdown(int sig);
-void run_the_game(int port);
-
-/* write_to_q is in comm.h for the macro */
-int get_from_q(struct txt_q *queue, char *dest);
-int init_socket(int port);
-int new_connection(int s);
-int new_descriptor(int s);
-int unfriendly_domain(char *h);
-int process_output(struct descriptor_data *t);
-int process_input(struct descriptor_data *t);
-void saveallplayers(void);
-void zapper(void);
-void checkpointing(int sig);
-void nonblock(int s);
-void on_echo_local(int fd);
-void transall(int room);
-int move_stashfile_safe(const char *victim); // 251016
-void close_sockets(int s);
-void close_socket(struct descriptor_data *d);
-void stash_char(struct char_data *ch);
-void flush_queues(struct descriptor_data *d);
-void parse_name(struct descriptor_data *desc, char *arg);
-void log_abnormal_disconnect(struct descriptor_data *d);
-struct timeval timediff(struct timeval *a, struct timeval *b);
-
-/* extern fcnts */
-int is_korean(struct descriptor_data *d);
-void boot_db(void);
-void zone_update(void);
-void record_player_number(void);
-void affect_update(void);	/* In spells.c */
-void point_update(void);	/* In limits.c */
-void free_char(struct char_data *ch);
-
-void mobile_activity(void);
-void mobile_activity2(void);
-void string_add(struct descriptor_data *d, char *str);
-void perform_violence(void);
-void stop_fighting(struct char_data *ch);
-void show_string(struct descriptor_data *d, char *input);
-void save_char(struct char_data *ch, sh_int load_room);
-void do_assist(struct char_data *ch, char *argument, int cmd);
-void process_color_string(const char *input, char *output, int max_out_len); // Komo
-struct char_data *make_char(char *name, struct descriptor_data *desc);
 
 /* *********************************************************************
 *  main game loop and related stuff               *

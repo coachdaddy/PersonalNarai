@@ -23,11 +23,7 @@ extern struct room_data *world;
 extern struct descriptor_data *descriptor_list;
 extern struct room_data *world;
 
-/* extern functions */
 
-struct obj_data *create_money(int amount);
-int str_cmp(char *arg1, char *arg2);
-int is_number(char *arg);
 
 /* procedures related to get */
 void get(struct char_data *ch, struct obj_data *obj_object,

@@ -24,8 +24,6 @@
 extern struct room_data *world;
 extern struct descriptor_data *descriptor_list;
 
-/* extern functions */
-int file_to_string(char *name, char *buf);  /* in db.c */
 
 #define MAX_HISTORY_MSG 512  // 넉넉한 크기
 #define HISTORY_SIZE 100     // 20 -> 100으로 확장, 251124 by Komo

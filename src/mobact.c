@@ -17,30 +17,7 @@ extern struct index_data *mob_index;
 extern struct room_data *world;
 extern struct str_app_type str_app[];
 
-void hit (struct char_data *ch, struct char_data *victim, int type);
 
-int number (int from, int to);
-void obj_from_room (struct obj_data *o);
-void obj_to_char (struct obj_data *o, struct char_data *ch);
-bool saves_spell (struct char_data *ch, int type);
-int thief (struct char_data *ch, int cmd, char *arg);
-int dragon (struct char_data *ch, int cmd, char *arg);
-int magic_user (struct char_data *ch, int cmd, char *arg);
-int shooter (struct char_data *ch, int cmd, char *arg);
-int kickbasher (struct char_data *ch, int cmd, char *arg);
-int spitter (struct char_data *ch, int cmd, char *arg);
-int cleric (struct char_data *ch, int cmd, char *arg);
-int paladin (struct char_data *ch, int cmd, char *arg);
-int cityguard (struct char_data *ch, int cmd, char *arg);
-int superguard (struct char_data *ch, int cmd, char *arg);
-int rescuer (struct char_data *ch, int cmd, char *arg);
-int helper (struct char_data *ch, int cmd, char *arg);
-int finisher (struct char_data *ch, int cmd, char *arg);
-
-int warrior (struct char_data *ch, int cmd, char *arg);
-void first_attack (struct char_data *ch, struct char_data *victim);
-void do_cast (struct char_data *ch, char *arg, int cmd);
-void extract_char(struct char_data *ch, int drop_items);
 
 int check_stat(struct char_data *ch)
 {

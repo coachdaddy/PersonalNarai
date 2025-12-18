@@ -36,19 +36,7 @@ struct mbox_data {
 struct mbox_data *mbox_list;
 extern struct room_data *world;
 
-void page_string(struct descriptor_data *d, char *str, int keep);
-int number(int from, int to);
 
-void init_mbox();
-struct mbox_data *init_a_mbox(struct char_data *ch);
-struct mbox_data *find_mbox(struct char_data *ch);
-void load_mbox(struct mbox_data *cb);
-void save_mbox(struct mbox_data *cb);
-void mail_error_log(char *str);
-void remove_mail(struct mbox_data *cb, int m_num);
-int show_mail(struct char_data *ch, struct mbox_data *cb, char *arg);
-int post_mail(struct char_data *ch, struct mbox_data *cb, char *arg);
-int get_mail(struct char_data *ch, struct mbox_data *cb, char *arg);
 
 /* this function will be inserted into db.c 
    init all mbox  */

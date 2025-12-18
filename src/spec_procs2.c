@@ -32,52 +32,7 @@ extern struct time_info_data time_info;
 extern struct title_type titles[4][IMO + 4];
 extern struct index_data *mob_index;
 
-/* extern procedures */
-int number(int from, int to);
-int dice(int num, int size);							/* in utility.c */
-int str_cmp(char *arg1, char *arg2);
-int find_name(char *name);
 
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void gain_exp(struct char_data *ch, int gain);
-void stop_fighting(struct char_data *ch);
-void set_title(struct char_data *ch);
-void do_say(struct char_data *ch, char *str, int cmd);
-void die(struct char_data *ch, int level, struct char_data *who);
-void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
-void wear(struct char_data *ch, struct obj_data *o, int keyword);
-void shoot(struct char_data *ch, struct char_data *victim, int type);
-void add_follower(struct char_data *ch, struct char_data *leader);
-void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode, bool show);
-void list_char_to_char(struct char_data *list, struct char_data *ch, int mode);
-void do_kick(struct char_data *ch, char *arg, int cmd);
-void do_bash(struct char_data *ch, char *arg, int cmd);
-void do_start(struct char_data *ch);
-void do_look(struct char_data *ch, char *argument, int cmd);
-
-
-void cast_cure_light(byte level, struct char_data *ch, char *arg, int type,
-					 struct char_data *victim, struct obj_data *tar_obj);
-void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type,
-					  struct char_data *victim, struct obj_data *tar_obj);
-void cast_heal(byte level, struct char_data *ch, char *arg, int type,
-			   struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
-					struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_sunburst(byte level, struct char_data *ch, char *arg, int type,
-				   struct char_data *victim, struct obj_data *tar_obj);
-void cast_fireball(byte level, struct char_data *ch, char *arg, int type,
-				   struct char_data *victim, struct obj_data *tar_obj);
-void cast_color_spray(byte level, struct char_data *ch, char *arg, int type,
-					  struct char_data *victim, struct obj_data *tar_obj);
-void cast_all_heal(byte level, struct char_data *ch, char *arg, int si,
-				   struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_corn_of_ice(byte level, struct char_data *ch, char *arg, int si,
-					  struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_sanctuary(byte level, struct char_data *ch, char *arg, int si,
-					struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_haste(byte level, struct char_data *ch, char *arg, int si,
-				struct char_data *tar_ch, struct obj_data *tar_obj);
 
 /* ********************************************************************
 *  Special procedures for mobiles                                      *

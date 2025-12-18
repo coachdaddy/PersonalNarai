@@ -22,16 +22,7 @@ extern struct obj_data *object_list;
 extern struct char_data *character_list;
 extern struct index_data *mob_index;
 
-/* Extern procedures */
 
-void damage (struct char_data *ch, struct char_data *victim,
-	     int damage, int weapontype);
-bool saves_spell (struct char_data *ch, sh_int spell);
-// char *strdup(char *source);
-int dice (int number, int size);				/* in utility.c */
-void hit (struct char_data *ch, struct char_data *victim, int type);
-void stop_fighting (struct char_data *ch);
-int number (int from, int to);
 
 void mob_spell_fire_storm(byte level, struct char_data *ch,
 			  struct char_data *victim, struct obj_data *obj)

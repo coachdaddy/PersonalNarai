@@ -69,46 +69,8 @@ int regen_percent = 50;
 int regen_time_percent = 66;
 int regen_time = 200;
 
-/* local procedures */
-void boot_zones(void);
-void setup_dir(FILE * fl, int room, int dir);
-void allocate_room(int new_top);
-void boot_world(void);
-struct index_data *generate_indices(FILE * fl, int *top);
-void build_player_index(void);
-void char_to_store(struct char_data *ch, struct char_file_u *st);
-void store_to_char(struct char_file_u *st, struct char_data *ch);
-int is_empty(int zone_nr);
-void reset_zone(int zone);
-int file_to_string(char *name, char *buf);
-void renum_world(void);
-void renum_zone_table(void);
-void reset_time(void);
-void clear_char(struct char_data *ch);
-
 /* external refs */
 extern struct descriptor_data *descriptor_list;
-void load_messages(void);
-void weather_and_time(int mode);
-void assign_command_pointers(void);
-void assign_spell_pointers(void);
-
-int dice(int number, int size);
-int number(int from, int to);
-void boot_social_messages(void);
-struct help_index_element *build_help_index(FILE * fl, int *num);
-void assign_mobiles(void);
-void assign_objects(void);
-void assign_rooms(void);
-int str_cmp(char *arg1, char *arg2);
-char *one_argument(char *arg, char *first_arg);
-void wear(struct char_data *ch, struct obj_data *obj, int where_flag);
-
-/* from act.wizard.c */
-void roll_abilities(struct char_data *ch);
-
-/* quest */
-void init_quest(void);
 
 /* for 대림사 */
 /* these are also defined in spec_procs.c */

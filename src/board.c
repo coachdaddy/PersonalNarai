@@ -31,25 +31,7 @@ struct board_data {
 struct board_data *board_list;
 extern struct room_data *world;
 
-char *one_argument(char *arg, char *first);
-int isname(char *name, char *namelist);
-void page_string(struct descriptor_data *d, char *str, int keep);
-void half_chop(char *str, char *arg1, char *arg2);
-void extract_obj(struct obj_data *o);
 
-struct board_data *init_a_board(struct char_data *ch);
-struct board_data *find_board(struct char_data *ch);
-void load_board(struct board_data *cb);
-void save_board(struct board_data *cb);
-
-int show_board(struct char_data *ch, struct board_data *cb, char *arg);
-int post_board(struct char_data *ch, struct board_data *cb, char *arg);
-int remove_board(struct char_data *ch, struct board_data *cb, char *arg);
-int write_board(struct char_data *ch, struct board_data *cb, char *arg);
-int read_board(struct char_data *ch, struct board_data *cb, char *arg);
-
-/* got this from mobact.c */
-void obj_to_char(struct obj_data *o, struct char_data *ch);
 
 /* init one board and return its pointer */
 struct board_data *

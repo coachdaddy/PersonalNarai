@@ -4,23 +4,6 @@
 #include "utils.h"
 #include "spells.h"
 
-int number(int from, int to);
-void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
-
-void spell_lightning_bolt(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-void spell_call_lightning(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-void spell_fireball(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-void spell_fire_breath(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-void spell_frost_breath(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-void spell_energy_drain(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-void spell_disintegrate(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-void spell_magic_missile(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-void spell_full_heal(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-
-bool affected_by_spell(struct char_data *ch, byte skill);
-void affect_to_char(struct char_data *ch, struct affected_type *af);
-
-
 extern struct weather_data weather_info;
 extern struct room_data *world;
 

@@ -26,17 +26,7 @@
 extern struct room_data *world;
 extern struct index_data *mob_index;
 
-int number(int from, int to);
-void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch);
 
-void half_chop(char *string, char *arg1, char *arg2);
-struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name, struct obj_data *list);
-void send_to_char(char *messg, struct char_data *ch);
-void extract_obj(struct obj_data *obj);
-void obj_to_char(struct obj_data *o, struct char_data *ch);
-void char_to_room(struct char_data *ch, int room);
-void char_from_room(struct char_data *ch);
-void do_look(struct char_data *ch, char *argument, int cmd);
 
 struct {
 	int virtual;

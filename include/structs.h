@@ -806,4 +806,10 @@ struct con_app_type {
 	int shock;
 };
 
+struct player_index_element;
+
+#ifndef NO_PROTOTYPES
+#include "prototypes.h"
+#endif
+
 #endif /* _STRUCTS_H_ */

@@ -26,19 +26,7 @@ extern struct room_data *world;
 extern struct dex_skill_type dex_app_skill[];
 extern struct spell_info_type spell_info[];
 
-/* extern procedures */
-void stash_char(struct char_data *ch);
-void wipe_stash(char *filename);
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void do_shout(struct char_data *ch, char *argument, int cmd);
-void close_socket(struct descriptor_data *d);
-int number(int from, int to);
-int str_cmp(char *arg1, char *arg2);
-int move_stashfile_safe(const char *victim);
-void page_string(struct descriptor_data *d, char *str, int keep);
-void do_say(struct char_data *ch, char *str, int cmd);
-bool saves_spell(struct char_data *ch, int type);
-void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
+
 
 
 void do_quit(struct char_data *ch, char *argument, int cmd)

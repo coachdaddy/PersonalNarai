@@ -33,18 +33,6 @@ extern struct obj_data *object_list;
 extern struct index_data *obj_index;
 extern struct index_data *mob_index;
 
-/* External procedures */
-char *fread_string(FILE * f1);
-void stop_follower(struct char_data *ch);
-void do_flee(struct char_data *ch, char *argument, int cmd);
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void wipe_stash(char *filename);
-int number(int from, int to);
-void gain_exp(struct char_data *ch, int gain);
-int dice(int num, int size);                    /* in utility.c */
-void save_char_nocon(struct char_data *ch, sh_int load_room);
-void do_look(struct char_data *ch, char *argument, int cmd);
-void check_quest_mob_die(struct char_data *ch, int mob);    /* quest.c */
 
 /* Challenge Room Quest System  */
 extern struct {

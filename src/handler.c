@@ -26,16 +26,6 @@ extern struct index_data *mob_index;
 extern struct index_data *obj_index;
 extern struct descriptor_data *descriptor_list;
 
-/* External procedures */
-int str_cmp(char *arg1, char *arg2);
-void free_char(struct char_data *ch);
-void stop_fighting(struct char_data *ch);
-void remove_follower(struct char_data *ch);
-void die(struct char_data *ch, int level, struct char_data *who);
-void free_obj(struct obj_data *o);
-int number(int from, int to);
-int search_block(char *arg, char **list, bool exact);
-void process_color_string(const char *input, char *output, int max_out_len); /* utility.c, 251121 by Komo */
 
 
 /* 두 캐릭터가 같은 그룹인지 확인하는 함수 */

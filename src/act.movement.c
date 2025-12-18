@@ -37,16 +37,6 @@ extern struct {
     char *name;
 } QM[];
 
-/* external functs */
-int special(struct char_data *ch, int cmd, char *arg);
-void death_cry(struct char_data *ch);
-struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name,
-				     struct obj_data *list);
-void do_look(struct char_data *ch, char *arg, int cmd);
-void stop_fighting(struct char_data *ch);
-int number(int from, int to);
-int str_cmp(char *arg1, char *arg2);
-bool circle_follow(struct char_data *ch, struct char_data *victim);
 
 
 int do_simple_move(struct char_data *ch, int cmd, int following)

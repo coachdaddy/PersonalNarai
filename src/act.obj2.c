@@ -26,23 +26,6 @@ extern struct room_data *world;
 extern char *drinks[];
 extern int drink_aff[][3];
 
-/* extern functions */
-
-struct obj_data *get_object_in_equip_vis(struct char_data *ch,
-					 char *arg, struct obj_data
-					 **equipment, int *j);
-void cast_cure_critic(byte level, struct char_data *ch, char *arg, int si,
-		      struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_heal(byte level, struct char_data *ch, char *arg, int si,
-	       struct char_data *tar_ch, struct obj_data *tar_obj);
-void gain_condition(struct char_data *ch, int condition, int value);
-long int hit_limit(struct char_data *ch);
-long int mana_limit(struct char_data *ch);
-long int move_limit(struct char_data *ch);
-int dice(int num, int size);
-void update_pos(struct char_data *ch);
-int str_cmp(char *arg1, char *arg2);
-
 
 
 void weight_change_object(struct obj_data *obj, int weight)

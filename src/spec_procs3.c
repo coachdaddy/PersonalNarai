@@ -26,18 +26,6 @@ extern struct time_info_data time_info;
 extern struct title_type titles[4][IMO + 4];
 extern struct index_data *mob_index;
 
-/* extern procedures */
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void gain_exp(struct char_data *ch, int gain);
-void stop_fighting(struct char_data *ch);
-void set_title(struct char_data *ch);
-int number(int from, int to);
-int dice(int num, int size); /* in utility.c */
-
-void cast_cure_light(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
-void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
-void cast_heal(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
-void cast_full_heal(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
 
 
 int level_gate(struct char_data *ch, int cmd, char *arg)

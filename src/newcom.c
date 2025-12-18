@@ -24,9 +24,7 @@ extern struct char_data *character_list;
 extern int top_of_zone_table;
 extern struct zone_data *zone_table;
 
-extern void load_zones (int i);
-void raw_kill (struct char_data *ch);
-void hit (struct char_data *ch, struct char_data *victim, int type);
+
 
 void do_assist(struct char_data *ch, char *argument, int cmd)
 {

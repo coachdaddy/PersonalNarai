@@ -20,8 +20,11 @@
 
 extern struct str_app_type str_app[];
 extern struct index_data *mob_index;
+extern struct room_data *world;
+extern struct time_info_data time_info;
 
-char *fread_string(FILE *fl);
+struct shop_data *shop_index;
+int number_of_shops;
 
 struct shop_data {
 	int producing[MAX_PROD]; /* Which item to produce (virtual)      */
@@ -44,17 +47,7 @@ struct shop_data {
 	int close1, close2;      /* When does the shop close?    */
 };
 
-void do_say(struct char_data *ch, char *str, int cmd);
-void do_tell(struct char_data *ch, char *arg, int cmd);
-void do_action(struct char_data *ch, char *arg, int cmd);
-void do_emote(struct char_data *ch, char *arg, int cmd);
-void hit(struct char_data *ch, struct char_data *victim, int type);
 
-extern struct room_data *world;
-extern struct time_info_data time_info;
-
-struct shop_data *shop_index;
-int number_of_shops;
 
 int is_ok(struct char_data *keeper, struct char_data *ch, int shop_nr)
 {

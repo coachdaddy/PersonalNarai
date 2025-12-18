@@ -36,9 +36,6 @@ extern int police_skill_costs[];
 extern int outlaw_skill_costs[];
 extern int assasin_skill_costs[];
 
-void do_look(struct char_data *ch, char *arg, int cmd);
-void stash_char(struct char_data *ch);
-void unstash_char(struct char_data *ch, char *filename);
 
 /* shuttle bus to KAIST */
 
