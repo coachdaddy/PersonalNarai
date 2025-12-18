@@ -24,6 +24,8 @@
 
 #include "mob_bal.c"
 
+#include "vcs_track.h"
+
 
 /**************************************************************************
 *  declarations of most of the 'global' variables                         *
@@ -129,6 +131,11 @@ void boot_db(void)
 	log("(boot_db) Booting DB -- BEGIN.");
 
     log("(boot_db) Resetting the game time:");
+	DEBUG_LOG("VCS %s", VCS_TRACK_SHORT_HASH);
+
+    mudlog("(boot_db)   help index done.");
+
+    mudlog("(boot_db) Resetting the game time:");
 	reset_time();
 
 	log("(boot_db) Reading news, credits, help-page, plan, wizards, and motd.");

@@ -6,6 +6,7 @@ lib/stash.tar*
 lib/log/*
 src/obj/*
 src/tags
+include/vcs_track.h
 log-*
 run-mud.sh
 .vscode/
