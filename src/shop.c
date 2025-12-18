@@ -509,7 +509,7 @@ void assign_the_shopkeepers()
             mob_index[shop_index[temp1].keeper].func = shop_keeper;
         } else {
             snprintf(buf, sizeof(buf), "SYSERR: Shop index #%d has invalid keeper RNUM [%d]. Skipped.", temp1, keeper_rnum);
-            log(buf);
+            mudlog(buf);
         }
     }
 }

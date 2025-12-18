@@ -106,7 +106,7 @@ void mobile_activity(void)
 					snprintf(buf, sizeof(buf),
 						"Attempting to call a non-existing MOB func.\n (mobact.c) %s",
 						ch->player.short_descr);
-					log(buf);
+					mudlog(buf);
 					REMOVE_BIT(ch->specials.act, ACT_SPEC);
 				} else {
 					if ((*mob_index[ch->nr].func) (ch, 0, ""))

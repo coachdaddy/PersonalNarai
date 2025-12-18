@@ -644,7 +644,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 		else {
 			snprintf(buf, sizeof(buf), "%s gives %d coins to %s.", GET_NAME(ch), amount,
 				GET_NAME(vict));
-			log(buf);
+			mudlog(buf);
 		}
 		GET_GOLD(vict) += amount;
 		return;
@@ -686,7 +686,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 		snprintf(buf, sizeof(buf), "%s gives %d to %s."
 			,GET_NAME(ch), obj_index[obj->item_number].virtual,
 			GET_NAME(vict));
-		log(buf);
+		mudlog(buf);
 	}
 }
 

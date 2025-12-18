@@ -217,7 +217,7 @@ void affect_modify(struct char_data *ch, byte loc, short mod, long bitv, bool ad
 		}
 		break;
 	default:
-		/*  log("Unknown apply adjust attempt (handler.c, affect_modify)."); */
+		/*  mudlog("Unknown apply adjust attempt (handler.c, affect_modify)."); */
 		break;
 	}			/* switch */
 }
@@ -319,7 +319,7 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
 		     hjp = hjp->next) ;
 
 		if (hjp->next != af) {
-			log("FATAL : Could not locate affected_type in ch->affected.");
+			mudlog("FATAL : Could not locate affected_type in ch->affected.");
 			exit(1);
 		}
 		hjp->next = af->next; /* skip the af element */
@@ -426,16 +426,16 @@ void char_from_room(struct char_data *ch)
 
 	if (ch->in_room == NOWHERE) {
 		if (IS_AFFECTED(ch, SKILL_ARREST)) {
-			log("NOWHERE extracting char : arrested");
+			mudlog("NOWHERE extracting char : arrested");
 			return;
 		} else {
-			log("NOWHERE extracting char from room (handler.c, char_from_room)");
+			mudlog("NOWHERE extracting char from room (handler.c, char_from_room)");
 
 			exit(1);
 		}
 	}
 	if (ch->in_room > top_of_world) {
-		log("Can't find Player's location");
+		mudlog("Can't find Player's location");
 		return;
 	}
 
@@ -492,17 +492,17 @@ void obj_from_char(struct obj_data *object)
 	char buf[255];
 
 	if (!object) {
-		log("obj_from_char: NULL object");
+		mudlog("obj_from_char: NULL object");
 		return;
 	}
 	if (!object->carried_by) {
 		snprintf(buf, sizeof(buf), "obj from char: %s has no owner", object->short_description);
-		log(buf);
+		mudlog(buf);
 		return;
 	}
 	if (!object->carried_by->carrying) {
 		snprintf(buf, sizeof(buf), "obj from char: %s has no owner", object->short_description);
-		log(buf);
+		mudlog(buf);
 		return;
 	}
 	if (object->carried_by->carrying == object)	/* head of list */
@@ -529,7 +529,7 @@ int apply_ac(struct char_data *ch, int eq_pos)
 
 	if (!(ch->equipment[eq_pos])) {
 		snprintf(buf, sizeof(buf), "XO: %s %d", ch->player.name, eq_pos);
-		log(buf);
+		mudlog(buf);
 		return (0);
 	}
 /*assert(ch->equipment[eq_pos]);*/
@@ -568,12 +568,12 @@ void equip_char(struct char_data *ch, struct obj_data *obj, int pos)
 		return;
 	}
 	if (obj->carried_by) {
-		log("EQUIP: Obj is carried_by when equip.");
+		mudlog("EQUIP: Obj is carried_by when equip.");
 		return;
 	}
 
 	if (obj->in_room != NOWHERE) {
-		log("EQUIP: Obj is in_room when equip.");
+		mudlog("EQUIP: Obj is in_room when equip.");
 		return;
 	}
 
@@ -618,7 +618,7 @@ void equip_char(struct char_data *ch, struct obj_data *obj, int pos)
 			obj_to_char(obj, ch);
 			return;
 		} else {
-			log("ch->in_room = NOWHERE when equipping char.");
+			mudlog("ch->in_room = NOWHERE when equipping char.");
 		}
 	}
 
@@ -982,7 +982,7 @@ void extract_char(struct char_data *ch, int drop_items)
 
     if (!ch) return;
     if (ch->in_room == NOWHERE) {
-        log("SYSERR: NOWHERE extracting char. (handler.c, extract_char)");
+        mudlog("SYSERR: NOWHERE extracting char. (handler.c, extract_char)");
         return; /* exit(1);  <-- 기존 코드. 리턴시킴 */
     }
 
@@ -1063,7 +1063,7 @@ void extract_char(struct char_data *ch, int drop_items)
         if (k)
             k->next = ch->next;
         else {
-            log("Can't Find character in the list. (handler.c extract_char)");
+            mudlog("Can't Find character in the list. (handler.c extract_char)");
         }
     }
 
@@ -1270,7 +1270,7 @@ struct obj_data *create_money(int amount)
 	char buf[80];
 
 	if (amount == 0) {
-		log("ERROR: Try to create null money.");
+		mudlog("ERROR: Try to create null money.");
 		exit(1);
 	}
 
@@ -1280,7 +1280,7 @@ struct obj_data *create_money(int amount)
 	}
 
 	if (amount < 0) {
-		log("ERROR: Try to create negative money.");
+		mudlog("ERROR: Try to create negative money.");
 		exit(1);
 	}
 

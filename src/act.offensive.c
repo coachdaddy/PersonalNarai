@@ -88,7 +88,7 @@ void do_kill(struct char_data *ch, char *argument, int cmd)
 
 	if (GET_LEVEL(ch) >= IMO && GET_LEVEL(ch) < IMO + 3) {
 		snprintf(buf, sizeof(buf), "Fight IMO:%s v.s. %s", GET_NAME(ch), argument);
-		log(buf);
+		mudlog(buf);
 		return;
 	}
 	if ((GET_LEVEL(ch) < IMO) || IS_NPC(ch)) {

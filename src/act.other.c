@@ -46,7 +46,7 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 
 	act("Goodbye, friend.. Come back soon!", FALSE, ch, 0, 0, TO_CHAR);
 	snprintf(cyb, sizeof(cyb), "%s closed connect(quit)", GET_NAME(ch));
-	log(cyb);
+	mudlog(cyb);
 	if (ch->desc)
 		close_socket(ch->desc);
 
@@ -584,7 +584,7 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 
 	/* by ares */
 	snprintf(buf, sizeof(buf), "Use log : %s uses %s", ch->player.name, argument);
-	log(buf);
+	mudlog(buf);
 
 	stick = ch->equipment[HOLD];
 

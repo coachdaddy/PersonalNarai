@@ -867,7 +867,7 @@ void do_exits(struct char_data *ch, char *argument, int cmd)
                 p += written_chars;
                 remaining_space -= written_chars;
             } else if (written_chars >= remaining_space) {
-				log("do_exits: Buffer full, exit list truncated.");
+				mudlog("do_exits: Buffer full, exit list truncated.");
 				break;
 			}
         }
@@ -1791,7 +1791,7 @@ void load_news_if_changed() {
 
     // 파일이 바뀌었다면 다시 읽음
     if (!(fl = fopen(filename, "r"))) {
-        log("SYSERR: 뉴스 파일을 열 수 없습니다.");
+        mudlog("SYSERR: 뉴스 파일을 열 수 없습니다.");
         return;
     }
 
@@ -1805,7 +1805,7 @@ void load_news_if_changed() {
     news_last_mod = file_info.st_mtime;
     
     fclose(fl);
-    log("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
+    mudlog("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
 }
 
 void do_news(struct char_data *ch, char *argument, int cmd)
@@ -2054,7 +2054,7 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 	for (d = descriptor_list; d; d = d->next) {
 		if (target == d->descriptor) {
 			snprintf(name, sizeof(name), "Policed: %d\n", d->descriptor);
-			log(name);
+			mudlog(name);
 			if ((d->connected == CON_PLAYING) && (d->character)) {
 				if (d->character->player.level < ch->player.level) {
 					stash_char(d->character);

@@ -639,7 +639,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         send_to_char(feedback_buf, ch);
 
         snprintf(log_buf, sizeof(log_buf), "%s loaded %d x char %d (%s)", ch->player.name, quantity, vnum, mob_name);
-        log(log_buf);
+        mudlog(log_buf);
 
     /* --- 아이템(obj) 생성 --- */
     } else if (is_abbrev(arg1, "obj")) {
@@ -691,7 +691,7 @@ void do_load(struct char_data *ch, char *argument, int cmd)
         send_to_char(feedback_buf, ch);
 
         snprintf(log_buf, sizeof(log_buf), "%s loaded %d x object %d (%s)", ch->player.name, quantity, vnum, obj_name);
-        log(log_buf);
+        mudlog(log_buf);
 
     } else {
         send_to_char("That'll have to be either 'char' or 'obj'.\n\r", ch);
@@ -833,7 +833,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 			
 			// "confirm"이 입력된 경우, 플레이어 삭제 절차 진행
 			snprintf(buf, sizeof(buf), "PURGE: %s permanently deleted player %s.", ch->player.name, vict->player.name);
-			log(buf); // 로그 기록
+			mudlog(buf); // 로그 기록
 
 			stash_char(vict);
 			move_stashfile_safe(vict->player.name); 
@@ -1985,7 +1985,7 @@ void do_zreload(struct char_data *ch, char *argument, int cmd)
 
     snprintf(buf, sizeof(buf), "[ZRELOAD] (GC) %s reloaded Zone %d (%s).", 
             GET_NAME(ch), target_zone_num, zone_table[zone_rnum].filename);
-    log(buf);
+    mudlog(buf);
 
     load_zones(zone_rnum);
 
@@ -2046,7 +2046,7 @@ void do_wreload(struct char_data *ch, char *argument, int cmd)
 
     /* 로그 및 메시지 */
     snprintf(buf, sizeof(buf), "[WRELOAD] (GC) %s reloaded World file for Zone %d.", GET_NAME(ch), target_zone_num);
-    log(buf);
+    mudlog(buf);
     
     snprintf(buf, sizeof(buf), "&c[WRELOAD]&n 존 %d번 월드 데이터(%s) 업데이트 완료.\r\n"
 				 "&c[WRELOAD]&n 동기화를 위해 zreload 실행을 권장합니다.\r\n"

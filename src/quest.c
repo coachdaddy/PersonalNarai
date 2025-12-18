@@ -272,7 +272,7 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 			QM[num].name);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &U%s&Y? 어디 있는 걸까? 모르겠는데...&n\n\r",
 			QM[num].name);
-		log("QUEST : INVALID mobile.");
+		mudlog("QUEST : INVALID mobile.");
 	} else { 
 		snprintf(buf1, sizeof(buf1), "&CQUEST&n : &U%s&Y is in &#%s&Y probably.&n\n\r",
 			QM[num].name, zone);
@@ -338,7 +338,7 @@ void init_quest(void)
 	int num, size;
 
 	if (!(fp = fopen(QUEST_FILE, "r"))) {
-		log("(init_quest) Initializing quests (quest_file)");
+		mudlog("(init_quest) Initializing quests (quest_file)");
 		exit(0);
 	}
 
@@ -371,7 +371,7 @@ void init_quest(void)
 		topQM++;
 
 		if (topQM > MaxQuest) {
-			log("(init_quest) Quest Mobiles are overflown.");
+			mudlog("(init_quest) Quest Mobiles are overflown.");
 			fclose(fp);
 			return;
 		}

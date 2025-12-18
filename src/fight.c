@@ -94,7 +94,7 @@ void load_messages(void)
 		     type) &&
 		     (fight_messages[i].a_type); i++) ;
 		if (i >= MAX_MESSAGES) {
-			log("Too many combat messages.");
+			mudlog("Too many combat messages.");
 			exit(0);
 		}
 
@@ -171,7 +171,7 @@ void stop_fighting(struct char_data *ch)
 		for (tmp = combat_list; tmp && (tmp->next_fighting != ch);
 		     tmp = tmp->next_fighting) ;
 		if (!tmp) {
-			log("Char fighting not found Error (fight.c, stop_fighting)");
+			mudlog("Char fighting not found Error (fight.c, stop_fighting)");
 			goto next;
 		}
 		tmp->next_fighting = ch->next_fighting;
@@ -518,7 +518,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
                 }
             }
         } else {
-            log("QUEST_CORPSE_MOVE_ERROR: Quest Room (VNUM 3081) not found.");
+            mudlog("QUEST_CORPSE_MOVE_ERROR: Quest Room (VNUM 3081) not found.");
         }
     }
 }
@@ -1123,7 +1123,7 @@ void damage(struct char_data *ch, struct char_data *victim,
 					 GET_NAME(ch)),
 					world[victim->in_room].name);
 			}
-			log(buf);
+			mudlog(buf);
 		}
 
 		die(victim, GET_LEVEL(ch), ch);
@@ -1143,7 +1143,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 		return;
 
 	if (ch->in_room != victim->in_room) {
-		log("NOT SAME ROOM WHEN FIGHTING!");
+		mudlog("NOT SAME ROOM WHEN FIGHTING!");
 		return;
 	}
 
@@ -1378,7 +1378,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 
 	if (type == SKILL_BACKSTAB) {
 		if (IS_AFFECTED(ch, AFF_HIDE)) {
-			log("backstab+hide");
+			mudlog("backstab+hide");
 			dam <<= 1;
 		}
 		if (IS_NPC(ch)) {
