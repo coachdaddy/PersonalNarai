@@ -16,7 +16,6 @@
 #include "db.h"
 
 #include "guild_list.h"
-#include "prototypes.h"
 
 /* Extern structures */
 extern struct room_data *world;
@@ -25,6 +24,17 @@ extern struct char_data *character_list;
 extern struct index_data *mob_index;
 extern int noenchantflag;
 
+/* Extern procedures */
+void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype);
+bool saves_spell(struct char_data *ch, int spell);
+void weight_change_object(struct obj_data *obj, int weight);
+// char *strdup(char *source);
+int dice(int number, int size);         /* in utility.c */
+void do_look(struct char_data *ch, char *argument, int cmd);
+int number(int from, int to);
+void hit(struct char_data *ch, struct char_data *victim, int type);
+void do_say(struct char_data *ch, char *str, int cmd);
+void do_shout(struct char_data *ch, char *str, int cmd);
 
 /*
 cast 'spell block' victim

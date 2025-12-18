@@ -21,7 +21,32 @@ extern struct char_data *character_list;
 extern struct spell_info_type spell_info[MAX_SPL_LIST];
 extern struct obj_data *object_list;
 
+/* Extern procedures */
 
+void update_pos(struct char_data *victim);
+void damage(struct char_data *ch, struct char_data *victim,
+	     int damage, int weapontype);
+int number(int from, int to);
+
+
+void say_spell(struct char_data *ch, int si);
+bool saves_spell(struct char_data *ch, sh_int spell);
+void add_follower(struct char_data *ch, struct char_data *victim);
+// char *strdup(char *str);
+void spell_spell_block(byte level, struct char_data *ch, struct char_data *tar_ch,
+			struct obj_data *tar_obj);
+void spell_mana_transfer(byte level, struct char_data *ch, struct char_data
+			  *tar_ch, struct obj_data *tar_obj);
+void spell_holy_shield(byte level, struct char_data *ch, struct char_data
+			*tar_ch, struct obj_data *tar_obj);
+void spell_kiss_of_process(byte level, struct char_data *ch, struct char_data
+			    *tar_ch, struct obj_data *tar_obj);
+void spell_reflect_damage(byte level, struct char_data *ch, struct char_data
+			   *tar_ch, struct obj_data *tar_obj);
+void spell_dumb(byte level, struct char_data *ch, struct char_data *tar_ch,
+		 struct obj_data *tar_obj);
+void spell_thunder_bolt(byte level, struct char_data *ch,
+			 struct char_data *tar_ch, struct obj_data *tar_obj);
 
 /*
 cast 'spell block' victim

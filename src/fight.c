@@ -27,13 +27,24 @@ struct char_data *combat_list = 0;	/* head of l-list of fighting chars */
 struct char_data *combat_next_dude = 0;		/* Next dude global trick           */
 
 /* External structures */
-
 extern struct room_data *world;
 extern struct message_list fight_messages[MAX_MESSAGES];
 extern struct obj_data *object_list;
 extern struct index_data *obj_index;
 extern struct index_data *mob_index;
 
+/* External procedures */
+char *fread_string(FILE * f1);
+void stop_follower(struct char_data *ch);
+void do_flee(struct char_data *ch, char *argument, int cmd);
+void hit(struct char_data *ch, struct char_data *victim, int type);
+void wipe_stash(char *filename);
+int number(int from, int to);
+void gain_exp(struct char_data *ch, int gain);
+int dice(int num, int size);                    /* in utility.c */
+void save_char_nocon(struct char_data *ch, sh_int load_room);
+void do_look(struct char_data *ch, char *argument, int cmd);
+void check_quest_mob_die(struct char_data *ch, int mob);    /* quest.c */
 
 /* Challenge Room Quest System  */
 extern struct {
@@ -110,7 +121,7 @@ void load_messages(void)
 		     type) &&
 		     (fight_messages[i].a_type); i++) ;
 		if (i >= MAX_MESSAGES) {
-			mudlog("Too many combat messages.");
+			log("Too many combat messages.");
 			exit(0);
 		}
 
@@ -187,10 +198,7 @@ void stop_fighting(struct char_data *ch)
 		for (tmp = combat_list; tmp && (tmp->next_fighting != ch);
 		     tmp = tmp->next_fighting) ;
 		if (!tmp) {
-			mudlog("Char fighting not found Error (fight.c, stop_fighting)");
-			/*
-			   abort();
-			 */
+			log("Char fighting not found Error (fight.c, stop_fighting)");
 			goto next;
 		}
 		tmp->next_fighting = ch->next_fighting;
@@ -282,8 +290,7 @@ void make_corpse(struct char_data *ch, int level)
 	/* GoodBadIsland */
 	/* IRON GOLEM(23323) */
 	if (mob_index[ch->nr].virtual == 23323) {
-		act
-		    ("거대한 철문이 열리고, 위층으로 올라가는 계단이 보입니다.",
+		act("거대한 철문이 열리고, 위층으로 올라가는 계단이 보입니다.",
 		     FALSE, ch, 0, 0, TO_ROOM);
 		REMOVE_BIT(EXIT(ch, 4)->exit_info, EX_LOCKED);
 		REMOVE_BIT(EXIT(ch, 4)->exit_info, EX_CLOSED);
@@ -346,7 +353,6 @@ void raw_kill(struct char_data *ch, int level)
 	death_cry(ch);
 	make_corpse(ch, level);
 	extract_char(ch, TRUE);
-	DEBUG_LOG("In fight.c - raw_kill(%s) level (%d)", ch->player.name, level);
 }
 
 void die(struct char_data *ch, int level, struct char_data *who)
@@ -355,19 +361,18 @@ void die(struct char_data *ch, int level, struct char_data *who)
     int exp;
     struct follow_type * f;
     struct char_data *killer, *group_leader;
-
+	
     /* 시체 이동을 위한 변수 선언 */
     bool died_in_challenge_room = FALSE;
     int challenge_room_rnum = ch->in_room; // raw_kill 전에 현재 방(죽은 장소)을 기억
     char ch_name[30]; // raw_kill 전에 캐릭터 이름을 기억
+
+	if (!IS_NPC(ch)) {
+        strcpy(ch_name, GET_NAME(ch)); // NPC가 아닌 경우에만 이름 복사
+    }
     
     if (!ch)
         return;
-
-	if (!IS_NPC(ch)) { 
-		strncpy(ch_name, GET_NAME(ch), sizeof(ch_name) - 1); 
-		ch_name[sizeof(ch_name) - 1] = '\0'; 
-	}
 
     /* chase modified this for reraise */
     if (!IS_NPC(ch) && IS_AFFECTED(ch, AFF_RERAISE)) {
@@ -540,7 +545,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
                 }
             }
         } else {
-            mudlog("QUEST_CORPSE_MOVE_ERROR: Quest Room (VNUM 3081) not found.");
+            log("QUEST_CORPSE_MOVE_ERROR: Quest Room (VNUM 3081) not found.");
         }
     }
 }
@@ -631,27 +636,20 @@ void group_gain(struct char_data *ch, struct char_data *victim)
 
 char *replace_string(char *str, char *weapon)
 {
-	static char buf[3][MAX_STRING_LENGTH]; // ASAN, 251202
+	static char buf[10][MAX_STRING_LENGTH];
 	static int count = 0;
 	char *rtn;
 	char *cp;
-    char *wp_ptr; // 무기 이름 포인터 보존용 추가
-
-	cp = rtn = buf[count % 3];
+    
+	cp = rtn = buf[count % 10];
 	count++;
+	if (count >= 10000) count = 0;
 
 	for (; *str; str++) {
-
-        if ((cp - rtn) > (MAX_STRING_LENGTH - 50)) {
-            break; 
-        }
-
 		if (*str == '#') {
 			switch (*(++str)) {
 			case 'W': 
-				if (weapon) { 
-					for (wp_ptr = weapon; *wp_ptr; *(cp++) = *(wp_ptr++)); 
-				}
+				for (; *weapon; *(cp++) = *(weapon++)) ;
 				break;
 			default:
 				*(cp++) = '#';
@@ -661,7 +659,7 @@ char *replace_string(char *str, char *weapon)
 			*(cp++) = *str;
 		}
 	}			/* For */
-    *cp = '\0'; // 루프 밖에서 한 번만
+    *cp = '\0';
 	return (rtn);
 }
 
@@ -895,21 +893,12 @@ void damage(struct char_data *ch, struct char_data *victim,
 	extern int nokillflag;
 
 	/* for quest */
-	struct follow_type *f;
+	struct follow_type *f, *next_f;
 
 	long int hit_limit(struct char_data *ch);
 
 	if (!victim || !ch)
 		return;
-
-    if (ch == victim && attacktype != TYPE_SUFFERING)
-        return;
-
-#ifdef GHOST
-	/* connectionless PC can't damage or be damaged */
-	if ((!IS_NPC(ch) && !ch->desc) || (!IS_NPC(victim) && !victim->desc))
-		return;
-#endif				/* GHOST */
 
 	if (nokillflag)
 		if (!IS_NPC(ch) && !IS_NPC(victim))
@@ -939,17 +928,6 @@ void damage(struct char_data *ch, struct char_data *victim,
 			if (!ch->specials.fighting && ch->in_room == victim->in_room)
 				set_fighting(ch, victim);
 
-			/* forbid charmed person damage charmed person */
-			/*
-			   if (IS_AFFECTED(ch, AFF_CHARM) && IS_AFFECTED(victim,AFF_CHARM)) {
-			   if(ch->specials.fighting)
-			   stop_fighting(ch);
-			   if(victim->specials.fighting)
-			   stop_fighting(victim);
-			   return;
-			   }
-			 */
-
 			/* charmed mob can't ALWAYS kill another mob for player */
 			if (IS_NPC(ch) && IS_NPC(victim) && victim->master &&
 			    !number(0, 4) && IS_AFFECTED(victim, AFF_CHARM) &&
@@ -971,10 +949,6 @@ void damage(struct char_data *ch, struct char_data *victim,
 		dam /= 2;
 	if (IS_AFFECTED(victim, AFF_LOVE))
 		dam *= 2;
-	/*
-	   if (IS_NPC(ch))
-	   dam *= 2;
-	 */
 
 	dam = MAX(dam, -dam);
 	/* MAX DAMAGE */
@@ -1126,9 +1100,7 @@ void damage(struct char_data *ch, struct char_data *victim,
 					exp = MAX(exp, 1);
 					gain_exp(ch, exp);
 					GET_GOLD(ch) += GET_GOLD(victim);
-					GET_GOLD(ch) += (GET_LEVEL(victim) *
-							 GET_LEVEL(victim)
-							 * 500);
+					GET_GOLD(ch) += (GET_LEVEL(victim) * GET_LEVEL(victim) * 500);
 					change_alignment(ch, victim);
 				}
 
@@ -1136,9 +1108,6 @@ void damage(struct char_data *ch, struct char_data *victim,
 				if (ch->master) {
 					f = ch->master->followers;
 					/* check master */
-					/*
-					   if(IS_AFFECTED(ch->master, AFF_GROUP) &&
-					 */
 					if (ch->master->in_room == ch->in_room)
 						check_quest_mob_die(ch->master, victim->nr);
 				} else {
@@ -1150,12 +1119,10 @@ void damage(struct char_data *ch, struct char_data *victim,
 
 				while (f) {
 					/* check followers */
-					/*
-					   if(IS_AFFECTED(f->follower, AFF_GROUP) &&
-					 */
-					if (f->follower->in_room == ch->in_room)
-						check_quest_mob_die(f->follower, victim->nr);
-					f = f->next;
+                  next_f = f->next;
+                  if (f->follower->in_room == ch->in_room)
+                      check_quest_mob_die(f->follower, victim->nr);
+                  f = next_f;
 				}
 			}
 		} else {	/* if player killed . */
@@ -1184,7 +1151,7 @@ void damage(struct char_data *ch, struct char_data *victim,
 					 GET_NAME(ch)),
 					world[victim->in_room].name);
 			}
-			mudlog(buf);
+			log(buf);
 		}
 
 		die(victim, GET_LEVEL(ch), ch);
@@ -1211,7 +1178,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 		return;
 
 	if (ch->in_room != victim->in_room) {
-		mudlog("NOT SAME ROOM WHEN FIGHTING!");
+		log("NOT SAME ROOM WHEN FIGHTING!");
 		return;
 	}
 
@@ -1246,8 +1213,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 	if (prf) {
 		if (prf == 1) {
 			send_to_char("You parry successfully.\n\r", victim);
-			act("$N parries successfully.",
-			    FALSE, ch, 0, victim, TO_CHAR);
+			act("$N parries successfully.", FALSE, ch, 0, victim, TO_CHAR);
 			INCREASE_SKILLED1(victim, ch, SKILL_PARRY);
 		} else if (prf == 2) {
 			send_to_char("You hit illusion. You are confused.\n\r", ch);
@@ -1257,9 +1223,6 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 		}
 		return;
 	}
-
-	// if (ch->equipment[HOLD])
-	//     held = ch->equipment[HOLD];
 
 	if (ch->equipment[WIELD] &&
 	    (ch->equipment[WIELD]->obj_flags.type_flag == ITEM_WEAPON)) {
@@ -1304,8 +1267,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 	miss += dex_app[GET_DEX(victim)].defensive;
 	if (type == SKILL_BACKSTAB) {
 		miss -= (GET_LEVEL(ch) >> 2);
-		miss -= ((GET_LEVEL(ch) >> 2) + (GET_SKILLED(ch,
-						 SKILL_BACKSTAB) >> 2));
+		miss -= ((GET_LEVEL(ch) >> 2) + (GET_SKILLED(ch, SKILL_BACKSTAB) >> 2));
 	}
 
 	/* attack misses */
@@ -1330,7 +1292,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 
 			if (number(0, 49 + ((ch->specials.damnodice * ch->specials.damsizedice) << 4)) == 37) {
 				/* Check for all remortaled by dsshin   */
-				/* Limit is changed by epochal                  */
+				/* Limit is changed by epochal          */
 
 				limit_nodice = 13;
 				limit_sizedice = 21;
@@ -1363,13 +1325,12 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 				/*  to here */
 				if (number(0, 2) == 1) {
 					if (ch->specials.damnodice < limit_nodice) {
-						send_to_char("Your bare hand dice is added!!!\n\r", ch);
+						send_to_char("&LYour bare hand dice is added!!!&n\n\r", ch);
 						ch->specials.damnodice++;
 					}
 				} else {
 					if (ch->specials.damsizedice < limit_sizedice) {
-						send_to_char
-						    ("Your bare hand dice is enlarged!!!\n\r", ch);
+						send_to_char("&TYour bare hand dice is enlarged!!!&n\n\r", ch);
 						ch->specials.damsizedice++;
 					}
 				}
@@ -1411,12 +1372,6 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 
 	if (GET_POS(victim) < POSITION_FIGHTING)
 		dam *= 1 + (POSITION_FIGHTING - GET_POS(victim)) / 3;
-	/* Position  sitting  x 1.33 */
-	/* Position  resting  x 1.66 */
-	/* Position  sleeping x 2.00 */
-	/* Position  stunned  x 2.33 */
-	/* Position  incap    x 2.66 */
-	/* Position  mortally x 3.00 */
 
 	if (ch->skills[SKILL_EXTRA_DAMAGING].learned) {
 		if (ch->skills[SKILL_EXTRA_DAMAGING].learned >
@@ -1424,8 +1379,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 			/* warrior's extra damaging is more powerful */
 			INCREASE_SKILLED1(ch, victim, SKILL_EXTRA_DAMAGING);
 			if (ch->player.class == CLASS_WARRIOR)
-				dam += (dam * ((GET_SKILLED(ch,
-						SKILL_EXTRA_DAMAGING) >> 5) + 1));
+				dam += (dam * ((GET_SKILLED(ch, SKILL_EXTRA_DAMAGING) >> 5) + 1));
 			else
 				dam += number(dam >> 1, dam * ((GET_SKILLED(ch,
 									    SKILL_EXTRA_DAMAGING)
@@ -1435,23 +1389,19 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 
 	if (IS_AFFECTED(ch, AFF_LOVE))
 		dam *= 2;
-	/*
+	
 	if (IS_AFFECTED(ch, AFF_DEATH))
 		dam *= 4;
-		*/
+	
 
 	/* each class has dedicated weapon */
-	if (GET_CLASS(ch) == CLASS_THIEF &&
-	    w_type == TYPE_PIERCE && number(1, 10) > 5)
+	if (GET_CLASS(ch) == CLASS_THIEF && w_type == TYPE_PIERCE && number(1, 10) > 5)
 		dam *= 2;
-	if (GET_CLASS(ch) == CLASS_MAGIC_USER &&
-	    w_type == TYPE_BLUDGEON && number(1, 10) > 5)
+	if (GET_CLASS(ch) == CLASS_MAGIC_USER && w_type == TYPE_BLUDGEON && number(1, 10) > 5)
 		dam *= 2;
-	if (GET_CLASS(ch) == CLASS_WARRIOR &&
-	    w_type == TYPE_SLASH && number(1, 10) > 5)
+	if (GET_CLASS(ch) == CLASS_WARRIOR && w_type == TYPE_SLASH && number(1, 10) > 5)
 		dam *= 2;
-	if (GET_CLASS(ch) == CLASS_CLERIC &&
-	    w_type == TYPE_BLUDGEON && number(1, 10) > 5)
+	if (GET_CLASS(ch) == CLASS_CLERIC && w_type == TYPE_BLUDGEON && number(1, 10) > 5)
 		dam *= 2;
 
 	/*
@@ -1463,12 +1413,12 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 
 	if (type == SKILL_BACKSTAB) {
 		if (IS_AFFECTED(ch, AFF_HIDE)) {
-			mudlog("backstab+hide");
+			log("backstab+hide");
 			dam <<= 1;
 		}
 		if (IS_NPC(ch)) {
 			dam *= backstab_mult[GET_LEVEL(ch) / 2];
-		} else {	/* PC */
+		} else { /* PC */
 			dam *= (backstab_mult[(int)GET_LEVEL(ch)] +
 				(GET_SKILLED(ch,
 					     SKILL_BACKSTAB)
@@ -1481,8 +1431,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 									      number(1, 500)) {
 				INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
 
-				/* 메세지 출력 수정, 251201 Komo */
-                act("$N reflects your damage!", 
+				act("$N reflects your damage!", 
 					TRUE, ch, 0, victim, TO_CHAR); 
                 act("You reflect damage on $n successfully.", 
 					TRUE, ch, 0, victim, TO_VICT);
@@ -1498,8 +1447,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 		if (!IS_AFFECTED(victim, AFF_REFLECT_DAMAGE))
 			damage(ch, victim, dam, w_type);
 		else {
-			if (victim->skills[SPELL_REFLECT_DAMAGE].learned >
-									      number(1, 300)) {
+			if (victim->skills[SPELL_REFLECT_DAMAGE].learned > number(1, 300)) {
 				INCREASE_SKILLED1(victim, ch, SPELL_REFLECT_DAMAGE);
                 act("$N reflects your damage!", 
 					TRUE, ch, 0, victim, TO_CHAR);
@@ -1516,123 +1464,145 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 }
 
 /* control the fights going on */
+/* modified, 251217 */
 void perform_violence(void)
 {
-	struct char_data *ch;
-	int i, dat = 100;
-	extern void magic_weapon_hit();
-	struct obj_data *weapon, *held;
-	int percent;
+    struct char_data *ch;
+    int i, dat = 100;
+    extern void magic_weapon_hit(struct char_data *ch, struct char_data *vict, struct obj_data *obj);
+    struct obj_data *weapon, *held;
+    int percent;
+	int sk_double, sk_quad, sk_octa; /* GET_SKILLED 저장용 */
 
-	for (ch = combat_list; ch; ch = combat_next_dude) {
-		combat_next_dude = ch->next_fighting;
-		assert(ch->specials.fighting);
+    for (ch = combat_list; ch; ch = combat_next_dude) {
+        combat_next_dude = ch->next_fighting;
+        
+        if (!ch->specials.fighting) continue;
 
-		if (AWAKE(ch) && (ch->in_room == ch->specials.fighting->in_room)) {
-			weapon = ch->equipment[WIELD];
-			if (weapon && weapon->obj_flags.gpd > 0 &&
-			    weapon->obj_flags.value[0] > 0 &&
-			    IS_SET(weapon->obj_flags.extra_flags, ITEM_MAGIC))
-				magic_weapon_hit(ch, ch->specials.fighting, weapon);
-			held = ch->equipment[HOLD];
-			if (held && number(1, 10) > 5 && held->obj_flags.gpd >
-			    0 &&
-			    held->obj_flags.value[0] > 0 && IS_SET(held->obj_flags.extra_flags,
-								   ITEM_MAGIC) &&
-			    CAN_WEAR(ch->equipment[HOLD], ITEM_WIELD) &&
-			    GET_CLASS(ch) == CLASS_WARRIOR)
-				magic_weapon_hit(ch, ch->specials.fighting, held);
-			hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-			if (!IS_NPC(ch)) {
-				/* double attack */
-				if (ch->skills[SKILL_DOUBLE].learned > 0) {
-					percent = GET_LEARNED(ch, SKILL_DOUBLE)
-					    + GET_SKILLED(ch, SKILL_DOUBLE)
-					    + 3 * GET_LEVEL(ch);
-					if (percent > number(1, 200)) {
-						hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-						INCREASE_SKILLED1(ch, ch, SKILL_DOUBLE);
-					}
-				}
+		sk_double = IS_NPC(ch) ? 0 : GET_SKILLED(ch, SKILL_DOUBLE);
+        sk_quad   = IS_NPC(ch) ? 0 : GET_SKILLED(ch, SKILL_QUADRUPLE);
+        sk_octa   = IS_NPC(ch) ? 0 : GET_SKILLED(ch, SKILL_OCTA);
 
-				if (ch->skills[SKILL_QUADRUPLE].learned > 0) {
-					if (GET_CLASS(ch) == CLASS_MAGIC_USER
-					    || GET_CLASS(ch)
-					    == CLASS_CLERIC)
-						if (number(1, 40) > 20 +
-						    (GET_SKILLED(ch,
-								 SKILL_QUADRUPLE)
-						     >> 3))
-							goto octa;
+        if (AWAKE(ch) && (ch->in_room == ch->specials.fighting->in_room)) {
+            weapon = ch->equipment[WIELD];
+            if (weapon && weapon->obj_flags.gpd > 0 && 
+                weapon->obj_flags.value[0] > 0 && 
+                IS_SET(weapon->obj_flags.extra_flags, ITEM_MAGIC)) {
+                magic_weapon_hit(ch, ch->specials.fighting, weapon);
+            }
+            if (!ch->specials.fighting) continue;
 
-					for (i = 0; i < 2; i++) {
-						percent = GET_LEARNED(ch, SKILL_QUADRUPLE)
-						    + (GET_SKILLED(ch,
-						       SKILL_QUADRUPLE) << 1)
-						    + 6 * GET_LEVEL(ch);
-						if (percent > number(1, 450)) {
-							hit(ch,
-							    ch->specials.fighting, TYPE_UNDEFINED);
-							INCREASE_SKILLED1(ch,
-									  ch, SKILL_QUADRUPLE);
-						}
-					}
-				}
-			      octa:
-				if (ch->skills[SKILL_OCTA].learned > 0) {
-					if (GET_CLASS(ch) == CLASS_MAGIC_USER
-					    || GET_CLASS(ch)
-					    == CLASS_CLERIC)
-						if (number(1, 40) > 10 +
-						    (GET_SKILLED(ch, SKILL_OCTA)
-						     >> 3))
-							goto octa;
+            held = ch->equipment[HOLD];
+            if (held && number(1, 10) > 5 && held->obj_flags.gpd > 0 && 
+                held->obj_flags.value[0] > 0 && 
+                IS_SET(held->obj_flags.extra_flags, ITEM_MAGIC) && 
+                CAN_WEAR(ch->equipment[HOLD], ITEM_WIELD) && 
+                GET_CLASS(ch) == CLASS_WARRIOR) {
+                magic_weapon_hit(ch, ch->specials.fighting, held);
+            }
+            if (!ch->specials.fighting) continue;
 
-					for (i = 0; i < 4; i++) {
-						percent = GET_LEARNED(ch, SKILL_OCTA)
-						    + (GET_SKILLED(ch,
-						       SKILL_OCTA) << 1)
-						    + 6 * GET_LEVEL(ch);
-						if (percent > number(1, 450)) {
-							hit(ch,
-							    ch->specials.fighting, TYPE_UNDEFINED);
-							INCREASE_SKILLED1(ch,
-									  ch, SKILL_OCTA);
-						}
-					}
-				}
-			}
-			/*    next: */
-			if (IS_NPC(ch)) {
-				if (!IS_SET(ch->specials.act, ACT_CLERIC) &&
-				    !IS_SET(ch->specials.act, ACT_MAGE))
-					dat = 7;
-				else
-					dat = 15;
-				for (i = dat; i < GET_LEVEL(ch); i += dat)
-					hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-			}
+            /* 기본 공격 */
+            hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
+            if (!ch->specials.fighting) continue;
 
-			if (IS_AFFECTED(ch, AFF_HASTE)) {
-				hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-				hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-			}
-			if (IS_AFFECTED(ch, AFF_IMPROVED_HASTE)) {
-				hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-				hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-				hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-			}
+            /* PC */
+            if (!IS_NPC(ch)) {
+                /* Double Attack */
+                if (ch->skills[SKILL_DOUBLE].learned > 0) {
+                    percent = GET_LEARNED(ch, SKILL_DOUBLE) + sk_double + 3 * GET_LEVEL(ch);
+                    
+                    if (percent > number(1, 200)) {
+                        hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
+                        INCREASE_SKILLED1(ch, ch, SKILL_DOUBLE);
+                    }
+                }
+                if (!ch->specials.fighting) continue;
 
-			if (ch->equipment[WEAR_FEET] &&
-			    ch->equipment[WEAR_FEET]->item_number >= 0 &&
-			    obj_index[ch->equipment[WEAR_FEET]->item_number].virtual
-			    == 2012) {	/* SPEED boots */
-				hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-				hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-				hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
-			}
-		} else {	/* Not in same room */
-			stop_fighting(ch);
-		}
-	}
+                /* Quadruple Attack */
+                if (ch->skills[SKILL_QUADRUPLE].learned > 0) {
+                    int do_quad = 1;
+
+                    if (GET_CLASS(ch) == CLASS_MAGIC_USER || GET_CLASS(ch) == CLASS_CLERIC) {
+                        if (number(1, 40) > 20 + (sk_quad >> 3))
+                            do_quad = 0; 
+                    }
+
+                    if (do_quad) {
+                        for (i = 0; i < 2; i++) {
+                            if (!ch->specials.fighting) break; 
+                            
+                            percent = GET_LEARNED(ch, SKILL_QUADRUPLE) + (sk_quad << 1) + 6 * GET_LEVEL(ch);
+                            
+                            if (percent > number(1, 450)) {
+                                hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
+                                INCREASE_SKILLED1(ch, ch, SKILL_QUADRUPLE);
+                            }
+                        }
+                    }
+                }
+                if (!ch->specials.fighting) continue;
+
+                /* Octa Attack */
+                if (ch->skills[SKILL_OCTA].learned > 0) {
+                    int do_octa = 1;
+
+                    if (GET_CLASS(ch) == CLASS_MAGIC_USER || GET_CLASS(ch) == CLASS_CLERIC) {
+                        if (number(1, 40) > 10 + (sk_octa >> 3))
+                            do_octa = 0;
+                    }
+
+                    if (do_octa) {
+                        for (i = 0; i < 4; i++) {
+                            if (!ch->specials.fighting) break; 
+                            
+                            percent = GET_LEARNED(ch, SKILL_OCTA) + (sk_octa << 1) + 6 * GET_LEVEL(ch);
+                            
+                            if (percent > number(1, 450)) {
+                                hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
+                                INCREASE_SKILLED1(ch, ch, SKILL_OCTA);
+                            }
+                        }
+                    }
+                }
+            } else { /* NPC attack */
+                if (!ch->specials.fighting) continue;
+                if (!IS_SET(ch->specials.act, ACT_CLERIC) && !IS_SET(ch->specials.act, ACT_MAGE))
+                    dat = 7;
+                else
+                    dat = 15;
+                
+                for (i = dat; i < GET_LEVEL(ch); i += dat) {
+                    if (!ch->specials.fighting) break;
+                    hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
+                }
+            }
+
+            /* Additional check - Haste & Boots */
+            if (ch->specials.fighting && IS_AFFECTED(ch, AFF_HASTE)) {
+                hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
+                if (ch->specials.fighting)
+                    hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
+            }
+            
+            if (ch->specials.fighting && IS_AFFECTED(ch, AFF_IMPROVED_HASTE)) {
+                for (i=0; i<3; ++i) {
+                     if (!ch->specials.fighting) break;
+                     hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
+                }
+            }
+
+            if (ch->specials.fighting && ch->equipment[WEAR_FEET] && 
+                ch->equipment[WEAR_FEET]->item_number >= 0 && 
+                obj_index[ch->equipment[WEAR_FEET]->item_number].virtual == 2012) { 
+                for (i=0; i<3; ++i) {
+                     if (!ch->specials.fighting) break;
+                     hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
+                }
+            }
+
+        } else {
+            stop_fighting(ch);
+        }
+    }
 }

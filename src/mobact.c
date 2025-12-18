@@ -16,8 +16,31 @@ extern struct char_data *character_list;
 extern struct index_data *mob_index;
 extern struct room_data *world;
 extern struct str_app_type str_app[];
-extern int top_of_world;
 
+void hit (struct char_data *ch, struct char_data *victim, int type);
+
+int number (int from, int to);
+void obj_from_room (struct obj_data *o);
+void obj_to_char (struct obj_data *o, struct char_data *ch);
+bool saves_spell (struct char_data *ch, int type);
+int thief (struct char_data *ch, int cmd, char *arg);
+int dragon (struct char_data *ch, int cmd, char *arg);
+int magic_user (struct char_data *ch, int cmd, char *arg);
+int shooter (struct char_data *ch, int cmd, char *arg);
+int kickbasher (struct char_data *ch, int cmd, char *arg);
+int spitter (struct char_data *ch, int cmd, char *arg);
+int cleric (struct char_data *ch, int cmd, char *arg);
+int paladin (struct char_data *ch, int cmd, char *arg);
+int cityguard (struct char_data *ch, int cmd, char *arg);
+int superguard (struct char_data *ch, int cmd, char *arg);
+int rescuer (struct char_data *ch, int cmd, char *arg);
+int helper (struct char_data *ch, int cmd, char *arg);
+int finisher (struct char_data *ch, int cmd, char *arg);
+
+int warrior (struct char_data *ch, int cmd, char *arg);
+void first_attack (struct char_data *ch, struct char_data *victim);
+void do_cast (struct char_data *ch, char *arg, int cmd);
+void extract_char(struct char_data *ch, int drop_items);
 
 int check_stat(struct char_data *ch)
 {
@@ -87,7 +110,6 @@ void mobile_activity(void)
 	struct char_data *tmp_ch = NULL, *cho_ch = NULL;
 	struct obj_data *obj, *best_obj;
 	int door, found, max;
-	int dest_room; // ASAN, 251202
 	char buf[100];
 
 	extern int no_specials;
@@ -103,7 +125,6 @@ void mobile_activity(void)
 		if (mob_index[ch->nr].virtual == SON_OGONG_MIRROR) {
 			(ch->quest.solved)++;
 			if (ch->quest.solved > 50) {
-				DEBUG_LOG("mobact.c mobile_activity(%s)", ch->player.name);
 				extract_char(ch, TRUE);
 			}
 		}
@@ -118,11 +139,10 @@ void mobile_activity(void)
 					snprintf(buf, sizeof(buf),
 						"Attempting to call a non-existing MOB func.\n (mobact.c) %s",
 						ch->player.short_descr);
-					mudlog(buf);
+					log(buf);
 					REMOVE_BIT(ch->specials.act, ACT_SPEC);
 				} else {
-					if ((*mob_index[ch->nr].func) (ch, 0,
-								       ""))
+					if ((*mob_index[ch->nr].func) (ch, 0, ""))
 						/*continue; */ ;
 				}
 			}
@@ -148,29 +168,21 @@ void mobile_activity(void)
 						}
 					}
 				}	/* Scavenger */
-				/* ASAN : 단계를 나누어 검사 */
-                if (!IS_SET(ch->specials.act, ACT_SENTINEL) && 
-                    (GET_POS(ch) == POSITION_STANDING) &&
-                    ((door = number(0, 45)) <= 5) && 
-                    CAN_GO(ch, door)) {
-
-                    dest_room = EXIT(ch, door)->to_room;
-
-                    // 방 번호가 유효한지 먼저 체크
-                    if (dest_room != NOWHERE && dest_room <= top_of_world && 
-                        !IS_SET(world[dest_room].room_flags, NO_MOB)) {
-                        
-                        if (ch->specials.last_direction == door) {
-                            ch->specials.last_direction = -1;
-                        } else {
-                            if (!IS_SET(ch->specials.act, ACT_STAY_ZONE)) {
-                                ch->specials.last_direction = door;
-                                do_move(ch, "", ++door);
-                            } else {
-                                if (world[dest_room].zone == world[ch->in_room].zone) {
-                                    ch->specials.last_direction = door;
-                                    do_move(ch, "", ++door);
-                                }
+				if (!IS_SET(ch->specials.act, ACT_SENTINEL) && 
+						(GET_POS(ch) == POSITION_STANDING) &&
+				    	((door = number(0, 45)) <= 5) && CAN_GO(ch, door) &&
+				    	!IS_SET(world[EXIT(ch, door)->to_room].room_flags, NO_MOB)) {
+					if (ch->specials.last_direction == door) {
+						ch->specials.last_direction = -1;
+					} else {
+						if (!IS_SET(ch->specials.act, ACT_STAY_ZONE)) {
+							ch->specials.last_direction = door;
+							do_move(ch, "", ++door);
+						} else {
+							if (world[EXIT(ch, door)->to_room].zone == 
+								world[ch->in_room].zone) {
+								ch->specials.last_direction = door;
+								do_move(ch, "", ++door);
                             }
                         }
                     }
@@ -186,27 +198,20 @@ void mobile_activity(void)
 							    ACT_WIMPY) ||
 							    !AWAKE(tmp_ch)) {
 								if (!found) {
-									cho_ch
-									    = tmp_ch;
-									found
-									    = TRUE;
+									cho_ch = tmp_ch;
+									found = TRUE;
 									if (IS_EVIL(ch) && IS_GOOD(cho_ch) &&
 									    IS_AFFECTED(cho_ch, AFF_PROTECT_EVIL)) {
 										if (!saves_spell(ch, SAVING_PARA) && 
 												GET_LEVEL(ch) < GET_LEVEL (cho_ch)) {
-											act
-											    ("$n tries to attack, but failed miserably.",
+											act("$n tries to attack, but failed miserably.",
 											     TRUE, ch, 0, 0, TO_ROOM);
 											found = FALSE;
 										}
 									}
 								} else {
-									if
-									    (number(1,
-									    6)
-									    <= 3)
-										cho_ch
-										    = tmp_ch;
+									if (number(1, 6) <= 3)
+										cho_ch = tmp_ch;
 								}	/* else */
 							}	/* if IS_SET */
 						}	/* if IS_NPC */
@@ -216,7 +221,6 @@ void mobile_activity(void)
 						if (!IS_AFFECTED(cho_ch, AFF_HOLY_SHIELD)) {
 							if (found) {
 								first_attack(ch, cho_ch);
-								/* hit(ch, cho_ch, 0); */
 							}
 						} else { }
 					}

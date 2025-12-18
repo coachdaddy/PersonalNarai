@@ -26,6 +26,16 @@ extern struct index_data *mob_index;
 extern struct index_data *obj_index;
 extern struct descriptor_data *descriptor_list;
 
+/* External procedures */
+int str_cmp(char *arg1, char *arg2);
+void free_char(struct char_data *ch);
+void stop_fighting(struct char_data *ch);
+void remove_follower(struct char_data *ch);
+void die(struct char_data *ch, int level, struct char_data *who);
+void free_obj(struct obj_data *o);
+int number(int from, int to);
+int search_block(char *arg, char **list, bool exact);
+void process_color_string(const char *input, char *output, int max_out_len); /* utility.c, 251121 by Komo */
 
 
 /* 두 캐릭터가 같은 그룹인지 확인하는 함수 */
@@ -51,35 +61,21 @@ int is_same_group(struct char_data *ch, struct char_data *victim)
 
 char *fname(char *namelist)
 {
-    static char holder[2][30]; // 버퍼 2개 사용, 251130 by Komo
-    static int toggle = 0;
+    static char holder[30];
     register char *point;
 
-    toggle = 1 - toggle;
-    point = holder[toggle];
-
-    if (!namelist) {
-        *point = '\0';
-        return point;
+    for (point = holder; isalpha(*namelist); namelist++, point++) {
+        *point = *namelist;
     }
 
-    char *copy_ptr = point; // 루프용 포인터 따로 사용
-    for (; isalpha(*namelist); namelist++, copy_ptr++) {
-        *copy_ptr = *namelist;
-    }
+    *point = '\0';
 
-    *copy_ptr = '\0';
-
-    return (point);
+    return (holder);
 }
 
 int isname(char *str, char *namelist)
 {
 	register char *curname, *curstr;
-
-	// NULL 체크, 251130 by Komo
-    if (!str || !*str || !namelist || !*namelist)
-        return 0;
 
 	while (*str == ' ')
 		str++;
@@ -146,8 +142,6 @@ int isexactname(char *str, char *namelist)
 
 void affect_modify(struct char_data *ch, byte loc, short mod, long bitv, bool add)
 {
-	// int maxabil;
-
 	if (add) {
 		SET_BIT(ch->specials.affected_by, bitv);
 	} else {
@@ -342,10 +336,10 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
 		     hjp = hjp->next) ;
 
 		if (hjp->next != af) {
-			mudlog("FATAL : Could not locate affected_type in ch->affected.");
+			log("FATAL : Could not locate affected_type in ch->affected.");
 			exit(1);
 		}
-		hjp->next = af->next;	/* skip the af element */
+		hjp->next = af->next; /* skip the af element */
 	}
 
 	if (af != NULL) {
@@ -399,15 +393,11 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
 /* Call affect_remove with every spell of spelltype "skill" */
 void affect_from_char(struct char_data *ch, byte skill)
 {
-	struct affected_type *hjp, *next_aff;
+	struct affected_type *hjp;
 
-    // ASAN
-    for (hjp = ch->affected; hjp; hjp = next_aff) {
-        next_aff = hjp->next; // 다음 것 미리 확보
-        
+    for (hjp = ch->affected; hjp; hjp = hjp->next)
         if (hjp->type == skill)
             affect_remove(ch, hjp);
-    }
 }
 
 /* Return if a char is affected by a spell (SPELL_XXX), NULL indicates 
@@ -453,16 +443,16 @@ void char_from_room(struct char_data *ch)
 
 	if (ch->in_room == NOWHERE) {
 		if (IS_AFFECTED(ch, SKILL_ARREST)) {
-			mudlog("NOWHERE extracting char : arrested");
+			log("NOWHERE extracting char : arrested");
 			return;
 		} else {
-			mudlog("NOWHERE extracting char from room (handler.c, char_from_room)");
+			log("NOWHERE extracting char from room (handler.c, char_from_room)");
 
 			exit(1);
 		}
 	}
 	if (ch->in_room > top_of_world) {
-		mudlog("Can't find Player's location");
+		log("Can't find Player's location");
 		return;
 	}
 
@@ -495,7 +485,7 @@ void char_to_room(struct char_data *ch, int room)
 	ch->in_room = room;
 	if (ch->equipment[WEAR_LIGHT])
 		if (ch->equipment[WEAR_LIGHT]->obj_flags.type_flag == ITEM_LIGHT)
-			if (ch->equipment[WEAR_LIGHT]->obj_flags.value[2])	/* Light is ON */
+			if (ch->equipment[WEAR_LIGHT]->obj_flags.value[2]) /* Light is ON */
 				world[room].light++;
 }
 
@@ -519,17 +509,17 @@ void obj_from_char(struct obj_data *object)
 	char buf[255];
 
 	if (!object) {
-		mudlog("obj_from_char: NULL object");
+		log("obj_from_char: NULL object");
 		return;
 	}
 	if (!object->carried_by) {
 		snprintf(buf, sizeof(buf), "obj from char: %s has no owner", object->short_description);
-		mudlog(buf);
+		log(buf);
 		return;
 	}
 	if (!object->carried_by->carrying) {
 		snprintf(buf, sizeof(buf), "obj from char: %s has no owner", object->short_description);
-		mudlog(buf);
+		log(buf);
 		return;
 	}
 	if (object->carried_by->carrying == object)	/* head of list */
@@ -556,7 +546,7 @@ int apply_ac(struct char_data *ch, int eq_pos)
 
 	if (!(ch->equipment[eq_pos])) {
 		snprintf(buf, sizeof(buf), "XO: %s %d", ch->player.name, eq_pos);
-		mudlog(buf);
+		log(buf);
 		return (0);
 	}
 /*assert(ch->equipment[eq_pos]);*/
@@ -595,12 +585,12 @@ void equip_char(struct char_data *ch, struct obj_data *obj, int pos)
 		return;
 	}
 	if (obj->carried_by) {
-		mudlog("EQUIP: Obj is carried_by when equip.");
+		log("EQUIP: Obj is carried_by when equip.");
 		return;
 	}
 
 	if (obj->in_room != NOWHERE) {
-		mudlog("EQUIP: Obj is in_room when equip.");
+		log("EQUIP: Obj is in_room when equip.");
 		return;
 	}
 
@@ -645,14 +635,14 @@ void equip_char(struct char_data *ch, struct obj_data *obj, int pos)
 			obj_to_char(obj, ch);
 			return;
 		} else {
-			mudlog("ch->in_room = NOWHERE when equipping char.");
+			log("ch->in_room = NOWHERE when equipping char.");
 		}
 	}
 
 	ch->equipment[pos] = obj;
 
 	if (GET_ITEM_TYPE(obj) == ITEM_ARMOR)
-		GET_AC(ch) = GET_AC(ch) - (sh_int) apply_ac(ch, pos);
+		GET_AC(ch) = GET_AC(ch) - (sh_int)apply_ac(ch, pos);
 
 	for (j = 0; j < MAX_OBJ_AFFECT; j++)
 		affect_modify(ch, obj->affected[j].location,
@@ -693,11 +683,10 @@ int get_number(char **name)
 	char number[MAX_INPUT_LENGTH];
 
 	number[0] = '\0';
-    if ((ppos = strchr(*name, '.'))) { // index -> strchr, 251203
-        *ppos++ = '\0';
+    if ((ppos = (char *)index((char *)(*name), '.'))) {
+        *(ppos++) = '\0';
         strcpy(number, *name);
-        
-        memmove(*name, ppos, strlen(ppos) + 1); // strcpy -> memmove 
+        strcpy(*name, ppos);
 
         for (i = 0; *(number + i); i++)
             if (!isdigit(*(number + i)))
@@ -1006,7 +995,7 @@ void extract_char(struct char_data *ch, int drop_items)
     int l, was_in;
     struct affected_type *af;
 
-    char for_debug[MAX_STRING_LENGTH]; // 버퍼 크기 변경, 251130 by Komo
+    char for_debug[MAX_STRING_LENGTH];
 
     extern struct char_data *combat_list;
 
@@ -1016,21 +1005,14 @@ void extract_char(struct char_data *ch, int drop_items)
 
     if (!ch) return;
     if (ch->in_room == NOWHERE) {
-        mudlog("SYSERR: NOWHERE extracting char. (handler.c, extract_char)");
+        log("SYSERR: NOWHERE extracting char. (handler.c, extract_char)");
         return; /* exit(1);  <-- 기존 코드. 리턴시킴 */
     }
 
     if (ch->player.name)
         snprintf(for_debug, sizeof(for_debug), "extract_char(%s)", ch->player.name);
-
-    // 안전한 로그 출력토록 수정, 251130 by Komo
-    if (ch->player.name)
-        snprintf(for_debug, sizeof(for_debug), "extract_char(%s)", ch->player.name);
     else
         snprintf(for_debug, sizeof(for_debug), "extract_char(NAME_NULL)");
-
-	DEBUG_LOG("%s", for_debug);
-    // mudlog(for_debug);
 
     if (!IS_NPC(ch) && !ch->desc) {
         for (t_desc = descriptor_list; t_desc; t_desc = t_desc->next)
@@ -1052,21 +1034,25 @@ void extract_char(struct char_data *ch, int drop_items)
         ch->desc->snoop.snooping = ch->desc->snoop.snoop_by = 0;
     }
 
-    //아이템 드랍 로직 수정, 251130 by Komo
-    if (drop_items && ch->carrying) { 
-        for (i = ch->carrying; i; i = i->next_content) { // 인벤토리 모든 아이템의 위치 정보를 '현재 방'으로 변경
-            i->carried_by = 0;
-            i->in_room = ch->in_room;
+    if (drop_items) { // flag 검사, 251109
+        if (ch->carrying) {
+            /* transfer ch's objects to room */
+            if (world[ch->in_room].contents) { /* room nonempty */
+                /* locate tail of room-contents */
+                // BUG FIX!!!
+                for (i = world[ch->in_room].contents; i->next_content; i = i->next_content) {
+                    /* append ch's stuff to room-contents */
+                    i->next_content = ch->carrying;
+                }
+            } else
+                world[ch->in_room].contents = ch->carrying;
+
+            /* connect the stuff to the room */
+            for (i = ch->carrying; i; i = i->next_content) {
+                i->carried_by = 0;
+                i->in_room = ch->in_room;
+            }
         }
-
-        struct obj_data *last_obj;
-        for (last_obj = ch->carrying; last_obj->next_content; last_obj = last_obj->next_content)
-            ; // carrying 끝으로. 루프만 돌아서 끝으로 이동
-
-        last_obj->next_content = world[ch->in_room].contents;
-        world[ch->in_room].contents = ch->carrying;
-        
-        ch->carrying = NULL;
     }
 
     if (ch->specials.fighting)
@@ -1100,7 +1086,7 @@ void extract_char(struct char_data *ch, int drop_items)
         if (k)
             k->next = ch->next;
         else {
-            mudlog("Can't Find character in the list. (handler.c extract_char)");
+            log("Can't Find character in the list. (handler.c extract_char)");
         }
     }
 
@@ -1120,7 +1106,7 @@ void extract_char(struct char_data *ch, int drop_items)
 
     if (ch && ch->desc) {
         /* remove all affected by spell */
-        struct affected_type *next_af; // 임시 변수 선언 필요
+        struct affected_type *next_af;
         for (af = ch->affected; af != NULL; af = next_af) {
             next_af = af->next; // 지우기 전에 다음 주소 미리 저장
             affect_remove(ch, af);
@@ -1142,12 +1128,11 @@ struct char_data *get_char_room_vis(struct char_data *ch, char *name)
 	char tmpname[MAX_INPUT_LENGTH];
 	char *tmp;
 
-	// modified 251203
     if (name && *name) {
         strncpy(tmpname, name, sizeof(tmpname) - 1);
         tmpname[sizeof(tmpname) - 1] = '\0';
     } else {
-        strcpy(tmpname, "ALL");
+        return (0); // strcpy(tmpname, "ALL");
     }
 
     tmp = tmpname;
@@ -1305,7 +1290,7 @@ struct obj_data *create_money(int amount)
 	char buf[80];
 
 	if (amount == 0) {
-		mudlog("ERROR: Try to create null money.");
+		log("ERROR: Try to create null money.");
 		exit(1);
 	}
 
@@ -1315,7 +1300,7 @@ struct obj_data *create_money(int amount)
 	}
 
 	if (amount < 0) {
-		mudlog("ERROR: Try to create negative money.");
+		log("ERROR: Try to create negative money.");
 		exit(1);
 	}
 
@@ -1356,8 +1341,7 @@ struct obj_data *create_money(int amount)
 										    / 1000))));
 			new_descr->description = strdup(buf);
 		} else
-			new_descr->description =
-							strdup("There is A LOT of coins");
+			new_descr->description = strdup("There is A LOT of coins");
 	}
 
 	new_descr->next = 0;
@@ -1415,7 +1399,6 @@ int generic_find(char *arg, int bitvector, struct char_data *ch,
 		arg += i;
 		if (search_block(name, ignore, TRUE) > -1)
 			found = TRUE;
-
 	}
 
 	if (!name[0])

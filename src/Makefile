@@ -2,7 +2,7 @@
 # Makefile for Narai MUD
 # $Id$
 # For GNU make only. For BSD make, use Makefile-bsdmake.
-# PROG, CFLAGS and LDFLAGS adjusted by komoyon@gmail.com, 2025-12-02
+# PROG, CFLAGS and LDFLAGS adjusted by komoyon@gmail.com - 2025-10-14
 
 PROG    = personal-narai
 INCDIR  = ../include
@@ -11,8 +11,11 @@ OBJDIR  = ./obj
 INSTDIR = ../bin
 VPATH   = .:$(INCDIR):$(UTLSRC):
 
+# CC      = clang
+# CC      = gcc
 CC      = cc
 
+# MAKE    = gmake
 MAKE    = make
 LD      = $(CC)
 
@@ -20,17 +23,24 @@ OFLAGS  = -O -g -Wall -pipe
 
 INCLUDE = -I$(INCDIR)
 
+# MFLAGS: SYPARK RETURN_TO_QUIT INIT_BARE_HAND GHOST
+#         OLD_DAM_MESSAGE OLD_PARRY
+#         OLD_MIRROR_IMAGE OldMobAct
+#
+# MFLAGS    = -DIMO=41 -DRETURN_TO_QUIT
+#
+# MFLAGS are moved to ../include/utils.h
+
 # Set initial gold and quest in "db.c"
+# DFLAGS= -DBETA_TEST
 DFLAGS=
 
-# 메모리 버그 추적을 위해 AddressSanitizer, -fsanitize=address -g 추가, 251202
-CFLAGS  = $(OFLAGS) $(DFLAGS) $(INCLUDE) -g -rdynamic -fsanitize=address -fsanitize-recover=address -g
-LIBS = -fsanitize=address -fsanitize-recover=address
+# CFLAGS  = $(OFLAGS) $(DFLAGS) $(INCLUDE)
+CFLAGS  = $(OFLAGS) $(DFLAGS) $(INCLUDE) -g -rdynamic
 
+# LDFLAGS    = libdescrypt.a
+# LDFLAGS  = -lcrypt -g
 LDFLAGS  = -lcrypt -g -rdynamic
-
-# 메모리 버그 추적을 위해 ASan, -fsanitize=address 추가, 251202
-LIBS = -fsanitize=address
 
 SRCS    = \
 	act.comm.c act.informative.c act.movement.c act.obj1.c act.obj2.c \
@@ -58,16 +68,15 @@ CTAGS_SRC   = $(SRCS) $(INCDIR)/*.h
 $(OBJDIR)/%.o :  %.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-# ASan
 $(OBJDIR)/% :  %.o
-	$(LD) -o $@ $< $(LDFLAGS) $(LIBS)
+	$(LD) -o $@ $< $(LDFLAGS)
 
 default :    objdir $(PROG_BIN) 
 
-all:    $(PROG_BIN)
+all:    $(PROG_BIN) utils
 
 $(PROG_BIN) : $(OBJS)
-	$(LD) -o $@ $^ $(LDFLAGS) $(LIBS)
+	$(LD) -o $@ $^ $(LDFLAGS)
 
 objdir:
 	if [ ! -d $(OBJDIR) ] ; then mkdir $(OBJDIR); fi

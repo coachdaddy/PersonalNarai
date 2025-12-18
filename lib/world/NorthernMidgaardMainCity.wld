@@ -969,7 +969,7 @@ D0
 D1
 ~
 gate~
-1 15000 15000
+1 0 15000
 D2
 ~
 ~
@@ -1092,6 +1092,126 @@ poster~
    quest - QM proposes a quest to you.
            If you make it, QM will give some gifts to you.
 
+~
+S
+#3082
+The Room of Challege [01]~
+     You are on a flat land of bright marble that seems to have no end.
+In front of you, to the north, a massive, circular portal shimmers with
+a bright blue luminescence. And through its rippling surface, you see 
+the Temple of Midgaard.
+~
+30 4114 0
+D0
+You see The Temple Of Midgaard.
+~
+~
+0 -1 3001
+~
+S
+#3083
+The Room of Challege [02]~
+     You are on a flat land of bright marble that seems to have no end.
+In front of you, to the north, a massive, circular portal shimmers with
+a bright blue luminescence. And through its rippling surface, you see 
+the Temple of Midgaard.
+~
+30 4114 0
+D0
+You see The Temple Of Midgaard.
+~
+~
+0 -1 3001
+~
+S
+#3084
+The Room of Challege [03]~
+     You are on a flat land of bright marble that seems to have no end.
+In front of you, to the north, a massive, circular portal shimmers with
+a bright blue luminescence. And through its rippling surface, you see 
+the Temple of Midgaard.
+~
+30 4114 0
+D0
+You see The Temple Of Midgaard.
+~
+~
+0 -1 3001
+~
+S
+#3085
+The Room of Challege [04]~
+     You are on a flat land of bright marble that seems to have no end.
+In front of you, to the north, a massive, circular portal shimmers with
+a bright blue luminescence. And through its rippling surface, you see 
+the Temple of Midgaard.
+~
+30 4114 0
+D0
+You see The Temple Of Midgaard.
+~
+~
+0 -1 3001
+~
+S
+#3086
+The Room of Challege [05]~
+     You are on a flat land of bright marble that seems to have no end.
+In front of you, to the north, a massive, circular portal shimmers with
+a bright blue luminescence. And through its rippling surface, you see 
+the Temple of Midgaard.
+~
+30 4114 0
+D0
+You see The Temple Of Midgaard.
+~
+~
+0 -1 3001
+~
+S
+#3087
+The Room of Challege [06]~
+     You are on a flat land of bright marble that seems to have no end.
+In front of you, to the north, a massive, circular portal shimmers with
+a bright blue luminescence. And through its rippling surface, you see 
+the Temple of Midgaard.
+~
+30 4114 0
+D0
+You see The Temple Of Midgaard.
+~
+~
+0 -1 3001
+~
+S
+#3088
+The Room of Challege [07]~
+     You are on a flat land of bright marble that seems to have no end.
+In front of you, to the north, a massive, circular portal shimmers with
+a bright blue luminescence. And through its rippling surface, you see 
+the Temple of Midgaard.
+~
+30 4114 0
+D0
+You see The Temple Of Midgaard.
+~
+~
+0 -1 3001
+~
+S
+#3089
+The Room of Challege [08]~
+     You are on a flat land of bright marble that seems to have no end.
+In front of you, to the north, a massive, circular portal shimmers with
+a bright blue luminescence. And through its rippling surface, you see 
+the Temple of Midgaard.
+~
+30 4114 0
+D0
+You see The Temple Of Midgaard.
+~
+~
+0 -1 3001
 ~
 S
 #3090

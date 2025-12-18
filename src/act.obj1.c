@@ -28,7 +28,6 @@ extern struct room_data *world;
 struct obj_data *create_money(int amount);
 int str_cmp(char *arg1, char *arg2);
 int is_number(char *arg);
-void mudlog(const char *str);
 
 /* procedures related to get */
 void get(struct char_data *ch, struct obj_data *obj_object,
@@ -655,7 +654,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 		else {
 			snprintf(buf, sizeof(buf), "%s gives %d coins to %s.", GET_NAME(ch), amount,
 				GET_NAME(vict));
-			mudlog(buf);
+			log(buf);
 		}
 		GET_GOLD(vict) += amount;
 		return;
@@ -668,8 +667,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 	if (!(obj = get_obj_in_list_vis(ch, obj_name, ch->carrying))) {
-		send_to_char("You do not seem to have anything like that.\n\r",
-			     ch);
+		send_to_char("You do not seem to have anything like that.\n\r", ch);
 		return;
 	}
 	if (IS_SET(obj->obj_flags.extra_flags, ITEM_NODROP)) {
@@ -698,7 +696,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 		snprintf(buf, sizeof(buf), "%s gives %d to %s."
 			,GET_NAME(ch), obj_index[obj->item_number].virtual,
 			GET_NAME(vict));
-		mudlog(buf);
+		log(buf);
 	}
 }
 

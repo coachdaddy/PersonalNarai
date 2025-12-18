@@ -37,10 +37,8 @@ extern int outlaw_skill_costs[];
 extern int assasin_skill_costs[];
 
 void do_look(struct char_data *ch, char *arg, int cmd);
-void mudlog(const char *str);
 void stash_char(struct char_data *ch);
 void unstash_char(struct char_data *ch, char *filename);
-// int MIN(int a, int b);
 
 /* shuttle bus to KAIST */
 

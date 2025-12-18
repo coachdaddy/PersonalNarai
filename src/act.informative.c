@@ -49,14 +49,10 @@ void page_string(struct descriptor_data *d, char *str, int keep_internal);
 int number(int from, int to);
 int strn_cmp(char *arg1, char *arg2, int n);
 
-int move_stashfile_safe (const char *victim);
+int move_stashfile_safe(const char *victim);
 void close_socket(struct descriptor_data *d);
 void sprintbit(long vektor, char *names[], char *result);
 void weather_change(int);
-void prune_crlf(char *txt);			/* in utility.c 251130 */
-
-void DEBUG_LOG(const char *format, ...);
-void mudlog(const char *str);
 
 /* intern functions */
 void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode,
@@ -70,8 +66,7 @@ time_t news_last_mod = 0; // 파일이 마지막으로 수정된 시간, 251119
 
 void argument_split(char *argument, char *first_arg, char *second_arg)
 {
-	int look_at, /* found, */ begin;
-	/* found = */ begin = 0;
+	int look_at, begin = 0;
 
 	/* Find first non blank */
 	for (; *(argument + begin) == ' '; begin++) ;
@@ -94,8 +89,7 @@ void argument_split(char *argument, char *first_arg, char *second_arg)
 	begin += look_at;
 }
 
-struct obj_data *
- get_object_in_equip_vis(struct char_data *ch,
+struct obj_data *get_object_in_equip_vis(struct char_data *ch,
 			 char *arg, struct obj_data *equipment[], int *j)
 {
 
@@ -164,18 +158,6 @@ void show_obj_to_char(struct obj_data *object, struct char_data *ch, int mode)
 
 	strlcat(buffer, "\n\r", sizeof(buffer));
 	page_string(ch->desc, buffer, 0);
-
-/*
-  if (((mode == 2) || (mode == 4)) && (GET_ITEM_TYPE(object) == 
-    ITEM_CONTAINER)) {
-    strcpy(buffer,"The ");
-    strcat(buffer,fname(object->name));
-    strcat(buffer," contains:\n\r");
-    send_to_char(buffer, ch);
-    if (mode == 2) list_obj_to_char(object->contains, ch, 1,TRUE);
-    if (mode == 4) list_obj_to_char(object->contains, ch, 3,TRUE);
-  }
-*/
 }
 
 void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode,
@@ -311,9 +293,10 @@ void show_char_to_char(struct char_data *i, struct char_data *ch, int mode)
 			act("$n is deadly UNEASE!!!!!", FALSE, i, 0, ch, TO_VICT);
 
 	} else if (mode == 1) {
-		if (i->player.description)
+		if (i->player.description) {
 			send_to_char(i->player.description, ch);
-		else {
+			send_to_char("\r\n", ch); // 개행문자 추가, 251014
+		} else {
 			act("You see nothing special about $m.", FALSE, i, 0,
 			    ch, TO_VICT);
 		}
@@ -451,7 +434,10 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 				 "너무 깜깜합니다..\n\r", ch);
 	else {
 		argument_split(argument, arg1, arg2);
-		keyword_no = search_block(arg1, keywords, FALSE);	/* Partiel Match */
+		if (!*arg1)
+			keyword_no = 8;
+		else
+			keyword_no = search_block(arg1, keywords, FALSE);	/* Partial Match */
 
 		if ((keyword_no == -1) && *arg1) {
 			keyword_no = 7;
@@ -725,20 +711,7 @@ void do_look(struct char_data *ch, char *argument, int cmd)
 					send_to_char(world[ch->in_room].description, ch);
 					send_to_char("\r\n", ch);
 				snprintf(buffer, sizeof(buffer), "[ EXITS : ");
-				/*
-				if (EXIT(ch, 0))
-					strcat(buffer, "N ");
-				if (EXIT(ch, 1))
-					strcat(buffer, "E ");
-				if (EXIT(ch, 2))
-					strcat(buffer, "S ");
-				if (EXIT(ch, 3))
-					strcat(buffer, "W ");
-				if (EXIT(ch, 4))
-					strcat(buffer, "U ");
-				if (EXIT(ch, 5))
-					strcat(buffer, "D ");
-					*/
+				
 				if (EXIT(ch, 0)) 
 					IS_SET(EXIT(ch, 0)->exit_info, EX_CLOSED) ? strlcat(buffer, "(N) ", sizeof(buffer)) : strlcat(buffer, "N ", sizeof(buffer));
 			   	if (EXIT(ch, 1)) 
@@ -782,7 +755,7 @@ void do_read(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[100];
 
-	/* This is just for now - To be changed later.! */
+	/* This is just for now - To be changed later! */
 	snprintf(buf, sizeof(buf), "at %s", argument);
 	do_look(ch, buf, 15);
 }
@@ -839,7 +812,6 @@ void do_title(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_STRING_LENGTH];
 	
-	prune_crlf(argument); // 251130 by Komo
 	for (; *argument == ' '; argument++);
 
 	if (!*argument) {
@@ -928,7 +900,7 @@ void do_exits(struct char_data *ch, char *argument, int cmd)
                 p += written_chars;
                 remaining_space -= written_chars;
             } else if (written_chars >= remaining_space) {
-				mudlog("do_exits: Buffer full, exit list truncated.");
+				log("do_exits: Buffer full, exit list truncated.");
 				break;
 			}
         }
@@ -1155,10 +1127,8 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 	send_to_char_han(buf, buf2, ch);
 	if (GET_LEVEL(ch) < IMO) {
 		if (titles[GET_CLASS(ch) - 1][GET_LEVEL(ch) + 1].exp < GET_EXP(ch)) {
-			strcpy(buf,
-			       "You have enough experience to advance.\n\r");
-			strcpy(buf2,
-			       "레벨을 올릴만큼 충분한 경험치가 쌓였습니다.\n\r");
+			strcpy(buf, "You have enough experience to advance.\n\r");
+			strcpy(buf2, "레벨을 올릴만큼 충분한 경험치가 쌓였습니다.\n\r");
 		} else {
 			snprintf(buf, sizeof(buf), "You need %lld experience to advance\n\r",
 				titles[GET_CLASS(ch) - 1][GET_LEVEL(ch) +
@@ -1175,8 +1145,7 @@ void do_score(struct char_data *ch, char *argument, int cmd)
 
 	switch (GET_POS(ch)) {
 	case POSITION_DEAD:
-		send_to_char_han("You are DEAD!\n\r",
-				 "당신은 죽으셨습니다\n\r", ch);
+		send_to_char_han("You are DEAD!\n\r", "당신은 죽으셨습니다\n\r", ch);
 		break;
 	case POSITION_MORTALLYW:
 		send_to_char("You are mortally wounded!, you should seek help!\n\r",
@@ -1314,9 +1283,7 @@ void do_attribute(struct char_data *ch, char *argument, int cmd)
 			}
 		}
 	}
-}
-
-/* end of Attribute Module... */
+}  /* end of Attribute Module... */
 
 void do_time(struct char_data *ch, char *argument, int cmd)
 {
@@ -1515,11 +1482,8 @@ void do_wizhelp(struct char_data *ch, char *argument, int cmd)
 	char buf[MAX_STRING_LENGTH];
 	int no, i, j, is_wizcmd;
 	size_t len = 0;
-	/* The list of commands (interpreter.c)  */
-	extern char *command[];
-	/* First command is command[0]           */
-	/* cmd_info[1] ~~ commando[0]            */
-	extern struct command_info cmd_info[];
+	extern char *command[]; 	/* The list of commands (interpreter.c)  */
+	extern struct command_info cmd_info[]; /* cmd_info[1] ~~ commando[0] */
 
 	if (IS_NPC(ch))
 		return;
@@ -1737,7 +1701,6 @@ void do_who(struct char_data *ch, char *argument, int cmd)
 	page_string(ch->desc, page_buffer, 1);
 }
 
-extern char *connected_types[];
 
 void do_users(struct char_data *ch, char *argument, int cmd)
 {
@@ -1749,8 +1712,7 @@ void do_users(struct char_data *ch, char *argument, int cmd)
     size_t len = 0;       /* 현재 버퍼에 써진 길이 추적용 */
 	static int most = 0;
 	extern int boottime;
-	extern char *connected_types[];
-
+	
 	one_argument(argument, line);
 	flag = ((GET_LEVEL(ch) < IMO) || (strcmp("-t", line) == 0));
 	line[0] = '\0';
@@ -1776,7 +1738,7 @@ void do_users(struct char_data *ch, char *argument, int cmd)
                         "%3d%2d:%-14s%2d ", 
                         d->descriptor, 
                         d->character->specials.timer,
-                        (d->connected == CON_PLYNG) ? GET_NAME(d->character) : "Not in game",
+                        (d->connected == CON_PLAYING) ? GET_NAME(d->character) : "Not in game",
                         GET_LEVEL(d->character));
             }
 		} else {
@@ -1887,7 +1849,7 @@ void load_news_if_changed() {
 
     // 파일이 바뀌었다면 다시 읽음
     if (!(fl = fopen(filename, "r"))) {
-        mudlog("SYSERR: 뉴스 파일을 열 수 없습니다.");
+        log("SYSERR: 뉴스 파일을 열 수 없습니다.");
         return;
     }
 
@@ -1901,7 +1863,7 @@ void load_news_if_changed() {
     news_last_mod = file_info.st_mtime;
     
     fclose(fl);
-    mudlog("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
+    log("INFO: 뉴스 파일이 갱신되어 새로 로딩했습니다.");
 }
 
 void do_news(struct char_data *ch, char *argument, int cmd)
@@ -1937,7 +1899,7 @@ void do_where(struct char_data *ch, char *argument, int cmd)
 		if (GET_LEVEL(ch) < IMO) {
 			for (d = descriptor_list; d; d = d->next) {
 				if (d->character && (d->connected ==
-				    CON_PLYNG) &&
+				    CON_PLAYING) &&
 				    (d->character->in_room != NOWHERE))
 					if (CAN_SEE(ch, d->character) &&
 					    world[d->character->in_room].zone ==
@@ -1962,7 +1924,7 @@ void do_where(struct char_data *ch, char *argument, int cmd)
 		} else {
 			for (d = descriptor_list; d; d = d->next) {
 				if (d->character && (d->connected ==
-				    CON_PLYNG) &&
+				    CON_PLAYING) &&
 				    (d->character->in_room != NOWHERE))
 					if (CAN_SEE(ch, d->character)) {
 						if (d->original)	/* If switched */
@@ -2151,8 +2113,8 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 	for (d = descriptor_list; d; d = d->next) {
 		if (target == d->descriptor) {
 			snprintf(name, sizeof(name), "Policed: %d\n", d->descriptor);
-			mudlog(name);
-			if ((d->connected == CON_PLYNG) && (d->character)) {
+			log(name);
+			if ((d->connected == CON_PLAYING) && (d->character)) {
 				if (d->character->player.level < ch->player.level) {
 					stash_char(d->character);
 					move_stashfile_safe(d->character->player.name);
@@ -2166,7 +2128,7 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 						wipe_obj(d->character->carrying);
 					d->character->carrying = 0;
 					close_socket(d);
-					DEBUG_LOG("act.informative. c extract char(%s)", d->character);
+					DEBUG_LOG("act.informative.c extract char(%s)", d->character);
 					extract_char(d->character, TRUE);
 				}
 			} else {

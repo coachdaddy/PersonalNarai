@@ -26,6 +26,18 @@ extern struct descriptor_data *descriptor_list;
 
 extern char *guild_names[];
 
+void damage(struct char_data *ch, struct char_data *victim,
+	     int damage, int weapontype);
+char *one_argument(char *str, char *first);
+void do_say(struct char_data *ch, char *str, int cmd);
+int number(int from, int to);
+void die(struct char_data *ch, int level, struct char_data *who);
+void do_look(struct char_data *ch, char *arg, int cmd);
+void stop_fighting(struct char_data *ch);
+void group_gain(struct char_data *ch, struct char_data *victim);
+void gain_exp(struct char_data *ch, int gain);
+void change_alignment(struct char_data *ch, struct char_data *victim);
+
 
 /* skills of police */
 void do_power_bash(struct char_data *ch, char *argument, int cmd)
@@ -118,7 +130,7 @@ void do_whistle(struct char_data *ch, char *argument, int cmd)
 		world[victim->in_room].name, world[victim->in_room].number);
 
 	for (d = descriptor_list; d; d = d->next) {
-		if (d->character && (d->connected == CON_PLYNG) &&
+		if (d->character && (d->connected == CON_PLAYING) &&
 		    (d->character->in_room != NOWHERE) &&
 		    d->character->player.guild == POLICE) {
 			send_to_char(buf, d->character);

@@ -17,8 +17,8 @@ void acthan(char *seng, char *shan, int hide_invisible, struct char_data *ch,
 	    struct obj_data *obj, void *vict_obj, int type);
 void write_to_q(char *txt, struct txt_q *queue);
 int write_to_descriptor(int desc, char *txt);
-void process_color_string(const char *input, char *output, int max_out_len); // src/utility.c
-void send_to_q_color(const char *messg, struct descriptor_data *desc); // in comm.c, 251202
+void process_color_string(const char *input, char *output, int max_out_len); // utility.c
+
 
 #define TO_ROOM    0
 #define TO_VICT    1
