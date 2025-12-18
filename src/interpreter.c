@@ -1677,34 +1677,41 @@ void nanny(struct descriptor_data *d, char *arg)
 		break;
 
 	case CON_SLCT:		/* get selection from main menu */
-		/* skip whitespaces */
-		for (; isspace(*arg); arg++) ;
+		for (; isspace(*arg); arg++) ;	/* skip whitespaces */
+
 		switch (*arg) {
 		case '0':
 			close_socket(d);
 			break;
 		case '1':
+			int target_room;	// 목적지 방의 rnum 저장
+
 			reset_char(d->character);
 			send_to_char(WELC_MESSG, d->character);
 			d->character->next = character_list;
 			character_list = d->character;
 			if (d->character->in_room == NOWHERE) {
-				if (d->character->player.level < IMO)
+				if (d->character->player.level < IMO) {
 					if (IS_SET(d->character->specials.act, PLR_BANISHED))
-						char_to_room(d->character,
-							     real_room(6999));
+						target_room = real_room(6999);
 					else
-						char_to_room(d->character,
-							     real_room(3001));
-				else
-					char_to_room(d->character, real_room(2));
-			} else {
-				if (real_room(d->character->in_room) > -1)
-					char_to_room(d->character,
-						     real_room(d->character->in_room));
-				else
-					char_to_room(d->character, real_room(3001));
+						target_room = real_room(3001);
+				} else {
+					target_room = real_room(2);
+				}
+			} else { // 기존에 저장된 방이 있는 경우
+				target_room = real_room(d->character->in_room);
 			}
+
+			if (target_room < 0) {
+				DEBUG_LOG("Warning: %s saved in invalid room %d. Moving to MID.", GET_NAME(d->character), d->character->in_room);
+				target_room = real_room(3001);
+				if (target_room < 0)
+					target_room = real_room(0); // the void
+			}
+
+			char_to_room(d->character, target_room);
+
 			unstash_char(d->character, 0);
 			act("$n has entered the game.",
 			    TRUE, d->character, 0, 0, TO_ROOM);
