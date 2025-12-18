@@ -5,7 +5,7 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#define FUDGE (100+dice(6,20))
+#define FUDGE (100 + dice(6, 20))
 
 #include <stdio.h>
 #include <string.h>
@@ -21,6 +21,8 @@
 #include "limit.h"
 #include "mob_magic.h"		/* cyb */
 
+#define RESCUER_VICTIM 5
+
 /*   external vars  */
 extern struct room_data *world;
 extern struct char_data *character_list;
@@ -30,6 +32,52 @@ extern struct time_info_data time_info;
 extern struct title_type titles[4][IMO + 4];
 extern struct index_data *mob_index;
 
+/* extern procedures */
+int number(int from, int to);
+int dice(int num, int size);							/* in utility.c */
+int str_cmp(char *arg1, char *arg2);
+int find_name(char *name);
+
+void hit(struct char_data *ch, struct char_data *victim, int type);
+void gain_exp(struct char_data *ch, int gain);
+void stop_fighting(struct char_data *ch);
+void set_title(struct char_data *ch);
+void do_say(struct char_data *ch, char *str, int cmd);
+void die(struct char_data *ch, int level, struct char_data *who);
+void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
+void wear(struct char_data *ch, struct obj_data *o, int keyword);
+void shoot(struct char_data *ch, struct char_data *victim, int type);
+void add_follower(struct char_data *ch, struct char_data *leader);
+void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode, bool show);
+void list_char_to_char(struct char_data *list, struct char_data *ch, int mode);
+void do_kick(struct char_data *ch, char *arg, int cmd);
+void do_bash(struct char_data *ch, char *arg, int cmd);
+void do_start(struct char_data *ch);
+void do_look(struct char_data *ch, char *argument, int cmd);
+
+
+void cast_cure_light(byte level, struct char_data *ch, char *arg, int type,
+					 struct char_data *victim, struct obj_data *tar_obj);
+void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type,
+					  struct char_data *victim, struct obj_data *tar_obj);
+void cast_heal(byte level, struct char_data *ch, char *arg, int type,
+			   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
+					struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_sunburst(byte level, struct char_data *ch, char *arg, int type,
+				   struct char_data *victim, struct obj_data *tar_obj);
+void cast_fireball(byte level, struct char_data *ch, char *arg, int type,
+				   struct char_data *victim, struct obj_data *tar_obj);
+void cast_color_spray(byte level, struct char_data *ch, char *arg, int type,
+					  struct char_data *victim, struct obj_data *tar_obj);
+void cast_all_heal(byte level, struct char_data *ch, char *arg, int si,
+				   struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_corn_of_ice(byte level, struct char_data *ch, char *arg, int si,
+					  struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_sanctuary(byte level, struct char_data *ch, char *arg, int si,
+					struct char_data *tar_ch, struct obj_data *tar_obj);
+void cast_haste(byte level, struct char_data *ch, char *arg, int si,
+				struct char_data *tar_ch, struct obj_data *tar_obj);
 
 /* ********************************************************************
 *  Special procedures for mobiles                                      *
@@ -61,10 +109,9 @@ int puff(struct char_data *ch, int cmd, char *arg)
 int super_deathcure(struct char_data *ch, int cmd, char *arg)
 {
 	struct char_data *vict, *mob;
-	struct char_data *choose_victim(struct char_data *mob, int fightmode,
-					int mode);
-
+	struct char_data *choose_victim(struct char_data *mob, int fightmode, int mode);
 	int h, real_number, ran_num;
+
 	if (cmd)
 		return (0);
 	
@@ -73,6 +120,7 @@ int super_deathcure(struct char_data *ch, int cmd, char *arg)
 	h = GET_HIT(ch);
 	if (h < 5000)
 		cast_full_heal(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, ch, 0);
+
 	if (vict && !IS_NPC(vict)) {
 		if (number(1, 10) > 7) {
 			act("$n control your move -100.", 1, ch, 0, 0, TO_ROOM);
@@ -143,15 +191,10 @@ int deathcure(struct char_data *ch, int cmd, char *arg)
 		cast_full_heal(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, ch, 0);
 	if (GET_POS(ch) == POSITION_FIGHTING)
 		return (TRUE);
-	if (vict->equipment[WEAR_ABOUTLEGS]) {
-		if
-		    (obj_index[vict->equipment[WEAR_ABOUTLEGS]->item_number].virtual ==
-		     1317) {
-			/* ANTI deathcure */
-			act("$n tries to do something to you, but failed miserably by ANTI deathcure."
-			    ,1, ch, 0, 0, TO_ROOM);
-			return (TRUE);
-		}
+	/* ANTI deathcure */
+	if (vict->equipment[WEAR_ABOUTLEGS] && obj_index[vict->equipment[WEAR_ABOUTLEGS]->item_number].virtual == 1317) {
+		act("$n tries to do something to you, but failed miserably by ANTI deathcure.", 1, ch, 0, 0, TO_ROOM);
+		return (TRUE);
 	}
 	if (vict && !IS_NPC(vict)) {
 		if (number(1, 10) > 7) {
@@ -232,7 +275,7 @@ int deathcure(struct char_data *ch, int cmd, char *arg)
 int perhaps(struct char_data *ch, int cmd, char *arg)
 {
 	struct char_data *vict, *next;
-#ifdef 	MID_HELPER
+#ifdef MID_HELPER
 	static struct char_data *perhaps = NULL;
 	char buf[256];
 	char *blessings[3] =
@@ -263,8 +306,7 @@ int perhaps(struct char_data *ch, int cmd, char *arg)
 		return (0);	/* If void return */
 	if (!ch)
 		return (0);
-	for (vict = world[ch->in_room].people; vict
-	     ; vict = next) {
+	for (vict = world[ch->in_room].people; vict; vict = next) {
 		next = vict->next_in_room;
 		if (vict && ((vict->points.max_hit / 9) > vict->points.hit)) {
 			act("$n kisses $N on $s cheek.", 1, ch, 0, vict, TO_ROOM);
@@ -280,27 +322,22 @@ int perhaps(struct char_data *ch, int cmd, char *arg)
 		do_say(ch, "나래 머드에 오신걸 환영합니다.", 0);
 		return 1;
 	case 2:
-		do_say(ch,
-		       "나래 머드에 관한 의견이 있으면 board에 써주세요.", 0);
+		do_say(ch, "나래 머드에 관한 의견이 있으면 board에 써주세요.", 0);
 		return 1;
 	case 3:
-		do_say(ch,
-		       "버그가 발견되면 보드에 적어주세요. 사례를 드립니다.", 0);
+		do_say(ch, "버그가 발견되면 보드에 적어주세요. 사례를 드립니다.", 0);
 		return 1;
 	case 4:
-		do_say(ch,
-		       "길드에 가입하면 level-down이 안된답니다.", 0);
+		do_say(ch, "길드에 가입하면 level-down이 안된답니다.", 0);
 		return 1;
 	case 5:
-		do_say(ch,
-		       "경찰길드와 깡패길드는 midgaard근처에 있습니다.", 0);
+		do_say(ch, "경찰길드와 깡패길드는 midgaard 근처에 있습니다.", 0);
 		return 1;
 	case 6:
-		do_say(ch,
-		       "암살자 길드는 DeathKingdom에 있습니다.", 0);
+		do_say(ch, "암살자 길드는 DeathKingdom에 있습니다.", 0);
 		return 1;
 	case 7:
-		do_say(ch, "reimburse는 안해준데요...", 0);
+		do_say(ch, "reimburse는 안해준대요...", 0);
 		return 1;
 	case 8:
 		do_say(ch, "NEWS를 자주 보세요...type 'NEWS' ", 0);
@@ -370,8 +407,7 @@ int Quest_bombard(struct char_data *ch, int cmd, char *arg)
 			ch->player.level += 1;
 		}
 		if (ch->specials.fighting && !affected_by_spell(ch, SPELL_SANCTUARY)) {
-			act("$n is surrounded by a white aura.", TRUE, ch, 0,
-			    0, TO_ROOM);
+			act("$n is surrounded by a white aura.", TRUE, ch, 0, 0, TO_ROOM);
 			af.type = SPELL_SANCTUARY;
 			af.duration = 4;
 			af.modifier = 0;
@@ -393,13 +429,11 @@ int Quest_bombard(struct char_data *ch, int cmd, char *arg)
 		}
 		if (GET_LEVEL(ch) >= 30) {
 			act("$n utters the words 'sunburst'.", 1, ch, 0, 0, TO_ROOM);
-			cast_sunburst(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL,
-				      vict, 0);
+			cast_sunburst(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);
 		}
 		if (GET_LEVEL(ch) >= 25) {
 			act("$n utters the words 'fireball'.", 1, ch, 0, 0, TO_ROOM);
-			cast_fireball(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL,
-				      vict, 0);
+			cast_fireball(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);
 		}
 		if (GET_LEVEL(ch) >= 20) {
 			hit(ch, vict, TYPE_UNDEFINED);
@@ -424,8 +458,7 @@ int mud_message(struct char_data *ch, int cmd, char *arg)
 		return (0);
 	vict = ch->specials.fighting;
 	if (vict) {
-		act("$n\tannihilate you with his full power.\n\r", 1, ch, 0,
-		    0, TO_ROOM);
+		act("$n\tannihilate you with his full power.\n\r", 1, ch, 0, 0, TO_ROOM);
 		if (IS_NPC(vict))
 			return TRUE;
 		if (vict->points.hit >= 51 && vict->points.hit < 101)
@@ -451,8 +484,7 @@ int musashi(struct char_data *ch, int cmd, char *arg)
 {
 	void cast_sunburst(byte level, struct char_data *ch, char *arg, int type,
 			   struct char_data *victim, struct obj_data *tar_obj);
-	struct char_data *choose_victim(struct char_data *mob, int fightmode,
-					int mode);
+	struct char_data *choose_victim(struct char_data *mob, int fightmode, int mode);
 	struct char_data *vict, *next_vict;
 	struct affected_type af;
 	int h, i, musash_mod = 0;
@@ -489,9 +521,7 @@ int musashi(struct char_data *ch, int cmd, char *arg)
 			musash_mod = 1;
 		}
 		if (ch->specials.fighting && !affected_by_spell(ch, SPELL_SANCTUARY)) {
-			act("$n 주위로 휘황한 광채가  감쌉니다.",
-			    TRUE, ch,
-			    0, 0, TO_ROOM);
+			act("$n 주위를 휘황한 광채가 감쌉니다.", TRUE, ch, 0, 0, TO_ROOM);
 			af.type = SPELL_SANCTUARY;
 			af.duration = 8;
 			af.modifier = 0;
@@ -506,23 +536,19 @@ int musashi(struct char_data *ch, int cmd, char *arg)
 		switch (number(0, 18)) {
 		case 0:
 			act("$n utters the words 'fire'.", 1, ch, 0, 0, TO_ROOM);
-			cast_sunburst(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL,
-				      vict, 0);
+			cast_sunburst(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);
 			return (1);
 		case 1:
 			act("$n utters the words 'frost'.", 1, ch, 0, 0, TO_ROOM);
-			cast_sunburst(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL,
-				      vict, 0);
+			cast_sunburst(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);
 			return (1);
 		case 2:
-			act("$n double attack by double sword method .", 1,
-			    ch, 0, 0, TO_ROOM);
+			act("$n double attack by double sword method .", 1, ch, 0, 0, TO_ROOM);
 			if (ch->specials.fighting)
 				hit(ch, ch->specials.fighting, TYPE_UNDEFINED);
 			return (1);
 		case 3:
-			act("$n double kick by double circle kick .", 1, ch,
-			    0, 0, TO_ROOM);
+			act("$n double kick by double circle kick .", 1, ch, 0, 0, TO_ROOM);
 			damage(ch, vict, 3 * GET_LEVEL(ch), SKILL_KICK);
 			vict = ch->specials.fighting;
 			damage(ch, vict, 3 * GET_LEVEL(ch), SKILL_KICK);
@@ -530,17 +556,15 @@ int musashi(struct char_data *ch, int cmd, char *arg)
 		case 4:
 		case 5:
 			do_say(ch, "A cha cha cha cha ..", 0);
-			act("$n tornado fire with miracle speed .", 1, ch, 0,
-			    0, TO_ROOM);
+			act("$n tornado fire with miracle speed .", 1, ch, 0, 0, TO_ROOM);
 			for (i = 0; i < number(5, 8); i++) {
 				vict = ch->specials.fighting;
-				cast_sunburst(GET_LEVEL(ch), ch, "",
-					      SPELL_TYPE_SPELL, vict, 0);
+				cast_sunburst(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);
 			}
 			return (1);
 		case 6:
 			do_say(ch, "Yak Yak Yak Yak Ya..", 0);
-			act("$n use thousands  kick .", 1, ch, 0, 0, TO_ROOM);
+			act("$n uses thousands kick.", 1, ch, 0, 0, TO_ROOM);
 			for (i = 0; i < number(10, 20); i++) {
 				vict = ch->specials.fighting;
 				damage(ch, vict, 2 * GET_LEVEL(ch), SKILL_KICK);
@@ -548,7 +572,7 @@ int musashi(struct char_data *ch, int cmd, char *arg)
 			return (1);
 		case 7:
 			do_say(ch, "Heau Heau Heau Heau Heau..", 0);
-			act("$n use hundreds bash .", 1, ch, 0, 0, TO_ROOM);
+			act("$n uses hundreds bash.", 1, ch, 0, 0, TO_ROOM);
 			for (i = 0; i < number(10, 20); i++) {
 				vict = ch->specials.fighting;
 				damage(ch, vict, 2 * GET_LEVEL(ch), SKILL_KICK);
@@ -556,7 +580,7 @@ int musashi(struct char_data *ch, int cmd, char *arg)
 			return (1);
 		case 8:
 			do_say(ch, "Ya uuuuu aaaaa    ..", 0);
-			act("$n throw powerfull punch ! .", 1, ch, 0, 0, TO_ROOM);
+			act("$n throws powerfull punch!!", 1, ch, 0, 0, TO_ROOM);
 			damage(ch, vict, 80, SKILL_KICK);
 			return (1);
 		case 9:
@@ -588,8 +612,7 @@ int musashi(struct char_data *ch, int cmd, char *arg)
 			do_say(ch, "Shou Ryu Ken..", 0);
 			damage(ch, vict, vict->points.hit / 3 - number(1,
 								       vict->points.hit
-								       / 8 + GET_LEVEL
-								       (vict)
+								       / 8 + GET_LEVEL(vict)
 								       / 2), SKILL_BASH);
 			send_to_char("You are falling down.\n\r", vict);
 			send_to_char("Quuu aaaa rrrrrrrr . .  .  . \n\r", vict);
@@ -613,8 +636,7 @@ int super_musashi(struct char_data *ch, int cmd, char *arg)
 {
 	void cast_sunburst(byte level, struct char_data *ch, char *arg, int type,
 			   struct char_data *victim, struct obj_data *tar_obj);
-	struct char_data *choose_victim(struct char_data *mob, int fightmode,
-					int mode);
+	struct char_data *choose_victim(struct char_data *mob, int fightmode, int mode);
 	struct char_data *vict, *next_vict;
 	struct affected_type af;
 	int h, i, musash_mod = 0;
@@ -658,9 +680,7 @@ int super_musashi(struct char_data *ch, int cmd, char *arg)
 		}
 
 		if (ch->specials.fighting && !affected_by_spell(ch, SPELL_SANCTUARY)) {
-			act("$n 주위로 휘황한 광채가  감쌉니다.",
-			    TRUE, ch,
-			    0, 0, TO_ROOM);
+			act("$n 주위를 휘황찬란한 광채가 감쌉니다.", TRUE, ch, 0, 0, TO_ROOM);
 			af.type = SPELL_SANCTUARY;
 			af.duration = 30;
 			af.modifier = 0;
@@ -706,8 +726,7 @@ int super_musashi(struct char_data *ch, int cmd, char *arg)
 		case 2:
 
 		case 3:
-			act("$n double kick by double circle kick .", 1, ch,
-			    0, 0, TO_ROOM);
+			act("$n double kick by double circle kick.", 1, ch, 0, 0, TO_ROOM);
 			damage(ch, vict, 20 * GET_LEVEL(ch), SKILL_KICK);
 			damage(ch, vict, 20 * GET_LEVEL(ch), SKILL_KICK);
 			return (1);
@@ -716,30 +735,28 @@ int super_musashi(struct char_data *ch, int cmd, char *arg)
 
 		case 5:
 			do_say(ch, "A cha cha cha cha ..", 0);
-			act("$n tornado fire with miracle speed .", 1, ch, 0,
-			    0, TO_ROOM);
+			act("$n tornado fire with miracle speed .", 1, ch, 0, 0, TO_ROOM);
 			for (i = 0; i < number(10, 20); i++)
-				cast_sunburst(GET_LEVEL(ch), ch, "",
-					      SPELL_TYPE_SPELL, vict, 0);
+				cast_sunburst(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);
 			return (1);
 
 		case 6:
 			do_say(ch, "Yak Yak Yak Yak Ya..", 0);
-			act("$n use thousands  kick .", 1, ch, 0, 0, TO_ROOM);
+			act("$n uses thousands  kick .", 1, ch, 0, 0, TO_ROOM);
 			for (i = 0; i < number(10, 20); i++)
 				damage(ch, vict, 10 * GET_LEVEL(ch), SKILL_KICK);
 			return (1);
 
 		case 7:
 			do_say(ch, "Heau Heau Heau Heau Heau..", 0);
-			act("$n use hundreds bash .", 1, ch, 0, 0, TO_ROOM);
+			act("$n uses hundreds bash .", 1, ch, 0, 0, TO_ROOM);
 			for (i = 0; i < number(10, 20); i++)
 				damage(ch, vict, 10 * GET_LEVEL(ch), SKILL_BASH);
 			return (1);
 
 		case 8:
 			do_say(ch, "Ya uuuuu aaaaa    ..", 0);
-			act("$n throw powerfull punch ! .", 1, ch, 0, 0, TO_ROOM);
+			act("$n throws powerfull punch !", 1, ch, 0, 0, TO_ROOM);
 			damage(ch, vict, GET_HIT(vict) / 3, SKILL_BASH);
 			return (1);
 		case 9:
@@ -769,11 +786,8 @@ int super_musashi(struct char_data *ch, int cmd, char *arg)
 		case 18:
 			do_say(ch, "Shou Ryu Ken..", 0);
 			damage(ch, vict, GET_HIT(vict) / 3 - number(1,
-								    GET_HIT(vict)
-								    / 15
-								    +
-								    GET_LEVEL(vict)
-								    / 2), SKILL_BASH);
+								    GET_HIT(vict) / 15
+								    + GET_LEVEL(vict) / 2), SKILL_BASH);
 			send_to_char("You are falling down.\n\r", vict);
 			send_to_char("Quuu aaaa rrrrrrrr . .  .  . \n\r", vict);
 			return (1);
@@ -803,14 +817,13 @@ int mom(struct char_data *ch, int cmd, char *arg)
 
 	if (vict) {
 		if ((GET_MOVE(vict) > 50)) {	/* cyb : reduce move point  */
-			send_to_char("으라차아  !\n\r", vict);
+			send_to_char("으라차아 !\n\r", vict);
 			GET_MOVE(vict) -= dice(10, 10);
 		}
 		h = GET_HIT(ch);
 
 		if ((h > 100) && (h < 999)) {
-			act("$n 이 크고 푸른 알약을 삼킵니다. (윙크)", 1,
-			    ch, 0, 0, TO_ROOM);
+			act("$n 이 크고 푸른 알약을 삼킵니다. (윙크)", 1, ch, 0, 0, TO_ROOM);
 			cast_heal(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, ch, 0);
 			return TRUE;
 		} else {
@@ -963,7 +976,6 @@ int cityguard(struct char_data *ch, int cmd, char *arg)
 	return (FALSE);
 }
 
-#define RESCUER_VICTIM	5
 int rescuer(struct char_data *ch, int cmd, char *arg)
 {
 	void mob_light_move(struct char_data *ch, char *argument, int cmd);
@@ -1001,8 +1013,7 @@ int rescuer(struct char_data *ch, int cmd, char *arg)
 		}
 		if (vict) {
 			act("$n screams 'PROTECT THE INNOCENT! CHARGE!'",
-			    FALSE, ch, 0,
-			    0, TO_ROOM);
+			    FALSE, ch, 0, 0, TO_ROOM);
 			hit(ch, vict, TYPE_UNDEFINED);	/* set fighting */
 		}
 		return TRUE;
@@ -1054,7 +1065,7 @@ int superguard(struct char_data *ch, int cmd, char *arg)
 		}
 	}
 	if (evil) {
-		act("$n 외칩니다. '누가 법을 깨뜨리는 녀석이냐 !!!!'",
+		act("$n 외칩니다. '누가 법을 깨뜨리는 녀석이냐!!!!'",
 		    FALSE, ch, 0, 0, TO_ROOM);
 		hit(ch, evil, TYPE_UNDEFINED);
 		return (TRUE);
@@ -1073,7 +1084,7 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 		return (FALSE);
 	pet_room = ch->in_room + 1;
 	if (cmd == 59) {	/* List */
-		send_to_char("애완동물 이 이런 것이 있습니다:\n\r", ch);
+		send_to_char("애완동물은 이런 것이 있습니다:\n\r", ch);
 		for (pet = world[pet_room].people; pet; pet = pet->next_in_room) {
 			/* can't buy PC */
 			if (!IS_NPC(pet))
@@ -1306,7 +1317,7 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 			}
 			i = find_name(ch->player.name);
 			if (i == -1) {
-				mudlog("이럴루가!!!");
+				log("이럴루가!!!");
 				send_to_char("ING? Then, how can i be here?\n\r", ch);
 				return TRUE;
 			}
@@ -1368,7 +1379,7 @@ int hospital(struct char_data *ch, int cmd, char *arg)
 			send_to_char
 			    ("하! 이름 바꾼다고 잘 살수 있을거 같지?\n\r", ch);
 			send_to_char("어림 반 푼어치도 없다!!!!!!!!!!!!!!\n\r", ch);
-			save_char(ch, ch->in_room);
+			save_char(ch, world[ch->in_room].number);
 			return TRUE;
 		default:
 			send_to_char("뭐요?\n\r", ch);
@@ -1609,7 +1620,7 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 	return (FALSE);
 }
 
-/* re-written, 251130 by Komo */
+/* re-written, by Komo */
 int remortal(struct char_data *ch, int cmd, char *arg)
 {
     char buf[255];
@@ -1912,8 +1923,7 @@ int shooter(struct char_data *ch, int cmd, char *arg)
 			if ((!IS_NPC(tch)) && (GET_LEVEL(tch) < IMO)) {
 				if (GET_POS(tch) <= POSITION_DEAD)
 					continue;
-				act("$n yells '$N must die!'", FALSE, ch, 0,
-				    tch, TO_ROOM);
+				act("$n yells '$N must die!'", FALSE, ch, 0, tch, TO_ROOM);
 				shoot(ch, tch, TYPE_SHOOT);
 			}
 		}
@@ -2195,8 +2205,7 @@ int portal(struct char_data *ch, int cmd, char *arg)
 {
 	int location, ok;
 	extern int top_of_world;
-	void do_look(struct char_data *ch, char *argument, int cmd);
-
+	
 	if (cmd != 3)		/* specific to Room 2176 */
 		return (FALSE);
 	location = number(1, top_of_world);

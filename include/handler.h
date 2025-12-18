@@ -70,3 +70,7 @@ int generic_find(char *arg, int bitvector, struct char_data *ch,
 #define FIND_OBJ_ROOM      8
 #define FIND_OBJ_WORLD    16
 #define FIND_OBJ_EQUIP    32
+
+/* in handler.c */
+int is_same_group(struct char_data *ch, struct char_data *victim);
+

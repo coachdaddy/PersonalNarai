@@ -15,6 +15,7 @@
 /* LOWER, UPPER, ISDIGIT 모두 삭제, by Komo */
 #define CAP(st)  (*(st) = toupper(*(st)))
 #endif
+#define RETURN_TO_QUIT
 #define MID_HELPER	"narai"
 
 #define REBOOT_TIME	(4*86400)
@@ -36,10 +37,6 @@ size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 
 
 const char *get_char_name(struct char_data *ch, struct char_data *viewer);  /* in utility.c PERS 매크로 대체 함수, 251125 by Komo */
 long int hit_limit(struct char_data *ch);
-
-#ifndef HAVE_STRLCPY
-size_t strlcpy(char *dst, const char *src, size_t siz);  /* in utility.c, 251208 by Komo */
-#endif
 
 // Don't use NULL pointer for null character ('\0')
 #define NUL '\0'
@@ -75,6 +72,7 @@ size_t strlcpy(char *dst, const char *src, size_t siz);  /* in utility.c, 251208
 #define IS_LIGHT(room)  (world[room].light || !IS_SET(world[room].room_flags, DARK))
 #define SET_BIT(var,bit)  ((var) = (var) | (bit))
 #define REMOVE_BIT(var,bit)  ((var) = (var) & ~(bit) )
+
 
 #define IF_STR(st)  ((st) ? (st) : "\0")
 #define ISNEWL(ch)  ((ch) == '\n' || (ch) == '\r')
@@ -181,8 +179,6 @@ size_t strlcpy(char *dst, const char *src, size_t siz);  /* in utility.c, 251208
 #define GET_LEARNED(ch, sk_no)		((ch)->skills[(int)(sk_no)].learned)
 #define GET_SKILLED(ch, sk_no)		((ch)->skills[(int)(sk_no)].skilled)
 
-/* defined in utility.c */
-void print_increased_skilled(struct char_data *ch, int sk_no);
 
 /* max skilled = 100 */
 
@@ -223,15 +219,3 @@ void print_increased_skilled(struct char_data *ch, int sk_no);
             }	\
         } \
     } while(0)
-
-
-// 251208, 가독성 및 관리를 위한 매크로 추가
-#define ONE_IN(n) (number(0, (n) - 1) == 0) /* N분의 1 */
-#define PERCENT(p) (number(1, 100) <= (p))  /* 퍼센트(백분율) */
-
-/* Unit Macros, 251209 */
-#define K(x) ((long)(x) * 1000)         /* Kilo, 1천 */
-#define M(x) ((long)(x) * 1000000)      /* Mega, 백만 */
-#define G(x) ((long)(x) * 1000000000)   /* Giga, 10억 */
-
-#include "prototypes.h"

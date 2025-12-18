@@ -26,6 +26,18 @@ extern struct time_info_data time_info;
 extern struct title_type titles[4][IMO + 4];
 extern struct index_data *mob_index;
 
+/* extern procedures */
+void hit(struct char_data *ch, struct char_data *victim, int type);
+void gain_exp(struct char_data *ch, int gain);
+void stop_fighting(struct char_data *ch);
+void set_title(struct char_data *ch);
+int number(int from, int to);
+int dice(int num, int size); /* in utility.c */
+
+void cast_cure_light(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
+void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
+void cast_heal(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
+void cast_full_heal(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
 
 
 int level_gate(struct char_data *ch, int cmd, char *arg)
@@ -102,8 +114,7 @@ int neverland(struct char_data *ch, int cmd, char *arg)
 
 	location = real_room(loc_nr);
 	act("$n씨가 지금 내려 갔나요 ??", FALSE, ch, 0, 0, TO_NOTVICT);
-	send_to_char
-	    ("악.\n\n악..\n\n 악...\n\n\n떨어지고 있습니다..\n\n\r", ch);
+	send_to_char("악.\n\n악..\n\n 악...\n\n\n떨어지고 있습니다..\n\n\r", ch);
 	send_to_char("여기가 어딜까 ??\n\r", ch);
 	char_from_room(ch);
 	char_to_room(ch, location);
@@ -134,8 +145,7 @@ int helper(struct char_data *ch, int cmd, char *arg)
 		cast_cure_light(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);
 	} else if (lev <= 19) {
 		act("$n utters the words 'sagok sghui'.", 1, ch, 0, 0, TO_ROOM);
-		cast_cure_critic(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL,
-				 vict, 0);
+		cast_cure_critic(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);
 	} else if (lev <= 27) {
 		act("$n utters the words 'laeh'.", 1, ch, 0, 0, TO_ROOM);
 		cast_heal(GET_LEVEL(ch), ch, "", SPELL_TYPE_SPELL, vict, 0);

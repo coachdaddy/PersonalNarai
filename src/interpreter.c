@@ -36,15 +36,13 @@
 #include "utils.h"
 #include "limit.h"
 
-#define ISLETTER(c)	(c > ' ' || c < 0)
-
 #define COMMANDO(number, min_pos, pointer, min_lm, min_lc, min_lt, min_lw) { \
-  cmd_info[(number)].command_pointer = (pointer); \
-  cmd_info[(number)].minimum_position = (min_pos); \
-  cmd_info[(number)].minimum_level[0] = (min_lm); \
-  cmd_info[(number)].minimum_level[1] = (min_lc); \
-  cmd_info[(number)].minimum_level[2] = (min_lt); \
-  cmd_info[(number)].minimum_level[3] = (min_lw); \
+        cmd_info[(number)].command_pointer = (pointer);                    \
+        cmd_info[(number)].minimum_position = (min_pos);                   \
+        cmd_info[(number)].minimum_level[0] = (min_lm);                    \
+        cmd_info[(number)].minimum_level[1] = (min_lc);                    \
+        cmd_info[(number)].minimum_level[2] = (min_lt);                    \
+        cmd_info[(number)].minimum_level[3] = (min_lw);                    \
 }
 
 #define NOT !
@@ -65,6 +63,204 @@ extern struct index_data *mob_index;
 extern struct index_data *obj_index;
 extern struct room_data *world;
 struct command_info cmd_info[MAX_CMD_LIST];
+
+/* external fcntls */
+void unstash_char(struct char_data *ch, char *name);
+void stash_char(struct char_data *ch);
+void set_title(struct char_data *ch);
+void init_char(struct char_data *ch);
+void store_to_char(struct char_file_u *st, struct char_data *ch);
+int create_entry(char *name);
+int special(struct char_data *ch, int cmd, char *arg);
+int number(int from, int to);
+int str_cmp(char *arg1, char *arg2);
+void char_to_room(struct char_data *ch, int room);
+void do_start(struct char_data *ch);
+int remove_entry(struct char_data *ch);
+void delete_char(struct char_data *ch);
+void close_socket(struct descriptor_data *d);
+
+void do_shoot(struct char_data *ch, char *argument, int cmd);
+void do_wimpy(struct char_data *ch, char *argument, int cmd);
+void do_move(struct char_data *ch, char *argument, int cmd);
+void do_look(struct char_data *ch, char *argument, int cmd);
+void do_read(struct char_data *ch, char *argument, int cmd);
+void do_write(struct char_data *ch, char *argument, int cmd);
+void do_say(struct char_data *ch, char *argument, int cmd);
+// void do_exit (struct char_data *ch, char *argument, int cmd);
+void do_snoop(struct char_data *ch, char *argument, int cmd);
+void do_insult(struct char_data *ch, char *argument, int cmd);
+void do_quit(struct char_data *ch, char *argument, int cmd);
+void do_help(struct char_data *ch, char *argument, int cmd);
+void do_who(struct char_data *ch, char *argument, int cmd);
+void do_emote(struct char_data *ch, char *argument, int cmd);
+void do_echo(struct char_data *ch, char *argument, int cmd);
+void do_trans(struct char_data *ch, char *argument, int cmd);
+void do_kill(struct char_data *ch, char *argument, int cmd);
+void do_stand(struct char_data *ch, char *argument, int cmd);
+void do_sit(struct char_data *ch, char *argument, int cmd);
+void do_rest(struct char_data *ch, char *argument, int cmd);
+void do_sleep(struct char_data *ch, char *argument, int cmd);
+void do_wake(struct char_data *ch, char *argument, int cmd);
+void do_force(struct char_data *ch, char *argument, int cmd);
+void do_get(struct char_data *ch, char *argument, int cmd);
+void do_drop(struct char_data *ch, char *argument, int cmd);
+void do_news(struct char_data *ch, char *argument, int cmd);
+void do_score(struct char_data *ch, char *argument, int cmd);
+void do_title(struct char_data *ch, char *argument, int cmd);
+void do_spells(struct char_data *ch, char *argument, int cmd);
+void do_report(struct char_data *ch, char *argument, int cmd);
+void do_inventory(struct char_data *ch, char *argument, int cmd);
+void do_equipment(struct char_data *ch, char *argument, int cmd);
+void do_shout(struct char_data *ch, char *argument, int cmd);
+void do_not_here(struct char_data *ch, char *argument, int cmd);
+void do_tell(struct char_data *ch, char *argument, int cmd);
+void do_send(struct char_data *ch, char *argument, int cmd);
+void do_gtell(struct char_data *ch, char *argument, int cmd);
+void do_wear(struct char_data *ch, char *argument, int cmd);
+void do_wield(struct char_data *ch, char *argument, int cmd);
+void do_grab(struct char_data *ch, char *argument, int cmd);
+void do_remove(struct char_data *ch, char *argument, int cmd);
+void do_put(struct char_data *ch, char *argument, int cmd);
+void do_shutdown(struct char_data *ch, char *argument, int cmd);
+void do_save(struct char_data *ch, char *argument, int cmd);
+void do_hit(struct char_data *ch, char *argument, int cmd);
+void do_string(struct char_data *ch, char *arg, int cmd);
+void do_give(struct char_data *ch, char *arg, int cmd);
+void do_stat(struct char_data *ch, char *arg, int cmd);
+void do_time(struct char_data *ch, char *arg, int cmd);
+void do_weather(struct char_data *ch, char *arg, int cmd);
+void do_load(struct char_data *ch, char *arg, int cmd);
+void do_purge(struct char_data *ch, char *arg, int cmd);
+void do_shutdow(struct char_data *ch, char *arg, int cmd);
+void do_whisper(struct char_data *ch, char *arg, int cmd);
+void do_cast(struct char_data *ch, char *arg, int cmd);
+void do_at(struct char_data *ch, char *arg, int cmd);
+void do_goto(struct char_data *ch, char *arg, int cmd);
+void do_ask(struct char_data *ch, char *arg, int cmd);
+void do_drink(struct char_data *ch, char *arg, int cmd);
+void do_eat(struct char_data *ch, char *arg, int cmd);
+void do_pour(struct char_data *ch, char *arg, int cmd);
+void do_sip(struct char_data *ch, char *arg, int cmd);
+void do_taste(struct char_data *ch, char *arg, int cmd);
+void do_order(struct char_data *ch, char *arg, int cmd);
+void do_follow(struct char_data *ch, char *arg, int cmd);
+void do_rent(struct char_data *ch, char *arg, int cmd);
+void do_junk(struct char_data *ch, char *arg, int cmd);
+void do_advance(struct char_data *ch, char *arg, int cmd);
+void do_close(struct char_data *ch, char *arg, int cmd);
+void do_open(struct char_data *ch, char *arg, int cmd);
+void do_lock(struct char_data *ch, char *arg, int cmd);
+void do_unlock(struct char_data *ch, char *arg, int cmd);
+void do_exits(struct char_data *ch, char *arg, int cmd);
+void do_enter(struct char_data *ch, char *arg, int cmd);
+void do_leave(struct char_data *ch, char *arg, int cmd);
+void do_flee(struct char_data *ch, char *arg, int cmd);
+void do_sneak(struct char_data *ch, char *arg, int cmd);
+void do_hide(struct char_data *ch, char *arg, int cmd);
+void do_backstab(struct char_data *ch, char *arg, int cmd);
+void do_pick(struct char_data *ch, char *arg, int cmd);
+void do_steal(struct char_data *ch, char *arg, int cmd);
+void do_bash(struct char_data *ch, char *arg, int cmd);
+void do_rescue(struct char_data *ch, char *arg, int cmd);
+void do_kick(struct char_data *ch, char *arg, int cmd);
+void do_punch(struct char_data *ch, char *arg, int cmd);
+void do_examine(struct char_data *ch, char *arg, int cmd);
+void do_users(struct char_data *ch, char *arg, int cmd);
+void do_where(struct char_data *ch, char *arg, int cmd);
+void do_levels(struct char_data *ch, char *arg, int cmd);
+void do_reroll(struct char_data *ch, char *arg, int cmd);
+void do_brief(struct char_data *ch, char *arg, int cmd);
+void do_wiznet(struct char_data *ch, char *arg, int cmd);
+void do_consider(struct char_data *ch, char *arg, int cmd);
+void do_group(struct char_data *ch, char *arg, int cmd);
+void do_restore(struct char_data *ch, char *arg, int cmd);
+void do_return(struct char_data *ch, char *argument, int cmd);
+void do_switch(struct char_data *ch, char *argument, int cmd);
+void do_quaff(struct char_data *ch, char *argument, int cmd);
+void do_recite(struct char_data *ch, char *argument, int cmd);
+void do_use(struct char_data *ch, char *argument, int cmd);
+void do_flag(struct char_data *ch, char *argument, int cmd);
+void do_noshout(struct char_data *ch, char *argument, int cmd);
+void do_wizhelp(struct char_data *ch, char *argument, int cmd);
+void do_credits(struct char_data *ch, char *argument, int cmd);
+void do_compact(struct char_data *ch, char *argument, int cmd);
+void do_action(struct char_data *ch, char *arg, int cmd);
+void do_practice(struct char_data *ch, char *arg, int cmd);
+void do_flick(struct char_data *ch, char *arg, int cmd);
+void do_wall(struct char_data *ch, char *arg, int cmd);
+void do_set(struct char_data *ch, char *arg, int cmd);
+void do_police(struct char_data *ch, char *arg, int cmd);
+void do_siteban(struct char_data *ch, char *arg, int cmd);
+void do_noaffect(struct char_data *ch, char *arg, int cmd);
+void do_invis(struct char_data *ch, char *arg, int cmd);
+void do_notell(struct char_data *ch, char *arg, int cmd);
+void do_banish(struct char_data *ch, char *arg, int cmd);
+void do_reload(struct char_data *ch, char *arg, int cmd);
+void do_data(struct char_data *ch, char *arg, int cmd);
+void do_checkrent(struct char_data *ch, char *arg, int cmd);
+void do_chat(struct char_data *ch, char *arg, int cmd);
+void do_lastchat(struct char_data *ch, char *arg, int cmd);
+void do_bank(struct char_data *ch, char *arg, int cmd);
+void do_sys(struct char_data *ch, char *arg, int cmd);
+void do_extractrent(struct char_data *ch, char *arg, int cmd);
+void do_replacerent(struct char_data *ch, char *arg, int cmd);
+void do_tornado(struct char_data *ch, char *arg, int cmd);
+void do_light_move(struct char_data *ch, char *arg, int cmd);
+void do_flash(struct char_data *ch, char *arg, int cmd);
+void do_multi_kick(struct char_data *ch, char *arg, int cmd);
+void do_demote(struct char_data *ch, char *arg, int cmd);
+void do_nochat(struct char_data *ch, char *arg, int cmd);
+void do_post(struct char_data *ch, char *arg, int cmd);
+void do_sayh(struct char_data *ch, char *argument, int cmd);
+void do_assist(struct char_data *ch, char *argument, int cmd);
+void do_ungroup(struct char_data *ch, char *argument, int cmd);
+void do_wizards(struct char_data *ch, char *argument, int cmd);
+void do_hangul(struct char_data *ch, char *arg, int cmd);
+void do_version(struct char_data *ch, char *arg, int cmd);
+void do_disarm(struct char_data *ch, char *arg, int cmd);         /* chase */
+void do_shouryuken(struct char_data *ch, char *arg, int cmd);     /* chase */
+void do_throw_object(struct char_data *ch, char *arg, int cmd);   /* chase */
+void do_assault(struct char_data *ch, char *arg, int cmd);        /* by process */
+void do_cant(struct char_data *ch, char *arg, int cmd);           /* by process */
+void do_query(struct char_data *ch, char *arg, int cmd);          /* by process */
+void do_whistle(struct char_data *ch, char *arg, int cmd);        /* by process */
+void do_simultaneous(struct char_data *ch, char *arg, int cmd);   /* by process */
+void do_arrest(struct char_data *ch, char *arg, int cmd);         /* by process */
+void do_angry_yell(struct char_data *ch, char *arg, int cmd);     /* by process */
+void do_solace(struct char_data *ch, char *arg, int cmd);         /* by process */
+void do_unwield(struct char_data *ch, char *arg, int cmd);        /* by process */
+void do_unhold(struct char_data *ch, char *arg, int cmd);         /* by process */
+void do_temptation(struct char_data *ch, char *arg, int cmd);     /* by process */
+void do_shadow(struct char_data *ch, char *arg, int cmd);         /* by process */
+void do_smoke(struct char_data *ch, char *arg, int cmd);          /* by process */
+void do_inject(struct char_data *ch, char *arg, int cmd);         /* by process */
+void do_plan(struct char_data *ch, char *arg, int cmd);           /* by process */
+void do_power_bash(struct char_data *ch, char *arg, int cmd);     /* by process */
+void do_evil_strike(struct char_data *ch, char *arg, int cmd);    /* by process */
+void do_charge(struct char_data *ch, char *arg, int cmd);         /* by process */
+void do_solo(struct char_data *ch, char *arg, int cmd);           /* by process */
+void do_auto_assist(struct char_data *ch, char *arg, int cmd);    /* by process */
+void do_spin_bird_kick(struct char_data *ch, char *arg, int cmd); /* by ares */
+void do_reply(struct char_data *ch, char *arg, int cmd);          /* by process */
+
+/* quest */
+void do_quest(struct char_data *ch, char *arg, int cmd);   /* by atre */
+void do_request(struct char_data *ch, char *arg, int cmd); /* by atre */
+void do_hint(struct char_data *ch, char *arg, int cmd);    /* by atre */
+// Challenge Room Quest System, in quest.c
+void do_challenge(struct char_data *ch, char *argument, int cmd); // 251017 by Komo
+void do_begin(struct char_data *ch, char *argument, int cmd);     // 251017 by Komo
+void do_rejoin(struct char_data *ch, char *argument, int cmd);    // 251022 by Komo
+
+// color processing function
+void process_color_string(const char *input, char *output, int max_out_len); // src/utility.c, Komo
+void do_colortest(struct char_data *ch, char *argument, int cmd); // src/utility.c, Komo
+
+// Live Reloading System, 251120
+void do_zreload(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251120 by Komo
+void do_wreload(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251121 by Komo
+void do_zonelist(struct char_data *ch, char *argument, int cmd); // src/act.wizard.c, 251121 by Komo
 
 
 char *command[] = {
@@ -488,9 +684,7 @@ int search_block(char *arg, char **list, bool exact)
 	register int i, l;
 
 	/* Make into lower case, and get length of string */
-	for (l = 0; *(arg + l); l++)
-		/*cyb   *(arg+l)=LOWER(*(arg+l)); */
-		/*cyb just iterate */ ;
+	for (l = 0; *(arg + l); l++) ;
 
 	if (exact) {
 		for (i = 0; **(list + i) != '\n'; i++)
@@ -523,7 +717,8 @@ int old_search_block(char *argument, int begin, int length, char **list, int mod
 									   *(list[guess]
 									   + search));
 			guess++;
-	} else {
+		} 
+	else {
 		while (NOT found AND * (list[guess]) != '\n') {
 			found = 1;
 			for (search = 0; (search < length AND found); search++)
@@ -661,7 +856,7 @@ int command_interpreter(struct char_data *ch, char *argument)
 
 		if (IS_SET(ch->specials.act, PLR_XYZZY)) {
 			snprintf(buf, sizeof(buf), "%s: %s", ch->player.name, argument);
-			mudlog(buf);
+			log(buf);
 		}
 		return (1);
 	}
@@ -848,335 +1043,317 @@ void assign_command_pointers(void)
 		cmd_info[position].command_pointer = 0;
 
 	COMMANDO(1, POSITION_STANDING, do_move, 0, 0, 0, 0);
-	COMMANDO(2, POSITION_STANDING, do_move, 0, 0, 0, 0);
-	COMMANDO(3, POSITION_STANDING, do_move, 0, 0, 0, 0);
-	COMMANDO(4, POSITION_STANDING, do_move, 0, 0, 0, 0);
-	COMMANDO(5, POSITION_STANDING, do_move, 0, 0, 0, 0);
-	COMMANDO(6, POSITION_STANDING, do_move, 0, 0, 0, 0);
-	COMMANDO(7, POSITION_STANDING, do_enter, 0, 0, 0, 0);
-	COMMANDO(8, POSITION_RESTING, do_exits, 0, 0, 0, 0);
-	COMMANDO(25, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(10, POSITION_RESTING, do_get, 0, 0, 0, 0);
-	COMMANDO(11, POSITION_RESTING, do_drink, 0, 0, 0, 0);
-	COMMANDO(12, POSITION_RESTING, do_eat, 0, 0, 0, 0);
-	COMMANDO(13, POSITION_RESTING, do_wear, 0, 0, 0, 0);
-	COMMANDO(14, POSITION_RESTING, do_wield, 0, 0, 0, 0);
-	COMMANDO(15, POSITION_RESTING, do_look, 0, 0, 0, 0);
-	COMMANDO(16, POSITION_DEAD, do_score, 0, 0, 0, 0);
-	COMMANDO(17, POSITION_RESTING, do_say, 0, 0, 0, 0);
-	COMMANDO(18, POSITION_RESTING, do_shout, 1, 1, 1, 1);
-	COMMANDO(19, POSITION_RESTING, do_tell, 0, 0, 0, 0);
-	COMMANDO(20, POSITION_DEAD, do_inventory, 0, 0, 0, 0);
-	COMMANDO(154, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(23, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(24, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(9, POSITION_FIGHTING, do_kill, 0, 0, 0, 0);
-	COMMANDO(107, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(27, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(28, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(29, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(30, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(202, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(32, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(33, POSITION_RESTING, do_insult, 0, 0, 0, 0);
-	COMMANDO(34, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(35, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(36, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(37, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(38, POSITION_DEAD, do_help, 0, 0, 0, 0);
-	COMMANDO(39, POSITION_DEAD, do_who, 0, 0, 0, 0);
-	COMMANDO(40, POSITION_SLEEPING, do_emote, 1, 1, 1, 1);
-	COMMANDO(41, POSITION_SLEEPING, do_echo, IMO, IMO, IMO, IMO);
-	COMMANDO(42, POSITION_RESTING, do_stand, 0, 0, 0, 0);
-	COMMANDO(43, POSITION_RESTING, do_sit, 0, 0, 0, 0);
-	COMMANDO(44, POSITION_RESTING, do_rest, 0, 0, 0, 0);
-	COMMANDO(45, POSITION_SLEEPING, do_sleep, 0, 0, 0, 0);
-	COMMANDO(46, POSITION_SLEEPING, do_wake, 0, 0, 0, 0);
-	COMMANDO(91, POSITION_SLEEPING, do_force, IMO + 2, IMO + 2, IMO + 2, IMO
-		 + 2);
-	COMMANDO(48, POSITION_SLEEPING, do_trans, IMO + 1, IMO + 1, IMO + 1, IMO
-		 + 1);
-	COMMANDO(49, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(50, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(51, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(52, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(53, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(54, POSITION_SLEEPING, do_news, 0, 0, 0, 0);
-	COMMANDO(55, POSITION_SLEEPING, do_equipment, 0, 0, 0, 0);
-	COMMANDO(56, POSITION_STANDING, do_not_here, 0, 0, 0, 0);
-	COMMANDO(57, POSITION_STANDING, do_not_here, 0, 0, 0, 0);
-	COMMANDO(58, POSITION_STANDING, do_not_here, 0, 0, 0, 0);
-	COMMANDO(59, POSITION_STANDING, do_not_here, 0, 0, 0, 0);
-	COMMANDO(60, POSITION_RESTING, do_drop, 0, 0, 0, 0);
-	COMMANDO(61, POSITION_SLEEPING, do_goto, IMO, IMO, IMO, IMO);
-	COMMANDO(62, POSITION_RESTING, do_weather, 0, 0, 0, 0);
-	COMMANDO(63, POSITION_RESTING, do_read, 0, 0, 0, 0);
-	COMMANDO(64, POSITION_STANDING, do_pour, 0, 0, 0, 0);
-	COMMANDO(65, POSITION_RESTING, do_grab, 0, 0, 0, 0);
-	COMMANDO(66, POSITION_RESTING, do_remove, 0, 0, 0, 0);
-	COMMANDO(67, POSITION_RESTING, do_put, 0, 0, 0, 0);
-	COMMANDO(68, POSITION_DEAD, do_shutdow, IMO + 3, IMO + 3, IMO + 3, IMO
-		 + 3);
-	COMMANDO(69, POSITION_SLEEPING, do_save, 0, 0, 0, 0);
-	COMMANDO(70, POSITION_FIGHTING, do_hit, 0, 0, 0, 0);
-	COMMANDO(71, POSITION_SLEEPING, do_string, IMO, IMO, IMO, IMO);
-	COMMANDO(72, POSITION_RESTING, do_give, 0, 0, 0, 0);
-	COMMANDO(73, POSITION_DEAD, do_quit, 0, 0, 0, 0);
-	COMMANDO(74, POSITION_DEAD, do_stat, IMO, IMO, IMO, IMO);
-	COMMANDO(75, POSITION_DEAD, do_action, 0, 0, 0, 0);
-	COMMANDO(76, POSITION_DEAD, do_time, 0, 0, 0, 0);
-	COMMANDO(77, POSITION_DEAD, do_load, IMO + 2, IMO + 2, IMO + 2, IMO + 2);
-	COMMANDO(78, POSITION_DEAD, do_purge, IMO + 1, IMO + 1, IMO + 1, IMO + 1);
-	COMMANDO(79, POSITION_DEAD, do_shutdown, IMO + 3, IMO + 3, IMO + 3,
-		 IMO + 3);
-	COMMANDO(80, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(82, POSITION_RESTING, do_replacerent,
-		 IMO + 3, IMO + 3, IMO + 3, IMO + 3);
-	COMMANDO(83, POSITION_RESTING, do_whisper, 0, 0, 0, 0);
-	COMMANDO(84, POSITION_SITTING, do_cast, 1, 1, 1, 1);
-	COMMANDO(85, POSITION_DEAD, do_at, IMO, IMO, IMO, IMO);
-	COMMANDO(86, POSITION_RESTING, do_ask, 1, 1, 1, 1);
-	COMMANDO(87, POSITION_RESTING, do_order, 1, 1, 1, 1);
-	COMMANDO(88, POSITION_RESTING, do_sip, 0, 0, 0, 0);
-	COMMANDO(89, POSITION_RESTING, do_taste, 0, 0, 0, 0);
-	COMMANDO(90, POSITION_DEAD, do_snoop, IMO, IMO, IMO, IMO);
-	COMMANDO(47, POSITION_RESTING, do_follow, 0, 0, 0, 0);
-	COMMANDO(92, POSITION_STANDING, do_rent, 1, 1, 1, 1);
-	COMMANDO(93, POSITION_RESTING, do_junk, 1, 1, 1, 1);
-	COMMANDO(94, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(95, POSITION_DEAD, do_advance, 1, 1, 1, 1);
-	COMMANDO(96, POSITION_SITTING, do_action, 0, 0, 0, 0);
-	COMMANDO(97, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(98, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(99, POSITION_SITTING, do_open, 0, 0, 0, 0);
-	COMMANDO(100, POSITION_SITTING, do_close, 0, 0, 0, 0);
-	COMMANDO(101, POSITION_SITTING, do_lock, 0, 0, 0, 0);
-	COMMANDO(102, POSITION_SITTING, do_unlock, 0, 0, 0, 0);
-	COMMANDO(103, POSITION_STANDING, do_leave, 0, 0, 0, 0);
-	COMMANDO(104, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(105, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(106, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(226, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(108, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(109, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(110, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(111, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(151, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(113, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(114, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(115, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(116, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(117, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(118, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(119, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(120, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(121, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(122, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(123, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(124, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(125, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(126, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(127, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(128, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(129, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(130, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(131, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(132, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(133, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(134, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(135, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(136, POSITION_SLEEPING, do_action, 0, 0, 0, 0);
-	COMMANDO(137, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(138, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(139, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(140, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(141, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(142, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(143, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(144, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(145, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(146, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(147, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(148, POSITION_STANDING, do_action, IMO, IMO, IMO, IMO);
-	COMMANDO(149, POSITION_STANDING, do_extractrent,
-		 IMO + 2, IMO + 2, IMO + 2, IMO + 2);
-	COMMANDO(150, POSITION_RESTING, do_grab, 1, 1, 1, 1);
-	COMMANDO(112, POSITION_FIGHTING, do_flee, 1, 1, 1, 1);
-	COMMANDO(152, POSITION_STANDING, do_sneak, IMO, IMO, 1, IMO);
-	COMMANDO(153, POSITION_RESTING, do_hide, IMO, IMO, 1, IMO);
-	/* COMMANDO(154, POSITION_DEAD, do_backstab, IMO, IMO, 1, IMO);  */
-	COMMANDO(22, POSITION_STANDING, do_backstab, IMO, IMO, 1, IMO);		/* jhpark */
-	COMMANDO(155, POSITION_STANDING, do_pick, 20, 20, 1, 10);
-	COMMANDO(156, POSITION_STANDING, do_steal, IMO, IMO, 1, IMO);
-	COMMANDO(157, POSITION_FIGHTING, do_bash, IMO, IMO, IMO, 1);
-	COMMANDO(158, POSITION_FIGHTING, do_rescue, 30, 30, 10, 1);
-	COMMANDO(159, POSITION_FIGHTING, do_kick, IMO, IMO, IMO, 1);
-	COMMANDO(160, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(161, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(162, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(163, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(164, POSITION_RESTING, do_practice, 1, 1, 1, 1);
-	COMMANDO(165, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(166, POSITION_SITTING, do_examine, 0, 0, 0, 0);
-	COMMANDO(167, POSITION_RESTING, do_get, 0, 0, 0, 0);
-	COMMANDO(169, POSITION_RESTING, do_sayh, 0, 0, 0, 0);
-	COMMANDO(170, POSITION_RESTING, do_practice, 1, 1, 1, 1);
-	COMMANDO(171, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(172, POSITION_SITTING, do_use, 1, 1, 1, 1);
-	COMMANDO(173, POSITION_DEAD, do_where, 1, 1, 1, 1);
-	COMMANDO(174, POSITION_DEAD, do_levels, 0, 0, 0, 0);
-	COMMANDO(175, POSITION_DEAD, do_reroll, IMO + 3, IMO + 3, IMO + 3, IMO
-		 + 3);
-	COMMANDO(176, POSITION_SITTING, do_action, 0, 0, 0, 0);
-	COMMANDO(177, POSITION_SLEEPING, do_emote, 1, 1, 1, 1);
-	COMMANDO(178, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(179, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(180, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(181, POSITION_SLEEPING, do_action, 0, 0, 0, 0);
-	COMMANDO(182, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(183, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(184, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(185, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(186, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(187, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(188, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(189, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(190, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(191, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(192, POSITION_RESTING, do_shoot, 1, 1, 1, 1);
-	COMMANDO(193, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(194, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(195, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(196, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(197, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(198, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(199, POSITION_DEAD, do_brief, 0, 0, 0, 0);
-	COMMANDO(200, POSITION_DEAD, do_wiznet, IMO, IMO, IMO, IMO);
-	COMMANDO(201, POSITION_RESTING, do_consider, 0, 0, 0, 0);
-	COMMANDO(31, POSITION_RESTING, do_group, 1, 1, 1, 1);
-	COMMANDO(203, POSITION_DEAD, do_restore, IMO + 2, IMO + 2, IMO + 2,
-		 IMO + 2);
-	COMMANDO(204, POSITION_DEAD, do_return, 0, 0, 0, 0);
-	COMMANDO(205, POSITION_DEAD, do_switch, IMO + 2, IMO + 2, IMO + 2, IMO
-		 + 2);
-	COMMANDO(206, POSITION_RESTING, do_quaff, 0, 0, 0, 0);
-	COMMANDO(207, POSITION_RESTING, do_recite, 0, 0, 0, 0);
-	COMMANDO(208, POSITION_DEAD, do_users, 2, 2, 2, 2);
-	COMMANDO(239, POSITION_STANDING, do_flag, IMO + 1, IMO + 1, IMO + 1, IMO
-		 + 1);
-	COMMANDO(210, POSITION_SLEEPING, do_noshout, 1, 1, 1, 1);
-	COMMANDO(211, POSITION_SLEEPING, do_wizhelp, IMO, IMO, IMO, IMO);
-	COMMANDO(212, POSITION_DEAD, do_credits, 0, 0, 0, 0);
-	COMMANDO(213, POSITION_DEAD, do_compact, 0, 0, 0, 0);
-	COMMANDO(214, POSITION_DEAD, do_flick, IMO + 3, IMO + 3, IMO + 3, IMO
-		 + 3);
-	COMMANDO(215, POSITION_DEAD, do_wall, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
-	COMMANDO(216, POSITION_DEAD, do_set, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
-	COMMANDO(217, POSITION_DEAD, do_police, IMO + 3, IMO + 3, IMO + 3, IMO
-		 + 3);
-	COMMANDO(218, POSITION_DEAD, do_wizlock, IMO + 3, IMO + 3, IMO + 3,
-		 IMO + 3);
-	COMMANDO(219, POSITION_DEAD, do_noaffect, IMO + 1, IMO + 1, IMO + 1, IMO
-		 + 1);
-	COMMANDO(220, POSITION_DEAD, do_invis, IMO, IMO, IMO, IMO);
-	COMMANDO(221, POSITION_DEAD, do_notell, 0, 0, 0, 0);
-	COMMANDO(222, POSITION_DEAD, do_banish, IMO + 3, IMO + 3, IMO + 3, IMO
-		 + 3);
-	COMMANDO(223, POSITION_RESTING, do_reload, 1, 1, 1, 1);
-	COMMANDO(224, POSITION_DEAD, do_data, IMO, IMO, IMO, IMO);
-	COMMANDO(225, POSITION_DEAD, do_checkrent, IMO, IMO, IMO, IMO);
-	COMMANDO(26, POSITION_DEAD, do_chat, 10, 10, 10, 10);
-	COMMANDO(227, POSITION_DEAD, do_bank, 1, 1, 1, 1);
-	COMMANDO(228, POSITION_DEAD, do_bank, 1, 1, 1, 1);
-	COMMANDO(229, POSITION_DEAD, do_bank, 1, 1, 1, 1);
-	COMMANDO(230, POSITION_DEAD, do_sys, IMO, IMO, IMO, IMO);
-	COMMANDO(231, POSITION_DEAD, do_flag, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
-	COMMANDO(232, POSITION_DEAD, do_stat, IMO, IMO, IMO, IMO);
-	COMMANDO(233, POSITION_DEAD, do_stat, IMO, IMO, IMO, IMO);
-	COMMANDO(234, POSITION_FIGHTING, do_tornado, IMO, IMO, 20, 13);
-	COMMANDO(235, POSITION_FIGHTING, do_light_move, IMO, IMO, 1, IMO);
-	COMMANDO(236, POSITION_SLEEPING, do_title, 1, 1, 1, 1);
-	COMMANDO(237, POSITION_SLEEPING, do_report, 1, 1, 1, 1);
-	COMMANDO(238, POSITION_SLEEPING, do_spells, 1, 1, 1, 1);
-	COMMANDO(209, POSITION_FIGHTING, do_flash, IMO, IMO, 5, IMO);
-	COMMANDO(240, POSITION_FIGHTING, do_multi_kick, IMO, IMO, IMO, 17);
-	COMMANDO(241, POSITION_FIGHTING, do_demote,
-		 IMO + 3, IMO + 3, IMO + 3, IMO + 3);
-	COMMANDO(242, POSITION_DEAD, do_nochat, 1, 1, 1, 1);
-	COMMANDO(243, POSITION_FIGHTING, do_wimpy, 1, 1, 1, 1);
-	COMMANDO(244, POSITION_DEAD, do_gtell, 1, 1, 1, 1);
-	COMMANDO(245, POSITION_RESTING, do_send, 19, 19, 19, 19);
-	COMMANDO(246, POSITION_RESTING, do_write, 0, 0, 0, 0);
-	COMMANDO(247, POSITION_RESTING, do_post, 0, 0, 0, 0);
-	COMMANDO(248, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(249, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(250, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(251, POSITION_STANDING, do_action, 0, 0, 0, 0);
-	COMMANDO(252, POSITION_RESTING, do_look, 0, 0, 0, 0);
-	COMMANDO(253, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(254, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(255, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(256, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(257, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(258, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(259, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(260, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(261, POSITION_RESTING, do_action, 0, 0, 0, 0);
-	COMMANDO(262, POSITION_FIGHTING, do_assist, 0, 0, 0, 0);
-	COMMANDO(263, POSITION_RESTING, do_ungroup, 1, 1, 1, 1);
-	COMMANDO(264, POSITION_SLEEPING, do_wizards, 0, 0, 0, 0);
-	COMMANDO(265, POSITION_DEAD, do_hangul, 0, 0, 0, 0);
-	COMMANDO(266, POSITION_SLEEPING, do_news, 0, 0, 0, 0);
-	COMMANDO(267, POSITION_SLEEPING, do_version, IMO, IMO, IMO, IMO);
-	COMMANDO(268, POSITION_FIGHTING, do_disarm, IMO, IMO, 1, 10);
-	COMMANDO(269, POSITION_FIGHTING, do_shouryuken, IMO, IMO, IMO, 30);
-	COMMANDO(270, POSITION_FIGHTING, do_throw_object, IMO, IMO, 30, IMO);
-	COMMANDO(271, POSITION_FIGHTING, do_punch, IMO, IMO, 30, 25);
-	COMMANDO(272, POSITION_FIGHTING, do_assault, 1, 1, 1, 1);
-	COMMANDO(273, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
-	COMMANDO(274, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
-	COMMANDO(275, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
-	COMMANDO(276, POSITION_SLEEPING, do_cant, 10, 10, 10, 10);
-	COMMANDO(277, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
-	COMMANDO(278, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
-	COMMANDO(279, POSITION_STANDING, do_query, 10, 10, 10, 10);
-	COMMANDO(280, POSITION_STANDING, do_whistle, 15, 15, 15, 15);
-	COMMANDO(281, POSITION_FIGHTING, do_simultaneous, 15, 15, 15, 15);
-	COMMANDO(282, POSITION_FIGHTING, do_arrest, 15, 15, 15, 15);
-	COMMANDO(283, POSITION_FIGHTING, do_angry_yell, 20, 20, 20, 20);
-	COMMANDO(284, POSITION_FIGHTING, do_solace, 25, 25, 25, 25);
-	COMMANDO(285, POSITION_FIGHTING, do_unwield, 0, 0, 0, 0);
-	COMMANDO(286, POSITION_FIGHTING, do_unhold, 0, 0, 0, 0);
-	COMMANDO(287, POSITION_FIGHTING, do_temptation, 10, 10, 10, 10);
-	COMMANDO(288, POSITION_STANDING, do_shadow, 25, 25, 25, 25);
-	COMMANDO(289, POSITION_STANDING, do_smoke, 20, 20, 20, 20);
-	COMMANDO(290, POSITION_STANDING, do_inject, 20, 20, 20, 20);
-	COMMANDO(291, POSITION_SLEEPING, do_plan, 1, 1, 1, 1);
-	COMMANDO(292, POSITION_FIGHTING, do_power_bash, 15, 15, 15, 15);
-	COMMANDO(293, POSITION_FIGHTING, do_evil_strike, 25, 25, 25, 25);
-	COMMANDO(294, POSITION_STANDING, do_not_here, 1, 1, 1, 1);
-	COMMANDO(295, POSITION_FIGHTING, do_charge, 20, 20, 20, 20);
-	COMMANDO(296, POSITION_STANDING, do_solo, 1, 1, 1, 1);
-	COMMANDO(297, POSITION_STANDING, do_flag, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
-	COMMANDO(298, POSITION_FIGHTING, do_spin_bird_kick, IMO, IMO, IMO, 30);
-	COMMANDO(299, POSITION_STANDING, do_not_here, 1, 1, 1, 1);
-	COMMANDO(300, POSITION_SLEEPING, do_reply, 1, 1, 1, 1);
-	COMMANDO(302, POSITION_SLEEPING, do_quest, 10, 10, 10, 10);
-	COMMANDO(303, POSITION_SLEEPING, do_request, 10, 10, 10, 10);
-	COMMANDO(304, POSITION_SLEEPING, do_hint, 10, 10, 10, 10);
-	COMMANDO(305, POSITION_SLEEPING, do_not_here, 1, 1, 1, 1);
-	COMMANDO(306, POSITION_SLEEPING, do_not_here, 1, 1, 1, 1);
-	COMMANDO(307, POSITION_DEAD, do_wiznet, IMO, IMO, IMO, IMO);
-	COMMANDO(308, POSITION_SLEEPING, do_lastchat, 2, 2, 2, 2);
-	/* Challenge Room Quest System, Komo */
+    COMMANDO(2, POSITION_STANDING, do_move, 0, 0, 0, 0);
+    COMMANDO(3, POSITION_STANDING, do_move, 0, 0, 0, 0);
+    COMMANDO(4, POSITION_STANDING, do_move, 0, 0, 0, 0);
+    COMMANDO(5, POSITION_STANDING, do_move, 0, 0, 0, 0);
+    COMMANDO(6, POSITION_STANDING, do_move, 0, 0, 0, 0);
+    COMMANDO(7, POSITION_STANDING, do_enter, 0, 0, 0, 0);
+    COMMANDO(8, POSITION_RESTING, do_exits, 0, 0, 0, 0);
+    COMMANDO(9, POSITION_FIGHTING, do_kill, 0, 0, 0, 0);
+    COMMANDO(10, POSITION_RESTING, do_get, 0, 0, 0, 0);
+    COMMANDO(11, POSITION_RESTING, do_drink, 0, 0, 0, 0);
+    COMMANDO(12, POSITION_RESTING, do_eat, 0, 0, 0, 0);
+    COMMANDO(13, POSITION_RESTING, do_wear, 0, 0, 0, 0);
+    COMMANDO(14, POSITION_RESTING, do_wield, 0, 0, 0, 0);
+    COMMANDO(15, POSITION_RESTING, do_look, 0, 0, 0, 0);
+    COMMANDO(16, POSITION_DEAD, do_score, 0, 0, 0, 0);
+    COMMANDO(17, POSITION_RESTING, do_say, 0, 0, 0, 0);
+    COMMANDO(18, POSITION_RESTING, do_shout, 1, 1, 1, 1);
+    COMMANDO(19, POSITION_RESTING, do_tell, 0, 0, 0, 0);
+    COMMANDO(20, POSITION_DEAD, do_inventory, 0, 0, 0, 0);
+    COMMANDO(22, POSITION_STANDING, do_backstab, IMO, IMO, 1, IMO); /* jhpark */
+    COMMANDO(23, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(24, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(25, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(26, POSITION_DEAD, do_chat, 10, 10, 10, 10);
+    COMMANDO(27, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(28, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(29, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(30, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(31, POSITION_RESTING, do_group, 1, 1, 1, 1);
+    COMMANDO(32, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(33, POSITION_RESTING, do_insult, 0, 0, 0, 0);
+    COMMANDO(34, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(35, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(36, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(37, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(38, POSITION_DEAD, do_help, 0, 0, 0, 0);
+    COMMANDO(39, POSITION_DEAD, do_who, 0, 0, 0, 0);
+    COMMANDO(40, POSITION_SLEEPING, do_emote, 1, 1, 1, 1);
+    COMMANDO(41, POSITION_SLEEPING, do_echo, IMO, IMO, IMO, IMO);
+    COMMANDO(42, POSITION_RESTING, do_stand, 0, 0, 0, 0);
+    COMMANDO(43, POSITION_RESTING, do_sit, 0, 0, 0, 0);
+    COMMANDO(44, POSITION_RESTING, do_rest, 0, 0, 0, 0);
+    COMMANDO(45, POSITION_SLEEPING, do_sleep, 0, 0, 0, 0);
+    COMMANDO(46, POSITION_SLEEPING, do_wake, 0, 0, 0, 0);
+    COMMANDO(47, POSITION_RESTING, do_follow, 0, 0, 0, 0);
+    COMMANDO(48, POSITION_SLEEPING, do_trans, IMO + 1, IMO + 1, IMO + 1, IMO + 1);
+    COMMANDO(49, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(50, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(51, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(52, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(53, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(54, POSITION_SLEEPING, do_news, 0, 0, 0, 0);
+    COMMANDO(55, POSITION_SLEEPING, do_equipment, 0, 0, 0, 0);
+    COMMANDO(56, POSITION_STANDING, do_not_here, 0, 0, 0, 0);
+    COMMANDO(57, POSITION_STANDING, do_not_here, 0, 0, 0, 0);
+    COMMANDO(58, POSITION_STANDING, do_not_here, 0, 0, 0, 0);
+    COMMANDO(59, POSITION_STANDING, do_not_here, 0, 0, 0, 0);
+    COMMANDO(60, POSITION_RESTING, do_drop, 0, 0, 0, 0);
+    COMMANDO(61, POSITION_SLEEPING, do_goto, IMO, IMO, IMO, IMO);
+    COMMANDO(62, POSITION_RESTING, do_weather, 0, 0, 0, 0);
+    COMMANDO(63, POSITION_RESTING, do_read, 0, 0, 0, 0);
+    COMMANDO(64, POSITION_STANDING, do_pour, 0, 0, 0, 0);
+    COMMANDO(65, POSITION_RESTING, do_grab, 0, 0, 0, 0);
+    COMMANDO(66, POSITION_RESTING, do_remove, 0, 0, 0, 0);
+    COMMANDO(67, POSITION_RESTING, do_put, 0, 0, 0, 0);
+    COMMANDO(68, POSITION_DEAD, do_shutdow, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(69, POSITION_SLEEPING, do_save, 0, 0, 0, 0);
+    COMMANDO(70, POSITION_FIGHTING, do_hit, 0, 0, 0, 0);
+    COMMANDO(71, POSITION_SLEEPING, do_string, IMO, IMO, IMO, IMO);
+    COMMANDO(72, POSITION_RESTING, do_give, 0, 0, 0, 0);
+    COMMANDO(73, POSITION_DEAD, do_quit, 0, 0, 0, 0);
+    COMMANDO(74, POSITION_DEAD, do_stat, IMO, IMO, IMO, IMO);
+    COMMANDO(75, POSITION_DEAD, do_action, 0, 0, 0, 0);
+    COMMANDO(76, POSITION_DEAD, do_time, 0, 0, 0, 0);
+    COMMANDO(77, POSITION_DEAD, do_load, IMO + 2, IMO + 2, IMO + 2, IMO + 2);
+    COMMANDO(78, POSITION_DEAD, do_purge, IMO + 1, IMO + 1, IMO + 1, IMO + 1);
+    COMMANDO(79, POSITION_DEAD, do_shutdown, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(80, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(82, POSITION_RESTING, do_replacerent, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(83, POSITION_RESTING, do_whisper, 0, 0, 0, 0);
+    COMMANDO(84, POSITION_SITTING, do_cast, 1, 1, 1, 1);
+    COMMANDO(85, POSITION_DEAD, do_at, IMO, IMO, IMO, IMO);
+    COMMANDO(86, POSITION_RESTING, do_ask, 1, 1, 1, 1);
+    COMMANDO(87, POSITION_RESTING, do_order, 1, 1, 1, 1);
+    COMMANDO(88, POSITION_RESTING, do_sip, 0, 0, 0, 0);
+    COMMANDO(89, POSITION_RESTING, do_taste, 0, 0, 0, 0);
+    COMMANDO(90, POSITION_DEAD, do_snoop, IMO, IMO, IMO, IMO);
+    COMMANDO(91, POSITION_SLEEPING, do_force, IMO + 2, IMO + 2, IMO + 2, IMO + 2);
+    COMMANDO(92, POSITION_STANDING, do_rent, 1, 1, 1, 1);
+    COMMANDO(93, POSITION_RESTING, do_junk, 1, 1, 1, 1);
+    COMMANDO(94, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(95, POSITION_DEAD, do_advance, 1, 1, 1, 1);
+    COMMANDO(96, POSITION_SITTING, do_action, 0, 0, 0, 0);
+    COMMANDO(97, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(98, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(99, POSITION_SITTING, do_open, 0, 0, 0, 0);
+    COMMANDO(100, POSITION_SITTING, do_close, 0, 0, 0, 0);
+    COMMANDO(101, POSITION_SITTING, do_lock, 0, 0, 0, 0);
+    COMMANDO(102, POSITION_SITTING, do_unlock, 0, 0, 0, 0);
+    COMMANDO(103, POSITION_STANDING, do_leave, 0, 0, 0, 0);
+    COMMANDO(104, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(105, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(106, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(107, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(108, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(109, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(110, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(111, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(151, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(113, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(114, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(115, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(116, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(117, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(118, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(119, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(120, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(121, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(122, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(123, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(124, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(125, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(126, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(127, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(128, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(129, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(130, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(131, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(132, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(133, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(134, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(135, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(136, POSITION_SLEEPING, do_action, 0, 0, 0, 0);
+    COMMANDO(137, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(138, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(139, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(140, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(141, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(142, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(143, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(144, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(145, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(146, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(147, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(148, POSITION_STANDING, do_action, IMO, IMO, IMO, IMO);
+    COMMANDO(149, POSITION_STANDING, do_extractrent, IMO + 2, IMO + 2, IMO + 2, IMO + 2);
+    COMMANDO(150, POSITION_RESTING, do_grab, 1, 1, 1, 1);
+    COMMANDO(112, POSITION_FIGHTING, do_flee, 1, 1, 1, 1);
+    COMMANDO(152, POSITION_STANDING, do_sneak, IMO, IMO, 1, IMO);
+    COMMANDO(153, POSITION_RESTING, do_hide, IMO, IMO, 1, IMO);
+    COMMANDO(154, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(155, POSITION_STANDING, do_pick, 20, 20, 1, 10);
+    COMMANDO(156, POSITION_STANDING, do_steal, IMO, IMO, 1, IMO);
+    COMMANDO(157, POSITION_FIGHTING, do_bash, IMO, IMO, IMO, 1);
+    COMMANDO(158, POSITION_FIGHTING, do_rescue, 30, 30, 10, 1);
+    COMMANDO(159, POSITION_FIGHTING, do_kick, IMO, IMO, IMO, 1);
+    COMMANDO(160, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(161, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(162, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(163, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(164, POSITION_RESTING, do_practice, 1, 1, 1, 1);
+    COMMANDO(165, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(166, POSITION_SITTING, do_examine, 0, 0, 0, 0);
+    COMMANDO(167, POSITION_RESTING, do_get, 0, 0, 0, 0);
+    COMMANDO(169, POSITION_RESTING, do_sayh, 0, 0, 0, 0);
+    COMMANDO(170, POSITION_RESTING, do_practice, 1, 1, 1, 1);
+    COMMANDO(171, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(172, POSITION_SITTING, do_use, 1, 1, 1, 1);
+    COMMANDO(173, POSITION_DEAD, do_where, 1, 1, 1, 1);
+    COMMANDO(174, POSITION_DEAD, do_levels, 0, 0, 0, 0);
+    COMMANDO(175, POSITION_DEAD, do_reroll, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(176, POSITION_SITTING, do_action, 0, 0, 0, 0);
+    COMMANDO(177, POSITION_SLEEPING, do_emote, 1, 1, 1, 1);
+    COMMANDO(178, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(179, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(180, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(181, POSITION_SLEEPING, do_action, 0, 0, 0, 0);
+    COMMANDO(182, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(183, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(184, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(185, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(186, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(187, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(188, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(189, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(190, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(191, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(192, POSITION_RESTING, do_shoot, 1, 1, 1, 1);
+    COMMANDO(193, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(194, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(195, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(196, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(197, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(198, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(199, POSITION_DEAD, do_brief, 0, 0, 0, 0);
+    COMMANDO(200, POSITION_DEAD, do_wiznet, IMO, IMO, IMO, IMO);
+    COMMANDO(201, POSITION_RESTING, do_consider, 0, 0, 0, 0);
+    COMMANDO(202, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(203, POSITION_DEAD, do_restore, IMO + 2, IMO + 2, IMO + 2, IMO + 2);
+    COMMANDO(204, POSITION_DEAD, do_return, 0, 0, 0, 0);
+    COMMANDO(205, POSITION_DEAD, do_switch, IMO + 2, IMO + 2, IMO + 2, IMO + 2);
+    COMMANDO(206, POSITION_RESTING, do_quaff, 0, 0, 0, 0);
+    COMMANDO(207, POSITION_RESTING, do_recite, 0, 0, 0, 0);
+    COMMANDO(208, POSITION_DEAD, do_users, 2, 2, 2, 2);
+    COMMANDO(209, POSITION_FIGHTING, do_flash, IMO, IMO, 5, IMO);
+    COMMANDO(210, POSITION_SLEEPING, do_noshout, 1, 1, 1, 1);
+    COMMANDO(211, POSITION_SLEEPING, do_wizhelp, IMO, IMO, IMO, IMO);
+    COMMANDO(212, POSITION_DEAD, do_credits, 0, 0, 0, 0);
+    COMMANDO(213, POSITION_DEAD, do_compact, 0, 0, 0, 0);
+    COMMANDO(214, POSITION_DEAD, do_flick, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(215, POSITION_DEAD, do_wall, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(216, POSITION_DEAD, do_set, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(217, POSITION_DEAD, do_police, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(218, POSITION_DEAD, do_siteban, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(219, POSITION_DEAD, do_noaffect, IMO + 1, IMO + 1, IMO + 1, IMO + 1);
+    COMMANDO(220, POSITION_DEAD, do_invis, IMO, IMO, IMO, IMO);
+    COMMANDO(221, POSITION_DEAD, do_notell, 0, 0, 0, 0);
+    COMMANDO(222, POSITION_DEAD, do_banish, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(223, POSITION_RESTING, do_reload, 1, 1, 1, 1);
+    COMMANDO(224, POSITION_DEAD, do_data, IMO, IMO, IMO, IMO);
+    COMMANDO(225, POSITION_DEAD, do_checkrent, IMO, IMO, IMO, IMO);
+    COMMANDO(226, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(227, POSITION_DEAD, do_bank, 1, 1, 1, 1);
+    COMMANDO(228, POSITION_DEAD, do_bank, 1, 1, 1, 1);
+    COMMANDO(229, POSITION_DEAD, do_bank, 1, 1, 1, 1);
+    COMMANDO(230, POSITION_DEAD, do_sys, IMO, IMO, IMO, IMO);
+    COMMANDO(231, POSITION_DEAD, do_flag, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(232, POSITION_DEAD, do_stat, IMO, IMO, IMO, IMO);
+    COMMANDO(233, POSITION_DEAD, do_stat, IMO, IMO, IMO, IMO);
+    COMMANDO(234, POSITION_FIGHTING, do_tornado, IMO, IMO, 20, 13);
+    COMMANDO(235, POSITION_FIGHTING, do_light_move, IMO, IMO, 1, IMO);
+    COMMANDO(236, POSITION_SLEEPING, do_title, 1, 1, 1, 1);
+    COMMANDO(237, POSITION_SLEEPING, do_report, 1, 1, 1, 1);
+    COMMANDO(238, POSITION_SLEEPING, do_spells, 1, 1, 1, 1);
+    COMMANDO(239, POSITION_STANDING, do_flag, IMO + 1, IMO + 1, IMO + 1, IMO + 1);
+    COMMANDO(240, POSITION_FIGHTING, do_multi_kick, IMO, IMO, IMO, 17);
+    COMMANDO(241, POSITION_FIGHTING, do_demote, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(242, POSITION_DEAD, do_nochat, 1, 1, 1, 1);
+    COMMANDO(243, POSITION_FIGHTING, do_wimpy, 1, 1, 1, 1);
+    COMMANDO(244, POSITION_DEAD, do_gtell, 1, 1, 1, 1);
+    COMMANDO(245, POSITION_RESTING, do_send, 19, 19, 19, 19);
+    COMMANDO(246, POSITION_RESTING, do_write, 0, 0, 0, 0);
+    COMMANDO(247, POSITION_RESTING, do_post, 0, 0, 0, 0);
+    COMMANDO(248, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(249, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(250, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(251, POSITION_STANDING, do_action, 0, 0, 0, 0);
+    COMMANDO(252, POSITION_RESTING, do_look, 0, 0, 0, 0);
+    COMMANDO(253, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(254, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(255, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(256, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(257, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(258, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(259, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(260, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(261, POSITION_RESTING, do_action, 0, 0, 0, 0);
+    COMMANDO(262, POSITION_FIGHTING, do_assist, 0, 0, 0, 0);
+    COMMANDO(263, POSITION_RESTING, do_ungroup, 1, 1, 1, 1);
+    COMMANDO(264, POSITION_SLEEPING, do_wizards, 0, 0, 0, 0);
+    COMMANDO(265, POSITION_DEAD, do_hangul, 0, 0, 0, 0);
+    COMMANDO(266, POSITION_SLEEPING, do_news, 0, 0, 0, 0);
+    COMMANDO(267, POSITION_SLEEPING, do_version, IMO, IMO, IMO, IMO);
+    COMMANDO(268, POSITION_FIGHTING, do_disarm, IMO, IMO, 1, 10);
+    COMMANDO(269, POSITION_FIGHTING, do_shouryuken, IMO, IMO, IMO, 30);
+    COMMANDO(270, POSITION_FIGHTING, do_throw_object, IMO, IMO, 30, IMO);
+    COMMANDO(271, POSITION_FIGHTING, do_punch, IMO, IMO, 30, 25);
+    COMMANDO(272, POSITION_FIGHTING, do_assault, 1, 1, 1, 1);
+    COMMANDO(273, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
+    COMMANDO(274, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
+    COMMANDO(275, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
+    COMMANDO(276, POSITION_SLEEPING, do_cant, 10, 10, 10, 10);
+    COMMANDO(277, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
+    COMMANDO(278, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
+    COMMANDO(279, POSITION_STANDING, do_query, 10, 10, 10, 10);
+    COMMANDO(280, POSITION_STANDING, do_whistle, 15, 15, 15, 15);
+    COMMANDO(281, POSITION_FIGHTING, do_simultaneous, 15, 15, 15, 15);
+    COMMANDO(282, POSITION_FIGHTING, do_arrest, 15, 15, 15, 15);
+    COMMANDO(283, POSITION_FIGHTING, do_angry_yell, 20, 20, 20, 20);
+    COMMANDO(284, POSITION_FIGHTING, do_solace, 25, 25, 25, 25);
+    COMMANDO(285, POSITION_FIGHTING, do_unwield, 0, 0, 0, 0);
+    COMMANDO(286, POSITION_FIGHTING, do_unhold, 0, 0, 0, 0);
+    COMMANDO(287, POSITION_FIGHTING, do_temptation, 10, 10, 10, 10);
+    COMMANDO(288, POSITION_STANDING, do_shadow, 25, 25, 25, 25);
+    COMMANDO(289, POSITION_STANDING, do_smoke, 20, 20, 20, 20);
+    COMMANDO(290, POSITION_STANDING, do_inject, 20, 20, 20, 20);
+    COMMANDO(291, POSITION_SLEEPING, do_plan, 1, 1, 1, 1);
+    COMMANDO(292, POSITION_FIGHTING, do_power_bash, 15, 15, 15, 15);
+    COMMANDO(293, POSITION_FIGHTING, do_evil_strike, 25, 25, 25, 25);
+    COMMANDO(294, POSITION_STANDING, do_not_here, 1, 1, 1, 1);
+    COMMANDO(295, POSITION_FIGHTING, do_charge, 20, 20, 20, 20);
+    COMMANDO(296, POSITION_STANDING, do_solo, 1, 1, 1, 1);
+    COMMANDO(297, POSITION_STANDING, do_flag, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(298, POSITION_FIGHTING, do_spin_bird_kick, IMO, IMO, IMO, 30);
+    COMMANDO(299, POSITION_STANDING, do_not_here, 1, 1, 1, 1);
+    COMMANDO(300, POSITION_SLEEPING, do_reply, 1, 1, 1, 1);
+    COMMANDO(302, POSITION_SLEEPING, do_quest, 10, 10, 10, 10);
+    COMMANDO(303, POSITION_SLEEPING, do_request, 10, 10, 10, 10);
+    COMMANDO(304, POSITION_SLEEPING, do_hint, 10, 10, 10, 10);
+    COMMANDO(305, POSITION_SLEEPING, do_not_here, 1, 1, 1, 1);
+    COMMANDO(306, POSITION_SLEEPING, do_not_here, 1, 1, 1, 1);
+    COMMANDO(307, POSITION_DEAD, do_wiznet, IMO, IMO, IMO, IMO);
+    COMMANDO(308, POSITION_SLEEPING, do_lastchat, 2, 2, 2, 2);
+    /* Challenge Room Quest System, Komo */
     COMMANDO(309, POSITION_STANDING, do_challenge, 1, 1, 1, 1);
     COMMANDO(310, POSITION_STANDING, do_begin, 1, 1, 1, 1);
     COMMANDO(311, POSITION_STANDING, do_rejoin, 1, 1, 1, 1);
     COMMANDO(312, POSITION_DEAD, do_colortest, 1, 1, 1, 1); /* 색상 출력 미리보기, 251022 */
-	COMMANDO(313, POSITION_DEAD, do_zreload, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* zone reload, 251120 */
+    COMMANDO(313, POSITION_DEAD, do_zreload, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* zone reload, 251120 */
     COMMANDO(314, POSITION_DEAD, do_wreload, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* world reload, 251121 */
     COMMANDO(315, POSITION_DEAD, do_zonelist, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* zonelist, 251121 */
-    COMMANDO(316, POSITION_RESTING, do_challenge_abort, 1, 1, 1, 1); /* 도전 포기, 251129 by Komo */
 }
 
 void query_status(struct descriptor_data *d)
@@ -1225,10 +1402,7 @@ int _parse_name(char *arg, char *name)
 			check[i] = toupper(*name);
 	}
 	check[i] = '\0';
-	/*for (i=0; i<6; i++)
-	   if(!strcmp(check,illegal_name[i])) return(1);
-	 */
-
+	
 	if (!i)
 		return (1);
 
@@ -1248,7 +1422,9 @@ void nanny(struct descriptor_data *d, char *arg)
 	struct descriptor_data *k;
 	extern struct descriptor_data *descriptor_list;
 	extern int nonewplayers;
-	
+	void do_look(struct char_data *ch, char *argument, int cmd);
+    void load_char_objs(struct char_data * ch);
+    int load_char(char *name, struct char_file_u *char_element);
 	char improved_stat[2];
 	int i;
 	char new_connection[180];
@@ -1269,8 +1445,8 @@ void nanny(struct descriptor_data *d, char *arg)
 				SEND_TO_Q("Name : ", d);
 				return;
 			}
-			sprintf(new_connection, "%s is trying to play", tmp_name);
-			mudlog(new_connection);
+			snprintf(new_connection, sizeof(new_connection), "%s is trying to play", tmp_name);
+			log(new_connection);
 			/* Check if already playing */
 			for (k = descriptor_list; k; k = k->next) {
 				if ((k->character != d->character) && k->character) {
@@ -1364,13 +1540,13 @@ void nanny(struct descriptor_data *d, char *arg)
 					tmp_ch->desc = d;
 					d->character = tmp_ch;
 					tmp_ch->specials.timer = 0;
-					STATE(d) = CON_PLYNG;
+					STATE(d) = CON_PLAYING;
 					act("&u$n has reconnected.&n", TRUE, tmp_ch, 0, 0, TO_ROOM);
 					snprintf(buf, sizeof(buf),
 						"%s(%d)[%s] has reconnected.",
 						GET_NAME(d->character),
 						GET_LEVEL(d->character), d->host);
-					mudlog(buf);
+					log(buf);
 					return;
 				}
 			}
@@ -1478,7 +1654,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		if (STATE(d) != CON_QCLASS) {
 			snprintf(buf, sizeof(buf), "%s [%s] new player.", GET_NAME(d->character),
 				d->host);
-			mudlog(buf);
+			log(buf);
 			SEND_TO_Q("\n\r&C*** PRESS RETURN : &n", d);
 		}
 		break;
@@ -1532,7 +1708,7 @@ void nanny(struct descriptor_data *d, char *arg)
 			unstash_char(d->character, 0);
 			act("$n has entered the game.",
 			    TRUE, d->character, 0, 0, TO_ROOM);
-			STATE(d) = CON_PLYNG;
+			STATE(d) = CON_PLAYING;
 			if (!GET_LEVEL(d->character))
 				do_start(d->character);
 			do_look(d->character, "", 15);
@@ -1660,8 +1836,7 @@ void nanny(struct descriptor_data *d, char *arg)
 			case 'i':
 			case 'd':
 			case 'c':
-				if (!improve_status(d->character,
-						    improved_stat[i]))
+				if (!improve_status(d->character, improved_stat[i]))
 					SEND_TO_Q("\n\rAlas! you lost chance...", d);
 				break;
 			default:
@@ -1704,7 +1879,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		}
 		break;
 	default:
-		mudlog("Nanny: illegal state of con'ness");
+		log("Nanny: illegal state of con'ness");
 		abort();
 		break;
 	}

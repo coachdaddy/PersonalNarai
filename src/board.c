@@ -41,7 +41,7 @@ struct board_data *init_a_board(struct char_data *ch);
 struct board_data *find_board(struct char_data *ch);
 void load_board(struct board_data *cb);
 void save_board(struct board_data *cb);
-void mudlog(const char *str);
+
 int show_board(struct char_data *ch, struct board_data *cb, char *arg);
 int post_board(struct char_data *ch, struct board_data *cb, char *arg);
 int remove_board(struct char_data *ch, struct board_data *cb, char *arg);

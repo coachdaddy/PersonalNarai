@@ -19,6 +19,8 @@ extern struct time_data time_info;
 extern struct room_data *world;      /* In db.c */
 extern char *spells[];               /* defined in spell_parser.c */
 
+void send_to_char(char *messg, struct char_data *ch); /* in comm.c */
+
 
 /**************************************************************************
  * Main Utility Functions                            *
@@ -384,8 +386,6 @@ void process_color_string(const char *input, char *output, int max_out_len)
         }
     }
 
-    /* [추가, 251130] 버퍼가 꽉 차서 루프가 끝난 경우, 
-       마지막이 불완전한 한글 바이트인지 확인하고 정리 */
     if (remaining_len <= 0) {
         int backtrack = 0;
         char *end_ptr = out_ptr; // 현재 끝 위치
@@ -530,73 +530,3 @@ const char *get_char_name(struct char_data *ch, struct char_data *viewer)
     // NPC면 short_desc, PC면 name 반환
     return IS_NPC(ch) ? ch->player.short_descr : GET_NAME(ch);
 }
-
-// 문자열 끝에 \r 또는 \n이 있을 때만 안전하게 제거하는 함수, 251130 by Komo
-void prune_crlf(char *txt) {
-    int len = strlen(txt);
-    while (len > 0 && (txt[len-1] == '\n' || txt[len-1] == '\r')) {
-        txt[--len] = '\0';
-    }
-}
-
-
-/*
- * UTF-8 문자열을 바이트 길이(n)에 맞춰 안전하게 복사하는 함수
- * 251130 by Komo
- */
-void utf8_safe_strncpy(char *dest, const char *src, size_t n) {
-    
-    strncpy(dest, src, n - 1);
-    dest[n - 1] = '\0';
-
-    size_t len = strlen(dest);
-    
-    // UTF-8은 1xxxxxxx 형태로 시작하므로, 최상위 비트 확인
-    int backtrack = 0;
-    while (backtrack < 4 && len > 0) { // 한글은 보통 3바이트, 최대 4바이트까지 검사
-        unsigned char ch = (unsigned char)dest[len - 1];
-
-        if ((ch & 0x80) == 0) break;
-
-        if ((ch & 0xC0) == 0xC0) {
-            dest[len - 1] = '\0';
-            break;
-        }
-        
-        dest[len - 1] = '\0';
-        len--;
-        backtrack++;
-    }
-	dest[len] = '\0';
-}
-
-
-/*
- * BSD 표준 함수가 없는 리눅스 환경용 strlcpy, 251208
- */
-#ifndef HAVE_STRLCPY /* 충돌 방지 */
-size_t strlcpy(char *dst, const char *src, size_t siz)
-{
-    char *d = dst;
-    const char *s = src;
-    size_t n = siz;
-
-    /* Copy as many bytes as will fit */
-    if (n != 0) {
-        while (--n != 0) {
-            if ((*d++ = *s++) == '\0')
-                break;
-        }
-    }
-
-    /* Not enough room in dst, add NUL and traverse rest of src */
-    if (n == 0) {
-        if (siz != 0)
-            *d = '\0';      /* NUL-terminate dst */
-        while (*s++)
-            ;
-    }
-
-    return (s - src - 1);   /* count does not include NUL */
-}
-#endif

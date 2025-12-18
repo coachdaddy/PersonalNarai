@@ -1,4 +1,3 @@
-
 /*  Define for magic weapon */
 #define WEAPON_SMASH 1
 #define WEAPON_FLAME 2

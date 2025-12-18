@@ -18,12 +18,24 @@
 
 #include "guild_list.h"
 #include "magic_weapon.h"
+#include "prototypes.h"
 
 /* Extern structures */
 extern struct room_data *world;
 extern struct obj_data *object_list;
 extern struct char_data *character_list;
 extern struct index_data *mob_index;
+
+/* Extern procedures */
+void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype);
+bool saves_spell(struct char_data *ch, sh_int spell);
+int dice(int number, int size);             /* in utility.c */
+int number(int from, int to);
+void hit(struct char_data *ch, struct char_data *victim, int type);
+void sprinttype(int type, char *name[], char *res);
+void sprintbit (long vector, char *name[], char *res);
+void spell_sanctuary(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
+
 
 /* Offensive Spells */
 
@@ -47,15 +59,19 @@ void spell_chill_touch(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 	int dam;
-	static int dam_each[] =
-	{0,
-	 20, 20, 25, 25, 25, 30, 30, 30, 30, 30, 
-	 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
-	 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 
-	 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-	 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
-	 40, 40, 40, 40, 40, 40, 40, 40, 40, 40
-	};
+
+    void affect_join(struct char_data *ch, struct affected_type *af, bool avg_dur, bool avg_mod);
+
+	static int dam_each[] = {
+        0,
+        20, 20, 25, 25, 25, 30, 30, 30, 30, 30, 
+        30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
+        35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 
+        35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+        40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+        40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+        50, 50, 50, 50, 50
+    };
 
 	INCREASE_SKILLED2(ch, victim, SPELL_CHILL_TOUCH);
 	dam = number(dam_each[(int)level] >> 1, dam_each[(int)level] << 1);
@@ -76,15 +92,16 @@ void spell_burning_hands(byte level, struct char_data *ch,
 			 struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
-	static int dam_each[] =
-	{0,
-	 30, 30, 35, 35, 35, 40, 40, 40, 40, 40, 
-	 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
-	 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 
-	 45, 45, 45, 45, 45, 45, 45, 45, 45, 45,
-	 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-	 60, 60, 60, 60, 60, 60, 60, 60, 60, 60
-	};
+	static int dam_each[] = {
+        0,
+        30, 30, 35, 35, 35, 40, 40, 40, 40, 40,
+        40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+        45, 45, 45, 45, 45, 45, 45, 45, 45, 45,
+        45, 45, 45, 45, 45, 45, 45, 45, 45, 45,
+        50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+        60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+        60, 60, 60, 60, 60
+    };
 
 	INCREASE_SKILLED2(ch, victim, SPELL_BURNING_HANDS);
 	dam = number(dam_each[(int)level] >> 1, dam_each[(int)level] << 1);
@@ -99,14 +116,15 @@ void spell_shocking_grasp(byte level, struct char_data *ch,
 			  struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
-	static int dam_each[] =
-	{0,
-	 40, 40, 45, 45, 45, 50, 50, 50, 50, 50, 
-	 50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-	 55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 
-	 55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
-	 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
-	 70, 70, 70, 70, 70, 70, 70, 70, 70, 70
+	static int dam_each[] = {
+        0,
+        40, 40, 45, 45, 45, 50, 50, 50, 50, 50, 
+        50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
+        55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 
+        55, 55, 55, 55, 55, 55, 55, 55, 55, 55,
+        60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+        70, 70, 70, 70, 70, 70, 70, 70, 70, 70,
+        99, 99, 99, 99, 99
 	};
 
 	INCREASE_SKILLED2(ch, victim, SPELL_SHOCKING_GRASP);
@@ -145,15 +163,16 @@ void spell_color_spray(byte level, struct char_data *ch,
 		       struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
-	static int dam_each[] =
-	{0,
-	 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 
-	 120, 120, 120, 120, 120, 130, 130, 130, 130, 130, 
-	 140, 140, 140, 140, 140, 140, 140, 140, 140, 140, 
-	 150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 
-	 160, 160, 160, 160, 160, 160, 160, 160, 160, 160, 
-	 170, 170, 170, 170, 170, 180, 180, 180, 180, 180
-	};
+	static int dam_each[] = {
+        0,
+        100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 
+        120, 120, 120, 120, 120, 130, 130, 130, 130, 130, 
+        140, 140, 140, 140, 140, 140, 140, 140, 140, 140, 
+        150, 150, 150, 150, 150, 150, 150, 150, 150, 150, 
+        160, 160, 160, 160, 160, 160, 160, 160, 160, 160, 
+        170, 170, 170, 170, 170, 180, 180, 180, 180, 180,
+        200, 200, 200, 200, 200
+    };
 
 	INCREASE_SKILLED2(ch, victim, SPELL_COLOUR_SPRAY);
 	dam = number(dam_each[(int)level], dam_each[(int)level] << 2);	/* 1 */
@@ -269,16 +288,19 @@ void spell_sunburst(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
+	void spell_blindness (byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
+    char buf[MAX_STRING_LENGTH];
 
-	static int dam_each[] =
-	{0,
-	 400, 400, 400, 400, 400, 440, 440, 440, 440, 440, 
-	 460, 460, 460, 460, 460, 480, 480, 480, 480, 480, 
-	 500, 500, 500, 500, 500, 520, 520, 520, 520, 520, 
-	 540, 540, 540, 540, 540, 560, 560, 560, 560, 560, 
-	 580, 580, 580, 580, 580, 600, 600, 600, 600, 600, 
-	 640, 640, 640, 640, 640, 680, 680, 680, 680, 680
-	};
+    static int dam_each[] = {
+        0,
+        400, 400, 400, 400, 400, 440, 440, 440, 440, 440, 
+        460, 460, 460, 460, 460, 480, 480, 480, 480, 480, 
+        500, 500, 500, 500, 500, 520, 520, 520, 520, 520, 
+        540, 540, 540, 540, 540, 560, 560, 560, 560, 560, 
+        580, 580, 580, 580, 580, 600, 600, 600, 600, 600, 
+        640, 640, 640, 640, 640, 680, 680, 680, 680, 680,
+        800, 800, 800, 800, 800
+    };
 
 	if (!ch || !victim) return;
 
@@ -288,10 +310,10 @@ void spell_sunburst(byte level, struct char_data *ch,
 	if (saves_spell(victim, SAVING_SPELL))
 		dam >>= 1;
 
-	if (number(1, 15) == 1) { 
-		spell_blindness(level, ch, victim, 0);
-		DEBUG_LOG("DEBUG: sunburst: %d ", dam);
-	}
+	if (number(1, 15) == 1)
+        spell_blindness(level, ch, victim, 0);
+    // sprintf(buf, "DEBUG: sunburst: %d", dam);
+    log(buf);
 
 	damage(ch, victim, dam, SPELL_SUNBURST);
 }
@@ -397,8 +419,7 @@ void spell_earthquake(byte level, struct char_data *ch,
 	dam = dice(level, (level >> 2) + GET_SKILLED(ch, SPELL_EARTHQUAKE));
 
 	send_to_char("The earth trembles beneath your feet!\n\r", ch);
-	act
-	    ("$n makes the earth tremble and shiver\n\rYou fall, and hit yourself!",
+	act("$n makes the earth tremble and shiver\n\rYou fall, and hit yourself!",
 	     FALSE, ch, 0, 0, TO_ROOM);
 	for (tmp_victim = character_list; tmp_victim; tmp_victim = temp) {
 		temp = tmp_victim->next;
@@ -426,6 +447,8 @@ void spell_all_heal(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
 	struct char_data *tmp_victim, *temp;
+	void spell_heal(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
+
 
 	INCREASE_SKILLED2(ch, ch, SPELL_ALL_HEAL);
 
@@ -447,6 +470,7 @@ void spell_sanctuary_cloud(byte level, struct char_data *ch,
 			   struct char_data *victim, struct obj_data *obj)
 {
 	struct char_data *tmp_victim, *temp;
+	void spell_heal(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
 
 	INCREASE_SKILLED2(ch, ch, SPELL_SANCTUARY_CLOUD);
 
@@ -677,20 +701,17 @@ void spell_identify(byte level, struct char_data *ch,
 				obj->obj_flags.value[0]);
 			send_to_char_han(buf, bufh, ch);
 			if (obj->obj_flags.value[1] >= 1) {
-				sprinttype(obj->obj_flags.value[1] - 1,
-					   spells, buf);
+				sprinttype(obj->obj_flags.value[1] - 1, spells, buf);
 				strcat(buf, "\n\r");
 				send_to_char(buf, ch);
 			}
 			if (obj->obj_flags.value[2] >= 1) {
-				sprinttype(obj->obj_flags.value[2] - 1,
-					   spells, buf);
+				sprinttype(obj->obj_flags.value[2] - 1, spells, buf);
 				strcat(buf, "\n\r");
 				send_to_char(buf, ch);
 			}
 			if (obj->obj_flags.value[3] >= 1) {
-				sprinttype(obj->obj_flags.value[3] - 1,
-					   spells, buf);
+				sprinttype(obj->obj_flags.value[3] - 1, spells, buf);
 				strcat(buf, "\n\r");
 				send_to_char(buf, ch);
 			}
@@ -709,8 +730,7 @@ void spell_identify(byte level, struct char_data *ch,
 			send_to_char_han(buf, bufh, ch);
 
 			if (obj->obj_flags.value[3] >= 1) {
-				sprinttype(obj->obj_flags.value[3] - 1,
-					   spells, buf);
+				sprinttype(obj->obj_flags.value[3] - 1, spells, buf);
 				strcat(buf, "\n\r");
 				send_to_char(buf, ch);
 			}
@@ -719,7 +739,7 @@ void spell_identify(byte level, struct char_data *ch,
 		case ITEM_FIREWEAPON:
 			snprintf(buf, sizeof(buf), "Damage Dice is '%dD%d'\n\r",
 				obj->obj_flags.value[1], obj->obj_flags.value[2]);
-			snprintf(bufh, sizeof(bufh), "Damage Dice 는 '%dD%d'\n\r",
+			snprintf(bufh, sizeof(bufh), "Damage Dice는 '%dD%d'\n\r",
 				obj->obj_flags.value[1], obj->obj_flags.value[2]);
 			send_to_char_han(buf, bufh, ch);
 			if (obj->obj_flags.gpd) {
@@ -916,8 +936,7 @@ void spell_frost_breath(byte level, struct char_data *ch,
 	if (number(0, IMO) < GET_LEVEL(ch)) {
 		if (!saves_spell(victim, SAVING_BREATH)) {
 			for (frozen = victim->carrying;
-			     frozen && (frozen->obj_flags.type_flag !=
-			     ITEM_SCROLL) &&
+			     frozen && (frozen->obj_flags.type_flag != ITEM_SCROLL) &&
 			     (frozen->obj_flags.type_flag != ITEM_WAND) &&
 			     (frozen->obj_flags.type_flag != ITEM_STAFF) &&
 			     (frozen->obj_flags.type_flag != ITEM_NOTE) &&
@@ -947,8 +966,7 @@ void spell_gas_breath(byte level, struct char_data *ch,
 	if (number(0, IMO) < GET_LEVEL(ch)) {
 		if (!saves_spell(victim, SAVING_BREATH)) {
 			for (melt = victim->carrying;
-			     melt && (melt->obj_flags.type_flag !=
-			     ITEM_SCROLL) &&
+			     melt && (melt->obj_flags.type_flag != ITEM_SCROLL) &&
 			     (melt->obj_flags.type_flag != ITEM_WAND) &&
 			     (melt->obj_flags.type_flag != ITEM_STAFF) &&
 			     (melt->obj_flags.type_flag != ITEM_NOTE) &&
@@ -978,8 +996,7 @@ void spell_lightning_breath(byte level, struct char_data *ch,
 	if (number(0, IMO) < GET_LEVEL(ch)) {
 		if (!saves_spell(victim, SAVING_BREATH)) {
 			for (explode = victim->carrying;
-			     explode && (explode->obj_flags.type_flag !=
-			     ITEM_SCROLL) &&
+			     explode && (explode->obj_flags.type_flag != ITEM_SCROLL) &&
 			     (explode->obj_flags.type_flag != ITEM_WAND) &&
 			     (explode->obj_flags.type_flag != ITEM_STAFF) &&
 			     (explode->obj_flags.type_flag != ITEM_NOTE) &&

@@ -18,13 +18,30 @@
 #define SPELL_LEARN_MAX	120
 
 #define READ_TITLE(ch) (GET_SEX(ch) == SEX_MALE ?   \
-  titles[(int)GET_CLASS(ch) - 1][(int) GET_LEVEL(ch)].title_m :  \
-  titles[(int)GET_CLASS(ch) - 1][(int) GET_LEVEL(ch)].title_f)
+  titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_m :  \
+  titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_f)
 
 extern struct char_data *character_list;
 extern struct obj_data *object_list;
 extern struct title_type titles[4][IMO + 4];
 extern struct room_data *world;
+
+/* External procedures */
+int move_stashfile_safe(char *victim);                                                   // 251024
+void update_pos(struct char_data *victim);                                               /* in fight.c */
+void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype); /*    do      */
+struct time_info_data age(struct char_data *ch);
+int number(int from, int to);
+int dice(int num, int size);            /* in utility.c */
+void stop_fighting(struct char_data *ch);
+void char_from_room(struct char_data *ch);
+void char_to_room(struct char_data *ch, int to);
+void do_rent(struct char_data *ch, char *arg, int cmd);
+void close_socket(struct descriptor_data *d);
+void obj_from_obj(struct obj_data *o);
+void obj_to_obj(struct obj_data *o, struct obj_data *to);
+void obj_to_room(struct obj_data *o, int room);
+void save_char(struct char_data *ch, sh_int load_room); /* db.c */
 
 
 /* When age < 15 return the value p0 */
@@ -386,8 +403,7 @@ void gain_exp_regardless(struct char_data *ch, int gain)
 		if (gain > 0) {
 			GET_EXP(ch) += gain;
 			for (i = 0; (i <= (IMO + 3)) &&
-			     (titles[GET_CLASS(ch) - 1][i].exp <=
-			     GET_EXP(ch)); i++) {
+			        (titles[GET_CLASS(ch) - 1][i].exp <= GET_EXP(ch)); i++) {
 				if (i > GET_LEVEL(ch)) {
 					send_to_char("You raise a level.\n\r", ch);
 					GET_LEVEL(ch) = i;
@@ -539,7 +555,7 @@ void point_update(void)
             rcnt++;
 
         int flag = 1;
-        /* ASAN : 먼저 NPC가 아니고, 레벨이 IMO보다 낮은지 확인, 251202 */
+        
         if (!IS_NPC(i) && GET_LEVEL(i) < IMO) {
             /* 40레벨 미만 */
             if (GET_LEVEL(i) < 40 && 
@@ -562,32 +578,38 @@ void point_update(void)
             /* 40레벨 이상 */
             else if (GET_LEVEL(i) >= 40 && 
                     (titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
-                    (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) {
-            if (rcnt >= 1 && GET_LEVEL(i) < 50 && flag == 1) {
-                GET_LEVEL(i)++;
-                advance_level(i, 1);
-                snprintf(buf, sizeof(buf), "\n\r %s MAKE LEVEL !! ---==Congratulations==--- \n", i->player.name);
-                send_to_all(buf);
-                if (i->in_room != NOWHERE)
-                    save_char(i, world[i->in_room].number);
-                else
-                    save_char(i, 3001); // 방 정보 없으면 mid
-                flag = 0;
-            }
+                    (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) { 
+					if (rcnt >= 1 && GET_LEVEL(i) < 50 && flag == 1) { 
+						GET_LEVEL(i)++; 
+						advance_level(i, 1); 
+						snprintf(buf, sizeof(buf), 
+								"\n\r %s MAKE LEVEL !! ---==Congratulations==--- \n", i->player.name); 
+						send_to_all(buf); 
 
-            if (rcnt >= 2 && GET_LEVEL(i) < 60 && flag == 1) {
-                GET_LEVEL(i)++;
-                advance_level(i, 1);
-                snprintf(buf, sizeof(buf), "\n\r %s Rank UP !! ---==Congratulations==--- \n", i->player.name);
-                send_to_all(buf);
-                if (i->in_room != NOWHERE)
-                    save_char(i, world[i->in_room].number);
-                else
-                    save_char(i, 3001); // 방 정보 없으면 mid
-                flag = 0;
-            }
-        }
-    } /* for */
+						if (i->in_room != NOWHERE) 
+							save_char(i, world[i->in_room].number); 
+						else 
+							save_char(i, 3001);
+												
+						flag = 0; 
+					}
+
+		            if (rcnt >= 2 && GET_LEVEL(i) < 60 && flag == 1) { 
+						GET_LEVEL(i)++; 
+						advance_level(i, 1); 
+						snprintf(buf, sizeof(buf), 
+								"\n\r %s Rank UP !! ---==Congratulations==--- \n", i->player.name); 
+						send_to_all(buf);
+
+						if (i->in_room != NOWHERE) 
+							save_char(i, world[i->in_room].number); 
+						else 
+							save_char(i, 3001);
+						flag = 0; 
+					} 
+			} 
+		}
+	} /* for */
 
     /* objects */
     for (j = object_list; j; j = next_thing) {

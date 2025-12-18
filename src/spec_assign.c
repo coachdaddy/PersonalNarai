@@ -12,6 +12,8 @@
 extern struct room_data *world;
 extern struct index_data *mob_index;
 extern struct index_data *obj_index;
+void boot_the_shops();
+void assign_the_shopkeepers();
 
 /* ********************************************************************
 *  Assignments                                                        *

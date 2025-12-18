@@ -91,12 +91,7 @@ int no_specials = 0;		/* Suppress ass. of special routines */
 int nostealflag = 0;
 int noshoutflag = 0;
 
-int regen_percent = 50;
-int regen_time_percent = 66;
-int regen_time = 200;
-
-struct descriptor_data *xo;
-
+// 함수 프로토타입
 void game_loop(int s);
 void signal_setup(void);
 void handle_graceful_shutdown(int sig);
@@ -134,7 +129,7 @@ void record_player_number(void);
 void affect_update(void);	/* In spells.c */
 void point_update(void);	/* In limits.c */
 void free_char(struct char_data *ch);
-void mudlog(const char *str);
+
 void mobile_activity(void);
 void mobile_activity2(void);
 void string_add(struct descriptor_data *d, char *str);
@@ -177,20 +172,21 @@ int main(int argc, char **argv)
 
 	srandom(boottime = time(0));
 
-	snprintf(buf, sizeof(buf), "mud-%d.pid", port);
-	if (access(buf, F_OK) == 0) {
-		mudlog("Port busy: pid file already exists.");
-		exit(port);
-	}
+	snprintf(pidfile, sizeof(pidfile), "mud-%d.pid", port);
+    if (access(pidfile, F_OK) == 0) {
+        log("(main) Port busy: pid file already exists.");
+        exit(1);
+    }
 
 	umask(0077);
 
 	log("(main) Signal trapping.");
-    signal_setup();
+
+	signal_setup();
+
 	snprintf(buf, sizeof(buf), "(main) Running game on port %d.", port);
 	log(buf);
-	snprintf(buf, sizeof(buf), "Running game on port %d.", port);
-	mudlog(buf);
+
 	run_the_game(port);
 
 	// PID 파일 삭제 (정상 종료 시)
@@ -209,9 +205,6 @@ void run_the_game(int port)
 	descriptor_list = NULL;
 
 	log("(run_the_game) Opening mother connection.");
-	mudlog("Signal trapping.");
-	signal_setup();
-	mudlog("Opening mother connection.");
 	s = init_socket(port);
 
 	boot_db();
@@ -230,34 +223,16 @@ void run_the_game(int port)
 	no_echo_local(s);
 
 	game_loop(s);
-	log("(run_the_game) DOWN??? SAVE ALL CHARS???");
-	char pidfile[256];
-	sprintf(pidfile, "writing pid file: mud-%d.pid", port);
-	mudlog(pidfile);
+	log("(run_the_game) DOWN??????????SAVE ALL CHARS???????");
+    transall(3001);
 
-	sprintf(pidfile, "mud-%d.pid", port);
-	pidfp = fopen(pidfile, "w+");
-	if (!pidfp) {
-		perror("ERROR: can't open pid file.");
-	} else {
-		fprintf(pidfp, "%ld\n", (long)getpid());
-		fclose(pidfp);
-	}
+    log("(run_the_game) Game loop ended. Saving all characters.");
+    saveallplayers();
+    close_sockets(s);
 
-	mudlog("Entering game loop.");
-	no_echo_local(s);
+    shutdown(s, 2);
 
-	game_loop(s);
-	mudlog("DOWN??????????SAVE ALL CHARS???????");
-	transall(3001);
-	log("(run_the_game) Game loop ended. Saving all characters.");
-	saveallplayers();
-	close_sockets(s);
-	shutdown(s, 2);
-
-	log("(run_the_game) Normal termination of game.");
-	unlink(pidfile);
-	mudlog("Normal termination of game.");
+    log("(run_the_game) Normal termination of game.");
 }
 
 // 신호 처리 로직 통합, by Komo
@@ -375,7 +350,6 @@ void game_loop(int s)
 				log_abnormal_disconnect(point);
 				FD_CLR(point->descriptor, &input_set);
 				FD_CLR(point->descriptor, &output_set);
-				mudlog("Kicked out a freaky folk.\n\r");
 				close_socket(point);
 			}
 		}
@@ -397,7 +371,7 @@ void game_loop(int s)
 				echo_telnet(point);
 				no_echo = 0;
 				if (point->character && point->connected ==
-				    CON_PLYNG &&
+				    CON_PLAYING &&
 				    point->character->specials.was_in_room != NOWHERE) {
 					if (point->character->in_room != NOWHERE)
 						char_from_room(point->character);
@@ -415,24 +389,8 @@ void game_loop(int s)
 					if (point->showstr_point)
 						show_string(point, comm);
 					else {
-						/* ASan, 251204 */
-                        int cmd_wait;
-                        struct descriptor_data *d;
-                        bool still_alive = FALSE;
-
-                        cmd_wait = command_interpreter(point->character, comm);
-
-                        for (d = descriptor_list; d; d = d->next) {
-                            if (d == point) {
-                                still_alive = TRUE;
-                                break;
-                            }
-                        }
-
-                        if (still_alive) {
-                            point->wait += cmd_wait;
-                            ++point->ncmds;
-                        }
+						point->wait += command_interpreter(point->character, comm);
+						++point->ncmds;
 					}
 				} else {
 					nanny(point, comm);
@@ -448,7 +406,6 @@ void game_loop(int s)
 				log_abnormal_disconnect(point);
 				FD_CLR(point->descriptor, &input_set);
 				FD_CLR(point->descriptor, &output_set);
-				mudlog("Kicked out a freaky folk.\n\r");
 				close_socket(point);
 			}
 		}
@@ -492,15 +449,15 @@ void game_loop(int s)
          */
         if (reboot_game && reboot_counter < 0) {
             // 리붓 절차 시작
-            reboot_counter = TICS_PER_SEC * 60; // 60초 카운트다운
+            reboot_counter = 240; // 60초 카운트다운
             send_to_all("\n\r\n\r### SYSTEM: Server is rebooting in 1 minute. Please log off safely. ###\n\r\n\r");
             log("Graceful shutdown sequence initiated (via zapper or SIGUSR1).");
             reboot_game = 0; // 플래그 초기화
         }
 
         if (reboot_counter >= 0) {
-            if (pulse % TICS_PER_SEC == 0) { // Approx. every second
-                int seconds_left = reboot_counter / TICS_PER_SEC;
+            if (pulse % 4 == 0) { // Approx. every second
+                int seconds_left = reboot_counter / 4;
                 if (seconds_left == 30 || seconds_left == 10 || seconds_left <= 5) {
                     char buf[100];
                     snprintf(buf, sizeof(buf), "### SYSTEM: Rebooting in %d seconds. ###\n\r", seconds_left);
@@ -532,11 +489,15 @@ void game_loop(int s)
          * TICK 계산에 정의된 상수를 활용 - 251121 by Komo
          */
         pulse_per_mud_hour = SECS_PER_MUD_HOUR * TICS_PER_SEC;
-		if (!(pulse % pulse_per_mud_hour)) {
-			weather_and_time(1);
-			affect_update();
-			point_update();
-		}
+		if (pulse_per_mud_hour > 0 && !(pulse % pulse_per_mud_hour)) {
+            weather_and_time(1);
+            affect_update();
+            point_update();
+        }
+
+        if (pulse >= 2400) {
+            pulse = 0;
+        }
 		/* 정의된 주기마다 플레이어 저장 (tics 기준) */
         if (tics > 0 && (tics % PLAYER_SAVE_PERIOD == 0)) {
             struct descriptor_data *d;
@@ -544,7 +505,7 @@ void game_loop(int s)
             char buf[256];
 
             for (d = descriptor_list; d; d = d->next) {
-                if (d->connected == CON_PLYNG && d->character) {
+                if (d->connected == CON_PLAYING && d->character) {
                     player_count++;
                 }
             }
@@ -570,7 +531,7 @@ void transall(int room)
 
 	for (pt = descriptor_list; pt; pt = npt) {
 		npt = pt->next;
-		if (pt->connected == CON_PLYNG)
+		if (pt->connected == CON_PLAYING)
 			if (pt->character) {
 				char_from_room(pt->character);
 				char_to_room(pt->character, real_room(room));
@@ -589,10 +550,9 @@ void saveallplayers()
 
 	for (pt = descriptor_list; pt; pt = npt) {
 		npt = pt->next;
-		if (pt->connected == CON_PLYNG)
+		if (pt->connected == CON_PLAYING)
 			if (pt->character) {
-				save_char(pt->character,
-					  world[pt->character->in_room].number);
+				save_char(pt->character, pt->character->in_room);
 				stash_char(pt->character);
 				move_stashfile_safe(pt->character->player.name);
 			}
@@ -627,7 +587,7 @@ void record_player_number()
 				sprintf(line + strlen(line), "%3d%2d:", d->descriptor,
 					d->character->specials.timer);
 				sprintf(line + strlen(line), "%-14s%2d ",
-					(d->connected == CON_PLYNG) ? GET_NAME(d->character)
+					(d->connected == CON_PLAYING) ? GET_NAME(d->character)
 					: "Not in game",
 					GET_LEVEL(d->character));
 			} else
@@ -639,23 +599,23 @@ void record_player_number()
 			if (!(n % 2)) {
 				strcat(line, "|");
 			} else {
-				mudlog(line);
+				log(line);
 				line[0] = 0;
 			}
 			++n;
 		}
 		if (n % 2) {
-			mudlog(line);
+			log(line);
 		}
 
 		if (m > most)
 			most = m;
 		sprintf(line, "%s%d/%d active connections",
 			(n % 2) ? "\n\r" : "", m, most);
-		mudlog(line);
+		log(line);
 		t = 30 + time(0) - boottime;
 		sprintf(line, "Running time %d:%02d", t / 3600, (t % 3600) / 60);
-		mudlog(line);
+		log(line);
 
 #ifdef REBOOT_WHEN
 		static bool adjust = FALSE;
@@ -718,7 +678,10 @@ void send_to_q_color(const char *messg, struct descriptor_data *desc)
     if (!desc || !messg)
         return;
 
+    /* 색상 코드를 변환하여 color_buf에 */
     process_color_string(messg, color_buf, sizeof(color_buf));
+
+    /* 변환된 문자열을 소켓 큐에 write */
     write_to_q(color_buf, &desc->output);
 }
 
@@ -763,7 +726,7 @@ int init_socket(int port)
 
 	bzero(&sa, sizeof(struct sockaddr_in));
 	gethostname(hostname, MAX_HOSTNAME);
-	mudlog(hostname);
+	log(hostname);
 	hp = gethostbyname(hostname);
 	if (hp == NULL) {
 		perror("gethostbyname");
@@ -965,7 +928,7 @@ int process_input(struct descriptor_data *t)
 			} else
 				break;
 		else {
-			mudlog("EOF encountered on socket read.");
+			log("EOF encountered on socket read.");
 			return (-1);
 		}
 	} while (!ISNEWL(*(t->buf + begin + sofar - 1)));
@@ -1068,7 +1031,7 @@ int process_input(struct descriptor_data *t)
 
 void close_sockets(int s)
 {
-	mudlog("Closing all sockets.");
+	log("Closing all sockets.");
 	while (descriptor_list)
 		close_socket(descriptor_list);
 	close(s);
@@ -1093,33 +1056,21 @@ void close_socket(struct descriptor_data *d)
 		d->snoop.snoop_by->desc->snoop.snooping = 0;
 	}
 	if (d->character) {
-		if (d->connected == CON_PLYNG) {
+		if (d->connected == CON_PLAYING) {
 			save_char(d->character, world[d->character->in_room].number);
 			stash_char(d->character);
 			move_stashfile_safe(d->character->player.name);
 			act("$n has lost $s link.", TRUE, d->character, 0, 0, TO_ROOM);
 			snprintf(buf, sizeof(buf), "Closing link to: %s.", GET_NAME(d->character));
-			mudlog(buf);
+			log(buf);
 			d->character->desc = 0;
 		} else {
 			snprintf(buf, sizeof(buf), "Losing player: %s.", GET_NAME(d->character));
-/*
-#ifdef  RETURN_TO_QUIT  
-	save_char(d->character,world[d->character->in_room].number);
-#else
-      save_char(d->character, d->character->in_room);
-#endif
-*/
-/*
-#ifdef SYPARK
-	  stash_char(d->character);
-#endif
-*/
-			mudlog(buf);
+			log(buf);
 			free_char(d->character);
 		}
 	} else
-		mudlog("Losing descriptor without char.");
+		log("Losing descriptor without char.");
 
 	if (next_to_process == d)	/* to avoid crashing the process loop */
 		next_to_process = next_to_process->next;
@@ -1392,7 +1343,7 @@ void log_abnormal_disconnect(struct descriptor_data *d)
         name
     );
     
-    log(buf);
+    mudlog(buf);
 }
 
 void zapper(void)
@@ -1420,8 +1371,7 @@ void checkpointing(int sig)
         log("!!! Emergency saving all players before abort().");
         saveallplayers();
         abort();
-    }
-    else {
+    } else {
         last_tics = tics; // remember current tics
     }
     log("(checkpointing) Checkpoint signal received. Tics saved.");

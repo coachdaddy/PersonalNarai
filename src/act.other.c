@@ -31,7 +31,6 @@ void stash_char(struct char_data *ch);
 void wipe_stash(char *filename);
 void hit(struct char_data *ch, struct char_data *victim, int type);
 void do_shout(struct char_data *ch, char *argument, int cmd);
-void mudlog(const char *str);
 void close_socket(struct descriptor_data *d);
 int number(int from, int to);
 int str_cmp(char *arg1, char *arg2);
@@ -40,11 +39,7 @@ void page_string(struct descriptor_data *d, char *str, int keep);
 void do_say(struct char_data *ch, char *str, int cmd);
 bool saves_spell(struct char_data *ch, int type);
 void damage(struct char_data *ch, struct char_data *victim, int dam, int type);
-int MIN(int a, int b);
 
-int move_stashfile_safe (const char *victim);
-
-void DEBUG_LOG(const char *format, ...);
 
 void do_quit(struct char_data *ch, char *argument, int cmd)
 {
@@ -69,12 +64,11 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 	save_char(ch, world[ch->in_room].number);
 
 	act("Goodbye, friend.. Come back soon!", FALSE, ch, 0, 0, TO_CHAR);
-	sprintf(cyb, "%s closed connect(quit)", GET_NAME(ch));
-	mudlog(cyb);
+	snprintf(cyb, sizeof(cyb), "%s closed connect(quit)", GET_NAME(ch));
+	log(cyb);
 	if (ch->desc)
 		close_socket(ch->desc);
 
-	DEBUG_LOG("act.other.c extract char(%s)", ch->player.name);
 	extract_char(ch, FALSE);
 }
 
@@ -448,10 +442,8 @@ void do_group(struct char_data *ch, char *argument, int cmd)
 	if (!(victim = get_char_room_vis(ch, name))) {
 		send_to_char("No one here by that name.\n\r", ch);
 	} else {
-
 		if (ch->master) {
-			act
-			    ("You can not enroll group members without being head of a group.",
+			act("You can not enroll group members without being head of a group.",
 			     FALSE, ch, 0, 0, TO_CHAR);
 			return;
 		}
@@ -484,10 +476,8 @@ void do_group(struct char_data *ch, char *argument, int cmd)
 				    victim, 0, 0, TO_CHAR);
 				REMOVE_BIT(victim->specials.affected_by, AFF_GROUP);
 			} else {
-				act("$n is now a group member.", FALSE,
-				    victim, 0, 0, TO_ROOM);
-				act("You are now a group member.", FALSE,
-				    victim, 0, 0, TO_CHAR);
+				act("$n is now a group member.", FALSE, victim, 0, 0, TO_ROOM);
+				act("You are now a group member.", FALSE, victim, 0, 0, TO_CHAR);
 				SET_BIT(victim->specials.affected_by, AFF_GROUP);
 			}
 		} else {
@@ -616,7 +606,7 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 
 	/* by ares */
 	snprintf(buf, sizeof(buf), "Use log : %s uses %s", ch->player.name, argument);
-	mudlog(buf);
+	log(buf);
 
 	stick = ch->equipment[HOLD];
 
@@ -636,7 +626,6 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 			send_to_char("The staff seems powerless.\n\r", ch);
 		}
 	} else if (stick->obj_flags.type_flag == ITEM_WAND) {
-
 		bits = generic_find(argument, FIND_CHAR_ROOM | FIND_OBJ_INV |
 				    FIND_OBJ_ROOM |
 				    FIND_OBJ_EQUIP, ch, &tmp_char, &tmp_object);
@@ -729,20 +718,15 @@ void do_assault(struct char_data *ch, char *argument, int cmd)
 			case SEX_MALE:
 			case SEX_NEUTRAL:
 				do_say(ch, "아하아~~~~너무 좋아\n\r", 0);
-				do_say(victim,
-				       "아~~~나도 좋아요~~~\n\r", 0);
-				do_say(victim,
-				       "아...기막히다....한 번 더하고 싶다~~\n\r", 0);
+				do_say(victim, "아~~~나도 좋아요~~~\n\r", 0);
+				do_say(victim, "아...기막히다....한 번 더하고 싶다~~\n\r", 0);
 				break;
 			case SEX_FEMALE:
 				do_say(ch, "아하아~~~~너무 좋아\n\r", 0);
-				do_say(victim,
-				       "아~~~나도 좋아요~~~\n\r", 0);
-				do_say(victim,
-				       "이제 진정한 여자가 된 기분이에요~~~\n\r", 0);
+				do_say(victim, "아~~~나도 좋아요~~~\n\r", 0);
+				do_say(victim, "이제 진정한 여자가 된 기분이에요~~~\n\r", 0);
 				break;
 			}
-
 		} else {
 			send_to_char("바보....거긴 안 입었다..:)\n\r", ch);
 		}
@@ -948,8 +932,7 @@ void do_shouryuken(struct char_data *ch, char *argument, int cmd)
 		return;
 	
 	if (GET_SEX(ch) != SEX_MALE) {
-		send_to_char
-		    ("남자 전용 스킬입니다. 성전환을 하는게 어떨지~~\n\r", ch);
+		send_to_char("남자 전용 스킬입니다. 성전환을 하는게 어떨지~~\n\r", ch);
 		return;
 	}
 

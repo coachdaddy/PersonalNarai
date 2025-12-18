@@ -16,6 +16,7 @@
 #include "db.h"
 #include "spells.h"
 #include "limit.h"
+#include "prototypes.h"
 
 extern struct char_data *character_list;
 extern struct index_data *obj_index;
@@ -35,6 +36,16 @@ extern char *dirs[];
 
 #define GBISLAND_SEED_EVIL_POWER	23309
 
+int number (int from, int to);
+void wipe_stash (char *filename);
+void save_char_nocon (struct char_data *ch, sh_int load_room);
+void raw_kill (struct char_data *ch, int level);
+void do_look (struct char_data *ch, char *argument, int cmd);
+void do_say (struct char_data *ch, char *str, int cmd);
+void do_open (struct char_data *ch, char *argument, int cmd);
+void do_move (struct char_data *ch, char *argument, int cmd);
+void do_give (struct char_data *ch, char *argument, int cmd);
+
 
 void gbisland_move_seashore(struct char_data *ch)
 {
@@ -42,15 +53,7 @@ void gbisland_move_seashore(struct char_data *ch)
 	int vnum_seashore;
 	struct obj_data *obj, *next_obj;
 
-	int sect_type = world[ch->in_room].sector_type;
-
-    // 범위 검사
-    if (sect_type < 0 || sect_type >= 9) {
-        mudlog("SYSERR: Invalid sector type in gbisland..."); // 필요하면 로그 남기기
-        sect_type = 0; 
-    }
-
-    need_movement = movement_loss[sect_type];
+    need_movement = movement_loss[world[ch->in_room].sector_type];
 
     if (GET_MOVE(ch) < need_movement && !IS_NPC(ch) && GET_LEVEL(ch) < IMO) {
         send_to_char("You are too exhausted.\n\r", ch);
@@ -332,8 +335,7 @@ int gbisland_saint_mirror(struct char_data *ch, int cmd, char *arg)
 		} else if (ask) {
 			if (!move) {
 				do_say(ch, "저를 따라오세요...", 0);
-				do_say(ch,
-				       "절대로 마법의 진 안에서 다른 곳을 밟으면 안됩니다.", 0);
+				do_say(ch, "절대로 마법의 진 안에서 다른 곳을 밟으면 안됩니다.", 0);
 
 				move = TRUE;
 			} else {
@@ -416,29 +418,21 @@ int gbisland_lanessa(struct char_data *ch, int cmd, char *arg)
 				rnum = real_object(GBISLAND_MAGIC_PAPER);
 				obj = read_object(rnum, REAL);
 
-				do_say(ch,
-				       "제 영혼으로 부적을 붙여야해요...", 0);
+				do_say(ch, "제 영혼으로 부적을 붙여야해요...", 0);
 				do_say(ch, "...", 0);
-				do_say(ch,
-				       "그럼, 부디, 카암을 물리치시길...", 0);
-				do_say(ch,
-				       "그리고, 마을을 지켜주세요...", 0);
-				do_say(ch,
-				       "그럼... 신의 은총이 함께 하길...", 0);
+				do_say(ch, "그럼, 부디, 카암을 물리치시길...", 0);
+				do_say(ch, "그리고, 마을을 지켜주세요...", 0);
+				do_say(ch, "그럼... 신의 은총이 함께 하길...", 0);
 
-				act
-				    ("성녀 라네사의 몸이 성스러운 빛에 가려 사라집니다.",
+				act("성녀 라네사의 몸이 성스러운 빛에 가려 사라집니다.",
 				     TRUE, ch, 0, 0, TO_ROOM);
-				act
-				    ("성스러운 빛이 사라지면서 부적이 완성됩니다.",
+				act("성스러운 빛이 사라지면서 부적이 완성됩니다.",
 				     TRUE, ch, 0, 0, TO_ROOM);
-				act
-				    ("성녀 라네사의 아름다운 모습이 부적에 살아 있는 듯 합니다.",
+				act("성녀 라네사의 아름다운 모습이 부적에 살아 있는 듯 합니다.",
 				     TRUE, ch, 0, 0, TO_ROOM);
 
 				obj_to_room(obj, ch->in_room);
 
-				DEBUG_LOG("gbisland.c lanessa(%s)", ch->player.name);
 				extract_char(ch, TRUE);
 			} else if (paper1 || paper2) {
 				do_say(ch,

@@ -21,29 +21,27 @@
 extern struct str_app_type str_app[];
 extern struct index_data *mob_index;
 
-char *fread_string(FILE * fl);
-
-void mudlog(const char *str);
+char *fread_string(FILE *fl);
 
 struct shop_data {
-	int producing[MAX_PROD];	/* Which item to produce (virtual)      */
-	float profit_buy;	/* Factor to multiply cost with.        */
-	float profit_sell;	/* Factor to multiply cost with.        */
-	byte type[MAX_TRADE];	/* Which item to trade.                 */
-	char *no_such_item1;	/* Message if keeper hasn't got an item */
-	char *no_such_item2;	/* Message if player hasn't got an item */
-	char *missing_cash1;	/* Message if keeper hasn't got cash    */
-	char *missing_cash2;	/* Message if player hasn't got cash    */
-	char *do_not_buy;	/* If keeper dosn't buy such things.   */
-	char *message_buy;	/* Message when player buys item        */
-	char *message_sell;	/* Message when player sells item       */
-	int temper1;		/* How does keeper react if no money    */
-	int temper2;		/* How does keeper react when attacked  */
-	int keeper;		/* The mobil who owns the shop (virtual) */
-	int with_who;		/* Who does the shop trade with?  */
-	int in_room;		/* Where is the shop?      */
-	int open1, open2;	/* When does the shop open?    */
-	int close1, close2;	/* When does the shop close?    */
+	int producing[MAX_PROD]; /* Which item to produce (virtual)      */
+	float profit_buy;        /* Factor to multiply cost with.        */
+	float profit_sell;       /* Factor to multiply cost with.        */
+	byte type[MAX_TRADE];    /* Which item to trade.                 */
+	char *no_such_item1;     /* Message if keeper hasn't got an item */
+	char *no_such_item2;     /* Message if player hasn't got an item */
+	char *missing_cash1;     /* Message if keeper hasn't got cash    */
+	char *missing_cash2;     /* Message if player hasn't got cash    */
+	char *do_not_buy;        /* If keeper dosn't buy such things.   */
+	char *message_buy;       /* Message when player buys item        */
+	char *message_sell;      /* Message when player sells item       */
+	int temper1;             /* How does keeper react if no money    */
+	int temper2;             /* How does keeper react when attacked  */
+	int keeper;              /* The mobil who owns the shop (virtual) */
+	int with_who;            /* Who does the shop trade with?  */
+	int in_room;             /* Where is the shop?      */
+	int open1, open2;        /* When does the shop open?    */
+	int close1, close2;      /* When does the shop close?    */
 };
 
 void do_say(struct char_data *ch, char *str, int cmd);
@@ -127,32 +125,28 @@ void shopping_buy(char *arg, struct char_data *ch,
 	one_argument(arg, argm);
 	if (!(*argm)) {
 		snprintf(buf, sizeof(buf),
-			"%s what do you want to buy??"
-			,GET_NAME(ch));
+			"%s what do you want to buy??", GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		return;
 	};
 	if (!(temp1 =
 	      get_obj_in_list_vis(ch, argm, keeper->carrying))) {
 		snprintf(buf, sizeof(buf),
-			shop_index[shop_nr].no_such_item1
-			,GET_NAME(ch));
+			shop_index[shop_nr].no_such_item1, GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		return;
 	}
 
 	if (temp1->obj_flags.cost <= 0) {
 		snprintf(buf, sizeof(buf),
-			shop_index[shop_nr].no_such_item1
-			,GET_NAME(ch));
+			shop_index[shop_nr].no_such_item1, GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		extract_obj(temp1);
 		return;
 	}
 
 	if (GET_GOLD(ch) < (int)(temp1->obj_flags.cost *
-				 shop_index[shop_nr].profit_buy) && GET_LEVEL
-	    (ch) < (IMO + 1)) {
+				 shop_index[shop_nr].profit_buy) && GET_LEVEL(ch) < (IMO + 1)) {
 		snprintf(buf, sizeof(buf),
 			shop_index[shop_nr].missing_cash2,
 			GET_NAME(ch));
@@ -229,16 +223,14 @@ void shopping_sell(char *arg, struct char_data *ch,
 
 	if (!(*argm)) {
 		snprintf(buf, sizeof(buf),
-			"%s What do you want to sell??"
-			,GET_NAME(ch));
+			"%s What do you want to sell??", GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		return;
 	}
 
 	if (!(temp1 = get_obj_in_list_vis(ch, argm, ch->carrying))) {
 		snprintf(buf, sizeof(buf),
-			shop_index[shop_nr].no_such_item2
-			,GET_NAME(ch));
+			shop_index[shop_nr].no_such_item2, GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		return;
 	}
@@ -253,8 +245,7 @@ void shopping_sell(char *arg, struct char_data *ch,
 
 	if (GET_GOLD(keeper) < (int)(temp1->obj_flags.cost *
 				     shop_index[shop_nr].profit_sell)) {
-		snprintf(buf, sizeof(buf), shop_index[shop_nr].missing_cash1
-			,GET_NAME(ch));
+		snprintf(buf, sizeof(buf), shop_index[shop_nr].missing_cash1, GET_NAME(ch));
 		do_tell(keeper, buf, 19);
 		return;
 	}
@@ -345,8 +336,7 @@ void shopping_list(char *arg, struct char_data *ch,
 		for (temp1 = keeper->carrying;
 		     temp1;
 		     temp1 = temp1->next_content)
-			if ((CAN_SEE_OBJ(ch, temp1)) && (temp1->obj_flags.cost
-							 > 0)) {
+			if ((CAN_SEE_OBJ(ch, temp1)) && (temp1->obj_flags.cost > 0)) {
 				found_obj = TRUE;
 				if (temp1->obj_flags.type_flag != ITEM_DRINKCON)
 					snprintf(buf2, sizeof(buf2), "%s for %d gold coins.\n\r"
@@ -355,10 +345,10 @@ void shopping_list(char *arg, struct char_data *ch,
 						       shop_index[shop_nr].profit_buy));
 				else {
 					if (temp1->obj_flags.value[1])
-						sprintf(buf3, "%s of %s", (temp1->short_description)
+						snprintf(buf3, sizeof(buf3), "%s of %s", (temp1->short_description)
 							,drinks[temp1->obj_flags.value[2]]);
 					else
-						sprintf(buf3, "%s", (temp1->short_description));
+						snprintf(buf3, sizeof(buf3), "%s", (temp1->short_description));
 					snprintf(buf2, sizeof(buf2),
 						"%s for %d gold coins.\n\r", buf3,
 						(int)(temp1->obj_flags.cost *
@@ -451,8 +441,7 @@ void boot_the_shops()
 			else if (!(shop_index =
 				   (struct shop_data *)realloc(
 								      shop_index,
-								      (number_of_shops
-								       + 1) *
+								      (number_of_shops + 1) *
 								      sizeof(struct shop_data)))) {
 				perror("Error in boot shop\n");
 				exit(0);
@@ -464,8 +453,7 @@ void boot_the_shops()
 					shop_index[number_of_shops].producing[count] =
 					    real_object(temp);
 				else
-					shop_index[number_of_shops].producing[count]
-					    = temp;
+					shop_index[number_of_shops].producing[count] = temp;
 			}
 			fscanf(shop_f, "%f \n",
 			       &shop_index[number_of_shops].profit_buy);
@@ -474,7 +462,7 @@ void boot_the_shops()
 			for (count = 0; count < MAX_TRADE; count++) {
 				fscanf(shop_f, "%d \n", &temp);
 				shop_index[number_of_shops].type[count] =
-				    (byte) temp;
+				    (byte)temp;
 			}
 			shop_index[number_of_shops].no_such_item1 =
 			    fread_string(shop_f);
@@ -514,7 +502,7 @@ void boot_the_shops()
 			       &shop_index[number_of_shops].close2);
 
 			number_of_shops++;
-		} else if (*buf == '$')		/* EOF */
+		} else if (*buf == '$') /* EOF */
 			break;
 	}
 
@@ -532,7 +520,7 @@ void assign_the_shopkeepers()
             mob_index[shop_index[temp1].keeper].func = shop_keeper;
         } else {
             snprintf(buf, sizeof(buf), "SYSERR: Shop index #%d has invalid keeper RNUM [%d]. Skipped.", temp1, keeper_rnum);
-            mudlog(buf);
+            log(buf);
         }
     }
 }

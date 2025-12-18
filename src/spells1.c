@@ -20,7 +20,52 @@
 extern struct room_data *world;
 extern struct char_data *character_list;
 
+/* Extern functions */
 
+void spell_burning_hands(byte level, struct char_data *ch,
+			  struct char_data *victim, struct obj_data *obj);
+void spell_call_lightning(byte level, struct char_data *ch,
+			   struct char_data *victim, struct obj_data *obj);
+void spell_chill_touch(byte level, struct char_data *ch,
+			struct char_data *victim, struct obj_data *obj);
+void spell_shocking_grasp(byte level, struct char_data *ch,
+			   struct char_data *victim, struct obj_data *obj);
+void spell_color_spray(byte level, struct char_data *ch,
+			struct char_data *victim, struct obj_data *obj);
+void spell_earthquake(byte level, struct char_data *ch,
+		       struct char_data *victim, struct obj_data *obj);
+void spell_all_heal(byte level, struct char_data *ch,
+		     struct char_data *victim, struct obj_data *obj);
+void spell_fire_storm(byte level, struct char_data *ch,
+		       struct char_data *victim, struct obj_data *obj);
+void spell_hand_of_god(byte level, struct char_data *ch,
+			struct char_data *victim, struct obj_data *obj);
+void spell_energy_drain(byte level, struct char_data *ch,
+			 struct char_data *victim, struct obj_data *obj);
+void spell_fireball(byte level, struct char_data *ch,
+		     struct char_data *victim, struct obj_data *obj);
+void spell_throw(byte level, struct char_data *ch,
+		  struct char_data *victim, struct obj_data *obj);
+void spell_full_fire(byte level, struct char_data *ch,
+		      struct char_data *victim, struct obj_data *obj);
+void spell_energyflow(byte level, struct char_data *ch,
+		       struct char_data *victim, struct obj_data *obj);
+void spell_harm(byte level, struct char_data *ch,
+		 struct char_data *victim, struct obj_data *obj);
+void spell_lightning_bolt(byte level, struct char_data *ch,
+			   struct char_data *victim, struct obj_data *obj);
+void spell_magic_missile(byte level, struct char_data *ch,
+			  struct char_data *victim, struct obj_data *obj);
+void spell_sunburst(byte level, struct char_data *ch,
+		     struct char_data *victim, struct obj_data *obj);
+void spell_corn_of_ice(byte level, struct char_data *ch,
+			struct char_data *victim, struct obj_data *obj);
+void spell_disintegrate(byte level, struct char_data *ch,
+			 struct char_data *victim, struct obj_data *obj);
+void spell_clone(byte level, struct char_data *ch,
+		  struct char_data *victim, struct obj_data *obj);
+void spell_sanctuary_cloud(byte level, struct char_data *ch,
+			    struct char_data *victim, struct obj_data *obj);
 
 void cast_burning_hands(byte level, struct char_data *ch, char *arg, int type,
 			struct char_data *victim, struct obj_data *tar_obj)
