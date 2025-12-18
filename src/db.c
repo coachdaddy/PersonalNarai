@@ -2352,14 +2352,14 @@ int real_room(int virtual)
 	top = top_of_world;
 
 	/* perform binary search on world-table */
-	for (;;) {
-		mid = (bot + top) / 2;
+	while (bot <= top) {
+		mid = bot + (top - bot) / 2;
 
 		if ((world + mid)->number == virtual)
-			return (mid);
+			return mid;
+		
 		if (bot >= top) {
-			fprintf(stderr,
-				"Room %d does not exist in database\n", virtual);
+			fprintf(stderr, "Room %d does not exist in database\n", virtual);
 			return (-1);
 		}
 		if ((world + mid)->number > virtual)
@@ -2378,8 +2378,8 @@ int real_mobile(int virtual)
 	top = top_of_mobt;
 
 	/* perform binary search on mob-table */
-	for (;;) {
-		mid = (bot + top) / 2;
+	while (bot <= top) {
+		mid = bot + (top - bot) / 2;
 
 		if ((mob_index + mid)->virtual == virtual)
 			return (mid);
@@ -2401,8 +2401,8 @@ int real_object(int virtual)
 	top = top_of_objt;
 
 	/* perform binary search on obj-table */
-	for (;;) {
-		mid = (bot + top) / 2;
+	while (bot <= top) {
+		mid = bot + (top - bot) / 2;
 
 		if ((obj_index + mid)->virtual == virtual)
 			return (mid);
