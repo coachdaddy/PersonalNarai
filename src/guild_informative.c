@@ -4,12 +4,6 @@
 *  Made by Shin Won-dong  in KAIST                                        *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <time.h>
-#include <assert.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"

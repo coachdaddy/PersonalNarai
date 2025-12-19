@@ -1,12 +1,8 @@
 /* ************************************************************************
 *  file: daerimsa.c , Special module.                  					  *
-*  Usage: Procedures handling special procedures for daerimssa 			  *
+*  Usage: Procedures handling special procedures for daerimsa 			  *
 		 by atre
 ************************************************************************* */
-
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
 
 #include "structs.h"
 #include "utils.h"
@@ -17,24 +13,9 @@
 #include "limit.h"
 
 
-
 /* it should be initialized in read_mobile */
 struct char_data *son_ogong;
 struct char_data *fourth_jangro;
-
-#define SON_OGONG			11101
-#define SON_OGONG_MIRROR	11141
-#define FOURTH_JANGRO		11132
-
-#define SON_OGONG_STEP		(son_ogong->quest.solved)
-#define FOURTH_JANGRO_STEP	(fourth_jangro->quest.solved)
-
-#define DAERIMSA_PEN		11123
-#define DAERIMSA_PAPER		11124
-#define DAERIMSA_SCROLL		11132
-
-#define GOLDEN_RIM			11127
-#define SON_OGONG_BONG		11126
 
 
 
@@ -44,8 +25,7 @@ int son_ogong_func(struct char_data *ch, int cmd, char *arg)
 	struct char_data *victim, *mob;
 
 	if (cmd) {
-		if (cmd != 207 && cmd != 235 && cmd != 268 && cmd != 72 && cmd
-		    != 13)
+		if (cmd != 207 && cmd != 235 && cmd != 268 && cmd != 72 && cmd != 13)
 			return 0;
 	}
 
@@ -60,20 +40,18 @@ int son_ogong_func(struct char_data *ch, int cmd, char *arg)
 		   disarm = 268
 		 */
 		if (cmd == 207 || cmd == 235 || cmd == 268) {
-			acthan(
-				      "Ogong makes a golden-barrier, it prevents your activity.",
-				      "오공이 금빛 막을 만들어서 당신의 움직임을 방해합니다.",
-				      FALSE, son_ogong, 0, 0, TO_ROOM);
+			acthan("Ogong makes a golden-barrier, it prevents your activity.",
+				   "오공이 금빛 막을 만들어서 당신의 움직임을 방해합니다.",
+				   FALSE, son_ogong, 0, 0, TO_ROOM);
 			return 1;
 		} else if (cmd)
 			return 0;
 
 		if (SON_OGONG_STEP < 2) {
 			/* make mirror */
-			acthan(
-				      "Ogong pulls out a hair, and throws it.",
-				      "오공이 머리털 하나를 뽑하서 던집니다.",
-				      FALSE, son_ogong, 0, 0, TO_ROOM);
+			acthan("Ogong pulls out a hair, and throws it.",
+				   "오공이 머리털 하나를 뽑하서 던집니다.",
+				   FALSE, son_ogong, 0, 0, TO_ROOM);
 			mob = read_mobile(SON_OGONG_MIRROR, VIRTUAL);
 			char_to_room(mob, son_ogong->in_room);
 			first_attack(mob, victim);
@@ -81,17 +59,14 @@ int son_ogong_func(struct char_data *ch, int cmd, char *arg)
 
 		if (SON_OGONG_STEP == 2) {
 			/* 여의봉 */
-			acthan(
-				      "Ogong gets a bong in his ear.",
-				      "오공이 귓속에서 여의봉을 꺼냅니다.",
-				      FALSE, son_ogong, 0, 0, TO_ROOM);
+			acthan("Ogong gets a bong in his ear.",
+				   "오공이 귓속에서 여의봉을 꺼냅니다.",
+				   FALSE, son_ogong, 0, 0, TO_ROOM);
 			obj = read_object(SON_OGONG_BONG, VIRTUAL);
 			wear(son_ogong, obj, 12);
 			SON_OGONG_STEP = 3;
 		}
-	}
-	/* no fighting */
-	else {
+	} else { /* no fighting */
 		switch (SON_OGONG_STEP) {
 		case 0:
 			if (!cmd) {
@@ -154,10 +129,6 @@ int son_ogong_func(struct char_data *ch, int cmd, char *arg)
 		}
 	}
 
-/*
-snprintf(buf, sizeof(buf), "son_special : %s(%d)\n", GET_NAME(ch), cmd);
-mudlog(buf);
-*/
 	return 0;
 }
 
@@ -297,8 +268,6 @@ int fourth_jangro_func(struct char_data *ch, int cmd, char *arg)
 	return 0;
 }
 
-#define DARK_ROOM_IN_DAERIMSA		11134
-#define TOWER_IN_DAERIMSA			11161
 
 int teleport_daerimsa_tower(struct char_data *ch, int cmd, char *arg)
 {
@@ -367,7 +336,6 @@ int teleport_daerimsa_tower(struct char_data *ch, int cmd, char *arg)
 	return 0;
 }
 
-#define SAINT_WATER	11134
 
 int saint_water(struct char_data *ch, int cmd, char *arg)
 {

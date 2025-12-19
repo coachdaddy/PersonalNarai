@@ -5,12 +5,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#define FUDGE (100 + dice(6, 20))
-
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
@@ -19,9 +13,6 @@
 #include "spells.h"
 #include "limit.h"
 #include "mob_magic.h"		/* cyb */
-
-#define RESCUER_VICTIM 5
-
 
 
 

@@ -4,53 +4,17 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <string.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <sys/types.h>
+#include "structs.h"
 
-// Don't use obsolete termio.h, use modern termios.h
-#undef DONT_HAVE_TERMIOS_H
-
-#ifdef DONT_HAVE_TERMIOS_H
-#include <termio.h>
-#else
-#include <termios.h>
-#endif
-
-#ifndef __FreeBSD__
-#include <crypt.h>
-#endif
-
-#include <sys/uio.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+/* file specific, Don't MOVE */
 #define	TELOPTS
 #include <arpa/telnet.h>
 
-#include "structs.h"
 #include "interpreter.h"
 #include "db.h"
 #include "utils.h"
 #include "limit.h"
 
-#define COMMANDO(number, min_pos, pointer, min_lm, min_lc, min_lt, min_lw) { \
-        cmd_info[(number)].command_pointer = (pointer);                    \
-        cmd_info[(number)].minimum_position = (min_pos);                   \
-        cmd_info[(number)].minimum_level[0] = (min_lm);                    \
-        cmd_info[(number)].minimum_level[1] = (min_lc);                    \
-        cmd_info[(number)].minimum_level[2] = (min_lt);                    \
-        cmd_info[(number)].minimum_level[3] = (min_lw);                    \
-}
-
-#define NOT !
-#define AND &&
-#define OR ||
-
-#define STATE(d) ((d)->connected)
-#define MAX_CMD_LIST 350	/*  max command list modified by chase */
 
 int no_echo = 0;
 struct command_info cmd_info[MAX_CMD_LIST];
@@ -1483,7 +1447,7 @@ void nanny(struct descriptor_data *d, char *arg)
 					if (IS_SET(d->character->specials.act, PLR_BANISHED))
 						target_room = real_room(6999);
 					else
-						target_room = real_room(3001);
+						target_room = real_room(VNUM_ROOM_MID);
 				} else {
 					target_room = real_room(2);
 				}
@@ -1493,7 +1457,7 @@ void nanny(struct descriptor_data *d, char *arg)
 
 			if (target_room < 0) {
 				DEBUG_LOG("Warning: %s saved in invalid room %d. Moving to MID.", GET_NAME(d->character), d->character->in_room);
-				target_room = real_room(3001);
+				target_room = real_room(VNUM_ROOM_MID);
 				if (target_room < 0)
 					target_room = real_room(0); // the void
 			}

@@ -3,14 +3,20 @@
  *  file: structs.h , structures and defines used by the MUD         *
  *  Usage: All structs are defined here.                                *
  ************************************************************************/
-#include "conf.h" /* all of tunables */
+#include "conf.h"	/* all of tunables */
 #include "types.h"
 
 #include <sys/types.h>
 #include <stdlib.h>
+/* ======================================================================= */
+// moved defines
+/* ======================================================================= */
+// from where?
+#define MESS_ATTACKER   1
+#define MESS_VICTIM     2
+#define MESS_ROOM       3
 
-
-/* comm.h에서 이동 */
+// comm.h에서 이동
 #define TO_ROOM    0
 #define TO_VICT    1
 #define TO_NOTVICT 2
@@ -805,6 +811,41 @@ struct reset_q_element {
 struct reset_q_type {
 	struct reset_q_element *head;
 	struct reset_q_element *tail;
+};
+
+// from spells.h
+struct spell_info_type {
+	void (*spell_pointer) (byte level, struct char_data * ch, char *arg,
+			       int type,
+			       struct char_data * tar_ch, struct obj_data * tar_obj);
+	byte minimum_position;	/* Position for caster              */
+	ubyte min_usesmana;		/* Amount of mana used by a spell   */
+	byte beats;				/* Heartbeats until ready for next */
+	int prev;				/* previous skill/spell */
+	int side;				/* side skill/spell */
+	byte min_level[4];
+	byte max_skill[4];
+	int targets;		/* See below for use with TAR_XXX  */
+};
+
+/* Possible Targets:
+
+   bit 0 : IGNORE TARGET
+   bit 1 : PC/NPC in room
+   bit 2 : PC/NPC in world
+   bit 3 : Object held
+   bit 4 : Object in inventory
+   bit 5 : Object in room
+   bit 6 : Object in world
+   bit 7 : If fighting, and no argument, select tar_char as self
+   bit 8 : If fighting, and no argument, select tar_char as victim (fighting)
+   bit 9 : If no argument, select self, if argument check that it IS self.
+*/
+
+/* Attacktypes with grammar */
+struct attack_hit_type {
+	char *singular;
+	char *plural;
 };
 
 

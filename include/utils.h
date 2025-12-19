@@ -7,10 +7,49 @@
 #include <ctype.h>
 #include <string.h>
 
+// from act.wizard.c
+/* 안전한 문자열 붙이기 */
+#define SAFE_PRINTF(...) \
+    do { \
+        if (len < size) \
+            len += snprintf(buf + len, size - len, __VA_ARGS__); \
+    } while (0)
+
 // comm.h에서 이동
 /* SEND_TO_Q 단순 함수 호출로 변경 */
 #define SEND_TO_Q(messg, desc)  send_to_q_color((messg), (desc))
 
+// from daerimsa.c
+#define SON_OGONG_STEP		(son_ogong->quest.solved)
+#define FOURTH_JANGRO_STEP	(fourth_jangro->quest.solved)
+
+// from db.c
+#define ZCMD zone_table[zone].cmd[cmd_no]
+
+// from interpreter.c
+#define STATE(d) ((d)->connected)
+#define COMMANDO(number, min_pos, pointer, min_lm, min_lc, min_lt, min_lw) { \
+        cmd_info[(number)].command_pointer = (pointer);                    \
+        cmd_info[(number)].minimum_position = (min_pos);                   \
+        cmd_info[(number)].minimum_level[0] = (min_lm);                    \
+        cmd_info[(number)].minimum_level[1] = (min_lc);                    \
+        cmd_info[(number)].minimum_level[2] = (min_lt);                    \
+        cmd_info[(number)].minimum_level[3] = (min_lw);                    \
+}
+
+// from limit.c
+#define READ_TITLE(ch) (GET_SEX(ch) == SEX_MALE ?   \
+    titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_m :  \
+    titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_f)
+
+// from mob_magic.c
+#define VICT_IS_SAME_ROOM(mob)	(mob->in_room==mob->specials.fighting->in_room)
+
+// from spec_procs.c
+#define FUDGE (100 + dice(6, 20))
+
+
+/* ---------- original UTILS.H ---------- */
 #ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif

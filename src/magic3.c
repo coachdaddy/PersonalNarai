@@ -4,10 +4,6 @@
 *  Usage : The actual effect of magic.                                    *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "spells.h"
@@ -15,7 +11,6 @@
 #include "limit.h"
 #include "db.h"
 #include "guild_list.h"
-
 
 
 

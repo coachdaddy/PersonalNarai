@@ -4,26 +4,18 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "handler.h"
 #include "interpreter.h"
 #include "db.h"
 #include "spells.h"
-
 #include "guild_list.h"
 
-#define MAX_NPC_CORPSE_TIME 15
-#define MAX_PC_CORPSE_TIME 40
-#define QUEST_ROOM_VNUM	3081  // 퀘스트 룸 VNUM
 
 /* Structures */
-struct char_data *combat_list = 0;	/* head of l-list of fighting chars */
-struct char_data *combat_next_dude = 0;		/* Next dude global trick           */
+struct char_data *combat_list = 0;		/* head of l-list of fighting chars */
+struct char_data *combat_next_dude = 0;	/* Next dude global trick           */
 
 struct dam_weapon_type {
     char *to_room;
@@ -57,6 +49,7 @@ struct attack_hit_type attack_hit_han[] =
 	{"톡 쏩니다", "톡 쏩니다"},	/* TYPE_STING    */
 	{"부숩니다", "부숩니다"}	/* TYPE_CRUSH    */
 };
+
 
 /* The Fight related routines */
 void appear(struct char_data *ch)
@@ -500,7 +493,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
     /* 도전의 방에서 사망한 플레이어 시체는 이동시켜두자... */
     if (died_in_challenge_room) {
         struct obj_data *corpse, *next_corpse;
-        int quest_room_rnum = real_room(QUEST_ROOM_VNUM); 
+        int quest_room_rnum = real_room(VNUM_ROOM_QUESTROOM); 
         
         if (quest_room_rnum != NOWHERE) {
             for (corpse = world[challenge_room_rnum].contents; corpse; corpse = next_corpse) {

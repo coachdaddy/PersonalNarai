@@ -4,10 +4,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
@@ -15,18 +11,6 @@
 #include "db.h"
 #include "spells.h"
 #include "limit.h"
-
-
-#define GBISLAND_SEASHORE			23302
-#define GBISLAND_MIRROR_SAINT		23321
-#define GBISLAND_MAGIC_BARRIER_OUT	23331
-#define GBISLAND_BOTTLE				23312
-
-#define GBISLAND_MAGIC_PAPER1		23306
-#define GBISLAND_MAGIC_PAPER2		23307
-#define GBISLAND_MAGIC_PAPER		23308
-
-#define GBISLAND_SEED_EVIL_POWER	23309
 
 
 

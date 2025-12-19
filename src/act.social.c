@@ -4,17 +4,12 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
-
-
 
 
 struct social_messg {
@@ -62,6 +57,7 @@ char *fread_action(FILE *fl)
 		}
 	}
 }
+
 
 void boot_social_messages(void)
 {

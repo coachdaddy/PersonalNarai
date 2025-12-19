@@ -4,9 +4,6 @@
 *  Usage : All the non-offensive magic handling routines.                 *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "db.h"

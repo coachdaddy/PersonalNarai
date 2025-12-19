@@ -5,9 +5,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
@@ -15,7 +12,6 @@
 #include "db.h"
 #include "spells.h"
 #include "limit.h"
-
 #include "guild_list.h"
 
 

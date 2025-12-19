@@ -5,12 +5,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#define FUDGE (100+dice(6,20))
-
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
@@ -122,9 +116,6 @@ int dump(struct char_data *ch, int cmd, char *arg)
 	struct char_data *tmp_char;
 	int value = 0;
 
-	void do_drop(struct char_data *ch, char *argument, int cmd);
-	char *fname(char *namelist);
-
 	for (k = world[ch->in_room].contents; k; k = world[ch->in_room].contents) {
 		snprintf(buf, sizeof(buf), "The %s vanish in a puff of smoke.\n\r", fname(k->name));
 		for (tmp_char = world[ch->in_room].people; tmp_char;
@@ -172,12 +163,6 @@ int mayor(struct char_data *ch, int cmd, char *arg)
 	static char *path;
 	static int index;
 	static bool move = FALSE;
-
-	void do_move(struct char_data *ch, char *argument, int cmd);
-	void do_open(struct char_data *ch, char *argument, int cmd);
-	void do_lock(struct char_data *ch, char *argument, int cmd);
-	void do_unlock(struct char_data *ch, char *argument, int cmd);
-	void do_close(struct char_data *ch, char *argument, int cmd);
 
 	if (!move) {
 		if (time_info.hours == 6) {
@@ -327,9 +312,6 @@ void npc_steal(struct char_data *ch, struct char_data *victim)
 
 int snake(struct char_data *ch, int cmd, char *arg)
 {
-	void cast_poison(byte level, struct char_data *ch, char *arg, int type,
-			 struct char_data *tar_ch, struct obj_data *tar_obj);
-
 	if (cmd)
 		return FALSE;
 	if (GET_POS(ch) != POSITION_FIGHTING)
@@ -728,13 +710,6 @@ int paladin(struct char_data *ch, int cmd, char *arg)
 {
 	struct char_data *vict;
 
-	void do_bash(struct char_data *ch, char *argument, int cmd);
-	void do_multi_kick(struct char_data *ch, char *argument, int cmd);
-	void do_kick(struct char_data *ch, char *argument, int cmd);
-	void do_punch(struct char_data *ch, char *argument, int cmd);
-	void do_light_move(struct char_data *ch, char *argument, int cmd);
-	void do_disarm(struct char_data *ch, char *argument, int cmd);
-
 	if (cmd)
 		return FALSE;
 	if (GET_POS(ch) != POSITION_FIGHTING) {
@@ -846,15 +821,7 @@ int dragon(struct char_data *ch, int cmd, char *arg)
 {
 	int mh;
 	struct char_data *vict;
-	void cast_fire_breath(byte level, struct char_data *ch, char *arg, int type,
-			      struct char_data *tar_ch, struct obj_data *tar_obj);
-	void cast_frost_breath(byte level, struct char_data *ch, char *arg, int type,
-			       struct char_data *tar_ch, struct obj_data *tar_obj);
-	void cast_gas_breath(byte level, struct char_data *ch, char *arg, int type,
-			     struct char_data *tar_ch, struct obj_data *tar_obj);
-	void cast_lightning_breath(byte level, struct char_data *ch, char *arg,
-				   int type, struct char_data *tar_ch, struct obj_data *tar_obj);
-
+	
 	if (cmd)
 		return FALSE;
 	vict = ch->specials.fighting;

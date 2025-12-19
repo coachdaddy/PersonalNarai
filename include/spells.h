@@ -127,7 +127,6 @@
 #define SKILL_ARREST				124
 #define SPELL_SANCTUARY_CLOUD		125
 
-#define MAXSPELL 150
 
 	/* by atre */
 #define TYPE_HIT        150
@@ -143,7 +142,6 @@
 #define TYPE_SUFFERING               200
 /* More anything but spells and weapontypes can be insterted here! */
 
-#define MAX_TYPES 70
 
 #define SAVING_PARA   		0
 #define SAVING_HIT_SKILL    1
@@ -151,7 +149,6 @@
 #define SAVING_BREATH 		3
 #define SAVING_SPELL  		4
 
-#define MAX_SPL_LIST 	200
 
 #define TAR_IGNORE        1
 #define TAR_CHAR_ROOM     2
@@ -165,20 +162,6 @@
 #define TAR_OBJ_WORLD   512
 #define TAR_OBJ_EQUIP  1024
 #define TAR_CHAR_ZONE  2048
-
-struct spell_info_type {
-	void (*spell_pointer) (byte level, struct char_data * ch, char *arg,
-			       int type,
-			       struct char_data * tar_ch, struct obj_data * tar_obj);
-	byte minimum_position;	/* Position for caster              */
-	ubyte min_usesmana;		/* Amount of mana used by a spell   */
-	byte beats;				/* Heartbeats until ready for next */
-	int prev;				/* previous skill/spell */
-	int side;				/* side skill/spell */
-	byte min_level[4];
-	byte max_skill[4];
-	int targets;		/* See below for use with TAR_XXX  */
-};
 
 /* Possible Targets:
 
@@ -201,9 +184,4 @@ struct spell_info_type {
 #define SPELL_TYPE_STAFF   3
 #define SPELL_TYPE_SCROLL  4
 
-/* Attacktypes with grammar */
 
-struct attack_hit_type {
-	char *singular;
-	char *plural;
-};

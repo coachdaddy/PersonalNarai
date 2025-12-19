@@ -4,10 +4,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include <stdlib.h>
 #include "structs.h"
 #include "utils.h"
 #include "spells.h"
@@ -15,11 +11,7 @@
 #include "limit.h"
 #include "db.h"
 #include "magic_weapon.h"
-
 #include "guild_list.h"
-
-#define REAL 0
-#define VIRTUAL 1
 
 
 
@@ -1587,7 +1579,7 @@ void spell_word_of_recall(byte level, struct char_data *ch,
 		loc_nr = ROOM_GUILD_OUTLAW;
 		break;
 	default:
-		loc_nr = 3001;
+		loc_nr = VNUM_ROOM_MID;
 		break;
 	}
 	for (location = 0; location <= top_of_world; location++)

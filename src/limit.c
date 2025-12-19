@@ -4,21 +4,11 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-
 #include "structs.h"
 #include "limit.h"
 #include "utils.h"
 #include "spells.h"
 #include "guild_list.h"
-
-#define SPELL_LEARN_MAX	120
-
-#define READ_TITLE(ch) (GET_SEX(ch) == SEX_MALE ?   \
-  titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_m :  \
-  titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_f)
 
 
 
@@ -547,7 +537,7 @@ void point_update(void)
                 if (i->in_room != NOWHERE)
                     save_char(i, world[i->in_room].number);
                 else
-                    save_char(i, 3001);
+                    save_char(i, VNUM_ROOM_MID);
 
                 flag = 0;
             }
@@ -565,7 +555,7 @@ void point_update(void)
 						if (i->in_room != NOWHERE) 
 							save_char(i, world[i->in_room].number); 
 						else 
-							save_char(i, 3001);
+							save_char(i, VNUM_ROOM_MID);
 												
 						flag = 0; 
 					}
@@ -580,7 +570,7 @@ void point_update(void)
 						if (i->in_room != NOWHERE) 
 							save_char(i, world[i->in_room].number); 
 						else 
-							save_char(i, 3001);
+							save_char(i, VNUM_ROOM_MID);
 						flag = 0; 
 					} 
 			} 

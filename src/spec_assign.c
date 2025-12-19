@@ -4,7 +4,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
 #include "structs.h"
 #include "db.h"
 #include "guild_list.h"
@@ -75,18 +74,13 @@ void assign_mobiles(void)
 	mob_index[real_mobile(15182)].func = great_mazinga;	/* great mazinga */
 
 	/* DaeRimSa */
-#define SON_OGONG			11101
-#define FOURTH_JANGRO		11132
 	mob_index[real_mobile(SON_OGONG)].func = son_ogong_func;
 	mob_index[real_mobile(FOURTH_JANGRO)].func = fourth_jangro_func;
 
 	/* GoodBadIsland */
-#define SAINT_MIRROR        23304
-#define LANESSA             23303
-#define CARPIE              23320
-	mob_index[real_mobile(SAINT_MIRROR)].func = gbisland_saint_mirror;
-	mob_index[real_mobile(LANESSA)].func = gbisland_lanessa;
-	mob_index[real_mobile(CARPIE)].func = gbisland_carpie;
+	mob_index[real_mobile(VNUM_MOB_MIRROR_SAINT)].func = gbisland_saint_mirror;
+	mob_index[real_mobile(VNUM_MOB_LANESSA)].func = gbisland_lanessa;
+	mob_index[real_mobile(VNUM_MOB_CARPIE)].func = gbisland_carpie;
 
 	boot_the_shops();
 	assign_the_shopkeepers();
@@ -151,7 +145,7 @@ void assign_rooms(void)
 	world[real_room(3060)].funct = hospital;
 	world[real_room(3065)].funct = metahospital;
 	world[real_room(1)].funct = safe_house;
-	world[real_room(3001)].funct = safe_house;
+	world[real_room(VNUM_ROOM_MID)].funct = safe_house;
 	world[real_room(3008)].funct = safe_house;
 	world[real_room(6999)].funct = safe_house;
 	world[real_room(3070)].funct = safe_house;
