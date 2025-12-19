@@ -136,4 +136,4 @@ extern char fileid[];
 
 
 /* --- guild_constant.c --- */
-extern char *guild_names[];
+

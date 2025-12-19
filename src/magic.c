@@ -291,7 +291,7 @@ void spell_sunburst(byte level, struct char_data *ch,
 	if (number(1, 15) == 1)
         spell_blindness(level, ch, victim, 0);
     // sprintf(buf, "DEBUG: sunburst: %d", dam);
-    mudlog(buf);
+    // mudlog(buf);
 
 	damage(ch, victim, dam, SPELL_SUNBURST);
 }

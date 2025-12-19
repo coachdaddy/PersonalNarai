@@ -11,11 +11,8 @@ OBJDIR  = ./obj
 INSTDIR = ../bin
 VPATH   = .:$(INCDIR):$(UTLSRC):
 
-# CC      = clang
-# CC      = gcc
 CC      = cc
 
-# MAKE    = gmake
 MAKE    = make
 LD      = $(CC)
 
@@ -23,23 +20,12 @@ OFLAGS  = -O -g -Wall -pipe
 
 INCLUDE = -I$(INCDIR)
 
-# MFLAGS: SYPARK INIT_BARE_HAND GHOST
-#         OLD_DAM_MESSAGE OLD_PARRY
-#         OLD_MIRROR_IMAGE OldMobAct
-#
-# MFLAGS    = -DIMO=41
-#
-# MFLAGS are moved to ../include/utils.h
-
 # Set initial gold and quest in "db.c"
 # DFLAGS= -DBETA_TEST
 DFLAGS=
 
-# CFLAGS  = $(OFLAGS) $(DFLAGS) $(INCLUDE)
 CFLAGS  = $(OFLAGS) $(DFLAGS) $(INCLUDE) -g -rdynamic
 
-# LDFLAGS    = libdescrypt.a
-# LDFLAGS  = -lcrypt -g
 LDFLAGS  = -lcrypt -g -rdynamic
 
 SRCS    = \
@@ -224,7 +210,6 @@ $(OBJDIR)/mabact.o: mabact.c \
     $(INCDIR)/db.h \
     $(INCDIR)/spells.h
 $(OBJDIR)/magic_weapon.o: magic_weapon.c $(INCDIR)/structs.h \
-    \
     $(INCDIR)/magic_weapon.h $(INCDIR)/utils.h $(INCDIR)/spells.h
 $(OBJDIR)/magic.o: magic.c \
     $(INCDIR)/structs.h \

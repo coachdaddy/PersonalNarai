@@ -40,9 +40,11 @@ PROG_BIN    = $(OBJDIR)/$(PROG)
 U_BINS      = $(UTILS:%=$(OBJDIR)/%)
 CTAGS_SRC   = $(SRCS) $(INCDIR)/*.h
 
-# $(OBJDIR)/%.o :  %.c
-#	$(CC) -c $(CFLAGS) -o $@ $<
-$(OBJDIR)/%.o :  %.c $(VCS_HEADER)
+$(OBJDIR)/%.o :  %.c
+     $(CC) -c $(CFLAGS) -o $@ $<
+
+# Only db.o depends on VCS header
+$(OBJDIR)/db.o: db.c $(VCS_HEADER)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(OBJDIR)/% :  %.o

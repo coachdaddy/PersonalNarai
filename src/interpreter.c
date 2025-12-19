@@ -1435,7 +1435,7 @@ void nanny(struct descriptor_data *d, char *arg)
 		case '0':
 			close_socket(d);
 			break;
-		case '1':
+		case '1': {
 			int target_room;	// 목적지 방의 rnum 저장
 
 			reset_char(d->character);
@@ -1473,6 +1473,7 @@ void nanny(struct descriptor_data *d, char *arg)
 			do_look(d->character, "", 15);
 			d->prompt_mode = 1;
 			break;
+		}
 		case '2':
 			SEND_TO_Q("Enter a description of your character.\n\r", d);
 			SEND_TO_Q("Terminate with a '@'.\n\r", d);

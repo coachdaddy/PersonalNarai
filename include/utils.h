@@ -7,13 +7,6 @@
 #include <ctype.h>
 #include <string.h>
 
-// from act.wizard.c
-/* 안전한 문자열 붙이기 */
-#define SAFE_PRINTF(...) \
-    do { \
-        if (len < size) \
-            len += snprintf(buf + len, size - len, __VA_ARGS__); \
-    } while (0)
 
 // comm.h에서 이동
 /* SEND_TO_Q 단순 함수 호출로 변경 */

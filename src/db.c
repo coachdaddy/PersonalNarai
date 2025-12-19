@@ -166,8 +166,15 @@ void boot_db(void)
             /* class (discard) */
             fscanf(mob_f, " %*c "); 
     
-            /* level */
-            fscanf(mob_f, " %d ", &tmp_level);
+            /* level (added error handling code) */
+            if (fscanf(mob_f, " %d ", &tmp_level) != 1) {
+                char err_buf[256];
+                snprintf(err_buf, sizeof(err_buf), "Quest Pre-load: fscanf error reading level for mob VNUM %d", mob_index[i].virtual);
+                mudlog(err_buf);
+                mob_index[i].level = -1;
+                mob_index[i].act = 0;
+                continue;
+            }
 
 			mob_index[i].level = tmp_level;
             
@@ -2297,20 +2304,14 @@ int real_room(int virtual)
 	/* perform binary search on world-table */
 	while (bot <= top) {
 		mid = bot + (top - bot) / 2;
-
 		if ((world + mid)->number == virtual)
 			return mid;
-		
-		if (bot >= top) {
-			fprintf(stderr, "Room %d does not exist in database\n", virtual);
-			return (-1);
-		}
 		if ((world + mid)->number > virtual)
 			top = mid - 1;
 		else
 			bot = mid + 1;
 	}
-
+	fprintf(stderr, "Room %d does not exist in database\n", virtual);
 	return -1;
 }
 
@@ -2327,15 +2328,13 @@ int real_mobile(int virtual)
 		mid = bot + (top - bot) / 2;
 
 		if ((mob_index + mid)->virtual == virtual)
-			return (mid);
-		if (bot >= top)
-			return (-1);
+			return mid;
 		if ((mob_index + mid)->virtual > virtual)
 			top = mid - 1;
 		else
 			bot = mid + 1;
 	}
-
+	fprintf(stderr, "Mob %d does not exist in database\n", virtual);
 	return -1;
 }
 
@@ -2352,15 +2351,13 @@ int real_object(int virtual)
 		mid = bot + (top - bot) / 2;
 
 		if ((obj_index + mid)->virtual == virtual)
-			return (mid);
-		if (bot >= top)
-			return (-1);
+			return mid;
 		if ((obj_index + mid)->virtual > virtual)
 			top = mid - 1;
 		else
 			bot = mid + 1;
 	}
-
+	fprintf(stderr, "Object %d does not exist in database\n", virtual);
 	return -1;
 }
 

@@ -813,8 +813,6 @@ void cast_kiss_of_process(byte level, struct char_data *ch, char *arg, int type,
 void cast_thunder_bolt(byte level, struct char_data *ch, char *arg, int type, struct char_data *tar_ch, struct obj_data *tar_obj);
 
 /* --- utility.c --- */
-// To avoid name conflict with built-in log(x) function
-#define log(s) mudlog(s)
 void mudlog(const char *str);
 void DEBUG_LOG(const char *format, ...);
 int number(int from, int to);

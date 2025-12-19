@@ -10,7 +10,7 @@
 ** ============================================================ */
 
 #ifndef DFLT_DIR
-#   define DFLT_DIR    "lib"   /* default port */
+#   define DFLT_DIR    "lib"   /* default directory */
 #endif  /* DFLT_DIR */
 #ifndef DFLT_PORT
 #   define DFLT_PORT   5101    /* default port */

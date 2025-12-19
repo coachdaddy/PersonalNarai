@@ -40,7 +40,7 @@
 /* 기본 자료형 정의                                         */
 /* ======================================================== */
 
-// Changed all bytes and short to int or unsigned
+// Changed all bytes and short to int or unsigned <Old Comments reserved>
 typedef short sbyte;
 typedef unsigned ubyte;
 typedef int sh_int;
@@ -62,9 +62,6 @@ typedef long long LONGLONG;
 #   define NUL '\0'
 #endif
 
-#ifndef NULL
-#   define NULL  (void *)0
-#endif
 
 // Logical operators from interpreter.c
 #define NOT !

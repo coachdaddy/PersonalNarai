@@ -25,6 +25,7 @@ int reboot_counter = -1;
 unsigned long reboot_time = REBOOT_TIME; // 현재 4일
 struct timeval null_time;
 struct descriptor_data *descriptor_list, *next_to_process;
+volatile sig_atomic_t shutdown_signal_received = 0;
 
 int baddoms = 0;
 char baddomain[16][32];
@@ -142,18 +143,10 @@ void handle_graceful_shutdown(int sig)
 }
 
 
-// SIGUSR2, SIGINT, SIGTERM: 즉시 종료
+// SIGUSR2, SIGINT, SIGTERM: 즉시 종료, flag만 설정 251219 by Komo
 void handle_immediate_shutdown(int sig)
 {
-    if (!shutdowngame) {
-        mudlog("Received signal for immediate shutdown.");
-        if (pidfile[0] != '\0') {
-            unlink(pidfile);
-            mudlog("PID file removed by signal handler.");
-        }
-        saveallplayers();
-        exit(0);
-    }
+    shutdown_signal_received = 1;
 }
 
 
@@ -340,6 +333,18 @@ void game_loop(int s)
 
 		/* handle heartbeat stuff */
 		pulse++;
+
+		/* handle_immediate_shutdown logic moved here, w/ CodeRabbit, 251219 */
+		if (shutdown_signal_received) {
+			mudlog("Received immediate shutdown signal. Saving players...");
+			
+			if (pidfile[0] != '\0') {
+				unlink(pidfile);
+			}
+			saveallplayers();
+			shutdowngame = 1;
+			continue; 
+    	}
 
 		zapper();
 		/* 
@@ -1261,8 +1266,7 @@ void zapper(void)
 /* 서버 멈춤 감지 */
 void checkpointing(int sig)
 {
-	extern int tics;
-    static int last_tics = 0;
+	static int last_tics = 0;
 
     if (tics == last_tics) { // 지난 검사와 tics가 같으면 멈춘 것
         mudlog("!!! CHECKPOINT shutdown: tics not updated. Server appears to be frozen.");

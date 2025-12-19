@@ -209,7 +209,6 @@ void affect_modify(struct char_data *ch, byte loc, short mod, long bitv, bool ad
 		}
 		break;
 	default:
-		/*  mudlog("Unknown apply adjust attempt (handler.c, affect_modify)."); */
 		break;
 	}			/* switch */
 }

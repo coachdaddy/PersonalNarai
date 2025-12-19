@@ -16,6 +16,13 @@
 char history[20][MAX_STRING_LENGTH];
 int his_start = 0, his_end = 0;
 
+/* 안전한 문자열 붙이기 */
+#define SAFE_PRINTF(...) \
+    do { \
+        if (len < size) \
+            len += snprintf(buf + len, size - len, __VA_ARGS__); \
+    } while (0)
+
 
 
 void do_advance(struct char_data *ch, char *argument, int cmd)
