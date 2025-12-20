@@ -1,57 +1,26 @@
-#ifndef _STRUCTS_H_
-#define _STRUCTS_H_
+#pragma once
 /************************************************************************
  *  file: structs.h , structures and defines used by the MUD         *
  *  Usage: All structs are defined here.                                *
  ************************************************************************/
+#include "conf.h"	/* all of tunables */
+#include "types.h"
+
 #include <sys/types.h>
 #include <stdlib.h>
+/* ======================================================================= */
+// moved defines
+/* ======================================================================= */
+// from where?
+#define MESS_ATTACKER   1
+#define MESS_VICTIM     2
+#define MESS_ROOM       3
 
-// Changed all bytes and short to int or unsigned
-typedef short sbyte;
-typedef unsigned ubyte;
-typedef int sh_int;
-typedef unsigned ush_int;
-typedef char bool;
-typedef unsigned short byte;
-
-typedef long long LONGLONG;
-
-#define IMO 61
-
-/*
-#define PULSE_MOBILE    41
-*/
-#define PULSE_MOBILE 39
-#define PULSE_MOBILE2 13
-
-#define PULSE_ZONE 240
-#define PULSE_VIOLENCE 12
-#define WAIT_SEC 4
-#define WAIT_ROUND 4
-
-// #define MAX_STRING_LENGTH   2000
-#define MAX_STRING_LENGTH 4096
-// #define MAX_OUTPUT_LENGTH 512 -> 251110
-#define MAX_OUTPUT_LENGTH 5000
-// #define MAX_INPUT_LENGTH 500 -> 251027
-#define MAX_INPUT_LENGTH 2048
-#define MAX_MESSAGES 61
-#define MAX_ITEMS 153
-
-#define MESS_ATTACKER 1
-#define MESS_VICTIM 2
-#define MESS_ROOM 3
-
-#define SECS_PER_REAL_MIN 60
-#define SECS_PER_REAL_HOUR (60 * SECS_PER_REAL_MIN)
-#define SECS_PER_REAL_DAY (24 * SECS_PER_REAL_HOUR)
-#define SECS_PER_REAL_YEAR (365 * SECS_PER_REAL_DAY)
-
-#define SECS_PER_MUD_HOUR 60
-#define SECS_PER_MUD_DAY (24 * SECS_PER_MUD_HOUR)
-#define SECS_PER_MUD_MONTH (35 * SECS_PER_MUD_DAY)
-#define SECS_PER_MUD_YEAR (17 * SECS_PER_MUD_MONTH)
+// comm.h에서 이동
+#define TO_ROOM    0
+#define TO_VICT    1
+#define TO_NOTVICT 2
+#define TO_CHAR    3
 
 /* ======================================================================= */
 /* The following defs are for obj_data  */
@@ -151,31 +120,29 @@ typedef long long LONGLONG;
 #define LIQ_CONDITIOIN      19
 
 /* for containers  - value[1] */
-
 #define CONT_CLOSEABLE      1
 #define CONT_PICKPROOF      2
 #define CONT_CLOSED         4
 #define CONT_LOCKED         8
 
+
 struct extra_descr_data {
-	char *keyword;		/* Keyword in look/examine          */
-	char *description;	/* What to see                      */
+	char *keyword;					/* Keyword in look/examine          */
+	char *description;				/* What to see                      */
 	struct extra_descr_data *next;	/* Next in list                     */
 };
 
-#define MAX_OBJ_AFFECT 2	/* Used in OBJ_FILE_ELEM *DO*NOT*CHANGE* */
-#define OBJ_NOTIMER    -7000000
 
 struct obj_flag_data {
 	int value[4];		/* Values of the item (see list)    */
 	byte type_flag;		/* Type of item                     */
 	int wear_flags;		/* Where you can wear it            */
 	int extra_flags;	/* If it hums,glows etc             */
-	int weight;		/* Weigt what else                  */
-	int cost;		/* Value when sold (gp.)            */
-	int timer;		/* Timer for object                 */
+	int weight;			/* Weigt what else                  */
+	int cost;			/* Value when sold (gp.)            */
+	int timer;			/* Timer for object                 */
 	long bitvector;		/* To set chars bits                */
-	int gpd;		/* general purpose data             */
+	int gpd;			/* general purpose data             */
 };
 
 /* Used in OBJ_FILE_ELEM *DO*NOT*CHANGE* */
@@ -186,25 +153,24 @@ struct obj_affected_type {
 
 /* ======================== Structure for object ========================= */
 struct obj_data {
-	sh_int item_number;	/* Where in data-base               */
-	sh_int in_room;		/* In what room -1 when conta/carr  */
+	sh_int item_number;					/* Where in data-base               */
+	sh_int in_room;						/* In what room -1 when conta/carr  */
 	struct obj_flag_data obj_flags;		/* Object information               */
 	struct obj_affected_type
-	 affected[MAX_OBJ_AFFECT];	/* Which abilities in PC to change  */
-	char *name;		/* Title of object :get etc.        */
-	char *description;	/* When in room                     */
-	char *short_description;	/* when worn/carry/in cont.         */
-	char *action_description;	/* What to write when used          */
+	 affected[MAX_OBJ_AFFECT];			/* Which abilities in PC to change  */
+	char *name;							/* Title of object :get etc.        */
+	char *description;					/* When in room                     */
+	char *short_description;			/* when worn/carry/in cont.         */
+	char *action_description;			/* What to write when used          */
 	struct extra_descr_data *ex_description;	/* extra descriptions     */
-	struct char_data *carried_by;	/* Carried by :NULL in room/conta   */
+	struct char_data *carried_by;		/* Carried by :NULL in room/conta   */
 
-	struct obj_data *in_obj;	/* In what object NULL when none    */
-	struct obj_data *contains;	/* Contains objects                 */
+	struct obj_data *in_obj;			/* In what object NULL when none    */
+	struct obj_data *contains;			/* Contains objects                 */
 
-	struct obj_data *next_content;	/* For 'contains' lists             */
-	struct obj_data *next;	/* For the object list              */
+	struct obj_data *next_content;		/* For 'contains' lists             */
+	struct obj_data *next;				/* For the object list              */
 };
-
 /* ======================================================================= */
 
 
@@ -212,8 +178,6 @@ struct obj_data {
 /* ======================================================================= */
 /* The following defs are for room_data  */
 /* ======================================================================= */
-#define NOWHERE -1	/* nil reference for room-database    */
-#define NOBODY  -1  /* nil reference for mobile-database (추가, 251017) */
 
 /* Bitvector For 'room_flags' */
 #define DARK           1
@@ -319,9 +283,9 @@ struct room_data
 
 /* For 'char_payer_data' */
 #define MAX_GUILD_SKILLS 30
-#define MAX_SKILLS  200		/* Used in CHAR_FILE_U DO NOT CHANGE */
-#define MAX_WEAR    22
-#define MAX_AFFECT	32	/* Used in CHAR_FILE_U *DO*NOT*CHANGE* */
+#define MAX_SKILLS  	200		/* Used in CHAR_FILE_U DO NOT CHANGE */
+#define MAX_WEAR    	22
+#define MAX_AFFECT		32		/* Used in CHAR_FILE_U *DO*NOT*CHANGE* */
 
 #define DRUNK        0
 #define FULL         1
@@ -432,7 +396,7 @@ struct room_data
 #define ACT_AGGRESSIVE  32	/* Set if automatic attack on NPC's        */
 #define ACT_STAY_ZONE   64	/* MOB Must stay inside its own zone       */
 #define ACT_WIMPY      128	/* MOB Will flee when injured, and if      */
-			       /* aggressive only attack sleeping players */
+			       			/* aggressive only attack sleeping players */
 #define ACT_FIGHTER    256
 #define ACT_MAGE       512
 #define ACT_CLERIC    1024
@@ -601,12 +565,10 @@ struct char_data {
 	int nr;
 	sh_int in_room;
 	int magic_number;
-//  unsigned long bank;
 	LONGLONG bank;
 	int life, regeneration;
 
-	/* for mobile */
-	/* it's regened... */
+	/* for mobile. it's regened... */
 	int regened;
 
 	struct char_player_data player;
@@ -639,10 +601,10 @@ struct char_data {
 #define SKY_LIGHTNING 3
 
 struct weather_data {
-	int pressure;		/* How is the pressure ( Mb ) */
+	int pressure;	/* How is the pressure ( Mb ) */
 	int change;		/* How fast and what way does it change. */
 	int sky;		/* How is the sky. */
-	int sunlight;		/* And how much sun. */
+	int sunlight;	/* And how much sun. */
 };
 
 struct char_file_u {
@@ -726,27 +688,27 @@ struct descriptor_data {
 	char host[16];		/* hostname                   */
 	int ncmds, contime;
 	char pwd[12];		/* password                   */
-	int pos;		/* position in player-file    */
+	int pos;			/* position in player-file    */
 	int connected;		/* mode of 'connectedness'    */
-	int wait;		/* wait for how many loops    */
+	int wait;			/* wait for how many loops    */
 	char *showstr_head;	/* for paging through texts  */
 	char *showstr_point;
 
-	char **str;		/* for the modify-str system  */
+	char **str;			/* for the modify-str system  */
 	int max_str;		/* -                          */
 
 	/* new attribute!!! for posting */
 	char *title;
 
-	int prompt_mode;	/* control of prompt-printing */
+	int prompt_mode;				/* control of prompt-printing */
 	char buf[MAX_STRING_LENGTH];	/* buffer for raw input       */
 	char last_input[MAX_LAST_INPUT_COUNT][MAX_INPUT_LENGTH];	/* for use of !! */
 	int last_input_count;
-	struct txt_q output;	/* q of strings to send       */
-	struct txt_q input;	/* q of unprocessed input     */
+	struct txt_q output;			/* q of strings to send       */
+	struct txt_q input;				/* q of unprocessed input     */
 	struct char_data *character;	/* linked to char             */
-	struct char_data *original;	/* original char              */
-	struct snoop_data snoop;	/* to snoop people.           */
+	struct char_data *original;		/* original char              */
+	struct snoop_data snoop;		/* to snoop people.           */
 	struct descriptor_data *next;	/* link to next descriptor    */
 };
 
@@ -757,17 +719,17 @@ struct msg_type {
 };
 
 struct message_type {
-	struct msg_type die_msg;	/* messages when death            */
-	struct msg_type miss_msg;	/* messages when miss             */
-	struct msg_type hit_msg;	/* messages when hit              */
+	struct msg_type die_msg;		/* messages when death            */
+	struct msg_type miss_msg;		/* messages when miss             */
+	struct msg_type hit_msg;		/* messages when hit              */
 	struct msg_type sanctuary_msg;	/* messages when hit on sanctuary */
-	struct msg_type god_msg;	/* messages when hit on god       */
-	struct message_type *next;	/* to next messages of this kind. */
+	struct msg_type god_msg;		/* messages when hit on god       */
+	struct message_type *next;		/* to next messages of this kind. */
 };
 
 struct message_list {
-	int a_type;		/* Attack type              */
-	int number_of_attacks;	/* How many attack messages to chose from. */
+	int a_type;					/* Attack type              */
+	int number_of_attacks;		/* How many attack messages to chose from. */
 	struct message_type *msg;	/* List of messages.         */
 };
 
@@ -788,8 +750,8 @@ struct dex_app_type {
 struct str_app_type {
 	int tohit;		/* To Hit (THAC0) Bonus/Penalty        */
 	int todam;		/* Damage Bonus/Penalty                */
-	int carry_w;		/* Maximum weight that can be carrried */
-	int wield_w;		/* Maximum weight that can be wielded  */
+	int carry_w;	/* Maximum weight that can be carrried */
+	int wield_w;	/* Maximum weight that can be wielded  */
 };
 
 struct wis_app_type {
@@ -806,4 +768,91 @@ struct con_app_type {
 	int shock;
 };
 
-#endif /* _STRUCTS_H_ */
+/* limit.h에서 이동 */
+struct title_type {
+	char *title_m;
+	char *title_f;
+	long int exp;
+};
+
+/* interpreter.h에서 이동 */
+struct command_info {
+	void (*command_pointer) (struct char_data * ch, char *argument, int cmd);
+	byte minimum_position;
+	byte minimum_level[4];	/* modified by ares */
+};
+
+/* quest.c */
+struct quest_mob_info {
+    int virtual;
+    int level;
+    char *name;
+};
+
+// db.h에서 이동
+struct player_index_element {
+	char *name;
+	int nr;
+};
+
+struct help_index_element {
+	char *keyword;
+	long pos;
+};
+
+// db2.h에서 이동
+/* for queueing zones for update   */
+struct reset_q_element {
+	int zone_to_reset;	/* ref to zone_data */
+	struct reset_q_element *next;
+};
+
+/* structure for the update queue     */
+struct reset_q_type {
+	struct reset_q_element *head;
+	struct reset_q_element *tail;
+};
+
+// from spells.h
+struct spell_info_type {
+	void (*spell_pointer) (byte level, struct char_data * ch, char *arg,
+			       int type,
+			       struct char_data * tar_ch, struct obj_data * tar_obj);
+	byte minimum_position;	/* Position for caster              */
+	ubyte min_usesmana;		/* Amount of mana used by a spell   */
+	byte beats;				/* Heartbeats until ready for next */
+	int prev;				/* previous skill/spell */
+	int side;				/* side skill/spell */
+	byte min_level[4];
+	byte max_skill[4];
+	int targets;		/* See below for use with TAR_XXX  */
+};
+
+/* Possible Targets:
+
+   bit 0 : IGNORE TARGET
+   bit 1 : PC/NPC in room
+   bit 2 : PC/NPC in world
+   bit 3 : Object held
+   bit 4 : Object in inventory
+   bit 5 : Object in room
+   bit 6 : Object in world
+   bit 7 : If fighting, and no argument, select tar_char as self
+   bit 8 : If fighting, and no argument, select tar_char as victim (fighting)
+   bit 9 : If no argument, select self, if argument check that it IS self.
+*/
+
+/* Attacktypes with grammar */
+struct attack_hit_type {
+	char *singular;
+	char *plural;
+};
+
+
+/* 함수 선언 모음 */
+#ifndef NO_PROTOTYPES
+#include "prototypes.h"
+#endif
+
+/* 전역 변수 선언 모음 */
+#include "globals.h"

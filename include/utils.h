@@ -1,48 +1,48 @@
-
+#pragma once
 /* ************************************************************************
 *  file: utils.h, Utility module.                         Part of DIKUMUD *
 *  Usage: Utility macros                                                  *
 ************************************************************************* */
-#ifndef _UTILS_H_
-#define _UTILS_H_
 
 #include <ctype.h>
 #include <string.h>
-#include <stddef.h>  /* for size_t */
 
-#define ISLETTER(c) (isgraph((unsigned char)(c)))
 
-/* LOWER, UPPER, ISDIGIT 모두 삭제, by Komo */
-#define CAP(st)  (*(st) = toupper(*(st)))
-#endif
-#define RETURN_TO_QUIT
-#define MID_HELPER	"narai"
+// comm.h에서 이동
+/* SEND_TO_Q 단순 함수 호출로 변경 */
+#define SEND_TO_Q(messg, desc)  send_to_q_color((messg), (desc))
 
-#define REBOOT_TIME	(4*86400)
+// from daerimsa.c
+#define SON_OGONG_STEP		(son_ogong->quest.solved)
+#define FOURTH_JANGRO_STEP	(fourth_jangro->quest.solved)
 
-#define TIME_ZONE	(9*3600)
-#define REBOOT_WHEN	(9*60-5)
+// from db.c
+#define ZCMD zone_table[zone].cmd[cmd_no]
 
-#pragma GCC diagnostic ignored "-Wunused-result"
+// from interpreter.c
+#define STATE(d) ((d)->connected)
+#define COMMANDO(number, min_pos, pointer, min_lm, min_lc, min_lt, min_lw) { \
+        cmd_info[(number)].command_pointer = (pointer);                    \
+        cmd_info[(number)].minimum_position = (min_pos);                   \
+        cmd_info[(number)].minimum_level[0] = (min_lm);                    \
+        cmd_info[(number)].minimum_level[1] = (min_lc);                    \
+        cmd_info[(number)].minimum_level[2] = (min_lt);                    \
+        cmd_info[(number)].minimum_level[3] = (min_lw);                    \
+}
 
-// To avoid name conflict with built-in log(x) function
-#define log(s) mudlog(s)
-extern void mudlog(const char *str);    /* in utility.c */
+// from limit.c
+#define READ_TITLE(ch) (GET_SEX(ch) == SEX_MALE ?   \
+    titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_m :  \
+    titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_f)
 
-void print_increased_skilled(struct char_data *ch, int sk_no); /* in utility.c */
-void DEBUG_LOG(const char *format, ...);
-#ifndef HAVE_STRLCAT
-size_t strlcat(char *dest, const char *src, size_t size);       /* in utility.c 안전한 문자열 연결 함수, 251125 by Komo */
-#endif
+// from mob_magic.c
+#define VICT_IS_SAME_ROOM(mob)	(mob->in_room==mob->specials.fighting->in_room)
 
-const char *get_char_name(struct char_data *ch, struct char_data *viewer);  /* in utility.c PERS 매크로 대체 함수, 251125 by Komo */
-long int hit_limit(struct char_data *ch);
+// from spec_procs.c
+#define FUDGE (100 + dice(6, 20))
 
-// Don't use NULL pointer for null character ('\0')
-#define NUL '\0'
-#define TRUE  1
-#define FALSE 0
 
+/* ---------- original UTILS.H ---------- */
 #ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif
@@ -66,6 +66,8 @@ long int hit_limit(struct char_data *ch);
         } \
     } while(0)
 
+#define CAP(st)  (*(st) = toupper(*(st)))
+
 #define IS_SET(flag,bit)  ((flag) & (bit))
 #define IS_AFFECTED(ch,skill) ( IS_SET((ch)->specials.affected_by, (skill)) )
 #define IS_DARK(room)  (!world[room].light && IS_SET(world[room].room_flags, DARK))
@@ -73,7 +75,7 @@ long int hit_limit(struct char_data *ch);
 #define SET_BIT(var,bit)  ((var) = (var) | (bit))
 #define REMOVE_BIT(var,bit)  ((var) = (var) & ~(bit) )
 
-
+#define ISLETTER(c) (isgraph((unsigned char)(c)))
 #define IF_STR(st)  ((st) ? (st) : "\0")
 #define ISNEWL(ch)  ((ch) == '\n' || (ch) == '\r')
 
@@ -179,11 +181,8 @@ long int hit_limit(struct char_data *ch);
 #define GET_LEARNED(ch, sk_no)		((ch)->skills[(int)(sk_no)].learned)
 #define GET_SKILLED(ch, sk_no)		((ch)->skills[(int)(sk_no)].skilled)
 
-
 /* max skilled = 100 */
-
 /* jhpark, skilled increase시 같은 길드멤버가 아닌지 확인 */
-
 #define INCREASE_SKILLED(ch, victim, sk_no)	\
     do { \
         if((IS_NPC(victim) || ch == victim) || (ch->player.guild != victim->player.guild)) {	\
@@ -219,3 +218,8 @@ long int hit_limit(struct char_data *ch);
             }	\
         } \
     } while(0)
+
+/* Unit Macros, 251218 */
+#define K(x) ((long)(x) * 1000)         /* Kilo, 1천 */
+#define M(x) ((long)(x) * 1000000)      /* Mega, 백만 */
+#define G(x) ((long)(x) * 1000000000)   /* Giga, 10억 */

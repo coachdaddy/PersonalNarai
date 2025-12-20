@@ -11,11 +11,8 @@ OBJDIR  = ./obj
 INSTDIR = ../bin
 VPATH   = .:$(INCDIR):$(UTLSRC):
 
-# CC      = clang
-# CC      = gcc
 CC      = cc
 
-# MAKE    = gmake
 MAKE    = make
 LD      = $(CC)
 
@@ -23,23 +20,12 @@ OFLAGS  = -O -g -Wall -pipe
 
 INCLUDE = -I$(INCDIR)
 
-# MFLAGS: SYPARK RETURN_TO_QUIT INIT_BARE_HAND GHOST
-#         OLD_DAM_MESSAGE OLD_PARRY
-#         OLD_MIRROR_IMAGE OldMobAct
-#
-# MFLAGS    = -DIMO=41 -DRETURN_TO_QUIT
-#
-# MFLAGS are moved to ../include/utils.h
-
 # Set initial gold and quest in "db.c"
 # DFLAGS= -DBETA_TEST
 DFLAGS=
 
-# CFLAGS  = $(OFLAGS) $(DFLAGS) $(INCLUDE)
 CFLAGS  = $(OFLAGS) $(DFLAGS) $(INCLUDE) -g -rdynamic
 
-# LDFLAGS    = libdescrypt.a
-# LDFLAGS  = -lcrypt -g
 LDFLAGS  = -lcrypt -g -rdynamic
 
 SRCS    = \
@@ -112,82 +98,82 @@ ctags :
 $(OBJDIR)/act.comm.o: act.comm.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
+    $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
     $(INCDIR)/db.h $(INCDIR)/spells.h
 $(OBJDIR)/act.informative.o: act.informative.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/limit.h $(INCDIR)/guild_list.h
 $(OBJDIR)/act.movement.o: act.movement.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/guild_list.h
 $(OBJDIR)/act.obj1.o: act.obj1.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
+    $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
     $(INCDIR)/db.h $(INCDIR)/spells.h
 $(OBJDIR)/act.obj2.o: act.obj2.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
+    $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
     $(INCDIR)/db.h $(INCDIR)/spells.h
 $(OBJDIR)/act.offensive.o: act.offensive.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/limit.h \
     $(INCDIR)/guild_list.h
 $(OBJDIR)/act.other.o: act.other.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/guild_list.h
 $(OBJDIR)/act.social.o: act.social.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
+    $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
     $(INCDIR)/db.h $(INCDIR)/spells.h
 $(OBJDIR)/act.wizard.o: act.wizard.c \
     $(INCDIR)/structs.h $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
+    $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
     $(INCDIR)/db.h $(INCDIR)/spells.h \
     $(INCDIR)/limit.h
 $(OBJDIR)/board.o: board.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/db.h
+    $(INCDIR)/db.h
 $(OBJDIR)/comm.o: comm.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h $(INCDIR)/interpreter.h \
+    $(INCDIR)/utils.h $(INCDIR)/interpreter.h \
     $(INCDIR)/handler.h $(INCDIR)/db.h
 $(OBJDIR)/constants.o: constants.c $(INCDIR)/structs.h \
     $(INCDIR)/limit.h
 $(OBJDIR)/daerimsa.o: daerimsa.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/limit.h
 $(OBJDIR)/db.o: db.c \
     $(INCDIR)/structs.h $(INCDIR)/utils.h \
-    $(INCDIR)/db.h $(INCDIR)/comm.h \
+    $(INCDIR)/db.h \
     $(INCDIR)/handler.h $(INCDIR)/limit.h $(INCDIR)/spells.h mob_bal.c
 $(OBJDIR)/fight.o: fight.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/handler.h $(INCDIR)/interpreter.h \
+    $(INCDIR)/handler.h $(INCDIR)/interpreter.h \
     $(INCDIR)/db.h $(INCDIR)/spells.h \
     $(INCDIR)/guild_list.h
 $(OBJDIR)/gbisland.o: gbisland.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/limit.h
 $(OBJDIR)/guild_command.o: guild_command.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/limit.h \
     $(INCDIR)/guild_list.h
@@ -197,79 +183,77 @@ $(OBJDIR)/guild_constant.o: guild_constant.c $(INCDIR)/structs.h \
 $(OBJDIR)/guild_informative.o: guild_informative.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
+    $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
     $(INCDIR)/db.h $(INCDIR)/spells.h \
     $(INCDIR)/limit.h $(INCDIR)/guild_list.h
 $(OBJDIR)/guild_skills.o: guild_skills.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/spells.h $(INCDIR)/handler.h $(INCDIR)/limit.h \
     $(INCDIR)/db.h $(INCDIR)/guild_list.h
 $(OBJDIR)/handler.o: handler.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/db.h \
+    $(INCDIR)/db.h \
     $(INCDIR)/handler.h $(INCDIR)/spells.h $(INCDIR)/guild_list.h
 $(OBJDIR)/interpreter.o: interpreter.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/comm.h $(INCDIR)/interpreter.h $(INCDIR)/db.h \
+    $(INCDIR)/interpreter.h $(INCDIR)/db.h \
     $(INCDIR)/utils.h $(INCDIR)/limit.h
 $(OBJDIR)/limit.o: limit.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/limit.h \
-    $(INCDIR)/utils.h $(INCDIR)/spells.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h $(INCDIR)/spells.h \
     $(INCDIR)/guild_list.h
 $(OBJDIR)/mabact.o: mabact.c \
     $(INCDIR)/utils.h $(INCDIR)/structs.h \
     $(INCDIR)/db.h \
-    $(INCDIR)/comm.h $(INCDIR)/spells.h
+    $(INCDIR)/spells.h
 $(OBJDIR)/magic_weapon.o: magic_weapon.c $(INCDIR)/structs.h \
-    $(INCDIR)/comm.h \
     $(INCDIR)/magic_weapon.h $(INCDIR)/utils.h $(INCDIR)/spells.h
 $(OBJDIR)/magic.o: magic.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/spells.h $(INCDIR)/handler.h \
+    $(INCDIR)/spells.h $(INCDIR)/handler.h \
     $(INCDIR)/limit.h $(INCDIR)/db.h \
     $(INCDIR)/guild_list.h $(INCDIR)/magic_weapon.h
 $(OBJDIR)/magic2.o: magic2.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/spells.h $(INCDIR)/handler.h \
+    $(INCDIR)/spells.h $(INCDIR)/handler.h \
     $(INCDIR)/limit.h $(INCDIR)/db.h \
     $(INCDIR)/magic_weapon.h $(INCDIR)/guild_list.h
 $(OBJDIR)/magic3.o: magic3.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/spells.h $(INCDIR)/handler.h \
+    $(INCDIR)/spells.h $(INCDIR)/handler.h \
     $(INCDIR)/limit.h $(INCDIR)/db.h \
     $(INCDIR)/guild_list.h
 $(OBJDIR)/mail.o: mail.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/db.h \
+    $(INCDIR)/db.h \
     $(INCDIR)/handler.h $(INCDIR)/interpreter.h
 $(OBJDIR)/mob_bal.o: mob_bal.c
 $(OBJDIR)/mob_magic.o: mob_magic.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/spells.h $(INCDIR)/handler.h \
+    $(INCDIR)/spells.h $(INCDIR)/handler.h \
     $(INCDIR)/db.h \
     $(INCDIR)/mob_magic.h
 $(OBJDIR)/mobact.o: mobact.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/db.h \
-    $(INCDIR)/comm.h $(INCDIR)/spells.h \
+    $(INCDIR)/spells.h \
     $(INCDIR)/utils.h
 $(OBJDIR)/modify.o: modify.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h $(INCDIR)/interpreter.h \
-    $(INCDIR)/handler.h $(INCDIR)/db.h \
-    $(INCDIR)/comm.h
+    $(INCDIR)/handler.h $(INCDIR)/db.h
 $(OBJDIR)/newcom.o: newcom.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
+    $(INCDIR)/interpreter.h $(INCDIR)/handler.h \
     $(INCDIR)/db.h $(INCDIR)/spells.h
 $(OBJDIR)/newshop.o: newshop.c $(INCDIR)/structs.h \
     $(INCDIR)/newshop.h
@@ -278,7 +262,6 @@ $(OBJDIR)/quest.o: quest.c \
     $(INCDIR)/utils.h $(INCDIR)/db.h
 $(OBJDIR)/shop.o: shop.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/comm.h \
     $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/interpreter.h $(INCDIR)/utils.h
 $(OBJDIR)/spec_assign.o: spec_assign.c \
@@ -287,42 +270,42 @@ $(OBJDIR)/spec_assign.o: spec_assign.c \
     $(INCDIR)/guild_list.h
 $(OBJDIR)/spec_procs.o: spec_procs.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/limit.h
 $(OBJDIR)/spec_procs2.o: spec_procs2.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/limit.h \
     $(INCDIR)/mob_magic.h
 $(OBJDIR)/spec_procs3.o: spec_procs3.c \
     $(INCDIR)/structs.h \
-    $(INCDIR)/utils.h $(INCDIR)/comm.h \
+    $(INCDIR)/utils.h \
     $(INCDIR)/interpreter.h $(INCDIR)/handler.h $(INCDIR)/db.h \
     $(INCDIR)/spells.h $(INCDIR)/limit.h \
     $(INCDIR)/mob_magic.h
 $(OBJDIR)/spell_parser.o: spell_parser.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/db.h \
+    $(INCDIR)/db.h \
     $(INCDIR)/interpreter.h $(INCDIR)/spells.h $(INCDIR)/handler.h
 $(OBJDIR)/spells1.o: spells1.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/db.h \
+    $(INCDIR)/db.h \
     $(INCDIR)/interpreter.h $(INCDIR)/spells.h $(INCDIR)/handler.h \
     $(INCDIR)/guild_list.h
 $(OBJDIR)/spells2.o: spells2.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/db.h \
+    $(INCDIR)/db.h \
     $(INCDIR)/interpreter.h $(INCDIR)/spells.h $(INCDIR)/handler.h \
     $(INCDIR)/guild_list.h
 $(OBJDIR)/spells3.o: spells3.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/db.h \
+    $(INCDIR)/db.h \
     $(INCDIR)/interpreter.h $(INCDIR)/spells.h $(INCDIR)/handler.h
 $(OBJDIR)/utility.o: utility.c \
     $(INCDIR)/structs.h \
@@ -331,7 +314,7 @@ $(OBJDIR)/version.o: version.c
 $(OBJDIR)/weather.o: weather.c \
     $(INCDIR)/structs.h \
     $(INCDIR)/utils.h \
-    $(INCDIR)/comm.h $(INCDIR)/handler.h $(INCDIR)/interpreter.h \
+    $(INCDIR)/handler.h $(INCDIR)/interpreter.h \
     $(INCDIR)/db.h
 $(OBJDIR)/change_level.o: $(UTLSRC)/change_level.c \
     $(INCDIR)/structs.h

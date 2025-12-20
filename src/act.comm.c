@@ -5,33 +5,18 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <assert.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "spells.h"
 
-#include <sys/time.h>
 
-/* extern variables */
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-
-/* extern functions */
-int file_to_string(char *name, char *buf);  /* in db.c */
-
-#define MAX_HISTORY_MSG 512  // 넉넉한 크기
-#define HISTORY_SIZE 100     // 20 -> 100으로 확장, 251124 by Komo
 static char history[HISTORY_SIZE][MAX_HISTORY_MSG];
 static int his_start = 0, his_end = 0;
 static FILE *chatlogfp = NULL;
+
 
 /* 말하기 */
 void do_say(struct char_data *ch, char *argument, int cmd)
@@ -113,7 +98,6 @@ void do_shout(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_STRING_LENGTH], buf1[MAX_STRING_LENGTH];
     struct descriptor_data *i;
-    extern int noshoutflag;
 
     if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
         send_to_char("Your mouth moves, but no sound comes out! (You have been silenced by the Gods)\n\r", ch);
@@ -154,8 +138,6 @@ void do_chat(struct char_data *ch, char *argument, int cmd)
     char buf[MAX_STRING_LENGTH];
     struct char_data *victim, *prefs; /* 메시지를 받을 대상, 설정을 확인할 대상 (본체) */
     
-    extern int nochatflag;
-
     // 예외 처리
     if (IS_SET(ch->specials.act, PLR_DUMB_BY_WIZ) && GET_LEVEL(ch) < IMO + 3) {
         send_to_char("You try to speak into the orb, but it remains dark. (You have been silenced by the Gods)\n\r", ch);
@@ -354,7 +336,7 @@ void do_ask(struct char_data *ch, char *argument, int cmd)
 	}
 }
 
-#define MAX_NOTE_LENGTH MAX_STRING_LENGTH	/* arbitrary */
+
 /* 쓰기 */
 void do_write(struct char_data *ch, char *argument, int cmd)
 {

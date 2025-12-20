@@ -3,48 +3,13 @@
 		made by atre@paradise.kaist.ac.kr at 1995/11/09
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <time.h>
-#include <stdlib.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
-#include "comm.h" // acthan, send_to_char_han 등
 
-#define MaxQuest		10000
-#define QUEST_FILE		"mob.quest"
-#define ZONE_NUMBER 47
-#define END_QUEST_MOBILE 631
-
-/* for Challenge Room Quest System */
-#define QUEST_ROOM_VNUM 3081           // 퀘스트 룸 VNUM
-#define CHALLENGE_ROOM_START_VNUM 3082 // '도전의 방' 시작 VNUM
-#define CHALLENGE_ROOM_END_VNUM 3089   // '도전의 방' 끝 VNUM (총 8개)
-extern struct room_data *world;
-extern struct index_data *mob_index;
-
-int number(int from, int to);
-void send_to_char_han(char *msgeng, char *msghan, struct char_data *ch);
-
-void half_chop(char *string, char *arg1, char *arg2);
-struct obj_data *get_obj_in_list_vis(struct char_data *ch, char *name, struct obj_data *list);
-void send_to_char(char *messg, struct char_data *ch);
-void extract_obj(struct obj_data *obj);
-void obj_to_char(struct obj_data *o, struct char_data *ch);
-void char_to_room(struct char_data *ch, int room);
-void char_from_room(struct char_data *ch);
-void do_look(struct char_data *ch, char *argument, int cmd);
-
-struct {
-	int virtual;
-	int level;
-	char *name;
-} QM[MaxQuest];
 
 int topQM;
+struct quest_mob_info QM[MaxQuest];
 
 int level_quest[IMO + 4] = {
 	0,
@@ -159,7 +124,7 @@ int get_quest(struct char_data *ch)
 
 	if (GET_LEVEL(ch) == 60) {
 		low = 345; /* 9531 36 son adle second */
-        high = END_QUEST_MOBILE;
+        high = END_QUEST_MOB;
     } else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) {
         low = 347;  /* 1465 37 roy slade	*/
         high = 437; /* 15117 40 super magnet	*/
@@ -216,7 +181,7 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 			(ch->quest.solved)--;
 		} else {
 			/* 단군의 request penalty */
-			int xp = number(5000000, 10000000);
+			int xp = number(M(5), M(10));
 
 			if (GET_EXP(ch) > xp) {
 				GET_EXP(ch) -= xp;
@@ -289,7 +254,7 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 			QM[num].name);
 		snprintf(buf2, sizeof(buf2), "&CQUEST&n : &U%s&Y? 어디 있는 걸까? 모르겠는데...&n\n\r",
 			QM[num].name);
-		log("QUEST : INVALID mobile.");
+		mudlog("QUEST : INVALID mobile.");
 	} else { 
 		snprintf(buf1, sizeof(buf1), "&CQUEST&n : &U%s&Y is in &#%s&Y probably.&n\n\r",
 			QM[num].name, zone);
@@ -355,7 +320,7 @@ void init_quest(void)
 	int num, size;
 
 	if (!(fp = fopen(QUEST_FILE, "r"))) {
-		log("(init_quest) Initializing quests (quest_file)");
+		mudlog("(init_quest) Initializing quests (quest_file)");
 		exit(0);
 	}
 
@@ -388,7 +353,7 @@ void init_quest(void)
 		topQM++;
 
 		if (topQM > MaxQuest) {
-			log("(init_quest) Quest Mobiles are overflown.");
+			mudlog("(init_quest) Quest Mobiles are overflown.");
 			fclose(fp);
 			return;
 		}
@@ -510,8 +475,7 @@ int quest_room(struct char_data *ch, int cmd, char *arg)
     };
 
 	struct obj_data *tmp_obj;
-	extern struct index_data *obj_index;
-
+	
 	/* quest(302) or use(172)  */
 	if (cmd != 302 && cmd != 172) {
 		return FALSE;
@@ -727,7 +691,7 @@ void do_challenge(struct char_data *ch, char *argument, int cmd)
         return;
     }
 
-    if (world[challenger->in_room].number != QUEST_ROOM_VNUM) {
+    if (world[challenger->in_room].number != VNUM_ROOM_QUESTROOM) {
         send_to_char_han("&CQUEST&n : &YYou cannot begin the challenge from here.&n\n\r",
                          "&CQUEST&n : &Y이곳에서는 도전을 시작할 수 없습니다.&n\n\r", challenger);
         return;
@@ -749,7 +713,7 @@ void do_challenge(struct char_data *ch, char *argument, int cmd)
     /* 포인터 유효성 검사용 디버깅 코드 삭제, 문제 없는 듯... */
 
     /* 비어있는 도전의 방 찾기 */
-    for (i = CHALLENGE_ROOM_START_VNUM; i <= CHALLENGE_ROOM_END_VNUM; i++) {
+    for (i = VNUM_ROOM_CHALLENGE_START; i <= VNUM_ROOM_CHALLENGE_END; i++) {
         room_rnum = real_room(i);
         if (room_rnum != NOWHERE && world[room_rnum].people == NULL) {
 
@@ -922,7 +886,7 @@ void do_rejoin(struct char_data *ch, char *argument, int cmd)
         send_to_char("&cCHALLENGE&n : &y이 레벨에서는 도전에 합류할 수 없습니다.&n\n\r", ch);
         return;
     }
-    if (world[ch->in_room].number != QUEST_ROOM_VNUM) {
+    if (world[ch->in_room].number != VNUM_ROOM_QUESTROOM) {
         send_to_char("&cCHALLENGE&n : &y이곳에서는 도전에 다시 합류할 수 없습니다.&n\n\r", ch);
         return;
     }
@@ -948,7 +912,7 @@ void do_rejoin(struct char_data *ch, char *argument, int cmd)
     group_leader = (ch->master ? ch->master : ch); // 그룹 리더 찾기
 
     // 리더 이동 - 리더가 명령 사용자(ch)가 아니고, 퀘스트 룸에 있다면
-    if (group_leader != ch && group_leader->in_room == real_room(QUEST_ROOM_VNUM)) {
+    if (group_leader != ch && group_leader->in_room == real_room(VNUM_ROOM_QUESTROOM)) {
         if (GET_LEVEL(group_leader) >= 10 && GET_LEVEL(group_leader) < 40) {
             acthan("&cCHALLENGE&n : &yYou follow $N into the Room of Challenge.&n", 
                    "&cCHALLENGE&n : &y당신은 $N을 따라 도전의 방으로 들어갑니다.&n", FALSE, group_leader, 0, ch, TO_CHAR);
@@ -963,7 +927,7 @@ void do_rejoin(struct char_data *ch, char *argument, int cmd)
         if (f->follower == ch || f->follower == group_leader)
             continue;
 
-        if (f->follower->in_room == real_room(QUEST_ROOM_VNUM) && IS_AFFECTED(f->follower, AFF_GROUP)) {
+        if (f->follower->in_room == real_room(VNUM_ROOM_QUESTROOM) && IS_AFFECTED(f->follower, AFF_GROUP)) {
             if (GET_LEVEL(f->follower) >= 10 && GET_LEVEL(f->follower) < 40) {
                 acthan("&cCHALLENGE&n : &yYou follow $N into the Room of Challenge.&n",
                        "&cCHALLENGE&n : &y당신은 $N을 따라 도전의 방으로 들어갑니다.&n", FALSE, f->follower, 0, ch, TO_CHAR);

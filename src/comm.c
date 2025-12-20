@@ -7,79 +7,28 @@
 *  violating our copyright.
 ************************************************************************* */
 
-#include <errno.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <string.h>
-#include <time.h>
-#include <fcntl.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
-
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
-#include "comm2.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "colors.h" // 색상 매크로
 
-#ifndef DFLT_DIR
-#define DFLT_DIR "lib"		/* default port */
-#endif				// DFLT_DIR
-#ifndef DFLT_PORT
-#define DFLT_PORT 5101		/* default port */
-#endif				// DFLT_PORT
-
-#define MAX_NAME_LENGTH 15
-#define MAX_HOSTNAME    256
-#define OPT_USEC        200000 /* time delay corresponding to 5 passes/sec */
-#define MAXFDALLOWED    200
-#define MAXOCLOCK       1200
-#define A_DAY           86400
-#define MINUTES(m)      (60 * (m))
-#define TICS_PER_SEC    5
-#define SAVE_PERIOD_MINUTES 10 /* 10분마다 플레이어 저장 */
-#define PLAYER_SAVE_PERIOD  (MINUTES(SAVE_PERIOD_MINUTES) * TICS_PER_SEC)
-
-extern int errno;
-extern int no_echo;
-extern struct room_data *world;			/* In db.c */
-extern int top_of_world;				/* In db.c */
-extern struct time_info_data time_info;	/* In db.c */
-extern char help[];
-extern char *connected_types[];
-
-extern void no_echo_telnet(struct descriptor_data *d);
-extern void echo_telnet(struct descriptor_data *d);
-extern void no_echo_local(int fd);
-extern void weather_and_time(int mode);
 
 /* local globals */
-struct descriptor_data *descriptor_list, *next_to_process;
-
-int s;
+int s, boottime, maxdesc, avail_descs;
+int tics = 0;			/* for extern checkpointing */
 int slow_death = 0;		/* Shut her down, Martha, she's sucking mud */
-int shutdowngame = 0;		/* clean shutdown */
+int shutdowngame = 0;	/* clean shutdown */
 int reboot_game = 0;
 int reboot_counter = -1;
-struct timeval null_time;
-int boottime;
 unsigned long reboot_time = REBOOT_TIME; // 현재 4일
+struct timeval null_time;
+struct descriptor_data *descriptor_list, *next_to_process;
+volatile sig_atomic_t shutdown_signal_received = 0;
 
-int maxdesc, avail_descs;
-int tics = 0; /* for extern checkpointing */
-
+int baddoms = 0;
+char baddomain[16][32];
 char pidfile[256] = {0};
 
 int nochatflag = 0;
@@ -91,55 +40,6 @@ int no_specials = 0;		/* Suppress ass. of special routines */
 int nostealflag = 0;
 int noshoutflag = 0;
 
-// 함수 프로토타입
-void game_loop(int s);
-void signal_setup(void);
-void handle_graceful_shutdown(int sig);
-void handle_immediate_shutdown(int sig);
-void run_the_game(int port);
-
-/* write_to_q is in comm.h for the macro */
-int get_from_q(struct txt_q *queue, char *dest);
-int init_socket(int port);
-int new_connection(int s);
-int new_descriptor(int s);
-int unfriendly_domain(char *h);
-int process_output(struct descriptor_data *t);
-int process_input(struct descriptor_data *t);
-void saveallplayers(void);
-void zapper(void);
-void checkpointing(int sig);
-void nonblock(int s);
-void on_echo_local(int fd);
-void transall(int room);
-int move_stashfile_safe(const char *victim); // 251016
-void close_sockets(int s);
-void close_socket(struct descriptor_data *d);
-void stash_char(struct char_data *ch);
-void flush_queues(struct descriptor_data *d);
-void parse_name(struct descriptor_data *desc, char *arg);
-void log_abnormal_disconnect(struct descriptor_data *d);
-struct timeval timediff(struct timeval *a, struct timeval *b);
-
-/* extern fcnts */
-int is_korean(struct descriptor_data *d);
-void boot_db(void);
-void zone_update(void);
-void record_player_number(void);
-void affect_update(void);	/* In spells.c */
-void point_update(void);	/* In limits.c */
-void free_char(struct char_data *ch);
-
-void mobile_activity(void);
-void mobile_activity2(void);
-void string_add(struct descriptor_data *d, char *str);
-void perform_violence(void);
-void stop_fighting(struct char_data *ch);
-void show_string(struct descriptor_data *d, char *input);
-void save_char(struct char_data *ch, sh_int load_room);
-void do_assist(struct char_data *ch, char *argument, int cmd);
-void process_color_string(const char *input, char *output, int max_out_len); // Komo
-struct char_data *make_char(char *name, struct descriptor_data *desc);
 
 /* *********************************************************************
 *  main game loop and related stuff               *
@@ -174,27 +74,27 @@ int main(int argc, char **argv)
 
 	snprintf(pidfile, sizeof(pidfile), "mud-%d.pid", port);
     if (access(pidfile, F_OK) == 0) {
-        log("(main) Port busy: pid file already exists.");
+        mudlog("(main) Port busy: pid file already exists.");
         exit(1);
     }
 
 	umask(0077);
 
-	log("(main) Signal trapping.");
+	mudlog("(main) Signal trapping.");
 
 	signal_setup();
 
 	snprintf(buf, sizeof(buf), "(main) Running game on port %d.", port);
-	log(buf);
+	mudlog(buf);
 
 	run_the_game(port);
 
 	// PID 파일 삭제 (정상 종료 시)
     if (pidfile[0] != '\0') {
         unlink(pidfile);
-        log("(main) PID file removed on normal termination.");
+        mudlog("(main) PID file removed on normal termination.");
     }
-    log("(main) Normal termination of game.");
+    mudlog("(main) Normal termination of game.");
 
 	return (0);
 }
@@ -204,13 +104,13 @@ void run_the_game(int port)
 {
 	descriptor_list = NULL;
 
-	log("(run_the_game) Opening mother connection.");
+	mudlog("(run_the_game) Opening mother connection.");
 	s = init_socket(port);
 
 	boot_db();
 
 	FILE *pidfp;
-	log("(run_the_game) Writing pid file.");
+	mudlog("(run_the_game) Writing pid file.");
 
 	if (!(pidfp = fopen(pidfile, "w+"))) {
         perror("(run_the_game) ERROR: can't open pid file.");
@@ -219,42 +119,34 @@ void run_the_game(int port)
         fclose(pidfp);
     }
 
-	log("(run_the_game) Entering game loop.");
+	mudlog("(run_the_game) Entering game loop.");
 	no_echo_local(s);
 
 	game_loop(s);
-	log("(run_the_game) DOWN??????????SAVE ALL CHARS???????");
-    transall(3001);
+	mudlog("(run_the_game) DOWN??????????SAVE ALL CHARS???????");
+    transall(VNUM_ROOM_MID);
 
-    log("(run_the_game) Game loop ended. Saving all characters.");
+    mudlog("(run_the_game) Game loop ended. Saving all characters.");
     saveallplayers();
     close_sockets(s);
 
     shutdown(s, 2);
 
-    log("(run_the_game) Normal termination of game.");
+    mudlog("(run_the_game) Normal termination of game.");
 }
 
 // 신호 처리 로직 통합, by Komo
 void handle_graceful_shutdown(int sig)
 {
     reboot_game = 1; // '리붓' 플래그 설정
-    log("Received SIGUSR1 - Graceful shutdown/reboot request.");
+    mudlog("Received SIGUSR1 - Graceful shutdown/reboot request.");
 }
 
 
-// SIGUSR2, SIGINT, SIGTERM: 즉시 종료
+// SIGUSR2, SIGINT, SIGTERM: 즉시 종료, flag만 설정 251219 by Komo
 void handle_immediate_shutdown(int sig)
 {
-    if (!shutdowngame) {
-        log("Received signal for immediate shutdown.");
-        if (pidfile[0] != '\0') {
-            unlink(pidfile);
-            log("PID file removed by signal handler.");
-        }
-        saveallplayers();
-        exit(0);
-    }
+    shutdown_signal_received = 1;
 }
 
 
@@ -287,7 +179,6 @@ void game_loop(int s)
 	static struct timeval opt_time;
 	char comm[MAX_INPUT_LENGTH];
 	struct descriptor_data *point, *next_point;
-	struct char_data *ch;
 	int pulse = 0;
 	char prmpt[32];
 	int pulse_per_mud_hour;
@@ -321,8 +212,8 @@ void game_loop(int s)
 		last_time.tv_sec = now.tv_sec + timeout.tv_sec;
 		last_time.tv_usec = now.tv_usec + timeout.tv_usec;
 
-		if (last_time.tv_usec >= 1000000) {
-			last_time.tv_usec -= 1000000;
+		if (last_time.tv_usec >= M(1)) {
+			last_time.tv_usec -= M(1);
 			last_time.tv_sec++;
 		}
 
@@ -443,6 +334,18 @@ void game_loop(int s)
 		/* handle heartbeat stuff */
 		pulse++;
 
+		/* handle_immediate_shutdown logic moved here, w/ CodeRabbit, 251219 */
+		if (shutdown_signal_received) {
+			mudlog("Received immediate shutdown signal. Saving players...");
+			
+			if (pidfile[0] != '\0') {
+				unlink(pidfile);
+			}
+			saveallplayers();
+			shutdowngame = 1;
+			continue; 
+    	}
+
 		zapper();
 		/* 
          * zapper()가 reboot_game=1로 만들면 아래 로직이 실행됨
@@ -451,7 +354,7 @@ void game_loop(int s)
             // 리붓 절차 시작
             reboot_counter = 240; // 60초 카운트다운
             send_to_all("\n\r\n\r### SYSTEM: Server is rebooting in 1 minute. Please log off safely. ###\n\r\n\r");
-            log("Graceful shutdown sequence initiated (via zapper or SIGUSR1).");
+            mudlog("Graceful shutdown sequence initiated (via zapper or SIGUSR1).");
             reboot_game = 0; // 플래그 초기화
         }
 
@@ -514,11 +417,11 @@ void game_loop(int s)
                 saveallplayers();
                 snprintf(buf, sizeof(buf), "Periodic player save executed (%d min interval). %d players saved.",
                          SAVE_PERIOD_MINUTES, player_count);
-                log(buf);
+                mudlog(buf);
             } else {
                 snprintf(buf, sizeof(buf), "Periodic player save skipped (No active players, %d min interval).", 
                          SAVE_PERIOD_MINUTES);
-                log(buf);
+                mudlog(buf);
             }
         }
 		tics++;
@@ -599,23 +502,23 @@ void record_player_number()
 			if (!(n % 2)) {
 				strcat(line, "|");
 			} else {
-				log(line);
+				mudlog(line);
 				line[0] = 0;
 			}
 			++n;
 		}
 		if (n % 2) {
-			log(line);
+			mudlog(line);
 		}
 
 		if (m > most)
 			most = m;
 		sprintf(line, "%s%d/%d active connections",
 			(n % 2) ? "\n\r" : "", m, most);
-		log(line);
+		mudlog(line);
 		t = 30 + time(0) - boottime;
 		sprintf(line, "Running time %d:%02d", t / 3600, (t % 3600) / 60);
-		log(line);
+		mudlog(line);
 
 #ifdef REBOOT_WHEN
 		static bool adjust = FALSE;
@@ -692,7 +595,7 @@ struct timeval timediff(struct timeval *a, struct timeval *b)
 	tmp = *a;
 
 	if ((rslt.tv_usec = tmp.tv_usec - b->tv_usec) < 0) {
-		rslt.tv_usec += 1000000;
+		rslt.tv_usec += M(1);
 		--(tmp.tv_sec);
 	}
 	if ((rslt.tv_sec = tmp.tv_sec - b->tv_sec) < 0) {
@@ -726,7 +629,7 @@ int init_socket(int port)
 
 	bzero(&sa, sizeof(struct sockaddr_in));
 	gethostname(hostname, MAX_HOSTNAME);
-	log(hostname);
+	mudlog(hostname);
 	hp = gethostbyname(hostname);
 	if (hp == NULL) {
 		perror("gethostbyname");
@@ -928,7 +831,7 @@ int process_input(struct descriptor_data *t)
 			} else
 				break;
 		else {
-			log("EOF encountered on socket read.");
+			mudlog("EOF encountered on socket read.");
 			return (-1);
 		}
 	} while (!ISNEWL(*(t->buf + begin + sofar - 1)));
@@ -1031,7 +934,7 @@ int process_input(struct descriptor_data *t)
 
 void close_sockets(int s)
 {
-	log("Closing all sockets.");
+	mudlog("Closing all sockets.");
 	while (descriptor_list)
 		close_socket(descriptor_list);
 	close(s);
@@ -1062,15 +965,15 @@ void close_socket(struct descriptor_data *d)
 			move_stashfile_safe(d->character->player.name);
 			act("$n has lost $s link.", TRUE, d->character, 0, 0, TO_ROOM);
 			snprintf(buf, sizeof(buf), "Closing link to: %s.", GET_NAME(d->character));
-			log(buf);
+			mudlog(buf);
 			d->character->desc = 0;
 		} else {
 			snprintf(buf, sizeof(buf), "Losing player: %s.", GET_NAME(d->character));
-			log(buf);
+			mudlog(buf);
 			free_char(d->character);
 		}
 	} else
-		log("Losing descriptor without char.");
+		mudlog("Losing descriptor without char.");
 
 	if (next_to_process == d)	/* to avoid crashing the process loop */
 		next_to_process = next_to_process->next;
@@ -1282,8 +1185,8 @@ static void perform_act(const char *str_eng, const char *str_han, int hide_invis
                     case 'F': replacement = fname((char *)vict_obj); break;
                     case '$': replacement = "$"; break;
                     default:
-                        log("SYSERR: Illegal $-code to act():");
-                        log(template);
+                        mudlog("SYSERR: Illegal $-code to act():");
+                        mudlog(template);
                         break;
                 }
 
@@ -1354,7 +1257,7 @@ void zapper(void)
     t = time(0) - boottime; // 머드가 실행된 총 시간
 
     if (t > reboot_time && !zapper_triggered && reboot_counter < 0) {
-        log("(zapper) Automatic reboot time reached. Triggering graceful shutdown.");
+        mudlog("(zapper) Automatic reboot time reached. Triggering graceful shutdown.");
         reboot_game = 1;
         zapper_triggered = 1;
     }
@@ -1363,16 +1266,15 @@ void zapper(void)
 /* 서버 멈춤 감지 */
 void checkpointing(int sig)
 {
-	extern int tics;
-    static int last_tics = 0;
+	static int last_tics = 0;
 
     if (tics == last_tics) { // 지난 검사와 tics가 같으면 멈춘 것
-        log("!!! CHECKPOINT shutdown: tics not updated. Server appears to be frozen.");
-        log("!!! Emergency saving all players before abort().");
+        mudlog("!!! CHECKPOINT shutdown: tics not updated. Server appears to be frozen.");
+        mudlog("!!! Emergency saving all players before abort().");
         saveallplayers();
         abort();
     } else {
         last_tics = tics; // remember current tics
     }
-    log("(checkpointing) Checkpoint signal received. Tics saved.");
+    mudlog("(checkpointing) Checkpoint signal received. Tics saved.");
 }

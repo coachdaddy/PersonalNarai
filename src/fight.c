@@ -4,54 +4,18 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "handler.h"
 #include "interpreter.h"
 #include "db.h"
 #include "spells.h"
-
 #include "guild_list.h"
 
-#define MAX_NPC_CORPSE_TIME 15
-#define MAX_PC_CORPSE_TIME 40
-#define QUEST_ROOM_VNUM	3081  // 퀘스트 룸 VNUM
 
 /* Structures */
-struct char_data *combat_list = 0;	/* head of l-list of fighting chars */
-struct char_data *combat_next_dude = 0;		/* Next dude global trick           */
-
-/* External structures */
-extern struct room_data *world;
-extern struct message_list fight_messages[MAX_MESSAGES];
-extern struct obj_data *object_list;
-extern struct index_data *obj_index;
-extern struct index_data *mob_index;
-
-/* External procedures */
-char *fread_string(FILE * f1);
-void stop_follower(struct char_data *ch);
-void do_flee(struct char_data *ch, char *argument, int cmd);
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void wipe_stash(char *filename);
-int number(int from, int to);
-void gain_exp(struct char_data *ch, int gain);
-int dice(int num, int size);                    /* in utility.c */
-void save_char_nocon(struct char_data *ch, sh_int load_room);
-void do_look(struct char_data *ch, char *argument, int cmd);
-void check_quest_mob_die(struct char_data *ch, int mob);    /* quest.c */
-
-/* Challenge Room Quest System  */
-extern struct {
-    int virtual;
-    int level;
-    char *name;
-} QM[];
+struct char_data *combat_list = 0;		/* head of l-list of fighting chars */
+struct char_data *combat_next_dude = 0;	/* Next dude global trick           */
 
 struct dam_weapon_type {
     char *to_room;
@@ -85,6 +49,7 @@ struct attack_hit_type attack_hit_han[] =
 	{"톡 쏩니다", "톡 쏩니다"},	/* TYPE_STING    */
 	{"부숩니다", "부숩니다"}	/* TYPE_CRUSH    */
 };
+
 
 /* The Fight related routines */
 void appear(struct char_data *ch)
@@ -121,7 +86,7 @@ void load_messages(void)
 		     type) &&
 		     (fight_messages[i].a_type); i++) ;
 		if (i >= MAX_MESSAGES) {
-			log("Too many combat messages.");
+			mudlog("Too many combat messages.");
 			exit(0);
 		}
 
@@ -198,7 +163,7 @@ void stop_fighting(struct char_data *ch)
 		for (tmp = combat_list; tmp && (tmp->next_fighting != ch);
 		     tmp = tmp->next_fighting) ;
 		if (!tmp) {
-			log("Char fighting not found Error (fight.c, stop_fighting)");
+			mudlog("Char fighting not found Error (fight.c, stop_fighting)");
 			goto next;
 		}
 		tmp->next_fighting = ch->next_fighting;
@@ -528,7 +493,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
     /* 도전의 방에서 사망한 플레이어 시체는 이동시켜두자... */
     if (died_in_challenge_room) {
         struct obj_data *corpse, *next_corpse;
-        int quest_room_rnum = real_room(QUEST_ROOM_VNUM); 
+        int quest_room_rnum = real_room(VNUM_ROOM_QUESTROOM); 
         
         if (quest_room_rnum != NOWHERE) {
             for (corpse = world[challenge_room_rnum].contents; corpse; corpse = next_corpse) {
@@ -545,7 +510,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
                 }
             }
         } else {
-            log("QUEST_CORPSE_MOVE_ERROR: Quest Room (VNUM 3081) not found.");
+            mudlog("QUEST_CORPSE_MOVE_ERROR: Quest Room (VNUM 3081) not found.");
         }
     }
 }
@@ -890,8 +855,7 @@ void damage(struct char_data *ch, struct char_data *victim,
 	char buf[MAX_STRING_LENGTH];
 	struct message_type *messages;
 	int i, j, nr, max_hit, exp;
-	extern int nokillflag;
-
+	
 	/* for quest */
 	struct follow_type *f, *next_f;
 
@@ -1151,7 +1115,7 @@ void damage(struct char_data *ch, struct char_data *victim,
 					 GET_NAME(ch)),
 					world[victim->in_room].name);
 			}
-			log(buf);
+			mudlog(buf);
 		}
 
 		die(victim, GET_LEVEL(ch), ch);
@@ -1161,24 +1125,17 @@ void damage(struct char_data *ch, struct char_data *victim,
 void hit(struct char_data *ch, struct char_data *victim, int type)
 {
 	struct obj_data *wielded = 0;
-	//  struct obj_data *held = 0;
 	int w_type;
 	int dam, prf;
 	int parry_num;
 	int miss;
 	int limit_nodice, limit_sizedice;
-	// char buffer[MAX_STRING_LENGTH];
-
-	extern int thaco[4][IMO + 4];
-	extern byte backstab_mult[];
-	extern struct str_app_type str_app[];
-	extern struct dex_app_type dex_app[];
-
+	
 	if (ch == NULL || victim == NULL)
 		return;
 
 	if (ch->in_room != victim->in_room) {
-		log("NOT SAME ROOM WHEN FIGHTING!");
+		mudlog("NOT SAME ROOM WHEN FIGHTING!");
 		return;
 	}
 
@@ -1413,7 +1370,7 @@ void hit(struct char_data *ch, struct char_data *victim, int type)
 
 	if (type == SKILL_BACKSTAB) {
 		if (IS_AFFECTED(ch, AFF_HIDE)) {
-			log("backstab+hide");
+			mudlog("backstab+hide");
 			dam <<= 1;
 		}
 		if (IS_NPC(ch)) {
@@ -1469,7 +1426,6 @@ void perform_violence(void)
 {
     struct char_data *ch;
     int i, dat = 100;
-    extern void magic_weapon_hit(struct char_data *ch, struct char_data *vict, struct obj_data *obj);
     struct obj_data *weapon, *held;
     int percent;
 	int sk_double, sk_quad, sk_octa; /* GET_SKILLED 저장용 */

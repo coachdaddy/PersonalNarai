@@ -3,120 +3,65 @@
 *  Usage: Loading/Saving chars, booting world, resetting etc.             *
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ***************************************************************************/
-#define _GNU_SOURCE
-
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <ctype.h>
-#include <time.h>
-#include <signal.h>
-#include <errno.h>
 
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
-#include "db2.h"
-#include "comm.h"
 #include "handler.h"
 #include "limit.h"
 #include "spells.h"
-
 #include "mob_bal.c"
-
 #include "vcs_track.h"
 
 
-/**************************************************************************
-*  declarations of most of the 'global' variables                         *
-************************************************************************ */
+/****************************************************************************
+*  declarations of most of the 'global' variables                         	*
+*************************************************************************** */
 
-struct room_data *world;	/* dyn alloc'ed array of rooms     */
-int top_of_world = 0;		/* ref to the top element of world */
-struct obj_data *object_list = 0;	/* the global linked list of obj's */
-struct char_data *character_list = 0;	/* global l-list of chars          */
+struct room_data *world = NULL;			/* dyn alloc'ed array of rooms     	*/
+int top_of_world = 0;					/* ref to the top element of world 	*/
 
-struct zone_data *zone_table;	/* table of reset data             */
-int top_of_zone_table = 0;
-struct message_list fight_messages[MAX_MESSAGES];	/* fighting messages   */
-struct player_index_element *player_table = 0;	/* index to player file   */
-int top_of_p_table = 0;		/* ref to top of table             */
+struct zone_data *zone_table = NULL;	/* table of reset data				*/
+int top_of_zone_table = 0;				/* ref to top of zone table        	*/
+
+struct reset_q_type reset_q;			/* queue of zones to be reset       */
+struct time_info_data time_info;		/* the infomation about the time   	*/
+struct weather_data weather_info;		/* the infomation about the weather */
+
+struct char_data *character_list = NULL;	/* global l-list of chars       */
+struct player_index_element *player_table = NULL;	/* index to player file */
+int top_of_p_table = 0;					/* ref to top of table             	*/
 int top_of_p_file = 0;
 
-char credits[MAX_STRING_LENGTH];	/* the Credits List                */
-char news[MAX_STRING_LENGTH];	/* the news                        */
-char imotd[MAX_STRING_LENGTH];	/* MOTD for immortals                          */
-char motd[MAX_STRING_LENGTH];	/* the messages of today           */
-char help[MAX_STRING_LENGTH];	/* the main help page              */
-char plan[MAX_STRING_LENGTH];	/* the info text                   */
-char wizards[MAX_STRING_LENGTH];	/* the wizards text                */
+struct index_data *mob_index = NULL;	/* index table for mobile file     	*/
+int top_of_mobt = 0;					/* top of mobile index table       	*/
+FILE *mob_f = NULL; 					/* file containing mob prototypes  	*/
 
-FILE *mob_f, /* file containing mob prototypes  */ *obj_f, /* obj prototypes                  */ *help_fl;	/* file for help texts (HELP <kwd>) */
+struct obj_data *object_list = NULL;	/* the global linked list of obj's 	*/
+struct index_data *obj_index = NULL;	/* index table for object file     	*/
+int top_of_objt = 0;					/* top of object index table       	*/
+FILE *obj_f = NULL;						/* obj prototypes                  	*/
 
-struct index_data *mob_index;	/* index table for mobile file     */
-struct index_data *obj_index;	/* index table for object file     */
-struct help_index_element *help_index = 0;
+char credits[MAX_STRING_LENGTH];		/* the Credits List                	*/
+char news[MAX_STRING_LENGTH];			/* the news                        	*/
+char imotd[MAX_STRING_LENGTH];			/* MOTD for immortals              	*/
+char motd[MAX_STRING_LENGTH];			/* the messages of today           	*/
+char help[MAX_STRING_LENGTH];			/* the main help page              	*/
+char plan[MAX_STRING_LENGTH];			/* the info text                   	*/
+char wizards[MAX_STRING_LENGTH];		/* the wizards text                	*/
 
-int top_of_mobt = 0;		/* top of mobile index table       */
-int top_of_objt = 0;		/* top of object index table       */
-int top_of_helpt;		/* top of help index table         */
+struct help_index_element *help_index = NULL;	/* the help index                  */
+int top_of_helpt;			/* top of help index table         */
+FILE *help_fl = NULL;		/* file for help texts (HELP <kwd>) */
 
-struct time_info_data time_info;	/* the infomation about the time   */
-struct weather_data weather_info;	/* the infomation about the weather */
+struct message_list fight_messages[MAX_MESSAGES];	/* fighting messages   */
 
 /* comm.c에서 이동, Komo */
 int regen_percent = 50;
 int regen_time_percent = 66;
 int regen_time = 200;
 
-/* local procedures */
-void boot_zones(void);
-void setup_dir(FILE * fl, int room, int dir);
-void allocate_room(int new_top);
-void boot_world(void);
-struct index_data *generate_indices(FILE * fl, int *top);
-void build_player_index(void);
-void char_to_store(struct char_data *ch, struct char_file_u *st);
-void store_to_char(struct char_file_u *st, struct char_data *ch);
-int is_empty(int zone_nr);
-void reset_zone(int zone);
-int file_to_string(char *name, char *buf);
-void renum_world(void);
-void renum_zone_table(void);
-void reset_time(void);
-void clear_char(struct char_data *ch);
 
-/* external refs */
-extern struct descriptor_data *descriptor_list;
-void load_messages(void);
-void weather_and_time(int mode);
-void assign_command_pointers(void);
-void assign_spell_pointers(void);
-
-int dice(int number, int size);
-int number(int from, int to);
-void boot_social_messages(void);
-struct help_index_element *build_help_index(FILE * fl, int *num);
-void assign_mobiles(void);
-void assign_objects(void);
-void assign_rooms(void);
-int str_cmp(char *arg1, char *arg2);
-char *one_argument(char *arg, char *first_arg);
-void wear(struct char_data *ch, struct obj_data *obj, int where_flag);
-
-/* from act.wizard.c */
-void roll_abilities(struct char_data *ch);
-
-/* quest */
-void init_quest(void);
-
-/* for 대림사 */
-/* these are also defined in spec_procs.c */
-#define FOURTH_JANGRO		11132
-#define SON_OGONG			11101
-
-extern struct char_data *fourth_jangro;
-extern struct char_data *son_ogong;
 
 /*************************************************************************
 *  routines for booting the system                                       *
@@ -126,11 +71,10 @@ extern struct char_data *son_ogong;
 void boot_db(void)
 {
 	int i;
-	extern int no_specials;
+	
+	mudlog("(boot_db) Booting DB -- BEGIN.");
 
-	log("(boot_db) Booting DB -- BEGIN.");
-
-    log("(boot_db) Resetting the game time:");
+    mudlog("(boot_db) Resetting the game time:");
 	DEBUG_LOG("VCS %s", VCS_TRACK_SHORT_HASH);
 
     mudlog("(boot_db)   help index done.");
@@ -138,7 +82,7 @@ void boot_db(void)
     mudlog("(boot_db) Resetting the game time:");
 	reset_time();
 
-	log("(boot_db) Reading news, credits, help-page, plan, wizards, and motd.");
+	mudlog("(boot_db) Reading news, credits, help-page, plan, wizards, and motd.");
 	file_to_string(NEWS_FILE, news);
 	file_to_string(CREDITS_FILE, credits);
 	file_to_string(IMOTD_FILE, imotd);
@@ -147,44 +91,44 @@ void boot_db(void)
 	file_to_string(PLAN_FILE, plan);
 	file_to_string(WIZARDS_FILE, wizards);
 
-	log("(boot_db) Opening mobile, object and help files.");
+	mudlog("(boot_db) Opening mobile, object and help files.");
     if (!(mob_f = fopen(MOB_FILE, "r"))) {
         perror("boot");
         exit(0);
     }
-    log("(boot_db)   Mob done");
+    mudlog("(boot_db)   Mob done");
 
     if (!(obj_f = fopen(OBJ_FILE, "r"))) {
         perror("boot");
         exit(0);
     }
-    log("(boot_db)   Obj done");
+    mudlog("(boot_db)   Obj done");
     if (!(help_fl = fopen(HELP_KWRD_FILE, "r")))
-        log("(boot_db)    Could not open help file.");
+        mudlog("(boot_db)    Could not open help file.");
     else
         help_index = build_help_index(help_fl, &top_of_helpt);
 
-    log("(boot_db)   help index done.");
+    mudlog("(boot_db)   help index done.");
 
-    log("(boot_db) Initializing quest system.");
+    mudlog("(boot_db) Initializing quest system.");
     init_quest();
-    log("(boot_db) Quest system initialized.");
+    mudlog("(boot_db) Quest system initialized.");
 
-    log("(boot_db) Loading zone table.");
+    mudlog("(boot_db) Loading zone table.");
 	boot_zones();
 
-	log("(boot_db) Loading rooms(world).");
+	mudlog("(boot_db) Loading rooms(world).");
     boot_world();
-    log("(boot_db) Renumbering rooms.");
+    mudlog("(boot_db) Renumbering rooms.");
     renum_world();
 
-    log("(boot_db) Generating index tables for mobile files.");
+    mudlog("(boot_db) Generating index tables for mobile files.");
     mob_index = generate_indices(mob_f, &top_of_mobt);
 
     /* Quest Modernization: Pre-load mob level and act flags ---
      * --- Komo, 251102
      */
-    log("(boot_db) Pre-loading mob level and act flags into index.");
+    mudlog("(boot_db) Pre-loading mob level and act flags into index.");
     { /* Create a local scope for temporary variables */
         long tmp_act;
         int tmp_level = -1;
@@ -195,7 +139,7 @@ void boot_db(void)
             if (fseek(mob_f, mob_index[i].pos, 0) != 0) {
                 char err_buf[256];
                 snprintf(err_buf, sizeof(err_buf), "Quest Pre-load: fseek error on mob VNUM %d", mob_index[i].virtual);
-                log(err_buf);
+                mudlog(err_buf);
                 mob_index[i].level = -1; /* Mark as invalid */
                 mob_index[i].act = 0;
                 continue; /* Skip this mob */
@@ -222,8 +166,15 @@ void boot_db(void)
             /* class (discard) */
             fscanf(mob_f, " %*c "); 
     
-            /* level */
-            fscanf(mob_f, " %ld ", &tmp_level);
+            /* level (added error handling code) */
+            if (fscanf(mob_f, " %d ", &tmp_level) != 1) {
+                char err_buf[256];
+                snprintf(err_buf, sizeof(err_buf), "Quest Pre-load: fscanf error reading level for mob VNUM %d", mob_index[i].virtual);
+                mudlog(err_buf);
+                mob_index[i].level = -1;
+                mob_index[i].act = 0;
+                continue;
+            }
 
 			mob_index[i].level = tmp_level;
             
@@ -231,36 +182,36 @@ void boot_db(void)
         }
         rewind(mob_f); /* Rewind file pointer for safety */
     }
-    log("(boot_db) Mob index pre-load complete.");
+    mudlog("(boot_db) Mob index pre-load complete.");
     
-    log("(boot_db) Generating index tables for object files.");
+    mudlog("(boot_db) Generating index tables for object files.");
 	obj_index = generate_indices(obj_f, &top_of_objt);
 
-	log("(boot_db) Renumbering zone table.");
+	mudlog("(boot_db) Renumbering zone table.");
     renum_zone_table();
 
-    log("(boot_db) Generating player index.");
+    mudlog("(boot_db) Generating player index.");
     build_player_index();
 
-    log("(boot_db) Loading fight messages.");
+    mudlog("(boot_db) Loading fight messages.");
     load_messages();
 
-    log("(boot_db) Loading social messages.");
+    mudlog("(boot_db) Loading social messages.");
     boot_social_messages();
 
-    log("(boot_db) Assigning function pointers:");
+    mudlog("(boot_db) Assigning function pointers:");
     if (!no_specials) {
-        log("(boot_db)    Mobiles.");
+        mudlog("(boot_db)    Mobiles.");
         assign_mobiles();
-        log("(boot_db)    Objects.");
+        mudlog("(boot_db)    Objects.");
         assign_objects();
-        log("(boot_db)    Room.");
+        mudlog("(boot_db)    Room.");
         assign_rooms();
     }
 
-    log("(boot_db)    Commands.");
+    mudlog("(boot_db)    Commands.");
     assign_command_pointers();
-    log("(boot_db)    Spells.");
+    mudlog("(boot_db)    Spells.");
 	assign_spell_pointers();
 
 	for (i = 0; i <= top_of_zone_table; i++) {
@@ -272,7 +223,7 @@ void boot_db(void)
 		reset_zone(i);
 	}
 	reset_q.head = reset_q.tail = 0;
-	log("(boot_db) Booting DB -- DONE.");
+	mudlog("(boot_db) Booting DB -- DONE.");
 }
 
 /* reset the time in the game from file */
@@ -335,7 +286,7 @@ void reset_time(void)
 	snprintf(buf, sizeof(buf), "   Current Gametime: %dH %dD %dM %dY.",
 		time_info.hours, time_info.day,
 		time_info.month, time_info.year);
-	log(buf);
+	mudlog(buf);
 
 	weather_info.pressure = 960;
 	if ((time_info.month >= 7) && (time_info.month <= 12))
@@ -517,7 +468,7 @@ void boot_world(void)
     character_list = 0;
     object_list = 0;
 
-    log("boot_world: Loading world files...");
+    mudlog("boot_world: Loading world files...");
 
     if (!(map_files = fopen(ALL_WORLD_FILE, "r"))) {
         perror("boot_world: Error opening ALL_WORLD_FILE");
@@ -539,7 +490,7 @@ void boot_world(void)
         if (z_rnum == -1) {
             snprintf(buf, sizeof(buf), "boot_world: Warning - World file '%s' uses undefined zone number %d.", 
                     file_name_from_list, zone_num_input);
-            log(buf);
+            mudlog(buf);
             z_rnum = 0; 
         } else {
 			if (zone_table[z_rnum].wld_filename) free(zone_table[z_rnum].wld_filename);
@@ -561,7 +512,7 @@ void boot_world(void)
     top_of_world = --room_nr; 
     
     snprintf(buf, sizeof(buf), "boot_world: Total %d rooms loaded.", top_of_world + 1);
-    log(buf);
+    mudlog(buf);
 }
 
 #undef ALL_WORLD_FILE
@@ -693,7 +644,7 @@ void setup_dir(FILE *fl, int room, int dir)
 
     if (fscanf(fl, " %d ", &tmp) != 1) {
         snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in setup_dir flags (Room #%d)", world[room].number);
-        log(err_buf);
+        mudlog(err_buf);
         exit(1);
     }
 
@@ -710,14 +661,14 @@ void setup_dir(FILE *fl, int room, int dir)
 
     if (fscanf(fl, " %d ", &tmp) != 1) {
         snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in setup_dir key (Room #%d)", world[room].number);
-        log(err_buf);
+        mudlog(err_buf);
         exit(1);
     }
     world[room].dir_option[dir]->key = tmp;
 
     if (fscanf(fl, " %d ", &tmp) != 1) {
         snprintf(err_buf, sizeof(err_buf), "SYSERR: Format error in setup_dir to_room (Room #%d)", world[room].number);
-        log(err_buf);
+        mudlog(err_buf);
         exit(1);
     }
     world[room].dir_option[dir]->to_room = tmp;
@@ -845,7 +796,7 @@ void load_zones(int zon)
     fl = fopen(zone_table[zon].filename, "r");
     if (!fl) {
         snprintf(buf, sizeof(buf), "Error in reading zone file '%s'", zone_table[zon].filename);
-        log(buf);
+        mudlog(buf);
         return;
     }
 
@@ -872,22 +823,22 @@ void boot_zones(void)
     char current_working_dir[256]; // 디버깅용
 
     // 디버깅 로그, 함수 시작 및 CWD 확인 ---
-    log("boot_zones: Function started.");
+    mudlog("boot_zones: Function started.");
     if (getcwd(current_working_dir, sizeof(current_working_dir)) != NULL) {
         snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: Current working directory: [%s]", current_working_dir);
-        log(debug_log_buffer);
+        mudlog(debug_log_buffer);
     } else {
-        log("boot_zones: Error getting current working directory.");
+        mudlog("boot_zones: Error getting current working directory.");
     }
 
     if (!(all_files = fopen(ALL_ZONE_FILE, "r"))) { // ALL_ZONE_FILE은 "zone/zone_files.new"
         perror("boot_zones(ALL_ZONE_FILE)");
         snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: CRITICAL - Failed to open ALL_ZONE_FILE: %s", ALL_ZONE_FILE);
-        log(debug_log_buffer);
+        mudlog(debug_log_buffer);
         exit(0);
     }
     snprintf(debug_log_buffer, sizeof(debug_log_buffer), "boot_zones: Successfully opened ALL_ZONE_FILE: %s", ALL_ZONE_FILE);
-    log(debug_log_buffer);
+    mudlog(debug_log_buffer);
 
     while (1) {
         char vnum_buf[256]; // 존 번호를 임시로 읽을 버퍼
@@ -895,13 +846,13 @@ void boot_zones(void)
 
         /* 첫 번째 존 번호 또는 '$' 읽기 */
         if (fscanf(all_files, "%s", vnum_buf) != 1) {
-            log("boot_zones: Error reading zone file list (Unexpected EOF).");
+            mudlog("boot_zones: Error reading zone file list (Unexpected EOF).");
             break;
         }
 
         /* '$' 문자를 만나면 루프 종료 */
         if (*vnum_buf == '$') {
-            log("boot_zones: Done reading zone file list.");
+            mudlog("boot_zones: Done reading zone file list.");
             break;
         }
 
@@ -910,7 +861,7 @@ void boot_zones(void)
 
         /* 두 번째 토큰 - 파일 경로 읽기 */
         if (fscanf(all_files, "%s", file_name_from_list) != 1) {
-            log("boot_zones: Error reading filename after zone number.");
+            mudlog("boot_zones: Error reading filename after zone number.");
             break;
         }
 
@@ -926,7 +877,7 @@ void boot_zones(void)
 		if(!check) {
 				char error_buf[256];
 				snprintf(error_buf, sizeof(error_buf), "boot_zones: NULL from fread_stirng for zone file %s", file_name_from_list);
-				log(error_buf);
+				mudlog(error_buf);
 				fclose(fl);
 				continue; // 파일을 못 열었어도 다음 존을 계속 읽기 위해 루프를 유지
 		}
@@ -952,7 +903,7 @@ void boot_zones(void)
     }
     top_of_zone_table = --zon;
     fclose(all_files);
-    log("boot_zones: Function finished.");
+    mudlog("boot_zones: Function finished.");
 }
 #undef ALL_ZONE_FILE
 
@@ -969,7 +920,6 @@ struct char_data *read_mobile(int nr, int type)
 	char letter;
 	int level, level2, level3, abil, class;
 	char buf[256];
-	extern struct spell_info_type spell_info[];
 	int r_num;
 
 	i = nr;
@@ -977,7 +927,7 @@ struct char_data *read_mobile(int nr, int type)
         r_num = real_mobile(nr);
         if (r_num < 0) {
             snprintf(buf, sizeof(buf), "read_mobile: Invalid virtual number %d. Mobile not loaded.", nr);
-            log(buf);
+            mudlog(buf);
             return(0);
         }
     } else {
@@ -1276,7 +1226,7 @@ struct obj_data *read_object(int nr, int type)
         r_num = real_object(nr);
         if (r_num < 0) {
             snprintf(buf, sizeof(buf), "read_object: Invalid virtual number %d. Object not loaded.", nr);
-            log(buf);
+            mudlog(buf);
             return(0);
 		}
     } else {
@@ -1428,7 +1378,7 @@ struct char_data *get_mobile_index(int index)
 	return NULL;
 }
 
-#define ZCMD zone_table[zone].cmd[cmd_no]
+
 void reset_zone(int zone)
 {
     int cmd_no;
@@ -1583,7 +1533,7 @@ void reset_zone(int zone)
 
                 default:
                     snprintf(buf, sizeof(buf), "Undefd cmd in reset table; zone %d cmd %d.\n\r", zone, cmd_no);
-                    log(buf);
+                    mudlog(buf);
                     exit(0);
                     break;
             }
@@ -1817,7 +1767,7 @@ void char_to_store(struct char_data *ch, struct char_file_u *st)
 		}
 	}
 	if ((i >= MAX_AFFECT) && af && af->next)
-		log("WARNING: OUT OF STORE ROOM FOR AFFECTED TYPES!!!");
+		mudlog("WARNING: OUT OF STORE ROOM FOR AFFECTED TYPES!!!");
 	ch->tmpabilities = ch->abilities;
 	st->birth = ch->player.time.birth;
 	st->played = ch->player.time.played;
@@ -2070,7 +2020,7 @@ char *fread_string(FILE *fl)
     int flag = 0;
     
     if (fl == NULL) {
-        log("fread_string: CRITICAL - Passed NULL file pointer.");
+        mudlog("fread_string: CRITICAL - Passed NULL file pointer.");
         exit(1);
     }
 
@@ -2083,14 +2033,14 @@ char *fread_string(FILE *fl)
             }
 
             /* 진짜 에러이거나 EOF인 경우 */
-            log("fread_string: fgets failed (EOF or Error).");
+            mudlog("fread_string: fgets failed (EOF or Error).");
             perror("fread_string");
             exit(1);
         }
 
         /* 버퍼 오버플로우 방지 검사 */
         if (strlen(buf) + strlen(tmp) >= MAX_STRING_LENGTH) {
-            log("SYSERR: fread_string: string too large (db.c)");
+            mudlog("SYSERR: fread_string: string too large (db.c)");
             strncat(buf, tmp, MAX_STRING_LENGTH - strlen(buf) - 1);
             flag = 1; 
         } else {
@@ -2195,7 +2145,7 @@ int file_to_string(char *name, char *buf)
 	*buf = '\0';
 
 	snprintf(log_buf, sizeof(log_buf), "Attempting to read data file: %s", name);
-    log(log_buf);
+    mudlog(log_buf);
 
 	if (!(fl = fopen(name, "r"))) {
 		perror(name);
@@ -2208,9 +2158,9 @@ int file_to_string(char *name, char *buf)
 
 		if (!feof(fl)) {
 			if (strlen(buf) + strlen(tmp) + 2 > MAX_STRING_LENGTH) {
-				log("fl->strng: string too big (db.c, file_to_string)");
+				mudlog("fl->strng: string too big (db.c, file_to_string)");
 				buf[25] = '\0';
-				log(buf);
+				mudlog(buf);
 				*buf = '\0';
 				return (-1);
 			}
@@ -2321,14 +2271,7 @@ void init_char(struct char_data *ch)
 	ch->specials.wimpyness = 0;
 
 	/* initial bonus */
-#ifdef BETA_TEST
-	GET_GOLD(ch) = 10000000000L;
-	ch->quest.solved = 50;
-	ch->specials.damnodice = 10;
-	ch->specials.damsizedice = 10;
-#else
 	ch->points.gold = 1000;
-#endif
 
 	for (i = 0; i <= MAX_SKILLS - 1; i++) {
 		if (GET_LEVEL(ch) < IMO + 3) {
@@ -2359,21 +2302,17 @@ int real_room(int virtual)
 	top = top_of_world;
 
 	/* perform binary search on world-table */
-	for (;;) {
-		mid = (bot + top) / 2;
-
+	while (bot <= top) {
+		mid = bot + (top - bot) / 2;
 		if ((world + mid)->number == virtual)
-			return (mid);
-		if (bot >= top) {
-			fprintf(stderr,
-				"Room %d does not exist in database\n", virtual);
-			return (-1);
-		}
+			return mid;
 		if ((world + mid)->number > virtual)
 			top = mid - 1;
 		else
 			bot = mid + 1;
 	}
+	fprintf(stderr, "Room %d does not exist in database\n", virtual);
+	return -1;
 }
 
 /* returns the real number of the monster with given virtual number */
@@ -2385,18 +2324,18 @@ int real_mobile(int virtual)
 	top = top_of_mobt;
 
 	/* perform binary search on mob-table */
-	for (;;) {
-		mid = (bot + top) / 2;
+	while (bot <= top) {
+		mid = bot + (top - bot) / 2;
 
 		if ((mob_index + mid)->virtual == virtual)
-			return (mid);
-		if (bot >= top)
-			return (-1);
+			return mid;
 		if ((mob_index + mid)->virtual > virtual)
 			top = mid - 1;
 		else
 			bot = mid + 1;
 	}
+	fprintf(stderr, "Mob %d does not exist in database\n", virtual);
+	return -1;
 }
 
 /* returns the real number of the object with given virtual number */
@@ -2408,18 +2347,18 @@ int real_object(int virtual)
 	top = top_of_objt;
 
 	/* perform binary search on obj-table */
-	for (;;) {
-		mid = (bot + top) / 2;
+	while (bot <= top) {
+		mid = bot + (top - bot) / 2;
 
 		if ((obj_index + mid)->virtual == virtual)
-			return (mid);
-		if (bot >= top)
-			return (-1);
+			return mid;
 		if ((obj_index + mid)->virtual > virtual)
 			top = mid - 1;
 		else
 			bot = mid + 1;
 	}
+	fprintf(stderr, "Object %d does not exist in database\n", virtual);
+	return -1;
 }
 
 /*
@@ -2450,13 +2389,13 @@ int move_stashfile_safe(const char *victim)
     char log_buf[1024];
 
     if (!victim || victim[0] == '\0') {
-        log("move_stashfile_safe error: victim name is NULL or empty.");
+        mudlog("move_stashfile_safe error: victim name is NULL or empty.");
         return -1;
     }
 
     if (strlen(victim) >= sizeof(name)) {
         snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: victim name '%s' is too long.", victim);
-        log(log_buf);
+        mudlog(log_buf);
         return -1;
     }
     strncpy(name, victim, sizeof(name) - 1);
@@ -2466,7 +2405,7 @@ int move_stashfile_safe(const char *victim)
     for (i = 0; name[i]; ++i) {
         if (!isalnum((unsigned char)name[i])) {
             snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: victim name '%s' contains invalid characters.", victim);
-            log(log_buf);
+            mudlog(log_buf);
             return -1;
         }
         name[i] = tolower((unsigned char)name[i]);
@@ -2478,13 +2417,13 @@ int move_stashfile_safe(const char *victim)
     /* 오류 처리 */
     if (rename(sf1, sf2) != 0) {
         snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe error: Failed to rename '%s' to '%s'", sf1, sf2);
-        log(log_buf);
+        mudlog(log_buf);
         perror("move_stashfile_safe system error");
         return -1; // 실패 반환
     }
 
     snprintf(log_buf, sizeof(log_buf), "move_stashfile_safe: Successfully renamed '%s' to '%s'", sf1, sf2);
-    log(log_buf);
+    mudlog(log_buf);
     
     return 0; // 성공 반환
 }
@@ -2528,7 +2467,7 @@ void stash_char(struct char_data *ch)
     snprintf(stashfile, sizeof(stashfile), "%s/%c/%s.x", STASH, name[0], name); // 확장자를 .x 로 변경
 
     snprintf (buf, sizeof(buf), "Saving character data to stash : %s", stashfile);
-	log(buf);
+	mudlog(buf);
 
 	sigprocmask(SIG_BLOCK, &mask, &orig_mask); /* by Komo */
 	if (!(fl = fopen(stashfile, "w"))) {		/* remove all data if exist */
@@ -2602,7 +2541,6 @@ void unstash_char(struct char_data *ch, char *filename)
 	char buf[MAX_OUTPUT_LENGTH];
 
 	/* for Knife rent */
-#define MAX_RENT_ITEM 1000
 	struct obj_data *item_stackp[MAX_RENT_ITEM];
 	int item_stack[MAX_RENT_ITEM];
 	int stack_count = 0;
@@ -2651,11 +2589,11 @@ void unstash_char(struct char_data *ch, char *filename)
 	}
 
 	snprintf(buf, sizeof(buf), "Unstash : %s", stashfile);
-	log(buf);
+	mudlog(buf);
 
 	fscanf(fl, "%d", &n);
 	if (n != KJHRENT) {
-		log("File format error in unstash_char. (db.c)");
+		mudlog("File format error in unstash_char. (db.c)");
 		sigprocmask(SIG_SETMASK, &orig_mask, NULL);
 		fclose(fl);
 		return;
@@ -2754,8 +2692,7 @@ void do_checkrent(struct char_data *ch, char *argument, int cmd)
 	char str[256];
 	FILE *fl;
 	int i, j, n;
-	int written; 
-
+	
 	one_argument(argument, name);
 	if (!*name) {
         send_to_char("Check whose rent file?\n\r", ch);
@@ -2804,7 +2741,7 @@ void do_extractrent(struct char_data *ch, char *argument, int cmd)
 	unstash_char(ch, name);
 	send_to_char("OK.\n\r", ch);
 	snprintf(buf, sizeof(buf), "%s grabbed rent for %s", GET_NAME(ch), name);
-	log(buf);
+	mudlog(buf);
 }
 void do_replacerent(struct char_data *ch, char *argument, int cmd)
 {
@@ -2817,7 +2754,7 @@ void do_replacerent(struct char_data *ch, char *argument, int cmd)
 	move_stashfile_safe(name);
 	send_to_char("OK.\n\r", ch);
 	snprintf(buf, sizeof(buf), "%s replaced rent for %s", GET_NAME(ch), name);
-	log(buf);
+	mudlog(buf);
 }
 
 void do_rent(struct char_data *ch, char *arg, int cmd)
