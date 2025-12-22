@@ -1,0 +1,23 @@
+PROJECT_ROOT/
+    ├── lib/                   (데이터 저장소: 실행 시 필요한 데이터)
+    │   ├── world/             (wld, mob, obj, shp, zon 파일)
+    │   ├── text/              (help, news, motd 등 텍스트 파일)
+    │   ├── misc/              (messages, social 등 설정 파일)
+    │   ├── players/           (유저 데이터 저장)
+    │   └── ...
+    ├── src/                   (소스 코드: 컴파일 대상)
+    │   ├── include/           (헤더 파일 모음: .h)
+    │   ├── core/              (엔진 핵심: 부팅, 소켓, DB, 공용 유틸)
+    │   ├── cmd_player/        (플레이어 명령어: 일반 유저용)
+    │   ├── cmd_admin/         (관리자 명령어: IMO용)
+    │   ├── game_logic/        (게임 로직: 전투, 상점, 길드, 퀘스트)
+    │   ├── magic/             (마법 시스템: 주문 및 효과)
+    │   ├── specials/          (AI 및 특수 구역: 몹/방 AI)
+    │   └── tools_admin/       (외부 유틸: 부팅 스크립트, 유지보수 툴)
+    ├── Makefile               (빌드 설정)
+    └── ...                    (기타 설정 및 문서 파일)
+
+
+
+
+
