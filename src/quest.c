@@ -145,7 +145,6 @@ int get_quest(struct char_data *ch)
 	}
 	while (num == ch->quest.data);
 
-
 	if( num < low ) {
 		DEBUG_LOG("Quest error for %s : num %d.", ch->player.name, num);
 		num = low+1;
@@ -171,7 +170,13 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 	/* request */
 	if (ch->quest.type > 0) {
 		/*      if error occur, can do request. */
-		if (ch->quest.data == NUL) {
+			// if (ch->quest.data == NUL) {
+		if (strlen(QM[ch->quest.data].name) == 0) {
+			ch->quest.type = 0;
+			return;
+		}
+			// END_QUEST_MOB;
+		if (ch->quest.data == END_QUEST_MOB) {
 			ch->quest.type = 0;
 			return;
 		}
