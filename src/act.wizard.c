@@ -984,7 +984,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
         send_to_char(mess, ch);
         
         send_to_char("\n\r------- Options for Character Settings -------\n\r", ch);
-        send_to_char(" exp, lev, hit, mana, move, ac, hr, dr, quest, pra\n\r", ch);
+        send_to_char(" exp, lev, hit, mana, move, ac, hr, dr, quest, questtype, pra\n\r", ch);
 		send_to_char(" str, str_add, wis, int, dex, con, handno, handsize,\n\r", ch);
 		send_to_char(" remortal, hunger, thirsty, drunk, align, bank, gold, \n\r", ch);
         send_to_char(" skill (all), recognise (all), class, sex, age, passwd.\n\r", ch);
@@ -1226,6 +1226,8 @@ void do_set(struct char_data *ch, char *argument, int cmd)
                 victim->specials.damsizedice = k;
             else if (strcmp("quest", buf3) == 0)
                 victim->quest.solved = k;
+			else if (strcmp("questtype", buf3) == 0)
+				victim->quest.type = k;
             else if (strcmp("sex", buf3) == 0) {
                 if (strncmp("m", buf4, 1) == 0 || strncmp("M", buf4, 1) == 0)
                     victim->player.sex = 1;

@@ -93,6 +93,26 @@ static struct {
 	{ 30049, "KAIST" }
 };
 
+/* 퀘스트 데이터 유효성 검증 헬퍼 함수 (by CodeRabbit) */
+/* 유효하면 1(TRUE), 무효하면 0(FALSE) 반환 */
+static int is_valid_quest_data(struct char_data *ch)
+{
+    /* 인덱스 범위 체크 */
+    if (ch->quest.data < 0 || ch->quest.data >= topQM)
+        return 0;
+
+    /* 포인터 및 문자열 유효성 체크 */
+    if (!QM[ch->quest.data].name || strlen(QM[ch->quest.data].name) == 0)
+        return 0;
+
+    /* 마지막 몹... 이상 여부 판단 필요 */
+    if (ch->quest.data == END_QUEST_MOB)
+        return 0;
+
+    return 1;
+}
+
+
 char *find_zone(int number)
 {
 	int i;
@@ -121,14 +141,15 @@ int get_quest(struct char_data *ch)
 	int low, high;
 	int t;
 	int num;
+	int safety_count = 0;
 
 	if (GET_LEVEL(ch) == 60) {
 		low = 345; /* 9531 36 son adle second */
         high = END_QUEST_MOB;
-    } else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) {
+    } else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) { // lv 40~49
         low = 347;  /* 1465 37 roy slade	*/
         high = 437; /* 15117 40 super magnet	*/
-    } else if (GET_LEVEL(ch) > 49 && GET_LEVEL(ch) < 60) {
+    } else if (GET_LEVEL(ch) > 49 && GET_LEVEL(ch) < 60) { // lv 50~59
         low = 367;  /* 15092 38 sick robot */
         high = 539; /* 13784 41 zeus god	*/
     } else if (ch->quest.solved >= 60) {
@@ -142,8 +163,30 @@ int get_quest(struct char_data *ch)
 
 	do {
 		num = number(low, high);
-	}
-	while (num == ch->quest.data);
+
+		if (num < low) {
+			DEBUG_LOG("Quest error for %s : num %d.", ch->player.name, num);
+			num = low + 1;
+		}
+
+		if (num >= topQM) {
+			DEBUG_LOG("Quest Warning: num %d >= topQM %d. Retrying...", num, topQM);
+			safety_count++;
+			continue;
+		}
+		if (QM[num].name == NULL) { // invalid mob name, 251223
+			DEBUG_LOG("Quest Warning: QM[%d] is NULL (Range: %d~%d). Retrying...", num, low, high);
+            safety_count++;
+			continue; 
+        }
+
+		safety_count++;
+        if (safety_count > 100) {
+            DEBUG_LOG("Critical Quest Error: No valid mob found between %d and %d - setting num as 0", low, high);
+			num = 0;
+            break; 
+        }
+	} while (num == ch->quest.data || QM[num].name == NULL);
 
 	if( num < low ) {
 		DEBUG_LOG("Quest error for %s : num %d.", ch->player.name, num);
@@ -159,7 +202,8 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 	char buf1[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
 
 	if (GET_LEVEL(ch) >= IMO) { /* IMO */
-		send_to_char_han("&CQUEST&n : &YYou can do anything.&n\n\r", "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
+		send_to_char_han("&CQUEST&n : &YYou can do anything.&n\n\r",
+						 "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
 		return;
 	}
 
@@ -169,16 +213,13 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 
 	/* request */
 	if (ch->quest.type > 0) {
-		/*      if error occur, can do request. */
-			// if (ch->quest.data == NUL) {
-		if (strlen(QM[ch->quest.data].name) == 0) {
+		/* if error occur, can do request. */
+		/* Validate quest data index and check for invalid quest */
+		if (!is_valid_quest_data(ch)) {
 			ch->quest.type = 0;
-			return;
-		}
-			// END_QUEST_MOB;
-		if (ch->quest.data == END_QUEST_MOB) {
-			ch->quest.type = 0;
-			return;
+			send_to_char_han("&CQUEST&n : &YYour quest data was invalid. Please get a new quest.&n\n\r",
+                         	 "&CQUEST&n : &Y퀘스트 정보가 유효하지 않습니다. 새 퀘스트를 받아주세요.&n\n\r", ch);
+        	return;
 		}
 
 		/* All remotal players can't do request.    */
@@ -249,6 +290,14 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 		return;
 	}
 
+	/* Validate quest data index and check for invalid quest */
+	if (!is_valid_quest_data(ch)) {
+		ch->quest.type = 0;
+		send_to_char_han("&CQUEST&n : &YYour quest data was invalid. Please get a new quest.&n\n\r",
+                         "&CQUEST&n : &Y퀘스트 정보가 유효하지 않습니다. 새 퀘스트를 받아주세요.&n\n\r", ch);
+        return;
+	}
+	
 	/* ch solved quest */
 	if (ch->quest.type < 0) {
 		send_to_char_han("&CQUEST&n : &YCongratulations, You made! Go to QM.&n\n\r",
@@ -308,6 +357,14 @@ void do_quest(struct char_data *ch, char *arg, int cmd)
 		return;
 	}
 
+	/* Validate quest data index and check for invalid quest */
+	if (!is_valid_quest_data(ch)) {
+		ch->quest.type = 0;
+		send_to_char_han("&CQUEST&n : &YYour quest data was invalid. Please get a new quest.&n\n\r",
+                         "&CQUEST&n : &Y퀘스트 정보가 유효하지 않습니다. 새 퀘스트를 받아주세요.&n\n\r", ch);
+        return;
+	}
+
 	/* ch solved quest */
 	if (ch->quest.type < 0) {
 		send_to_char_han("&CQUEST&n : &YCongratulations, You made! Go to QM.&n\n\r", 
@@ -339,6 +396,7 @@ void init_quest(void)
 	while (1) {
 		fscanf(fp, "%s", buf);
 		if (buf[0] == '$') { /* end of file */
+			DEBUG_LOG("(init_quest) Total Quest Mobs Loaded: %d (Max: %d)", topQM, MaxQuest);
 			fclose(fp);
 			return;
 		}
@@ -448,6 +506,12 @@ void check_quest_mob_die(struct char_data *ch, int mob)
 	int num;
 
 	num = ch->quest.data;
+
+	/* Validate quest data index and check for invalid quest */
+	if (!is_valid_quest_data(ch)) {
+		ch->quest.type = 0;
+		return;
+	}
 
 	if (ch->quest.type < 1) {
 		return;
@@ -806,8 +870,17 @@ void do_begin(struct char_data *ch, char *argument, int cmd)
     if (IS_NPC(ch))
         return;
 
+	/* Validate quest data index and check for invalid quest */
+	if (!is_valid_quest_data(ch)) {
+		ch->quest.type = 0;
+		send_to_char_han("&CQUEST&n : &YYour quest data was invalid. Please get a new quest.&n\n\r",
+                         "&CQUEST&n : &Y퀘스트 정보가 유효하지 않습니다. 새 퀘스트를 받아주세요.&n\n\r", ch);
+        return;
+	}
+
     if (ch->specials.challenge_room_vnum == 0 || world[ch->in_room].number != ch->specials.challenge_room_vnum) {
-        send_to_char_han("&cCHALLENGE&n : &yYou can't BEGIN your challenge here.&n\n\r", "&cCHALLENGE&n : &y이곳에서는 도전을 시작할 수 없습니다.&n\n\r", ch);
+        send_to_char_han("&cCHALLENGE&n : &yYou can't BEGIN your challenge here.&n\n\r",
+						 "&cCHALLENGE&n : &y이곳에서는 도전을 시작할 수 없습니다.&n\n\r", ch);
         return;
     }
 
@@ -823,13 +896,6 @@ void do_begin(struct char_data *ch, char *argument, int cmd)
     }
 
     qm_index = ch->quest.data; // 퀘스트 목표의 QM index
-
-    // r_num 유효성 검사
-    if  (qm_index < 0|| qm_index >= topQM) {
-        send_to_char_han("&cCHALLENGE&n : &yThe information on Qeust Monster can't be found (Invalid Index). Contact the GM or Wizard.&n\n\r",
-                         "&CQUEST&n : &y퀘스트 몬스터 정보를 찾을 수 없습니다 (잘못된 인덱스). 관리자에게 문의해주세요.&n\n\r", ch);
-        return;
-    }
 
     mob_vnum = QM[qm_index].virtual; // QM index로 vnum 획득
     if (mob_vnum <= 0) { // vnum 유효성 검사

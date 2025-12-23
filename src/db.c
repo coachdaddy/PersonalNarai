@@ -2311,7 +2311,7 @@ int real_room(int virtual)
 		else
 			bot = mid + 1;
 	}
-	fprintf(stderr, "Room %d does not exist in database\n", virtual);
+	DEBUG_LOG("SYSERR: Room %d does not exist in database.", virtual);
 	return -1;
 }
 
@@ -2334,7 +2334,7 @@ int real_mobile(int virtual)
 		else
 			bot = mid + 1;
 	}
-	fprintf(stderr, "Mob %d does not exist in database\n", virtual);
+	DEBUG_LOG("SYSERR: Mob %d does not exist in database.", virtual);
 	return -1;
 }
 
@@ -2357,7 +2357,7 @@ int real_object(int virtual)
 		else
 			bot = mid + 1;
 	}
-	fprintf(stderr, "Object %d does not exist in database\n", virtual);
+	DEBUG_LOG("SYSERR: Object %d does not exist in database.", virtual);
 	return -1;
 }
 
