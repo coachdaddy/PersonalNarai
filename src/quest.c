@@ -188,6 +188,11 @@ int get_quest(struct char_data *ch)
         }
 	} while (num == ch->quest.data || QM[num].name == NULL);
 
+	if( num < low ) {
+		DEBUG_LOG("Quest error for %s : num %d.", ch->player.name, num);
+		num = low+1;
+	}
+
 	return num;
 }
 
