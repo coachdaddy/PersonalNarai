@@ -315,6 +315,7 @@ void cast_cure_blind(byte level, struct char_data *ch, char *arg, int type,
 {
 	switch (type) {
 	case SPELL_TYPE_SPELL:
+		INCREASE_SKILLED2(ch, tar_ch, SPELL_CURE_BLIND);
 		spell_cure_blind(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_POTION:
@@ -346,7 +347,7 @@ void cast_mana_boost(byte level, struct char_data *ch, char *arg, int type,
 				spell_mana_boost(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in increase!");
+		mudlog("Serious screw-up in cast_mana_boost!");
 		break;
 	}
 }
@@ -365,7 +366,7 @@ void cast_vitalize(byte level, struct char_data *ch, char *arg, int type,
 		spell_vitalize(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in vital_move!");
+		mudlog("Serious screw-up in cast_vitalize!");
 		break;
 	}
 }
@@ -783,7 +784,7 @@ void cast_heal(byte level, struct char_data *ch, char *arg, int type,
 				spell_heal(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in heal!");
+		mudlog("Serious screw-up in cast_heal!");
 		break;
 	}
 }
@@ -806,7 +807,7 @@ void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
 				spell_full_heal(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in heal!");
+		mudlog("Serious screw-up in cast_full_heal!");
 		break;
 	}
 }
@@ -818,6 +819,7 @@ void cast_entire_heal(byte level, struct char_data *ch, char *arg, int type,
 	case SPELL_TYPE_SPELL:
 		act("$n entire heals $N.", FALSE, ch, 0, tar_ch, TO_NOTVICT);
 		act("You entire heal $N.", FALSE, ch, 0, tar_ch, TO_CHAR);
+		INCREASE_SKILLED2(ch, tar_ch, SPELL_ENTIRE_HEAL);
 		spell_entire_heal(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_POTION:
@@ -830,7 +832,7 @@ void cast_entire_heal(byte level, struct char_data *ch, char *arg, int type,
 				spell_entire_heal(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in heal!");
+		mudlog("Serious screw-up in cast_entire_heal!");
 		break;
 	}
 }
@@ -908,6 +910,7 @@ void cast_poison(byte level, struct char_data *ch, char *arg, int type,
 {
 	switch (type) {
 	case SPELL_TYPE_SPELL:
+		INCREASE_SKILLED2(ch, tar_ch, SPELL_POISON);
 		spell_poison(level, ch, tar_ch, tar_obj);
 		break;
 	case SPELL_TYPE_POTION:

@@ -370,12 +370,14 @@ void spell_create_golden_nectar(byte level, struct char_data *ch,
 void spell_cure_blind(byte level, struct char_data *ch,
 		      struct char_data *victim, struct obj_data *obj)
 {
-	assert(victim);
+	if (!victim)	return;
 
 	if (affected_by_spell(victim, SPELL_BLINDNESS)) {
-		INCREASE_SKILLED2(ch, victim, SPELL_CURE_BLIND);
 		affect_from_char(victim, SPELL_BLINDNESS);
 		send_to_char("Your vision returns!\n\r", victim);
+		if (ch != victim) {
+            act("$N's vision returns!", FALSE, ch, 0, victim, TO_CHAR);
+        }
 	}
 }
 
@@ -384,7 +386,8 @@ void spell_cure_critic(byte level, struct char_data *ch,
 {
 	int healpoints;
 
-	assert(victim);
+	if (!victim)	return;
+
 	INCREASE_SKILLED2(ch, victim, SPELL_CURE_CRITIC);
 	healpoints = dice(level, 20);
 	if ((healpoints + GET_HIT(victim)) > GET_PLAYER_MAX_HIT(victim))
@@ -400,7 +403,7 @@ void spell_cause_critic(byte level, struct char_data *ch,
 {
 	int dam;
 
-	assert(victim);
+	if (!victim)	return;
 
 	INCREASE_SKILLED2(ch, victim, SPELL_CAUSE_CRITIC);
 	dam = dice(level, 20);
@@ -1152,9 +1155,11 @@ void spell_full_heal(byte level, struct char_data *ch,
 void spell_entire_heal(byte level, struct char_data *ch,
 		       struct char_data *victim, struct obj_data *obj)
 {
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_entire_heal called with NULL victim!");
+		return;
+	}
 
-	INCREASE_SKILLED2(ch, victim, SPELL_ENTIRE_HEAL);
 	if (number(0, 6) != 3 || GET_LEVEL(ch) >= (IMO + 3)) {
 		spell_cure_blind(level, ch, victim, obj);
 		GET_HIT(victim) = victim->points.max_hit;
@@ -1172,7 +1177,10 @@ void spell_invisibility(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert((ch && obj) || victim);
+	if (!((ch && obj) || victim)) {
+		mudlog("SYSERR: Invalid arguments in spell_invisibility function: need (ch&obj) or victim");
+		return; 
+	}
 
 	INCREASE_SKILLED2(ch, ch, SPELL_INVISIBLE);
 	if (obj) {
@@ -1242,11 +1250,10 @@ void spell_poison(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim || obj);
+	if (!victim || !obj)	return;
 
 	if (victim) {
 		if (!saves_spell(victim, SAVING_PARA)) {
-			INCREASE_SKILLED2(ch, victim, SPELL_POISON);
 			af.type = SPELL_POISON;
 			af.duration = level / 5 + 1;
 			af.modifier = -1;
