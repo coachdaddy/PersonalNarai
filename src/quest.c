@@ -121,14 +121,15 @@ int get_quest(struct char_data *ch)
 	int low, high;
 	int t;
 	int num;
+	int safety_count = 0;
 
 	if (GET_LEVEL(ch) == 60) {
 		low = 345; /* 9531 36 son adle second */
         high = END_QUEST_MOB;
-    } else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) {
+    } else if (GET_LEVEL(ch) > 39 && GET_LEVEL(ch) < 50) { // lv 40~49
         low = 347;  /* 1465 37 roy slade	*/
         high = 437; /* 15117 40 super magnet	*/
-    } else if (GET_LEVEL(ch) > 49 && GET_LEVEL(ch) < 60) {
+    } else if (GET_LEVEL(ch) > 49 && GET_LEVEL(ch) < 60) { // lv 50~59
         low = 367;  /* 15092 38 sick robot */
         high = 539; /* 13784 41 zeus god	*/
     } else if (ch->quest.solved >= 60) {
@@ -142,8 +143,23 @@ int get_quest(struct char_data *ch)
 
 	do {
 		num = number(low, high);
-	}
-	while (num == ch->quest.data);
+
+		if( num < low ) {
+			DEBUG_LOG("Quest error for %s : num %d.", ch->player.name, num);
+			num = low + 1;
+		}
+
+		if (QM[num].name == NULL) { // invalid mob name, 251223
+			DEBUG_LOG("Quest Warning: QM[%d] is NULL (Range: %d~%d). Retrying...", num, low, high);
+            continue; 
+        }
+
+		safety_count++;
+        if (safety_count > 100) {
+            DEBUG_LOG("Critical Quest Error: No valid mob found between %d and %d", low, high);
+            break; 
+        }
+	} while (num == ch->quest.data || QM[num].name == NULL);
 
 	return num;
 }
