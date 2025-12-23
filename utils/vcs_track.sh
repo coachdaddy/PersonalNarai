@@ -1,5 +1,6 @@
 #!/bin/bash
-DIR="../include"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DIR="$SCRIPT_DIR/../include"
 FILE="$DIR/vcs_track.h"
 TEMP_FILE="$FILE.tmp"
 

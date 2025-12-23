@@ -4,8 +4,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-
 #include "structs.h"
 #include "db.h"
 #include "spells.h"
@@ -86,7 +84,6 @@ void mobile_activity(void)
 	/* son_ogong mirror */
 	ch = character_list;
 	while (ch) {
-#define SON_OGONG_MIRROR	11141
 		tmp_ch = ch->next;
 		if (mob_index[ch->nr].virtual == SON_OGONG_MIRROR) {
 			(ch->quest.solved)++;

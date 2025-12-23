@@ -5,11 +5,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <assert.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
@@ -17,15 +12,11 @@
 #include "handler.h"
 #include "spells.h"
 
-#include <sys/time.h>
 
-
-
-#define MAX_HISTORY_MSG 512  // 넉넉한 크기
-#define HISTORY_SIZE 100     // 20 -> 100으로 확장, 251124 by Komo
 static char history[HISTORY_SIZE][MAX_HISTORY_MSG];
 static int his_start = 0, his_end = 0;
 static FILE *chatlogfp = NULL;
+
 
 /* 말하기 */
 void do_say(struct char_data *ch, char *argument, int cmd)
@@ -345,7 +336,7 @@ void do_ask(struct char_data *ch, char *argument, int cmd)
 	}
 }
 
-#define MAX_NOTE_LENGTH MAX_STRING_LENGTH	/* arbitrary */
+
 /* 쓰기 */
 void do_write(struct char_data *ch, char *argument, int cmd)
 {

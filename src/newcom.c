@@ -4,9 +4,6 @@
 *  Usage :                                                                *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
@@ -14,7 +11,6 @@
 #include "db.h"
 #include "spells.h"
 #include "limits.h"
-
 
 
 

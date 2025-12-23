@@ -4,9 +4,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include "structs.h"
 #include "utils.h"
 #include "spells.h"
@@ -106,8 +103,6 @@ void mob_punch_drop(struct char_data *ch, struct char_data *victim)
 }
 
 /* mode and fightmode is defined in mob_magic.h  */
-#define NUMBER_OF_MAX_VICTIM	8
-#define VICT_IS_SAME_ROOM(mob)	(mob->in_room==mob->specials.fighting->in_room)
 struct char_data *
  choose_victim(struct char_data *mob, int fightmode, int mode)
 {
@@ -246,7 +241,6 @@ struct char_data *
 #undef NUMBER_OF_MAX_VICTIM
 
 /*  choose mob routine for rescuer  */
-#define NUMBER_OF_MAX_MOB	8
 struct char_data *
  choose_rescue_mob(struct char_data *mob)
 {

@@ -7,24 +7,6 @@
 *  violating our copyright.
 ************************************************************************* */
 
-#include <errno.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <unistd.h>
-#include <netdb.h>
-#include <string.h>
-#include <time.h>
-#include <fcntl.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
@@ -32,41 +14,21 @@
 #include "db.h"
 #include "colors.h" // 색상 매크로
 
-#ifndef DFLT_DIR
-#define DFLT_DIR "lib"		/* default port */
-#endif				// DFLT_DIR
-#ifndef DFLT_PORT
-#define DFLT_PORT 5101		/* default port */
-#endif				// DFLT_PORT
-
-#define MAX_NAME_LENGTH 15
-#define MAX_HOSTNAME    256
-#define OPT_USEC        200000 /* time delay corresponding to 5 passes/sec */
-#define MAXFDALLOWED    200
-#define MAXOCLOCK       1200
-#define A_DAY           86400
-#define MINUTES(m)      (60 * (m))
-#define TICS_PER_SEC    5
-#define SAVE_PERIOD_MINUTES 10 /* 10분마다 플레이어 저장 */
-#define PLAYER_SAVE_PERIOD  (MINUTES(SAVE_PERIOD_MINUTES) * TICS_PER_SEC)
-
-
 
 /* local globals */
-struct descriptor_data *descriptor_list, *next_to_process;
-
-int s;
+int s, boottime, maxdesc, avail_descs;
+int tics = 0;			/* for extern checkpointing */
 int slow_death = 0;		/* Shut her down, Martha, she's sucking mud */
-int shutdowngame = 0;		/* clean shutdown */
+int shutdowngame = 0;	/* clean shutdown */
 int reboot_game = 0;
 int reboot_counter = -1;
-struct timeval null_time;
-int boottime;
 unsigned long reboot_time = REBOOT_TIME; // 현재 4일
+struct timeval null_time;
+struct descriptor_data *descriptor_list, *next_to_process;
+volatile sig_atomic_t shutdown_signal_received = 0;
 
-int maxdesc, avail_descs;
-int tics = 0; /* for extern checkpointing */
-
+int baddoms = 0;
+char baddomain[16][32];
 char pidfile[256] = {0};
 
 int nochatflag = 0;
@@ -78,8 +40,6 @@ int no_specials = 0;		/* Suppress ass. of special routines */
 int nostealflag = 0;
 int noshoutflag = 0;
 
-int baddoms = 0;
-char baddomain[16][32];
 
 /* *********************************************************************
 *  main game loop and related stuff               *
@@ -164,7 +124,7 @@ void run_the_game(int port)
 
 	game_loop(s);
 	mudlog("(run_the_game) DOWN??????????SAVE ALL CHARS???????");
-    transall(3001);
+    transall(VNUM_ROOM_MID);
 
     mudlog("(run_the_game) Game loop ended. Saving all characters.");
     saveallplayers();
@@ -183,18 +143,10 @@ void handle_graceful_shutdown(int sig)
 }
 
 
-// SIGUSR2, SIGINT, SIGTERM: 즉시 종료
+// SIGUSR2, SIGINT, SIGTERM: 즉시 종료, flag만 설정 251219 by Komo
 void handle_immediate_shutdown(int sig)
 {
-    if (!shutdowngame) {
-        mudlog("Received signal for immediate shutdown.");
-        if (pidfile[0] != '\0') {
-            unlink(pidfile);
-            mudlog("PID file removed by signal handler.");
-        }
-        saveallplayers();
-        exit(0);
-    }
+    shutdown_signal_received = 1;
 }
 
 
@@ -227,7 +179,6 @@ void game_loop(int s)
 	static struct timeval opt_time;
 	char comm[MAX_INPUT_LENGTH];
 	struct descriptor_data *point, *next_point;
-	// struct char_data *ch;
 	int pulse = 0;
 	char prmpt[32];
 	int pulse_per_mud_hour;
@@ -382,6 +333,18 @@ void game_loop(int s)
 
 		/* handle heartbeat stuff */
 		pulse++;
+
+		/* handle_immediate_shutdown logic moved here, w/ CodeRabbit, 251219 */
+		if (shutdown_signal_received) {
+			mudlog("Received immediate shutdown signal. Saving players...");
+			
+			if (pidfile[0] != '\0') {
+				unlink(pidfile);
+			}
+			saveallplayers();
+			shutdowngame = 1;
+			continue; 
+    	}
 
 		zapper();
 		/* 
@@ -1303,8 +1266,7 @@ void zapper(void)
 /* 서버 멈춤 감지 */
 void checkpointing(int sig)
 {
-	extern int tics;
-    static int last_tics = 0;
+	static int last_tics = 0;
 
     if (tics == last_tics) { // 지난 검사와 tics가 같으면 멈춘 것
         mudlog("!!! CHECKPOINT shutdown: tics not updated. Server appears to be frozen.");

@@ -4,21 +4,11 @@
 ******************************************************************************/
 /* this is not so good code. you had better modify this one. */
 
-#include <stdio.h>
-#include <string.h>
-/*
-#include <sys/types.h>
-#include <sys/stat.h> 
-*/
-#include <fcntl.h>
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
 #include "handler.h"
 #include "interpreter.h"
-
-#define MAX_MAILS 200
-#define MBOARD_DIR "mboxes"
 
 struct mbox_data {
 	char *head[MAX_MAILS];	/* head of mbox */

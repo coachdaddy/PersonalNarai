@@ -4,20 +4,13 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
-
 #include "guild_list.h"
-
-#define VNUM_WINGS_1  9703
-#define VNUM_WINGS_2  2700
 
 
 
@@ -65,7 +58,7 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
 		/* See if char is carrying a wing */
 		for (obj = ch->carrying; obj; obj = obj->next_content) {
 			obj_number = obj_index[obj->item_number].virtual;
-			if (obj_number == 9703 || obj_number == 2700)
+			if (obj_number == VNUM_OBJ_WINGS_1 || obj_number == VNUM_OBJ_WINGS_2)
 				/* Wings of Pegasus and feather */
 				has_wing = TRUE;
 		}

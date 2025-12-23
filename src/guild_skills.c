@@ -5,15 +5,12 @@
 *  Made by Shin Won-dong  wdshin@eve.kaist.ac.kr                         *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <assert.h>
 #include "structs.h"
 #include "utils.h"
 #include "spells.h"
 #include "handler.h"
 #include "limit.h"
 #include "db.h"
-
 #include "guild_list.h"
 
 
@@ -199,7 +196,7 @@ void do_arrest(struct char_data *ch, char *argument, int cmd)
 			return;
 		}
 	}
-#define JALE_ROOM	1800
+
 	if (victim == ch)
 		return;
 	if (((GET_GUILD_SKILL(ch, POLICE_SKILL_ARREST) > number(1, 99) &&

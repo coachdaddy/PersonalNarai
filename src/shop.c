@@ -4,19 +4,11 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "structs.h"
 #include "handler.h"
 #include "db.h"
 #include "interpreter.h"
 #include "utils.h"
-
-#define SHOP_FILE "tinyworld.shp"
-#define MAX_TRADE 5
-#define MAX_PROD 5
-
 
 
 struct shop_data *shop_index;

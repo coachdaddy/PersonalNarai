@@ -3,15 +3,6 @@
 *  Usage: Loading/Saving chars, booting world, resetting etc.             *
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ***************************************************************************/
-#define _GNU_SOURCE
-
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <ctype.h>
-#include <time.h>
-#include <signal.h>
-#include <errno.h>
 
 #include "structs.h"
 #include "utils.h"
@@ -19,60 +10,57 @@
 #include "handler.h"
 #include "limit.h"
 #include "spells.h"
-
 #include "mob_bal.c"
-
 #include "vcs_track.h"
 
 
-/**************************************************************************
-*  declarations of most of the 'global' variables                         *
-************************************************************************ */
+/****************************************************************************
+*  declarations of most of the 'global' variables                         	*
+*************************************************************************** */
 
-struct room_data *world;	/* dyn alloc'ed array of rooms     */
-int top_of_world = 0;		/* ref to the top element of world */
-struct obj_data *object_list = 0;	/* the global linked list of obj's */
-struct char_data *character_list = 0;	/* global l-list of chars          */
+struct room_data *world = NULL;			/* dyn alloc'ed array of rooms     	*/
+int top_of_world = 0;					/* ref to the top element of world 	*/
 
-struct zone_data *zone_table;	/* table of reset data             */
-int top_of_zone_table = 0;
-struct message_list fight_messages[MAX_MESSAGES];	/* fighting messages   */
-struct player_index_element *player_table = 0;	/* index to player file   */
-int top_of_p_table = 0;		/* ref to top of table             */
+struct zone_data *zone_table = NULL;	/* table of reset data				*/
+int top_of_zone_table = 0;				/* ref to top of zone table        	*/
+
+struct reset_q_type reset_q;			/* queue of zones to be reset       */
+struct time_info_data time_info;		/* the infomation about the time   	*/
+struct weather_data weather_info;		/* the infomation about the weather */
+
+struct char_data *character_list = NULL;	/* global l-list of chars       */
+struct player_index_element *player_table = NULL;	/* index to player file */
+int top_of_p_table = 0;					/* ref to top of table             	*/
 int top_of_p_file = 0;
 
-char credits[MAX_STRING_LENGTH];	/* the Credits List                */
-char news[MAX_STRING_LENGTH];	/* the news                        */
-char imotd[MAX_STRING_LENGTH];	/* MOTD for immortals                          */
-char motd[MAX_STRING_LENGTH];	/* the messages of today           */
-char help[MAX_STRING_LENGTH];	/* the main help page              */
-char plan[MAX_STRING_LENGTH];	/* the info text                   */
-char wizards[MAX_STRING_LENGTH];	/* the wizards text                */
+struct index_data *mob_index = NULL;	/* index table for mobile file     	*/
+int top_of_mobt = 0;					/* top of mobile index table       	*/
+FILE *mob_f = NULL; 					/* file containing mob prototypes  	*/
 
-FILE *mob_f, /* file containing mob prototypes  */ *obj_f, /* obj prototypes                  */ *help_fl;	/* file for help texts (HELP <kwd>) */
+struct obj_data *object_list = NULL;	/* the global linked list of obj's 	*/
+struct index_data *obj_index = NULL;	/* index table for object file     	*/
+int top_of_objt = 0;					/* top of object index table       	*/
+FILE *obj_f = NULL;						/* obj prototypes                  	*/
 
-struct index_data *mob_index;	/* index table for mobile file     */
-struct index_data *obj_index;	/* index table for object file     */
-struct help_index_element *help_index = 0;
+char credits[MAX_STRING_LENGTH];		/* the Credits List                	*/
+char news[MAX_STRING_LENGTH];			/* the news                        	*/
+char imotd[MAX_STRING_LENGTH];			/* MOTD for immortals              	*/
+char motd[MAX_STRING_LENGTH];			/* the messages of today           	*/
+char help[MAX_STRING_LENGTH];			/* the main help page              	*/
+char plan[MAX_STRING_LENGTH];			/* the info text                   	*/
+char wizards[MAX_STRING_LENGTH];		/* the wizards text                	*/
 
-int top_of_mobt = 0;		/* top of mobile index table       */
-int top_of_objt = 0;		/* top of object index table       */
-int top_of_helpt;		/* top of help index table         */
+struct help_index_element *help_index = NULL;	/* the help index                  */
+int top_of_helpt;			/* top of help index table         */
+FILE *help_fl = NULL;		/* file for help texts (HELP <kwd>) */
 
-struct time_info_data time_info;	/* the infomation about the time   */
-struct weather_data weather_info;	/* the infomation about the weather */
-
-struct reset_q_type reset_q;
+struct message_list fight_messages[MAX_MESSAGES];	/* fighting messages   */
 
 /* comm.c에서 이동, Komo */
 int regen_percent = 50;
 int regen_time_percent = 66;
 int regen_time = 200;
 
-/* for 대림사 */
-/* these are also defined in spec_procs.c */
-#define FOURTH_JANGRO		11132
-#define SON_OGONG			11101
 
 
 /*************************************************************************
@@ -178,8 +166,15 @@ void boot_db(void)
             /* class (discard) */
             fscanf(mob_f, " %*c "); 
     
-            /* level */
-            fscanf(mob_f, " %d ", &tmp_level);
+            /* level (added error handling code) */
+            if (fscanf(mob_f, " %d ", &tmp_level) != 1) {
+                char err_buf[256];
+                snprintf(err_buf, sizeof(err_buf), "Quest Pre-load: fscanf error reading level for mob VNUM %d", mob_index[i].virtual);
+                mudlog(err_buf);
+                mob_index[i].level = -1;
+                mob_index[i].act = 0;
+                continue;
+            }
 
 			mob_index[i].level = tmp_level;
             
@@ -1383,7 +1378,7 @@ struct char_data *get_mobile_index(int index)
 	return NULL;
 }
 
-#define ZCMD zone_table[zone].cmd[cmd_no]
+
 void reset_zone(int zone)
 {
     int cmd_no;
@@ -2309,20 +2304,14 @@ int real_room(int virtual)
 	/* perform binary search on world-table */
 	while (bot <= top) {
 		mid = bot + (top - bot) / 2;
-
 		if ((world + mid)->number == virtual)
 			return mid;
-		
-		if (bot >= top) {
-			fprintf(stderr, "Room %d does not exist in database\n", virtual);
-			return (-1);
-		}
 		if ((world + mid)->number > virtual)
 			top = mid - 1;
 		else
 			bot = mid + 1;
 	}
-
+	fprintf(stderr, "Room %d does not exist in database\n", virtual);
 	return -1;
 }
 
@@ -2339,15 +2328,13 @@ int real_mobile(int virtual)
 		mid = bot + (top - bot) / 2;
 
 		if ((mob_index + mid)->virtual == virtual)
-			return (mid);
-		if (bot >= top)
-			return (-1);
+			return mid;
 		if ((mob_index + mid)->virtual > virtual)
 			top = mid - 1;
 		else
 			bot = mid + 1;
 	}
-
+	fprintf(stderr, "Mob %d does not exist in database\n", virtual);
 	return -1;
 }
 
@@ -2364,15 +2351,13 @@ int real_object(int virtual)
 		mid = bot + (top - bot) / 2;
 
 		if ((obj_index + mid)->virtual == virtual)
-			return (mid);
-		if (bot >= top)
-			return (-1);
+			return mid;
 		if ((obj_index + mid)->virtual > virtual)
 			top = mid - 1;
 		else
 			bot = mid + 1;
 	}
-
+	fprintf(stderr, "Object %d does not exist in database\n", virtual);
 	return -1;
 }
 
@@ -2556,7 +2541,6 @@ void unstash_char(struct char_data *ch, char *filename)
 	char buf[MAX_OUTPUT_LENGTH];
 
 	/* for Knife rent */
-#define MAX_RENT_ITEM 1000
 	struct obj_data *item_stackp[MAX_RENT_ITEM];
 	int item_stack[MAX_RENT_ITEM];
 	int stack_count = 0;

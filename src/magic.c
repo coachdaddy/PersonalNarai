@@ -5,10 +5,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "spells.h"
@@ -295,7 +291,7 @@ void spell_sunburst(byte level, struct char_data *ch,
 	if (number(1, 15) == 1)
         spell_blindness(level, ch, victim, 0);
     // sprintf(buf, "DEBUG: sunburst: %d", dam);
-    mudlog(buf);
+    // mudlog(buf);
 
 	damage(ch, victim, dam, SPELL_SUNBURST);
 }

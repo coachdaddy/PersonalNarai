@@ -3,9 +3,6 @@
 *  Usage: Procedures handling special procedures for object/room/mobile   *
 *  Made by Choi Yeon Beom in KAIST                                        *
 ************************************************************************* */
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
 
 #include "structs.h"
 #include "utils.h"

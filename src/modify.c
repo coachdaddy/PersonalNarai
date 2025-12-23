@@ -5,23 +5,11 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************ */
 
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-#include <time.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
-
-#define TP_MOB    0
-#define TP_OBJ     1
-#define TP_ERROR  2
-#define MAX_MSGS 100
-#define WRITER_NAME_LEN 20
-
 
 /* board */
 struct board_data {
@@ -35,9 +23,7 @@ struct board_data {
 	struct board_data *next;	/* next */
 };
 
-
-char *string_fields[] =
-{
+char *string_fields[] = {
 	"name",
 	"short",
 	"long",
@@ -48,8 +34,7 @@ char *string_fields[] =
 };
 
 /* maximum length for text field x+1 */
-int length[] =
-{
+int length[] = {
 	40,
 	60,
 	256,
@@ -57,8 +42,7 @@ int length[] =
 	60
 };
 
-char *skill_fields[] =
-{
+char *skill_fields[] = {
 	"learned",
 	"affected",
 	"duration",
@@ -66,8 +50,7 @@ char *skill_fields[] =
 	"\n"
 };
 
-int max_value[] =
-{
+int max_value[] = {
 	255,
 	255,
 	10000,

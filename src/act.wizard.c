@@ -5,15 +5,6 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <assert.h>
-#include <stdlib.h> /* qsort, 251124 by Komo */
-#include <time.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
@@ -31,6 +22,7 @@ int his_start = 0, his_end = 0;
         if (len < size) \
             len += snprintf(buf + len, size - len, __VA_ARGS__); \
     } while (0)
+
 
 
 void do_advance(struct char_data *ch, char *argument, int cmd)

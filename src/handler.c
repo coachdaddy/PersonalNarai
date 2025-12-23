@@ -4,19 +4,12 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <string.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <assert.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
 #include "handler.h"
 #include "spells.h"
-
 #include "guild_list.h"
-
 
 
 
@@ -216,7 +209,6 @@ void affect_modify(struct char_data *ch, byte loc, short mod, long bitv, bool ad
 		}
 		break;
 	default:
-		/*  mudlog("Unknown apply adjust attempt (handler.c, affect_modify)."); */
 		break;
 	}			/* switch */
 }
@@ -329,7 +321,7 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
 			free(af);
 			af = NULL;
 			char_from_room(ch);
-			char_to_room(ch, real_room(3001));
+			char_to_room(ch, real_room(VNUM_ROOM_MID));
 			return;
 		}
 		if (af->type == SPELL_DEATH) {

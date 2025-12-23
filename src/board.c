@@ -3,28 +3,20 @@
 * bulletin board in mud                                                       *
 ******************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <fcntl.h>
-#include <ctype.h>
-
 #include "structs.h"
 #include "utils.h"
 #include "db.h"
 
-#define MAX_MSGS 100
-#define WRITER_NAME_LEN 20
-#define BOARD_DIR "boards"
 
 struct board_data {
-	char *head[MAX_MSGS];	/* head of board */
-	char *msgs[MAX_MSGS];	/* msg of board */
-	char writer[MAX_MSGS][WRITER_NAME_LEN];		/* writer of that mesg */
-	int m_num;		/* msg number that board contains */
-	FILE *fp;		/* file pointer */
-	int room_num;		/* room number that board is in */
-	char bfile[50];		/* board file name */
-	struct board_data *next;	/* next */
+	char *head[MAX_MSGS];					/* head of board */
+	char *msgs[MAX_MSGS];					/* msg of board */
+	char writer[MAX_MSGS][WRITER_NAME_LEN];	/* writer of that mesg */
+	int m_num;								/* msg number that board contains */
+	FILE *fp;								/* file pointer */
+	int room_num;							/* room number that board is in */
+	char bfile[50];							/* board file name */
+	struct board_data *next;				/* next */
 };
 
 struct board_data *board_list;
@@ -32,8 +24,7 @@ struct board_data *board_list;
 
 
 /* init one board and return its pointer */
-struct board_data *
- init_a_board(struct char_data *ch)
+struct board_data *init_a_board(struct char_data *ch)
 {
 	struct board_data *cr_board;
 
@@ -51,8 +42,7 @@ struct board_data *
 }
 
 /* find board that is in the same room */
-struct board_data *
- find_board(struct char_data *ch)
+struct board_data *find_board(struct char_data *ch)
 {
 	struct board_data *tmp_board;
 	int ch_rnum;
@@ -308,7 +298,6 @@ int write_board(struct char_data *ch, struct board_data *cb, char *arg)
 	obj_to_char(paper, ch);
 
 	/* write paper with pen */
-#define MAX_NOTE_LENGTH MAX_STRING_LENGTH
 	ch->desc->str = &paper->action_description;
 	ch->desc->max_str = MAX_NOTE_LENGTH;
 	CREATE(ch->desc->title, char, strlen(arg) + 10);
