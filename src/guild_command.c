@@ -4,78 +4,48 @@
 *  Made by Shin Won-dong  in KAIST                                        *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
 #include "limit.h"
-
 #include "guild_list.h"		/* by process */
-/*   external vars  */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct index_data *obj_index;
-extern struct time_info_data time_info;
-extern struct title_type titles[4][IMO + 4];
-extern struct index_data *mob_index;
 
-extern char *guild_names[];
-extern int guild_skill_nums[];
-extern char *police_skills[];
-extern char *outlaw_skills[];
-extern char *assasin_skills[];
-extern int police_skill_costs[];
-extern int outlaw_skill_costs[];
-extern int assasin_skill_costs[];
-
-void do_look(struct char_data *ch, char *arg, int cmd);
-void stash_char(struct char_data *ch);
-void unstash_char(struct char_data *ch, char *filename);
 
 /* shuttle bus to KAIST */
-
-char *msg_for_taxi[] =
-{
+char *msg_for_taxi[] = {
 	"NOT-DEFINED",
 	"Welcome to KAIST!!!\n\r",
 	"Welcome to Process' house\n\r"
 };
 
-char *where_to_taxi[] =
-{
+char *where_to_taxi[] = {
 	"NOT-DEFINED",
 	"KAIST",
 	"PROCESS House",
 };
 
-int charge_taxi[] =
-{
+int charge_taxi[] = {
 	0,
 	2000,
 	3000,
 };
 
-int room_taxi[] =
-{
+int room_taxi[] = {
 	0,
 	31001,
 	2000
 };
 
-int level_taxi[] =
-{
+int level_taxi[] = {
 	0,
 	10,
 	10
 };
+
+
 int taxi(struct char_data *ch, int cmd, char *arg)
 {
 	char buf[MAX_STRING_LENGTH];
@@ -86,8 +56,7 @@ int taxi(struct char_data *ch, int cmd, char *arg)
 	if (IS_NPC(ch))
 		return FALSE;
 	room_number = world[ch->in_room].number;
-#define TO_KAIST 3014
-#define TO_PROCESS 3502
+
 	switch (room_number) {
 	case TO_KAIST:
 		taxi_num = 1;
@@ -121,7 +90,7 @@ int taxi(struct char_data *ch, int cmd, char *arg)
 			send_to_char("Get the fuck out!!n\r", ch);
 			GET_HIT(ch) = 1;
 			GET_MOVE(ch) = 1;
-			char_to_room(ch, real_room(3001));
+			char_to_room(ch, real_room(VNUM_ROOM_MID));
 			do_look(ch, "", 15);
 			return TRUE;
 		}
@@ -251,7 +220,6 @@ int locker_room(struct char_data *ch, int cmd, char *arg)
 	int i, room_number;
 	char guild_number;
 	static int count = 0;
-#define LIMIT_LOAD 10
 	static char load_names[LIMIT_LOAD + 1][30];
 	int equiped_something = 0;
 
@@ -287,10 +255,10 @@ int locker_room(struct char_data *ch, int cmd, char *arg)
 	}
 	if (cmd == 277) {	/* SAVE */
 		return FALSE;
-#define COST	10000
-		if (GET_GOLD(ch) < GET_LEVEL(ch) * GET_LEVEL(ch) * COST) {
+
+		if (GET_GOLD(ch) < GET_LEVEL(ch) * GET_LEVEL(ch) * LOCKER_COST) {
 			snprintf(buf, sizeof(buf), "You need %d coins to SAVE your items.",
-				GET_LEVEL(ch) * GET_LEVEL(ch) * COST);
+				GET_LEVEL(ch) * GET_LEVEL(ch) * LOCKER_COST);
 			send_to_char(buf, ch);
 			return TRUE;
 		}
@@ -318,7 +286,7 @@ int locker_room(struct char_data *ch, int cmd, char *arg)
 			return TRUE;
 		}
 
-		GET_GOLD(ch) = GET_GOLD(ch) - (GET_LEVEL(ch) * GET_LEVEL(ch) * COST);
+		GET_GOLD(ch) = GET_GOLD(ch) - (GET_LEVEL(ch) * GET_LEVEL(ch) * LOCKER_COST);
 		stash_char(ch);
 		send_to_char("Ok. When you want to LOAD items, type LOAD.\n\r", ch);
 		return TRUE;

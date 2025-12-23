@@ -4,43 +4,16 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
-#include <stdlib.h>
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "spells.h"
 #include "handler.h"
 #include "limit.h"
 #include "db.h"
 #include "magic_weapon.h"
-
 #include "guild_list.h"
 
-#define REAL 0
-#define VIRTUAL 1
 
-/* Extern structures */
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-extern int noenchantflag;
-
-/* Extern procedures */
-int number(int from, int to);
-int dice(int number, int size);             /* in utility.c */
-bool saves_spell(struct char_data *ch, int spell);
-void stop_fighting(struct char_data *ch);
-void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype);
-void weight_change_object(struct obj_data *obj, int weight);
-// char *strdup(char *source);
-void do_look(struct char_data *ch, char *argument, int cmd);
-void list_obj_to_char(struct obj_data *list, struct char_data *ch, int mode, bool show);
-void list_char_to_char(struct char_data *list, struct char_data *ch, int mode);
-void update_pos(struct char_data *ch);
 
 /* spells2.c - Not directly offensive spells */
 
@@ -69,8 +42,7 @@ void spell_teleport(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
 	int to_room;
-	extern int top_of_world;	/* ref to the top element of world */
-
+	
 	assert(ch);
 
 	INCREASE_SKILLED2(ch, victim, SPELL_TELEPORT);
@@ -300,8 +272,6 @@ void spell_create_water(byte level, struct char_data *ch,
 			struct char_data *victim, struct obj_data *obj)
 {
 	int water;
-
-	extern struct weather_data weather_info;
 	
 	assert(ch && obj);
 
@@ -336,10 +306,7 @@ void spell_create_nectar(byte level, struct char_data *ch,
 {
 	int nectar;
 	
-    void name_to_drinkcon(struct obj_data * obj, int type);
-    void name_from_drinkcon(struct obj_data * obj);
-
-	assert(ch && obj);
+    assert(ch && obj);
 
 	INCREASE_SKILLED2(ch, ch, SPELL_CREATE_NECTAR);
 
@@ -372,10 +339,7 @@ void spell_create_golden_nectar(byte level, struct char_data *ch,
 {
 	int nectar;
 	
-    void name_to_drinkcon(struct obj_data * obj, int type);
-    void name_from_drinkcon(struct obj_data * obj);
-
-	assert(ch && obj);
+    assert(ch && obj);
 
 	INCREASE_SKILLED2(ch, ch, SPELL_CREATE_GOLDEN_NECTAR);
 
@@ -1595,7 +1559,6 @@ void spell_phase(byte level, struct char_data *ch,
 void spell_word_of_recall(byte level, struct char_data *ch,
 			  struct char_data *victim, struct obj_data *obj)
 {
-	extern int top_of_world;
 	int loc_nr, location;
 	bool found = FALSE;
 
@@ -1616,7 +1579,7 @@ void spell_word_of_recall(byte level, struct char_data *ch,
 		loc_nr = ROOM_GUILD_OUTLAW;
 		break;
 	default:
-		loc_nr = 3001;
+		loc_nr = VNUM_ROOM_MID;
 		break;
 	}
 	for (location = 0; location <= top_of_world; location++)

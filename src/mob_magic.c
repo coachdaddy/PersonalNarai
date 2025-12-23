@@ -4,34 +4,15 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "spells.h"
 #include "handler.h"
 #include "limits.h"
 #include "db.h"
 #include "mob_magic.h"		/* by cyb */
 
-/* Extern structures */
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
 
-/* Extern procedures */
-
-void damage (struct char_data *ch, struct char_data *victim,
-	     int damage, int weapontype);
-bool saves_spell (struct char_data *ch, sh_int spell);
-// char *strdup(char *source);
-int dice (int number, int size);				/* in utility.c */
-void hit (struct char_data *ch, struct char_data *victim, int type);
-void stop_fighting (struct char_data *ch);
-int number (int from, int to);
 
 void mob_spell_fire_storm(byte level, struct char_data *ch,
 			  struct char_data *victim, struct obj_data *obj)
@@ -122,8 +103,6 @@ void mob_punch_drop(struct char_data *ch, struct char_data *victim)
 }
 
 /* mode and fightmode is defined in mob_magic.h  */
-#define NUMBER_OF_MAX_VICTIM	8
-#define VICT_IS_SAME_ROOM(mob)	(mob->in_room==mob->specials.fighting->in_room)
 struct char_data *
  choose_victim(struct char_data *mob, int fightmode, int mode)
 {
@@ -262,7 +241,6 @@ struct char_data *
 #undef NUMBER_OF_MAX_VICTIM
 
 /*  choose mob routine for rescuer  */
-#define NUMBER_OF_MAX_MOB	8
 struct char_data *
  choose_rescue_mob(struct char_data *mob)
 {

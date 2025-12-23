@@ -4,27 +4,13 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
 
-/* extern variables */
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct room_data *world;
-
-/* extern functions */
-void parse_string(char *input, char *output, struct char_data *ch1,
-		  struct char_data *ch2, struct char_data *to);
-int action(int cmd);
-char *fread_action(FILE *fl);
 
 struct social_messg {
 	int act_nr;
@@ -57,7 +43,7 @@ char *fread_action(FILE *fl)
 	for (;;) {
 		fgets(buf, MAX_STRING_LENGTH, fl);
 		if (feof(fl)) {
-			log("Fread_action - unexpected EOF.");
+			mudlog("Fread_action - unexpected EOF.");
 			exit(0);
 		}
 
@@ -71,6 +57,7 @@ char *fread_action(FILE *fl)
 		}
 	}
 }
+
 
 void boot_social_messages(void)
 {

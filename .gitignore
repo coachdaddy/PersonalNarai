@@ -10,7 +10,5 @@ include/vcs_track.h
 log-*
 run-mud.sh
 .vscode/
-deploy.sh
-Dockerfile
-entrypoint.sh
-local_debug.sh
+lib/mud-5101.pid
+lib/motd

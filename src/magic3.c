@@ -4,37 +4,15 @@
 *  Usage : The actual effect of magic.                                    *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "spells.h"
 #include "handler.h"
 #include "limit.h"
 #include "db.h"
-
 #include "guild_list.h"
 
-/* Extern structures */
-extern struct room_data *world;
-extern struct obj_data *object_list;
-extern struct char_data *character_list;
-extern struct index_data *mob_index;
-extern int noenchantflag;
 
-/* Extern procedures */
-void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype);
-bool saves_spell(struct char_data *ch, int spell);
-void weight_change_object(struct obj_data *obj, int weight);
-// char *strdup(char *source);
-int dice(int number, int size);         /* in utility.c */
-void do_look(struct char_data *ch, char *argument, int cmd);
-int number(int from, int to);
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void do_say(struct char_data *ch, char *str, int cmd);
-void do_shout(struct char_data *ch, char *str, int cmd);
 
 /*
 cast 'spell block' victim
@@ -171,7 +149,6 @@ void spell_kiss_of_process(byte level, struct char_data *ch,
 void spell_thunder_bolt(byte level, struct char_data *ch,
 			struct char_data *victim, struct obj_data *obj)
 {
-	extern struct weather_data weather_info;
 	struct obj_data *tmp_obj = NULL;
 	int percent;
 	int tmp;

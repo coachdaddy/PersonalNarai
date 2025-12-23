@@ -5,29 +5,16 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
 
-/* extern variables */
 
-extern struct str_app_type str_app[];
-extern struct room_data *world;
-extern struct descriptor_data *descriptor_list;
-extern struct room_data *world;
 
-/* extern functions */
 
-struct obj_data *create_money(int amount);
-int str_cmp(char *arg1, char *arg2);
-int is_number(char *arg);
 
 /* procedures related to get */
 void get(struct char_data *ch, struct obj_data *obj_object,
@@ -616,8 +603,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 	int amount;
 	struct char_data *vict;
 	struct obj_data *obj;
-	extern struct index_data *obj_index;
-
+	
 	argument = one_argument(argument, obj_name);
 	if (is_number(obj_name)) {
 		amount = atoi(obj_name);
@@ -654,7 +640,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 		else {
 			snprintf(buf, sizeof(buf), "%s gives %d coins to %s.", GET_NAME(ch), amount,
 				GET_NAME(vict));
-			log(buf);
+			mudlog(buf);
 		}
 		GET_GOLD(vict) += amount;
 		return;
@@ -696,7 +682,7 @@ void do_give(struct char_data *ch, char *argument, int cmd)
 		snprintf(buf, sizeof(buf), "%s gives %d to %s."
 			,GET_NAME(ch), obj_index[obj->item_number].virtual,
 			GET_NAME(vict));
-		log(buf);
+		mudlog(buf);
 	}
 }
 
@@ -707,8 +693,7 @@ void do_reload(struct char_data *ch, char *argument, int cmd)
 	char arg2[MAX_INPUT_LENGTH];
 	struct obj_data *gun;
 	struct obj_data *ammo;
-	extern struct index_data *obj_index;
-
+	
 	if (GET_POS(ch) < POSITION_STANDING) {
 		send_to_char("You need to be standing still for that.\n\r", ch);
 		return;

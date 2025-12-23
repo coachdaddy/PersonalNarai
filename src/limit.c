@@ -4,44 +4,12 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include "structs.h"
 #include "limit.h"
 #include "utils.h"
 #include "spells.h"
-#include "comm.h"
-
 #include "guild_list.h"
 
-#define SPELL_LEARN_MAX	120
-
-#define READ_TITLE(ch) (GET_SEX(ch) == SEX_MALE ?   \
-  titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_m :  \
-  titles[(int)GET_CLASS(ch) - 1][(int)GET_LEVEL(ch)].title_f)
-
-extern struct char_data *character_list;
-extern struct obj_data *object_list;
-extern struct title_type titles[4][IMO + 4];
-extern struct room_data *world;
-
-/* External procedures */
-int move_stashfile_safe(char *victim);                                                   // 251024
-void update_pos(struct char_data *victim);                                               /* in fight.c */
-void damage(struct char_data *ch, struct char_data *victim, int damage, int weapontype); /*    do      */
-struct time_info_data age(struct char_data *ch);
-int number(int from, int to);
-int dice(int num, int size);            /* in utility.c */
-void stop_fighting(struct char_data *ch);
-void char_from_room(struct char_data *ch);
-void char_to_room(struct char_data *ch, int to);
-void do_rent(struct char_data *ch, char *arg, int cmd);
-void close_socket(struct descriptor_data *d);
-void obj_from_obj(struct obj_data *o);
-void obj_to_obj(struct obj_data *o, struct obj_data *to);
-void obj_to_room(struct obj_data *o, int room);
-void save_char(struct char_data *ch, sh_int load_room); /* db.c */
 
 
 /* When age < 15 return the value p0 */
@@ -305,7 +273,6 @@ int move_gain(struct char_data *ch)
 void advance_level(struct char_data *ch, int level_up)
 {
 	int add_hp, add_mana, add_move, i;
-	extern struct wis_app_type wis_app[26];
 	int level;
 
 	level = GET_LEVEL(ch);
@@ -512,8 +479,7 @@ void point_update(void)
     struct char_data *i, *next_dude;
     struct obj_data *j, *next_thing, *jj, *next_thing2;
     char buf[100];
-    extern int level_quest[];
-
+    
     /* characters */
     for (i = character_list; i; i = next_dude) {
         next_dude = i->next;
@@ -571,7 +537,7 @@ void point_update(void)
                 if (i->in_room != NOWHERE)
                     save_char(i, world[i->in_room].number);
                 else
-                    save_char(i, 3001);
+                    save_char(i, VNUM_ROOM_MID);
 
                 flag = 0;
             }
@@ -589,7 +555,7 @@ void point_update(void)
 						if (i->in_room != NOWHERE) 
 							save_char(i, world[i->in_room].number); 
 						else 
-							save_char(i, 3001);
+							save_char(i, VNUM_ROOM_MID);
 												
 						flag = 0; 
 					}
@@ -604,7 +570,7 @@ void point_update(void)
 						if (i->in_room != NOWHERE) 
 							save_char(i, world[i->in_room].number); 
 						else 
-							save_char(i, 3001);
+							save_char(i, VNUM_ROOM_MID);
 						flag = 0; 
 					} 
 			} 

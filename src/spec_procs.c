@@ -5,59 +5,14 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
-#define FUDGE (100+dice(6,20))
-
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "structs.h"
 #include "utils.h"
-#include "comm.h"
 #include "interpreter.h"
 #include "handler.h"
 #include "db.h"
 #include "spells.h"
 #include "limit.h"
-#include "prototypes.h"
 
-/*   external vars  */
-extern struct room_data *world;
-extern struct char_data *character_list;
-extern struct descriptor_data *descriptor_list;
-extern struct index_data *obj_index;
-extern struct time_info_data time_info;
-extern struct title_type titles[4][IMO + 4];
-extern struct index_data *mob_index;
-
-/* extern procedures */
-void hit(struct char_data *ch, struct char_data *victim, int type);
-void gain_exp(struct char_data *ch, int gain);
-void advance_level(struct char_data *ch, int level_up);
-void stop_fighting(struct char_data *ch);
-void set_title(struct char_data *ch);
-int number(int from, int to);
-int dice(int num, int size);								/* in utility.c */
-void page_string(struct descriptor_data *d, char *str, int keep);
-int do_simple_move(struct char_data *ch, int cmd, int following);
-void do_flash(struct char_data *ch, char *arg, int cmd);
-void do_cast(struct char_data *ch, char *arg, int cmd);
-void do_shouryuken(struct char_data *ch, char *arg, int cmd);
-void do_spin_bird_kick(struct char_data *ch, char *arg, int cmd);
-void do_backstab(struct char_data *ch, char *arg, int cmd);
-void do_punch(struct char_data *ch, char *argument, int cmd);
-void do_bash(struct char_data *ch, char *arg, int cmd);
-void do_light_move(struct char_data *ch, char *argument, int cmd);
-
-
-void cast_sleep(byte level, struct char_data *ch, char *arg, int si, struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_cure_light(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
-void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
-void cast_heal(byte level, struct char_data *ch, char *arg, int type, struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_full_heal(byte level, struct char_data *ch, char *arg, int type, struct char_data *tar_ch, struct obj_data *tar_obj);
-void cast_sunburst(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
-void cast_fireball(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
-void cast_color_spray(byte level, struct char_data *ch, char *arg, int type, struct char_data *victim, struct obj_data *tar_obj);
 
 
 char *how_good(int p1, int p2)
@@ -75,10 +30,7 @@ int guild(struct char_data *ch, int cmd, char *arg)
 	char tmp[MAX_STRING_LENGTH];
 	int number, i, percent;
 	int lev, cla;
-	extern char *spells[];
-	extern struct spell_info_type spell_info[MAX_SPL_LIST];
-	extern struct int_app_type int_app[26];
-
+	
 	strcpy(buf3, "");
 
 	if ((cmd != 164) && (cmd != 170)) // cmd 164, 170 : practice
@@ -164,9 +116,6 @@ int dump(struct char_data *ch, int cmd, char *arg)
 	struct char_data *tmp_char;
 	int value = 0;
 
-	void do_drop(struct char_data *ch, char *argument, int cmd);
-	char *fname(char *namelist);
-
 	for (k = world[ch->in_room].contents; k; k = world[ch->in_room].contents) {
 		snprintf(buf, sizeof(buf), "The %s vanish in a puff of smoke.\n\r", fname(k->name));
 		for (tmp_char = world[ch->in_room].people; tmp_char;
@@ -214,12 +163,6 @@ int mayor(struct char_data *ch, int cmd, char *arg)
 	static char *path;
 	static int index;
 	static bool move = FALSE;
-
-	void do_move(struct char_data *ch, char *argument, int cmd);
-	void do_open(struct char_data *ch, char *argument, int cmd);
-	void do_lock(struct char_data *ch, char *argument, int cmd);
-	void do_unlock(struct char_data *ch, char *argument, int cmd);
-	void do_close(struct char_data *ch, char *argument, int cmd);
 
 	if (!move) {
 		if (time_info.hours == 6) {
@@ -369,9 +312,6 @@ void npc_steal(struct char_data *ch, struct char_data *victim)
 
 int snake(struct char_data *ch, int cmd, char *arg)
 {
-	void cast_poison(byte level, struct char_data *ch, char *arg, int type,
-			 struct char_data *tar_ch, struct obj_data *tar_obj);
-
 	if (cmd)
 		return FALSE;
 	if (GET_POS(ch) != POSITION_FIGHTING)
@@ -500,8 +440,7 @@ int warrior(struct char_data *ch, int cmd, char *arg)
 		298, 269, 298, 269, 298		/* level 50 */
 	};
 	int do_what;
-	extern struct command_info cmd_info[];
-
+	
 	if (cmd)
 		return FALSE;
 
@@ -771,13 +710,6 @@ int paladin(struct char_data *ch, int cmd, char *arg)
 {
 	struct char_data *vict;
 
-	void do_bash(struct char_data *ch, char *argument, int cmd);
-	void do_multi_kick(struct char_data *ch, char *argument, int cmd);
-	void do_kick(struct char_data *ch, char *argument, int cmd);
-	void do_punch(struct char_data *ch, char *argument, int cmd);
-	void do_light_move(struct char_data *ch, char *argument, int cmd);
-	void do_disarm(struct char_data *ch, char *argument, int cmd);
-
 	if (cmd)
 		return FALSE;
 	if (GET_POS(ch) != POSITION_FIGHTING) {
@@ -889,15 +821,7 @@ int dragon(struct char_data *ch, int cmd, char *arg)
 {
 	int mh;
 	struct char_data *vict;
-	void cast_fire_breath(byte level, struct char_data *ch, char *arg, int type,
-			      struct char_data *tar_ch, struct obj_data *tar_obj);
-	void cast_frost_breath(byte level, struct char_data *ch, char *arg, int type,
-			       struct char_data *tar_ch, struct obj_data *tar_obj);
-	void cast_gas_breath(byte level, struct char_data *ch, char *arg, int type,
-			     struct char_data *tar_ch, struct obj_data *tar_obj);
-	void cast_lightning_breath(byte level, struct char_data *ch, char *arg,
-				   int type, struct char_data *tar_ch, struct obj_data *tar_obj);
-
+	
 	if (cmd)
 		return FALSE;
 	vict = ch->specials.fighting;
