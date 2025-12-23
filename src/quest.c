@@ -164,7 +164,7 @@ int get_quest(struct char_data *ch)
 	do {
 		num = number(low, high);
 
-		if( num < low ) {
+		if (num < low) {
 			DEBUG_LOG("Quest error for %s : num %d.", ch->player.name, num);
 			num = low + 1;
 		}
@@ -172,16 +172,18 @@ int get_quest(struct char_data *ch)
 		if (num >= topQM) {
 			DEBUG_LOG("Quest Warning: num %d >= topQM %d. Retrying...", num, topQM);
 			safety_count++;
+			continue;
 		}
-
 		if (QM[num].name == NULL) { // invalid mob name, 251223
 			DEBUG_LOG("Quest Warning: QM[%d] is NULL (Range: %d~%d). Retrying...", num, low, high);
-            continue; 
+            safety_count++;
+			continue; 
         }
 
 		safety_count++;
         if (safety_count > 100) {
-            DEBUG_LOG("Critical Quest Error: No valid mob found between %d and %d", low, high);
+            DEBUG_LOG("Critical Quest Error: No valid mob found between %d and %d - setting num as 0", low, high);
+			num = 0;
             break; 
         }
 	} while (num == ch->quest.data || QM[num].name == NULL);
@@ -195,7 +197,8 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 	char buf1[MAX_STRING_LENGTH], buf2[MAX_STRING_LENGTH];
 
 	if (GET_LEVEL(ch) >= IMO) { /* IMO */
-		send_to_char_han("&CQUEST&n : &YYou can do anything.&n\n\r", "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
+		send_to_char_han("&CQUEST&n : &YYou can do anything.&n\n\r",
+						 "&CQUEST&n : &Y당신은 무엇이든 할 수 있습니다.&n\n\r", ch);
 		return;
 	}
 
@@ -209,7 +212,9 @@ void do_request(struct char_data *ch, char *arg, int cmd)
 		/* Validate quest data index and check for invalid quest */
 		if (!is_valid_quest_data(ch)) {
 			ch->quest.type = 0;
-			return;
+			send_to_char_han("&CQUEST&n : &YYour quest data was invalid. Please get a new quest.&n\n\r",
+                         	 "&CQUEST&n : &Y퀘스트 정보가 유효하지 않습니다. 새 퀘스트를 받아주세요.&n\n\r", ch);
+        	return;
 		}
 
 		/* All remotal players can't do request.    */
@@ -283,7 +288,9 @@ void do_hint(struct char_data *ch, char *arg, int cmd)
 	/* Validate quest data index and check for invalid quest */
 	if (!is_valid_quest_data(ch)) {
 		ch->quest.type = 0;
-		return;
+		send_to_char_han("&CQUEST&n : &YYour quest data was invalid. Please get a new quest.&n\n\r",
+                         "&CQUEST&n : &Y퀘스트 정보가 유효하지 않습니다. 새 퀘스트를 받아주세요.&n\n\r", ch);
+        return;
 	}
 	
 	/* ch solved quest */
@@ -348,7 +355,9 @@ void do_quest(struct char_data *ch, char *arg, int cmd)
 	/* Validate quest data index and check for invalid quest */
 	if (!is_valid_quest_data(ch)) {
 		ch->quest.type = 0;
-		return;
+		send_to_char_han("&CQUEST&n : &YYour quest data was invalid. Please get a new quest.&n\n\r",
+                         "&CQUEST&n : &Y퀘스트 정보가 유효하지 않습니다. 새 퀘스트를 받아주세요.&n\n\r", ch);
+        return;
 	}
 
 	/* ch solved quest */
@@ -859,7 +868,9 @@ void do_begin(struct char_data *ch, char *argument, int cmd)
 	/* Validate quest data index and check for invalid quest */
 	if (!is_valid_quest_data(ch)) {
 		ch->quest.type = 0;
-		return;
+		send_to_char_han("&CQUEST&n : &YYour quest data was invalid. Please get a new quest.&n\n\r",
+                         "&CQUEST&n : &Y퀘스트 정보가 유효하지 않습니다. 새 퀘스트를 받아주세요.&n\n\r", ch);
+        return;
 	}
 
     if (ch->specials.challenge_room_vnum == 0 || world[ch->in_room].number != ch->specials.challenge_room_vnum) {

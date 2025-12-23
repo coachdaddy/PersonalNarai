@@ -223,3 +223,9 @@
 #define K(x) ((long)(x) * 1000)         /* Kilo, 1천 */
 #define M(x) ((long)(x) * 1000000)      /* Mega, 백만 */
 #define G(x) ((long)(x) * 1000000000)   /* Giga, 10억 */
+
+/* s2ch - send_to_char_han 매크로 대체 함수, 251223 */
+static inline void s2ch(char *eng, char *han, struct char_data *ch)
+{
+    send_to_char_han(eng, han, ch);
+}
