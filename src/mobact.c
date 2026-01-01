@@ -105,8 +105,8 @@ void mobile_activity(void)
 					mudlog(buf);
 					REMOVE_BIT(ch->specials.act, ACT_SPEC);
 				} else {
-					DEBUG_LOG("mob_activity exec spec_proc. Name[%s] Vnum[%d] Ptr[%p]", 
-                            (ch->player.name ? ch->player.name : "NULL"), mob_index[ch->nr].virtual, ch->player.name);
+					/* DEBUG_LOG("mob_activity exec spec_proc. Name[%s] Vnum[%d] Ptr[%p]", 
+                            (ch->player.name ? ch->player.name : "NULL"), mob_index[ch->nr].virtual, ch->player.name); */
                     
 					if ((*mob_index[ch->nr].func) (ch, 0, ""))
 						/*continue; */ ;
