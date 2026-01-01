@@ -605,25 +605,30 @@ char *replace_string(char *str, char *weapon)
 	static int count = 0;
 	char *rtn;
 	char *cp;
+	char *wp_ptr; // 무기 이름 포인터 보존용
     
 	cp = rtn = buf[count % 10];
 	count++;
-	if (count >= 10000) count = 0;
 
 	for (; *str; str++) {
-		if (*str == '#') {
-			switch (*(++str)) {
-			case 'W': 
-				for (; *weapon; *(cp++) = *(weapon++)) ;
-				break;
-			default:
-				*(cp++) = '#';
-				break;
-			}
-		} else {
-			*(cp++) = *str;
-		}
-	}			/* For */
+        if ((cp - rtn) > (MAX_STRING_LENGTH - 50)) {
+            break; 
+        }
+        if (*str == '#') {
+            switch (*(++str)) {
+                case 'W':
+                    if (weapon) {
+                        for (wp_ptr = weapon; *wp_ptr; *(cp++) = *(wp_ptr++)) ;
+                    }
+                    break;
+                default:
+                    *(cp++) = '#';
+                    break;
+            }
+        } else {
+            *(cp++) = *str;
+        }
+    }	/* For */
     *cp = '\0';
 	return (rtn);
 }

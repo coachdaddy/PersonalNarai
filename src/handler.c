@@ -367,11 +367,15 @@ void affect_remove(struct char_data *ch, struct affected_type *af)
 /* Call affect_remove with every spell of spelltype "skill" */
 void affect_from_char(struct char_data *ch, byte skill)
 {
-	struct affected_type *hjp;
+	struct affected_type *hjp, *next_aff;
 
-    for (hjp = ch->affected; hjp; hjp = hjp->next)
+    // ASAN : hjp->next를 미리 저장해두고 루프
+    for (hjp = ch->affected; hjp; hjp = next_aff) {
+        next_aff = hjp->next; // 다음 것 미리 확보
+        
         if (hjp->type == skill)
             affect_remove(ch, hjp);
+    }
 }
 
 /* Return if a char is affected by a spell (SPELL_XXX), NULL indicates 
