@@ -1052,12 +1052,14 @@ void spell_pray_for_armor(byte level, struct char_data *ch,
 }
 
 /* modified by atre */
-void spell_self_heal(byte level, struct char_data *ch,
-		     struct char_data *victim, struct obj_data *obj)
+void spell_self_heal(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj)
 {
 	int hit;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_self_heal called with NULL victim!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_SELF_HEAL);
 	spell_cure_blind(level, ch, victim, obj);
@@ -1074,10 +1076,12 @@ void spell_self_heal(byte level, struct char_data *ch,
 	send_to_char("You feel better.\n\r", victim);
 }
 
-void spell_restore_move(byte level, struct char_data *ch,
-			struct char_data *victim, struct obj_data *obj)
+void spell_restore_move(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj)
 {
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_restore_move called with NULL victim!");
+		return;
+	}
 
 	if (number(0, 7) > 2 + (GET_SKILLED(ch, SPELL_RESTORE_MOVE) >> 5)) {
 		WAIT_STATE(victim, PULSE_VIOLENCE * 3);
@@ -1091,13 +1095,14 @@ void spell_restore_move(byte level, struct char_data *ch,
 }
 
 /* modified by atre */
-void spell_heal(byte level, struct char_data *ch,
-		struct char_data *victim, struct obj_data *obj)
+void spell_heal(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj)
 {
 	int hit;
-	void gain_exp(struct char_data * ch, int gain);
-	
-	assert(victim);
+
+	if (!victim) {
+		mudlog("SYSERR: spell_heal called with NULL victim!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_HEAL);
 	spell_cure_blind(level, ch, victim, obj);
@@ -1122,13 +1127,14 @@ void spell_heal(byte level, struct char_data *ch,
 }
 
 /* modified by atre */
-void spell_full_heal(byte level, struct char_data *ch,
-		     struct char_data *victim, struct obj_data *obj)
+void spell_full_heal(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj)
 {
 	int hit;
-	void gain_exp(struct char_data * ch, int gain);
 	
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_full_heal called with NULL victim!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_FULL_HEAL);
 	spell_cure_blind(level, ch, victim, obj);
@@ -1152,8 +1158,7 @@ void spell_full_heal(byte level, struct char_data *ch,
 	send_to_char("A warm feeling fills your body.\n\r", victim);
 }
 
-void spell_entire_heal(byte level, struct char_data *ch,
-		       struct char_data *victim, struct obj_data *obj)
+void spell_entire_heal(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj)
 {
 	if (!victim) {
 		mudlog("SYSERR: spell_entire_heal called with NULL victim!");
@@ -1172,8 +1177,7 @@ void spell_entire_heal(byte level, struct char_data *ch,
 	update_pos(victim);
 }
 
-void spell_invisibility(byte level, struct char_data *ch,
-			struct char_data *victim, struct obj_data *obj)
+void spell_invisibility(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj)
 {
 	struct affected_type af;
 
@@ -1204,15 +1208,18 @@ void spell_invisibility(byte level, struct char_data *ch,
 	}
 }
 
-void spell_locate_object(byte level, struct char_data *ch,
-			 struct char_data *victim, struct obj_data *obj)
+void spell_locate_object(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj)
 {
 	struct obj_data *i;
 	char name[256];
 	char buf[MAX_STRING_LENGTH];
 	int j;
 
-	assert(ch);
+	if (!ch) {
+		mudlog("SYSERR: spell_locate_object called with NULL ch!");
+		return;
+	}
+
 	INCREASE_SKILLED2(ch, ch, SPELL_LOCATE_OBJECT);
 	strcpy(name, fname(obj->name));
 	j = level >> 1;
