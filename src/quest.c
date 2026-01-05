@@ -1016,3 +1016,54 @@ void do_rejoin(struct char_data *ch, char *argument, int cmd)
         }
     }
 }
+
+
+void do_challenge_abort(struct char_data *ch, char *argument, int cmd)
+{
+    struct char_data *mob, *next_mob;
+    int challenge_room_rnum;
+    int mob_vnum;
+
+    if (IS_NPC(ch)) return;
+
+    /* 전투 중인지 확인 */
+    if (ch->specials.fighting) {
+        s2ch("&cCHALLENGE&n : &yThink about quitting AFTER the battle! You don't even know if you'll survive yet!&n\n\r",
+             "&cCHALLENGE&n : &y도전 포기를 하는 건 당장의 전투를 마무리한 뒤 생각해보시지! 죽지도 살지도 모르는 주제에!&n\n\r", ch);
+        return;
+    }
+
+    /* 도전 중이 아닌 경우 */
+    if (ch->specials.challenge_room_vnum <= 0) {
+        s2ch("&cCHALLENGE&n : &yYou are not currently in a challenge.&n\n\r", 
+             "&cCHALLENGE&n : &y현재 진행 중인 도전이 없습니다.&n\n\r", ch);
+        return;
+    }
+
+    /* 변수 설정 */
+    challenge_room_rnum = real_room(ch->specials.challenge_room_vnum);
+    mob_vnum = ch->specials.challenge_quest_mob_vnum;
+
+    /* 도전의 방에 남아있는 퀘스트 몬스터 제거 */
+    if (challenge_room_rnum != NOWHERE && world[challenge_room_rnum].people) {
+        for (mob = world[challenge_room_rnum].people; mob; mob = next_mob) {
+            next_mob = mob->next_in_room;
+            
+            if (IS_NPC(mob) && mob_index[mob->nr].virtual == mob_vnum) {
+                if (mob->in_room == ch->in_room) {
+                    act("&cCHALLENGE&n : &y$n fades away as the challenge is aborted.&n", TRUE, mob, 0, 0, TO_ROOM);
+                }
+                extract_char(mob, FALSE);
+            }
+        }
+    }
+
+    /* 도전 상태 변수 초기화 */
+    ch->specials.challenge_room_vnum = 0;
+    ch->specials.return_room_vnum = 0;
+    ch->specials.challenge_quest_mob_vnum = 0;
+
+    /* 완료 */
+    s2ch("&cCHALLENGE&n : &yYou have aborted the challenge. Challenge state reset.&n\n\r",
+         "&cCHALLENGE&n : &y도전을 포기했습니다. 상태가 초기화되었습니다.&n\n\r", ch);
+}

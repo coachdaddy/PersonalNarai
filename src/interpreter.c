@@ -1111,6 +1111,7 @@ void assign_command_pointers(void)
     COMMANDO(313, POSITION_DEAD, do_zreload, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* zone reload, 251120 */
     COMMANDO(314, POSITION_DEAD, do_wreload, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* world reload, 251121 */
     COMMANDO(315, POSITION_DEAD, do_zonelist, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* zonelist, 251121 */
+	COMMANDO(316, POSITION_RESTING, do_challenge_abort, 1, 1, 1, 1); /* 도전 포기, 251129 by Komo */
 }
 
 void query_status(struct descriptor_data *d)
