@@ -968,8 +968,9 @@ void do_rejoin(struct char_data *ch, char *argument, int cmd)
         return;
     }
 
+	target_room_rnum = real_room(ch->specials.challenge_room_vnum);
     /* 사용자(ch)가 현재 유효한 도전 상태인지 확인 */
-    if (ch->specials.challenge_room_vnum <= 0 || (target_room_rnum = real_room(ch->specials.challenge_room_vnum)) == NOWHERE) {
+    if (ch->specials.challenge_room_vnum <= 0 || target_room_rnum == NOWHERE) {
         send_to_char("&cCHALLENGE&n : &y현재 진행 중인 유효한 도전 정보가 없습니다.&n\n\r", ch);
         // 만약을 위해 상태 초기화 : 안전장치
         ch->specials.challenge_room_vnum = 0;

@@ -329,15 +329,21 @@ void die(struct char_data *ch, int level, struct char_data *who)
 	
     /* 시체 이동을 위한 변수 선언 */
     bool died_in_challenge_room = FALSE;
-    int challenge_room_rnum = ch->in_room; // raw_kill 전에 현재 방(죽은 장소)을 기억
-    char ch_name[30]; // raw_kill 전에 캐릭터 이름을 기억
+	int death_room_rnum = ch->in_room; /* 사망한 장소 기억 */
+    int death_room_vnum = world[ch->in_room].number;
+    char ch_name[MAX_INPUT_LENGTH]; // raw_kill 전에 캐릭터 이름을 기억
 
 	if (!IS_NPC(ch)) {
-        strcpy(ch_name, GET_NAME(ch)); // NPC가 아닌 경우에만 이름 복사
+        strcpy(ch_name, GET_NAME(ch)); // NPC가 아닌 경우에 이름 복사 - 시체 찾기
     }
     
     if (!ch)
         return;
+	
+	/* 도전의 방 확인 로직 : 사망한 방의 번호가 도전의 방 구간(3082~3089)인지 확인 */
+    if (death_room_vnum >= VNUM_ROOM_CHALLENGE_START && death_room_vnum <= VNUM_ROOM_CHALLENGE_END) {
+        died_in_challenge_room = TRUE;
+    }
 
     /* chase modified this for reraise */
     if (!IS_NPC(ch) && IS_AFFECTED(ch, AFF_RERAISE)) {
@@ -372,22 +378,23 @@ void die(struct char_data *ch, int level, struct char_data *who)
                 DEBUG_LOG("Player %s died in the Challenge Room %d. Resetting his challenge state.", 
                         GET_NAME(ch), world[ch->in_room].number);
 
-                died_in_challenge_room = TRUE; // 죽은 장소 플래그 설정
-                
                 // 방에 남아있는 다른 그룹원들에게 메시지 전달
                 group_leader = (ch->master ? ch->master : ch);
                 if (group_leader) { // 그룹 리더가 유효한 경우에만 메시지 전달 시도
                     for (f = group_leader->followers; f; f = f->next) {
                         if (f->follower != ch && f->follower->in_room == ch->in_room) {
-                            send_to_char_han("&cCHALLENGE&n : &rA challenger from your group died while attempting the challenge.&n\n\r", 
-                                             "&cCHALLENGE&n : &r당신 그룹의 도전자가 도전 중 사망하였습니다.&n\n\r", f->follower);
+                            s2ch("&cCHALLENGE&n : &rA challenger from your group died while attempting the challenge.&n\n\r", 
+                                 "&cCHALLENGE&n : &r당신 그룹의 도전자가 도전 중 사망하였습니다.&n\n\r", f->follower);
                         }
                     }
                     if (group_leader != ch && group_leader->in_room == ch->in_room) {
-                        send_to_char_han("&cCHALLENGE&n : &rA challenger from your group died while attempting the challenge.&n\n\r", 
-                                         "&cCHALLENGE&n : &r당신 그룹의 도전자가 도전 중 사망하였습니다.&n\n\r", group_leader);
+                        s2ch("&cCHALLENGE&n : &rA challenger from your group died while attempting the challenge.&n\n\r", 
+                             "&cCHALLENGE&n : &r당신 그룹의 도전자가 도전 중 사망하였습니다.&n\n\r", group_leader);
                     }
                 }
+            } else if (died_in_challenge_room) {
+                s2ch("&cCHALLENGE&n : &rYou died inside the Challenge Room! Your corpse will be moved.&n\n\r", 
+                	 "&cCHALLENGE&n : &r도전의 방에서 사망했습니다! 시체는 Quest Room으로 이동됩니다.&n\n\r", ch);
             }
 
             wipe_stash(GET_NAME(ch));
@@ -396,11 +403,12 @@ void die(struct char_data *ch, int level, struct char_data *who)
             ch->player.pked_num++;
         }
         
-        exp = GET_LEVEL(ch) * GET_LEVEL(ch) * level * 200;
+		/* 경험치 페널티 적용 */
+		exp = GET_LEVEL(ch) * GET_LEVEL(ch) * level * 200;
         gain_exp(ch, -exp);
-        /* For coin copy bug , fixed by dsshin */
 
-        if (!IS_NPC(ch)) {
+		/* 저장 */
+        if (!IS_NPC(ch)) { /* For coin copy bug , fixed by dsshin */
             save_char_nocon(ch, world[ch->in_room].number);
         }
 
@@ -490,22 +498,27 @@ void die(struct char_data *ch, int level, struct char_data *who)
 
     raw_kill(ch, level);
 
-    /* 도전의 방에서 사망한 플레이어 시체는 이동시켜두자... */
+    /* 도전의 방에서 사망한 플레이어 시체는 Quest Room으로 이동 */
     if (died_in_challenge_room) {
         struct obj_data *corpse, *next_corpse;
         int quest_room_rnum = real_room(VNUM_ROOM_QUESTROOM); 
         
         if (quest_room_rnum != NOWHERE) {
-            for (corpse = world[challenge_room_rnum].contents; corpse; corpse = next_corpse) {
+            for (corpse = world[death_room_rnum].contents; corpse; corpse = next_corpse) {
                 next_corpse = corpse->next_content;
 
                 // make_corpse에 의해 생성된 PC 시체인지 확인
                 if (GET_ITEM_TYPE(corpse) == ITEM_CONTAINER &&
-                    corpse->obj_flags.value[3] == 2 && strstr(corpse->name, ch_name)) {
+                    corpse->obj_flags.value[3] == 2 && isexactname(ch_name, corpse->name)) {
                     
                     obj_from_room(corpse);
                     obj_to_room(corpse, quest_room_rnum);
-                    
+
+					// 로그 남기기 & 메시지 출력
+					char buf[MAX_STRING_LENGTH];
+                    sprintf(buf, "CHALLENGE: Corpse of %s moved from Room %d to Quest Room.", ch_name, death_room_vnum);
+                    mudlog(buf);
+                    send_to_room("A corpse falls from the void above with a thud!\n\r", quest_room_rnum);
                     break;
                 }
             }
