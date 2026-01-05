@@ -338,10 +338,11 @@ void game_loop(int s)
 			
 			if (pidfile[0] != '\0') {
 				unlink(pidfile);
+				pidfile[0] = '\0';
 			}
 			saveallplayers();
 			shutdowngame = 1;
-			continue; 
+			break;
     	}
 
 		zapper();

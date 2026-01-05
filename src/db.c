@@ -2641,6 +2641,10 @@ void unstash_char(struct char_data *ch, char *filename)
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
+			if (!str) {
+				mudlog("(db.c) unstash_char: malloc failed for object name.");
+				continue;
+			}
 			strcpy(str, tmp_str);
 			free(obj->name);
 			obj->name = str;
@@ -2649,6 +2653,10 @@ void unstash_char(struct char_data *ch, char *filename)
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
+			if (!str) {
+				mudlog("(db.c) unstash_char: malloc failed for short description.");
+				continue;
+			}
 			strcpy(str, tmp_str);
 			free(obj->short_description);
 			obj->short_description = str;
@@ -2657,6 +2665,10 @@ void unstash_char(struct char_data *ch, char *filename)
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
+			if (!str) {
+				mudlog("(db.c) unstash_char: malloc failed for description.");
+				continue;
+			}
 			strcpy(str, tmp_str);
 			free(obj->description);
 			obj->description = str;
