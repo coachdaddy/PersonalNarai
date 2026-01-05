@@ -1130,7 +1130,7 @@ static void perform_act(const char *str_eng, const char *str_han, int hide_invis
     
     char *point;            // 버퍼에 쓸 포인터
     struct char_data *to;
-    char buf[MAX_STRING_LENGTH];
+    char buf[MAX_STRING_LENGTH], err_buf[MAX_STRING_LENGTH];
     char color_buf[MAX_STRING_LENGTH * 3];
 
     // 영어 문장조차 없으면 리턴
@@ -1160,7 +1160,7 @@ static void perform_act(const char *str_eng, const char *str_han, int hide_invis
             template = str_eng;
         }
 
-        // 문자열 파싱 - 기존 act 로직
+        // 문자열 파싱 - 원본 act 로직
         for (strp = template, point = buf; *strp; ++strp) {
             if (*strp == '$') {
                 ++strp;
@@ -1185,8 +1185,8 @@ static void perform_act(const char *str_eng, const char *str_han, int hide_invis
                     case 'F': replacement = fname((char *)vict_obj); break;
                     case '$': replacement = "$"; break;
                     default:
-                        mudlog("SYSERR: Illegal $-code to act():");
-                        mudlog(template);
+                        snprintf(err_buf, sizeof(err_buf), "SYSERR: Illegal $-code to perform_act(): %s", template);
+                        mudlog(err_buf);
                         break;
                 }
 
