@@ -139,9 +139,7 @@ void run_the_game(int port)
 void handle_graceful_shutdown(int sig)
 {
     reboot_game = 1; // '리붓' 플래그 설정
-    mudlog("Received SIGUSR1 - Graceful shutdown/reboot request.");
 }
-
 
 // SIGUSR2, SIGINT, SIGTERM: 즉시 종료, flag만 설정 251219 by Komo
 void handle_immediate_shutdown(int sig)
@@ -1269,12 +1267,15 @@ void checkpointing(int sig)
 	static int last_tics = 0;
 
     if (tics == last_tics) { // 지난 검사와 tics가 같으면 멈춘 것
-        mudlog("!!! CHECKPOINT shutdown: tics not updated. Server appears to be frozen.");
-        mudlog("!!! Emergency saving all players before abort().");
-        saveallplayers();
+		const char *msg = "\n!!! CHECKPOINT: Server frozen! Aborting to generate core dump.\n";
+        
+        /* mudlog 대신 async-safe한 write 사용 */
+        write(STDERR_FILENO, msg, strlen(msg));
+
+		// 서버가 멈췄다면 데이터 오염 가능성이 있으므로 저장 생략
+        // saveallplayers();
         abort();
     } else {
         last_tics = tics; // remember current tics
     }
-    mudlog("(checkpointing) Checkpoint signal received. Tics saved.");
 }

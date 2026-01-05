@@ -39,7 +39,7 @@ char *fname(char *namelist)
     static char holder[30];
     register char *point;
 
-    for (point = holder; isalpha(*namelist); namelist++, point++) {
+    for (point = holder; isalpha(*namelist) && (point - holder) < 29; namelist++, point++) {
         *point = *namelist;
     }
 
@@ -635,8 +635,14 @@ struct obj_data *unequip_char(struct char_data *ch, int pos)
 	int j;
 	struct obj_data *obj;
 
-	assert(pos >= 0 && pos < MAX_WEAR);
-	assert(ch->equipment[pos]);
+	if (pos < 0 || pos >= MAX_WEAR) {
+		mudlog("unequip_char: invalid position");
+		return NULL;
+	}
+	if (!ch->equipment[pos]) {
+		mudlog("unequip_char: no equipment at position");
+		return NULL;
+	}
 
 	obj = ch->equipment[pos];
 	if (GET_ITEM_TYPE(obj) == ITEM_ARMOR)
@@ -653,7 +659,6 @@ struct obj_data *unequip_char(struct char_data *ch, int pos)
 
 	return (obj);
 }
-
 int get_number(char **name)
 {
 	int i;
@@ -1011,11 +1016,10 @@ void extract_char(struct char_data *ch, int drop_items)
             /* transfer ch's objects to room */
             if (world[ch->in_room].contents) { /* room nonempty */
                 /* locate tail of room-contents */
-                // BUG FIX!!!
-                for (i = world[ch->in_room].contents; i->next_content; i = i->next_content) {
-                    /* append ch's stuff to room-contents */
-                    i->next_content = ch->carrying;
-                }
+                for (i = world[ch->in_room].contents; i->next_content; i = i->next_content) ;
+				
+				/* append ch's stuff to room-contents */
+				i->next_content = ch->carrying;
             } else
                 world[ch->in_room].contents = ch->carrying;
 
@@ -1024,6 +1028,7 @@ void extract_char(struct char_data *ch, int drop_items)
                 i->carried_by = 0;
                 i->in_room = ch->in_room;
             }
+			ch->carrying = NULL;
         }
     }
 

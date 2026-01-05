@@ -845,7 +845,7 @@ void boot_zones(void)
         int vnum_input;     // 정수로 변환된 존 번호
 
         /* 첫 번째 존 번호 또는 '$' 읽기 */
-        if (fscanf(all_files, "%s", vnum_buf) != 1) {
+        if (fscanf(all_files, "%255s", vnum_buf) != 1) {
             mudlog("boot_zones: Error reading zone file list (Unexpected EOF).");
             break;
         }
@@ -860,7 +860,7 @@ void boot_zones(void)
         vnum_input = atoi(vnum_buf);
 
         /* 두 번째 토큰 - 파일 경로 읽기 */
-        if (fscanf(all_files, "%s", file_name_from_list) != 1) {
+        if (fscanf(all_files, "%99s", file_name_from_list) != 1) {
             mudlog("boot_zones: Error reading filename after zone number.");
             break;
         }
