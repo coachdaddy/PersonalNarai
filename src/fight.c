@@ -320,6 +320,7 @@ void raw_kill(struct char_data *ch, int level)
 	extract_char(ch, TRUE);
 }
 
+
 void die(struct char_data *ch, int level, struct char_data *who)
 {
     struct affected_type *af;
@@ -329,18 +330,18 @@ void die(struct char_data *ch, int level, struct char_data *who)
 	
     /* 시체 이동을 위한 변수 선언 */
     bool died_in_challenge_room = FALSE;
+	char ch_name[MAX_INPUT_LENGTH]; // raw_kill 전에 캐릭터 이름을 기억
+
+	if (!ch) return; // 안전장치: ch가 없으면 바로 리턴
+
 	int death_room_rnum = ch->in_room; /* 사망한 장소 기억 */
     int death_room_vnum = world[ch->in_room].number;
-    char ch_name[MAX_INPUT_LENGTH]; // raw_kill 전에 캐릭터 이름을 기억
-
+    
 	if (!IS_NPC(ch)) {
         strcpy(ch_name, GET_NAME(ch)); // NPC가 아닌 경우에 이름 복사 - 시체 찾기
     }
-    
-    if (!ch)
-        return;
-	
-	/* 도전의 방 확인 로직 : 사망한 방의 번호가 도전의 방 구간(3082~3089)인지 확인 */
+
+	/* 도전의 방 확인 - 사망한 방의 번호가 도전의 방 구간(현재 3082~3089)인지 확인 */
     if (death_room_vnum >= VNUM_ROOM_CHALLENGE_START && death_room_vnum <= VNUM_ROOM_CHALLENGE_END) {
         died_in_challenge_room = TRUE;
     }
@@ -499,7 +500,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
     raw_kill(ch, level);
 
     /* 도전의 방에서 사망한 플레이어 시체는 Quest Room으로 이동 */
-    if (died_in_challenge_room) {
+    if (died_in_challenge_room && !IS_NPC(ch)) {
         struct obj_data *corpse, *next_corpse;
         int quest_room_rnum = real_room(VNUM_ROOM_QUESTROOM); 
         
@@ -507,7 +508,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
             for (corpse = world[death_room_rnum].contents; corpse; corpse = next_corpse) {
                 next_corpse = corpse->next_content;
 
-                // make_corpse에 의해 생성된 PC 시체인지 확인
+                // PC 시체이고 이름이 일치하면 이동
                 if (GET_ITEM_TYPE(corpse) == ITEM_CONTAINER &&
                     corpse->obj_flags.value[3] == 2 && isexactname(ch_name, corpse->name)) {
                     
@@ -516,7 +517,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
 
 					// 로그 남기기 & 메시지 출력
 					char buf[MAX_STRING_LENGTH];
-                    sprintf(buf, "CHALLENGE: Corpse of %s moved from Room %d to Quest Room.", ch_name, death_room_vnum);
+                    snprintf(buf, sizeof(buf), "CHALLENGE: Corpse of %s moved from Room %d to Quest Room.", ch_name, death_room_vnum);
                     mudlog(buf);
                     send_to_room("A corpse falls from the void above with a thud!\n\r", quest_room_rnum);
                     break;
@@ -527,6 +528,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
         }
     }
 }
+
 
 void group_gain(struct char_data *ch, struct char_data *victim)
 {
