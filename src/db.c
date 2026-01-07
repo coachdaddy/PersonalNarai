@@ -2517,23 +2517,20 @@ void stash_contents(FILE * fl, struct obj_data *p, int wear_flag)
 
 	if (p->obj_flags.type_flag != ITEM_KEY && !IS_OBJ_STAT(p, ITEM_NORENT)) {
 		if ((pc = p->contains))
-			stash_contents(fl, pc, wear_flag >= 0 ? -2 : wear_flag
-				       - 1);
+			stash_contents(fl, pc, wear_flag >= 0 ? -2 : wear_flag - 1);
 
 		fprintf(fl, "%d", obj_index[p->item_number].virtual);
 		fprintf(fl, " %d", wear_flag);
 		for (j = 0; j < 4; ++j)
 			fprintf(fl, " %d", p->obj_flags.value[j]);
 		for (j = 0; j < 2; j++)
-			fprintf(fl, " %d %d", p->affected[j].location,
-				p->affected[j].modifier);
-		// #ifdef SYPARK
+			fprintf(fl, " %d %d", p->affected[j].location, p->affected[j].modifier);
+		
 		fprintf(fl, " %d %d", p->obj_flags.extra_flags, p->obj_flags.gpd);
 		fprintf(fl, "\n");
 		fprintf(fl, "%s\n", p->name);
 		fprintf(fl, "%s\n", p->short_description);
 		fprintf(fl, "%s\n", p->description);
-		// #endif
 	}
 
 	if ((pc = p->next_content))
@@ -2544,7 +2541,6 @@ void stash_contents(FILE * fl, struct obj_data *p, int wear_flag)
 /* old version */
 void unstash_char(struct char_data *ch, char *filename)
 {
-	void wipe_stash(char *filename);
 	struct obj_data *obj;
 	char stashfile[256], name[100];
 	FILE *fl;
@@ -2552,18 +2548,16 @@ void unstash_char(struct char_data *ch, char *filename)
 	char tmp_str[255], *str;
 	char buf[MAX_OUTPUT_LENGTH];
 
-	/* for Knife rent */
 	struct obj_data *item_stackp[MAX_RENT_ITEM];
 	int item_stack[MAX_RENT_ITEM];
 	int stack_count = 0;
 	int where;
 	sigset_t mask, orig_mask; /* by Komo */
-	static int loc_to_where[22] =
-	{
+	static int loc_to_where[22] = {
 		0, 1, 1, 2, 2, 3, 4, 5, 6, 7,
 		8, 14, 9, 10, 11, 11, 12, 13, 15, 15,
-		16, 17};
-#undef MAX_RENT_ITEM
+		16, 17
+	};
 
 	sigemptyset(&mask);
     sigaddset(&mask, SIGUSR1);
@@ -2582,10 +2576,12 @@ void unstash_char(struct char_data *ch, char *filename)
 		return;
 	if (IS_NPC(ch) || !ch->desc)
 		return;
+
 	if (GET_NAME(ch))
 		strcpy(name, filename ? filename : GET_NAME(ch));
 	else
 		return;
+
 	for (i = 0; name[i]; ++i)
 		if (isupper(name[i]))
 			name[i] = tolower(name[i]);
@@ -2603,6 +2599,7 @@ void unstash_char(struct char_data *ch, char *filename)
 	snprintf(buf, sizeof(buf), "Unstash : %s", stashfile);
 	mudlog(buf);
 
+	// stash 파일 읽기 시작, 1. 포맷 확인
 	fscanf(fl, "%d", &n);
 	if (n != KJHRENT) {
 		mudlog("File format error in unstash_char. (db.c)");
@@ -2612,68 +2609,87 @@ void unstash_char(struct char_data *ch, char *filename)
 	}
 
 	for (;;) {
+		// 정수 데이터 읽기
 		if (fscanf(fl, "%d", &n) <= 0)
 			break;
 
-		fscanf(fl, "%d", &where);
+		fscanf(fl, "%d", &where); // 보유(착용) 위치
 		for (i = 0; i < 4; ++i)
-			fscanf(fl, "%d", &tmp[i]);
+			fscanf(fl, "%d", &tmp[i]); // value 0~3
+
+		// 원본 아이템 생성
 		obj = read_object(n, VIRTUAL);
-		if (obj == 0)
-			continue;
+		if (obj == 0) continue; // obj 생성 실패(DB에 없음?) 시 건너뜀
+
 		for (i = 0; i < 4; ++i)
-			obj->obj_flags.value[i] = tmp[i];
+			obj->obj_flags.value[i] = tmp[i]; // tmp[i] 값을 obj에 덮어씀
+
+		// AFFECTED 정보 읽고, 덮어쓰기
 		for (i = 0; i < 4; i++)
 			fscanf(fl, "%d", &tmp[i]);
 		for (i = 0; i < 2; i++) {
-			obj->affected[i].location = tmp[i * 2];
-			obj->affected[i].modifier = tmp[i * 2 + 1];
+			obj->affected[i].location = tmp[i * 2]; // 짝수 - 0, 2
+			obj->affected[i].modifier = tmp[i * 2 + 1]; // 홀수 - 1, 3
 		}
-		// #ifdef   SYPARK
+
 		fscanf(fl, "%d", &tmp[0]);
 		if (tmp[0] != -1)
 			obj->obj_flags.extra_flags = tmp[0];
 		fscanf(fl, "%d", &tmp[0]);
 		if (tmp[0] != -1)
 			obj->obj_flags.gpd = tmp[0];
-		fgets(tmp_str, 255, fl);
+
+		// 문자열 읽기 시작
+		fgets(tmp_str, 255, fl);	// 개행문자 처리
+
+		// 1. 아이템 이름 읽기
 		fgets(tmp_str, 255, fl);
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
 			if (!str) {
 				mudlog("(db.c) unstash_char: malloc failed for object name.");
+				extract_obj(obj); 
+                fgets(tmp_str, 255, fl); /* short desc 건너뛰기 */
+                fgets(tmp_str, 255, fl); /* desc 건너뛰기 */
 				continue;
 			}
 			strcpy(str, tmp_str);
 			free(obj->name);
 			obj->name = str;
 		}
+
+		// 2. short description 읽기
 		fgets(tmp_str, 255, fl);
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
 			if (!str) {
 				mudlog("(db.c) unstash_char: malloc failed for short description.");
+				extract_obj(obj);
+                fgets(tmp_str, 255, fl); /* desc 건너뛰기 */
 				continue;
 			}
 			strcpy(str, tmp_str);
 			free(obj->short_description);
 			obj->short_description = str;
 		}
+
+		// 3. description 읽기
 		fgets(tmp_str, 255, fl);
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
 			if (!str) {
 				mudlog("(db.c) unstash_char: malloc failed for description.");
+				extract_obj(obj);
 				continue;
 			}
 			strcpy(str, tmp_str);
 			free(obj->description);
 			obj->description = str;
 		}
-		// #endif
+
 		while (stack_count && item_stack[stack_count - 1] < -1 &&
 		       item_stack[stack_count - 1] < where) {
 			stack_count--;
@@ -2683,6 +2699,7 @@ void unstash_char(struct char_data *ch, char *filename)
 		item_stack[stack_count] = where;
 		stack_count++;
 	}
+
 	while (stack_count > 0) {
 		stack_count--;
 		obj_to_char(item_stackp[stack_count], ch);
