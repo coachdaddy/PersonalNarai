@@ -22,7 +22,11 @@ void spell_armor(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_armor called with NULL victim!");
+		return;
+	}
+
 	if (!affected_by_spell(victim, SPELL_ARMOR)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_ARMOR);
 
@@ -43,7 +47,10 @@ void spell_teleport(byte level, struct char_data *ch,
 {
 	int to_room;
 	
-	assert(ch);
+	if (!ch) {
+		mudlog("SYSERR: spell_teleport called with NULL ch!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_TELEPORT);
 	do {
@@ -67,7 +74,11 @@ void spell_far_look(byte level, struct char_data *ch,
 {
 	int location, i;
 
-	assert(ch);
+	if (!ch) {
+		mudlog("SYSERR: spell_far_look called with NULL ch!");
+		return;
+	}
+
 	if (CAN_SEE(ch, victim)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_FAR_LOOK);
 		i = GET_LEVEL(ch) - GET_LEVEL(victim);
@@ -103,7 +114,11 @@ void spell_relocate(byte level, struct char_data *ch,
 {
 	int location, i;
 
-	assert(ch);
+	if (!ch) {
+		mudlog("SYSERR: spell_relocate called with NULL ch!");
+		return;
+	}
+
 	if (CAN_SEE(ch, victim)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_RELOCATE);
 		i = GET_LEVEL(ch) - GET_LEVEL(victim);
@@ -140,7 +155,11 @@ void spell_damage_up(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(ch && victim);
+	if (!(ch && victim)) {
+		mudlog("SYSERR: spell_damage_up called with NULL ch or victim!");
+		return;
+	}
+
 	if (!affected_by_spell(victim, SPELL_DAMAGE_UP)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_DAMAGE_UP);
 
@@ -159,7 +178,11 @@ void spell_crush_armor(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(ch && victim);
+	if (!(ch && victim)) {
+		mudlog("SYSERR: spell_crush_armor called with NULL ch or victim!");
+		return;
+	}
+
 	if (!affected_by_spell(victim, SPELL_CRUSH_ARMOR)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_CRUSH_ARMOR);
 		af.type = SPELL_CRUSH_ARMOR;
@@ -178,7 +201,10 @@ void spell_bless(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(ch && (victim || obj));
+	if (!(ch && (victim || obj))) {
+		mudlog("SYSERR: spell_bless called with NULL ch, victim or obj!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, ch, SPELL_BLESS);
 	if (obj) {
@@ -208,7 +234,10 @@ void spell_blindness(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(ch && victim);
+	if (!(ch && victim)) {
+		mudlog("SYSERR: spell_blindness called with NULL ch or victim!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_BLINDNESS);
 	if (saves_spell(victim, SAVING_PARA) ||
@@ -237,7 +266,10 @@ void spell_create_food(byte level, struct char_data *ch,
 {
 	struct obj_data *tmp_obj;
 
-	assert(ch);
+	if (!ch) {
+		mudlog("SYSERR: spell_create_food called with NULL ch!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, ch, SPELL_CREATE_FOOD);
 
@@ -273,7 +305,10 @@ void spell_create_water(byte level, struct char_data *ch,
 {
 	int water;
 	
-	assert(ch && obj);
+	if (!(ch && obj)) {
+		mudlog("SYSERR: spell_create_water called with NULL ch or obj!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, ch, SPELL_CREATE_WATER);
 
@@ -306,7 +341,10 @@ void spell_create_nectar(byte level, struct char_data *ch,
 {
 	int nectar;
 	
-    assert(ch && obj);
+    if (!(ch && obj)) {
+		mudlog("SYSERR: spell_create_nectar called with NULL ch or obj!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, ch, SPELL_CREATE_NECTAR);
 
@@ -339,7 +377,10 @@ void spell_create_golden_nectar(byte level, struct char_data *ch,
 {
 	int nectar;
 	
-    assert(ch && obj);
+    if (!(ch && obj)) {
+		mudlog("SYSERR: spell_create_golden_nectar called with NULL ch or obj!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, ch, SPELL_CREATE_GOLDEN_NECTAR);
 
@@ -370,7 +411,10 @@ void spell_create_golden_nectar(byte level, struct char_data *ch,
 void spell_cure_blind(byte level, struct char_data *ch,
 		      struct char_data *victim, struct obj_data *obj)
 {
-	if (!victim)	return;
+	if (!victim) {
+		mudlog("SYSERR: spell_cure_blind called with NULL victim!");
+		return;
+	}
 
 	if (affected_by_spell(victim, SPELL_BLINDNESS)) {
 		affect_from_char(victim, SPELL_BLINDNESS);
@@ -386,7 +430,10 @@ void spell_cure_critic(byte level, struct char_data *ch,
 {
 	int healpoints;
 
-	if (!victim)	return;
+	if (!victim) {
+		mudlog("SYSERR: spell_cure_critic called with NULL victim!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_CURE_CRITIC);
 	healpoints = dice(level, 20);
@@ -403,7 +450,10 @@ void spell_cause_critic(byte level, struct char_data *ch,
 {
 	int dam;
 
-	if (!victim)	return;
+	if (!victim) {
+		mudlog("SYSERR: spell_cause_critic called with NULL victim!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_CAUSE_CRITIC);
 	dam = dice(level, 20);
@@ -418,7 +468,11 @@ void spell_mana_boost(byte level, struct char_data *ch,
 {
 	int mana = 0;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_mana_boost called with NULL victim!");
+		return;
+	}
+
 	INCREASE_SKILLED2(ch, victim, SPELL_MANA_BOOST);
 	if (GET_MOVE(victim) > 50)
 		mana = GET_MOVE(victim) / 2 + 2 * GET_LEVEL(victim);
@@ -433,7 +487,11 @@ void spell_vitalize(byte level, struct char_data *ch,
 {
 	int hit = 0;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_vitalize called with NULL victim!");
+		return;
+	}
+
 	INCREASE_SKILLED2(ch, victim, SPELL_VITALIZE);
 	hit = GET_MOVE(victim) / dice(1, 3);
 	hit += ((hit >> 6) + 1) * level;
@@ -448,7 +506,10 @@ void spell_cure_light(byte level, struct char_data *ch,
 {
 	int hit;
 
-	assert(ch && victim);
+	if (!(ch && victim)) {
+		mudlog("SYSERR: spell_cure_light called with NULL ch or victim!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_CURE_LIGHT);
 	hit = dice(level, 10);
@@ -466,7 +527,10 @@ void spell_cause_light(byte level, struct char_data *ch,
 {
 	int dam;
 
-	assert(ch && victim);
+	if (!(ch && victim)) {
+		mudlog("SYSERR: spell_cause_light called with NULL ch or victim!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_CAUSE_LIGHT);
 	dam = dice(level, 10);
@@ -481,7 +545,10 @@ void spell_curse(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim || obj);
+	if (!(victim || obj)) {
+		mudlog("SYSERR: spell_curse called with NULL victim and obj!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, ch, SPELL_CURSE);
 	if (obj) {
@@ -516,7 +583,10 @@ void spell_detect_evil(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_detect_evil called with NULL victim!");
+		return;
+	}
 
 	if (affected_by_spell(victim, SPELL_DETECT_EVIL))
 		return;
@@ -539,7 +609,10 @@ void spell_detect_invisibility(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_detect_invisibility called with NULL victim!");
+		return;
+	}
 
 	if (affected_by_spell(victim, SPELL_DETECT_INVISIBLE))
 		return;
@@ -559,7 +632,10 @@ void spell_detect_invisibility(byte level, struct char_data *ch,
 void spell_recharger(byte level, struct char_data *ch,
 		     struct char_data *victim, struct obj_data *obj)
 {
-	assert(ch && obj);
+	if (!(ch && obj)) {
+		mudlog("SYSERR: spell_recharger called with NULL ch or obj!");
+		return;
+	}
 
 	if ((GET_ITEM_TYPE(obj) == ITEM_WAND) ||
 	    (GET_ITEM_TYPE(obj) == ITEM_STAFF)) {
@@ -666,7 +742,10 @@ void spell_enchant_weapon(byte level, struct char_data *ch,
 	int i, type;
 	struct obj_data *tmp;
 
-	assert(ch && obj);
+	if (!(ch && obj)) {
+		mudlog("SYSERR: spell_enchant_weapon called with NULL ch or obj!");
+		return;
+	}
 
 	if (noenchantflag && GET_LEVEL(ch) < IMO)
 		return;
@@ -867,7 +946,10 @@ void spell_enchant_armor(byte level, struct char_data *ch,
 		return;
 	}
 
-	assert(ch && obj);
+	if (!(ch && obj)) {
+		mudlog("SYSERR: spell_enchant_armor called with NULL ch or obj!");
+		return;
+	}
 
 	for (i = 0; i < MAX_WEAR; i++) {
 		tmp = ch->equipment[i];
@@ -972,7 +1054,10 @@ void spell_pray_for_armor(byte level, struct char_data *ch,
 		return;
 	}
 
-	assert(ch && obj);
+	if (!(ch && obj)) {
+		mudlog("SYSERR: spell_pray_for_armor called with NULL ch or obj!");
+		return;
+	}
 
 	for (i = 0; i < MAX_WEAR; i++) {
 		tmp = ch->equipment[i];
@@ -1219,6 +1304,10 @@ void spell_locate_object(byte level, struct char_data *ch, struct char_data *vic
 		mudlog("SYSERR: spell_locate_object called with NULL ch!");
 		return;
 	}
+	if (!obj) {
+		mudlog("SYSERR: spell_locate_object called with NULL obj!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, ch, SPELL_LOCATE_OBJECT);
 	strcpy(name, fname(obj->name));
@@ -1257,7 +1346,10 @@ void spell_poison(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	if (!victim || !obj)	return;
+	if (!victim && !obj) {
+		mudlog("SYSERR: spell_poison called with NULL victim and NULL obj!");
+		return; 
+	}
 
 	if (victim) {
 		if (!saves_spell(victim, SAVING_PARA)) {
@@ -1283,7 +1375,10 @@ void spell_protection_from_evil(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_protection_from_evil called with NULL victim!");
+		return;
+	}
 
 	if (!affected_by_spell(victim, SPELL_PROTECT_FROM_EVIL)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_PROTECT_FROM_EVIL);
@@ -1302,7 +1397,10 @@ void spell_haste(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_haste called with NULL victim!");
+		return;
+	}
 
 	if (!affected_by_spell(victim, SPELL_HASTE) &&
 	    !affected_by_spell(victim, SPELL_IMPROVED_HASTE)) {
@@ -1323,7 +1421,10 @@ void spell_improved_haste(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_improved_haste called with NULL victim!");
+		return;
+	}
 
 	if (!affected_by_spell(victim, SPELL_HASTE) &&
 	    !affected_by_spell(victim, SPELL_IMPROVED_HASTE)) {
@@ -1341,7 +1442,10 @@ void spell_improved_haste(byte level, struct char_data *ch,
 void spell_remove_curse(byte level, struct char_data *ch,
 			struct char_data *victim, struct obj_data *obj)
 {
-	assert(ch && (victim || obj));
+	if (!(ch && (victim || obj))) {
+		mudlog("SYSERR: spell_remove_curse called with NULL ch and non-NULL victim or obj!");
+		return; 
+	}
 
 	if (obj) {
 		if (IS_SET(obj->obj_flags.extra_flags, ITEM_EVIL) ||
@@ -1365,7 +1469,10 @@ void spell_remove_curse(byte level, struct char_data *ch,
 void spell_remove_poison(byte level, struct char_data *ch,
 			 struct char_data *victim, struct obj_data *obj)
 {
-	assert(ch && (victim || obj));
+	if(!(ch && (victim || obj))) {
+		mudlog("SYSERR: spell_remove_poison called with NULL ch and non-NULL victim or obj!");
+		return; 
+	}
 
 	if (victim) {
 		if (affected_by_spell(victim, SPELL_POISON)) {
@@ -1513,7 +1620,10 @@ void spell_sleep(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_sleep called with NULL victim!");
+		return;
+	}
 
 	if (!IS_NPC(victim) &&
 	    (GET_LEVEL(victim) >= IMO) &&
@@ -1544,7 +1654,10 @@ void spell_strength(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_strength called with NULL victim!");
+		return;
+	}
 
 	INCREASE_SKILLED2(ch, victim, SPELL_STRENGTH);
 	act("You feel stronger.", FALSE, victim, 0, 0, TO_CHAR);
@@ -1576,7 +1689,10 @@ void spell_word_of_recall(byte level, struct char_data *ch,
 	int loc_nr, location;
 	bool found = FALSE;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_word_of_recall called with NULL victim!");
+		return;
+	}
 
 	if (IS_NPC(victim))
 		return;
@@ -1624,7 +1740,10 @@ void spell_summon(byte level, struct char_data *ch,
 {
 	int target;
 
-	assert(ch && victim);
+	if(!(ch && victim)) {
+		mudlog("SYSERR: spell_summon called with NULL ch or NULL victim!");
+		return; 
+	}
 
 	if (GET_LEVEL(victim) > GET_LEVEL(ch)) {
 		send_to_char("You are too humble a soul.\n\r", ch);
@@ -1684,11 +1803,10 @@ void spell_charm_person(byte level, struct char_data *ch,
 	struct affected_type af;
 	char buf[200];
 	
-    void add_follower(struct char_data * ch, struct char_data * leader);
-    bool circle_follow(struct char_data * ch, struct char_data * victim);
-    void stop_follower(struct char_data * ch);
-
-	assert(ch && victim);
+    if(!(ch && victim)) {
+		mudlog("SYSERR: spell_charm_person called with NULL ch or NULL victim!");
+		return;
+	}
 
 	if (!IS_NPC(ch) && GET_LEVEL(ch) == IMO) {
 		send_to_char("You cannot use this spell.\n\r", ch);
@@ -1767,7 +1885,10 @@ void spell_charm_person(byte level, struct char_data *ch,
 void spell_preach(byte level, struct char_data *ch,
 		  struct char_data *victim, struct obj_data *obj)
 {
-	assert(ch && victim);
+	if (!(ch && victim)) {
+		mudlog("SYSERR: spell_preach called with NULL ch or NULL victim!");
+		return; 
+	}
 
 	if (!IS_NPC(victim))
 		return;
@@ -1790,7 +1911,10 @@ void spell_sense_life(byte level, struct char_data *ch,
 {
 	struct affected_type af;
 
-	assert(victim);
+	if (!victim) {
+		mudlog("SYSERR: spell_sense_life called with NULL victim!");
+		return;
+	}
 
 	if (!affected_by_spell(victim, SPELL_SENSE_LIFE)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_SENSE_LIFE);
@@ -1807,9 +1931,7 @@ void spell_sense_life(byte level, struct char_data *ch,
 void spell_reanimate(byte level, struct char_data *ch,
 		     struct char_data *victim, struct obj_data *obj)
 {
-	void add_follower(struct char_data *ch, struct char_data *leader);
-    struct char_data *read_mobile(int nr, int type);
-    struct char_data *mob;
+	struct char_data *mob;
 
 	if ((obj->obj_flags.value[3] != 1) && (obj->obj_flags.value[3] != 2)) {
 		send_to_char("There do not appear to be any corpses hereabouts?\n\r",

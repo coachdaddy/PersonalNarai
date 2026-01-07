@@ -1184,7 +1184,7 @@ static void perform_act(const char *str_eng, const char *str_han, int hide_invis
                     case 'F': replacement = fname((char *)vict_obj); break;
                     case '$': replacement = "$"; break;
                     default:
-                        snprintf(err_buf, sizeof(err_buf), "SYSERR: Illegal $-code to perform_act(): %s", template);
+                        snprintf(err_buf, sizeof(err_buf), "SYSERR: Illegal $-code to perform_act(): %s", template ? template : "(null)");
                         mudlog(err_buf);
                         break;
                 }
@@ -1268,10 +1268,10 @@ void checkpointing(int sig)
 	static int last_tics = 0;
 
     if (tics == last_tics) { // 지난 검사와 tics가 같으면 멈춘 것
-		const char *msg = "\n!!! CHECKPOINT: Server frozen! Aborting to generate core dump.\n";
+		static const char msg[] = "\n!!! CHECKPOINT: Server frozen! Aborting to generate core dump.\n";
         
         /* mudlog 대신 async-safe한 write 사용 */
-        write(STDERR_FILENO, msg, strlen(msg));
+        write(STDERR_FILENO, msg, sizeof(msg) - 1);
 
 		// 서버가 멈췄다면 데이터 오염 가능성이 있으므로 저장 생략
         // saveallplayers();

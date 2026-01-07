@@ -2107,9 +2107,10 @@ void free_char(struct char_data *ch)
     /* 마법 효과(Affects) 제거, 이름 지우기 전에 수행 */
     for (af = ch->affected; af; af = next_af) {
         next_af = af->next; // 다음 노드 미리 저장
-        affect_remove(ch, af); 
+        free(af); // affect_remove(ch, af); 대체
     }
-    
+	ch->affected = NULL;
+
 	/* 문자열 해제 */
     if (ch->player.name)       	free(ch->player.name);
     if (ch->player.title)      	free(ch->player.title);
