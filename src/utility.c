@@ -38,8 +38,10 @@ int dice(int number, int size)
 	int r;
 	int sum = 0;
 
-	if (size < 1)
+	if (size < 1) {
+        mudlog("(dice) Warning: dice size < 1. Returning 1.");
 		return 1;
+	}
 	for (r = 1; r <= number; r++)
 		sum += ((random() % size) + 1);
 

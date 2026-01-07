@@ -1555,10 +1555,10 @@ void spell_sanctuary(byte level, struct char_data *ch,
 void spell_death(byte level, struct char_data *ch,
 		 struct char_data *victim, struct obj_data *obj)
 {
-	struct affected_type af;
-
-	act("You can't do that!!!\n\r", FALSE, ch, 0, 0, TO_CHAR);
+	act("Death spell has been blocked.\n\r", FALSE, ch, 0, 0, TO_CHAR);
 	return;
+	/* 
+	struct affected_type af;
 
 	if (!affected_by_spell(victim, SPELL_DEATH)) {
 		INCREASE_SKILLED2(ch, victim, SPELL_DEATH);
@@ -1573,6 +1573,7 @@ void spell_death(byte level, struct char_data *ch,
 		af.bitvector = AFF_DEATH;
 		affect_to_char(victim, &af);
 	}
+	*/
 }
 
 void spell_love(byte level, struct char_data *ch,
