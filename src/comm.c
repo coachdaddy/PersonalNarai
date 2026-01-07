@@ -139,9 +139,7 @@ void run_the_game(int port)
 void handle_graceful_shutdown(int sig)
 {
     reboot_game = 1; // '리붓' 플래그 설정
-    mudlog("Received SIGUSR1 - Graceful shutdown/reboot request.");
 }
-
 
 // SIGUSR2, SIGINT, SIGTERM: 즉시 종료, flag만 설정 251219 by Komo
 void handle_immediate_shutdown(int sig)
@@ -340,10 +338,11 @@ void game_loop(int s)
 			
 			if (pidfile[0] != '\0') {
 				unlink(pidfile);
+				pidfile[0] = '\0';
 			}
 			saveallplayers();
 			shutdowngame = 1;
-			continue; 
+			break;
     	}
 
 		zapper();
@@ -1130,7 +1129,7 @@ static void perform_act(const char *str_eng, const char *str_han, int hide_invis
     
     char *point;            // 버퍼에 쓸 포인터
     struct char_data *to;
-    char buf[MAX_STRING_LENGTH];
+    char buf[MAX_STRING_LENGTH], err_buf[MAX_STRING_LENGTH];
     char color_buf[MAX_STRING_LENGTH * 3];
 
     // 영어 문장조차 없으면 리턴
@@ -1160,7 +1159,7 @@ static void perform_act(const char *str_eng, const char *str_han, int hide_invis
             template = str_eng;
         }
 
-        // 문자열 파싱 - 기존 act 로직
+        // 문자열 파싱 - 원본 act 로직
         for (strp = template, point = buf; *strp; ++strp) {
             if (*strp == '$') {
                 ++strp;
@@ -1185,8 +1184,8 @@ static void perform_act(const char *str_eng, const char *str_han, int hide_invis
                     case 'F': replacement = fname((char *)vict_obj); break;
                     case '$': replacement = "$"; break;
                     default:
-                        mudlog("SYSERR: Illegal $-code to act():");
-                        mudlog(template);
+                        snprintf(err_buf, sizeof(err_buf), "SYSERR: Illegal $-code to perform_act(): %s", template);
+                        mudlog(err_buf);
                         break;
                 }
 
@@ -1269,12 +1268,15 @@ void checkpointing(int sig)
 	static int last_tics = 0;
 
     if (tics == last_tics) { // 지난 검사와 tics가 같으면 멈춘 것
-        mudlog("!!! CHECKPOINT shutdown: tics not updated. Server appears to be frozen.");
-        mudlog("!!! Emergency saving all players before abort().");
-        saveallplayers();
+		const char *msg = "\n!!! CHECKPOINT: Server frozen! Aborting to generate core dump.\n";
+        
+        /* mudlog 대신 async-safe한 write 사용 */
+        write(STDERR_FILENO, msg, strlen(msg));
+
+		// 서버가 멈췄다면 데이터 오염 가능성이 있으므로 저장 생략
+        // saveallplayers();
         abort();
     } else {
         last_tics = tics; // remember current tics
     }
-    mudlog("(checkpointing) Checkpoint signal received. Tics saved.");
 }

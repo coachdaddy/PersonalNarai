@@ -25,8 +25,7 @@ void cast_armor(byte level, struct char_data *ch, char *arg, int type,
 			return;
 		}
 		if (ch != tar_ch)
-			act("$N is protected by your deity.", FALSE, ch, 0,
-			    tar_ch, TO_CHAR);
+			act("$N is protected by your deity.", FALSE, ch, 0, tar_ch, TO_CHAR);
 
 		spell_armor(level, ch, tar_ch, 0);
 		break;
@@ -42,17 +41,19 @@ void cast_armor(byte level, struct char_data *ch, char *arg, int type,
 			tar_ch = ch;
 		if (affected_by_spell(tar_ch, SPELL_ARMOR))
 			return;
-		spell_armor(level, ch, ch, 0);
+		spell_armor(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_WAND:
 		if (tar_obj)
 			return;
+		if (!tar_ch)
+			return;
 		if (affected_by_spell(tar_ch, SPELL_ARMOR))
 			return;
-		spell_armor(level, ch, ch, 0);
+		spell_armor(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in armor!");
+		mudlog("Serious screw-up in cast_armor!");
 		break;
 	}
 }
@@ -213,16 +214,18 @@ void cast_blindness(byte level, struct char_data *ch, char *arg, int type,
 			return;
 		if (!tar_ch)
 			tar_ch = ch;
-		if (IS_AFFECTED(ch, AFF_BLIND))
+		if (IS_AFFECTED(tar_ch, AFF_BLIND))
 			return;
-		spell_blindness(level, ch, ch, 0);
+		spell_blindness(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_WAND:
 		if (tar_obj)
 			return;
-		if (IS_AFFECTED(ch, AFF_BLIND))
+		if (!tar_ch)
+			tar_ch = ch;
+		if (IS_AFFECTED(tar_ch, AFF_BLIND))
 			return;
-		spell_blindness(level, ch, ch, 0);
+		spell_blindness(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
 		for (tar_ch = world[ch->in_room].people;
@@ -232,7 +235,7 @@ void cast_blindness(byte level, struct char_data *ch, char *arg, int type,
 					spell_blindness(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in blindness!");
+		mudlog("Serious screw-up in cast_blindness!");
 		break;
 	}
 }
@@ -264,6 +267,10 @@ void cast_create_water(byte level, struct char_data *ch, char *arg, int type,
 {
 	switch (type) {
 	case SPELL_TYPE_SPELL:
+		if (!tar_obj) {
+			send_to_char("Create water where?\n\r", ch);
+			return;
+		}
 		if (tar_obj->obj_flags.type_flag != ITEM_DRINKCON) {
 			send_to_char("It is unable to hold water.\n\r", ch);
 			return;
@@ -271,7 +278,7 @@ void cast_create_water(byte level, struct char_data *ch, char *arg, int type,
 		spell_create_water(level, ch, 0, tar_obj);
 		break;
 	default:
-		mudlog("Serious screw-up in create water!");
+		mudlog("Serious screw-up in cast_create_water!");
 		break;
 	}
 }
@@ -281,6 +288,10 @@ void cast_create_nectar(byte level, struct char_data *ch, char *arg, int type,
 {
 	switch (type) {
 	case SPELL_TYPE_SPELL:
+		if (!tar_obj) {
+			send_to_char("Create nectar where?\n\r", ch);
+			return;
+		}
 		if (tar_obj->obj_flags.type_flag != ITEM_DRINKCON) {
 			send_to_char("It is unable to hold nectar.\n\r", ch);
 			return;
@@ -298,6 +309,10 @@ void cast_create_golden_nectar(byte level, struct char_data *ch, char *arg, int 
 {
 	switch (type) {
 	case SPELL_TYPE_SPELL:
+		if (!tar_obj) {
+			send_to_char("Create golden_nectar where?\n\r", ch);
+			return;
+		}
 		if (tar_obj->obj_flags.type_flag != ITEM_DRINKCON) {
 			send_to_char("It is unable to hold golden_nectar.\n\r", ch);
 			return;
@@ -305,7 +320,7 @@ void cast_create_golden_nectar(byte level, struct char_data *ch, char *arg, int 
 		spell_create_golden_nectar(level, ch, 0, tar_obj);
 		break;
 	default:
-		mudlog("Serious screw-up in create golden_nectar!");
+		mudlog("Serious screw-up in cast_create_golden_nectar!");
 		break;
 	}
 }
@@ -315,6 +330,7 @@ void cast_cure_blind(byte level, struct char_data *ch, char *arg, int type,
 {
 	switch (type) {
 	case SPELL_TYPE_SPELL:
+		INCREASE_SKILLED2(ch, tar_ch, SPELL_CURE_BLIND);
 		spell_cure_blind(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_POTION:
@@ -346,7 +362,7 @@ void cast_mana_boost(byte level, struct char_data *ch, char *arg, int type,
 				spell_mana_boost(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in increase!");
+		mudlog("Serious screw-up in cast_mana_boost!");
 		break;
 	}
 }
@@ -365,7 +381,7 @@ void cast_vitalize(byte level, struct char_data *ch, char *arg, int type,
 		spell_vitalize(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in vital_move!");
+		mudlog("Serious screw-up in cast_vitalize!");
 		break;
 	}
 }
@@ -672,6 +688,7 @@ void cast_enchant_person(byte level, struct char_data *ch, char *arg, int type,
 		if (!tar_ch)
 			return;
 		spell_enchant_person(level, ch, tar_ch, 0);
+		break;
 	default:
 		mudlog("Serious screw-up in enchant person!");
 		break;
@@ -783,7 +800,7 @@ void cast_heal(byte level, struct char_data *ch, char *arg, int type,
 				spell_heal(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in heal!");
+		mudlog("Serious screw-up in cast_heal!");
 		break;
 	}
 }
@@ -806,7 +823,7 @@ void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
 				spell_full_heal(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in heal!");
+		mudlog("Serious screw-up in cast_full_heal!");
 		break;
 	}
 }
@@ -818,6 +835,7 @@ void cast_entire_heal(byte level, struct char_data *ch, char *arg, int type,
 	case SPELL_TYPE_SPELL:
 		act("$n entire heals $N.", FALSE, ch, 0, tar_ch, TO_NOTVICT);
 		act("You entire heal $N.", FALSE, ch, 0, tar_ch, TO_CHAR);
+		INCREASE_SKILLED2(ch, tar_ch, SPELL_ENTIRE_HEAL);
 		spell_entire_heal(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_POTION:
@@ -830,7 +848,7 @@ void cast_entire_heal(byte level, struct char_data *ch, char *arg, int type,
 				spell_entire_heal(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in heal!");
+		mudlog("Serious screw-up in cast_entire_heal!");
 		break;
 	}
 }
@@ -908,6 +926,7 @@ void cast_poison(byte level, struct char_data *ch, char *arg, int type,
 {
 	switch (type) {
 	case SPELL_TYPE_SPELL:
+		INCREASE_SKILLED2(ch, tar_ch, SPELL_POISON);
 		spell_poison(level, ch, tar_ch, tar_obj);
 		break;
 	case SPELL_TYPE_POTION:
@@ -1130,6 +1149,7 @@ void cast_death(byte level, struct char_data *ch, char *arg, int type,
 	switch (type) {
 	case SPELL_TYPE_SPELL:
 		spell_death(level, ch, tar_ch, 0);
+		break;
 	default:
 		break;
 	}
@@ -1187,7 +1207,7 @@ void cast_love(byte level, struct char_data *ch, char *arg, int type,
 				spell_love(level, ch, tar_ch, 0);
 		break;
 	default:
-		mudlog("Serious screw-up in sanctuary!");
+		mudlog("Serious screw-up in cast_love!");
 		break;
 	}
 }
@@ -1196,7 +1216,7 @@ void cast_reraise(byte level, struct char_data *ch, char *arg, int type,
 		  struct char_data *tar_ch, struct obj_data *tar_obj)
 {
 	char tmpbuf[80];
-	sprintf(tmpbuf, "%s is tried cast reraise.\n\r", GET_NAME(ch));
+	snprintf(tmpbuf, sizeof(tmpbuf), "%s is tried cast reraise.\n\r", GET_NAME(ch));
 	mudlog(tmpbuf);
 	switch (type) {
 	case SPELL_TYPE_SPELL:

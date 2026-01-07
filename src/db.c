@@ -845,7 +845,7 @@ void boot_zones(void)
         int vnum_input;     // 정수로 변환된 존 번호
 
         /* 첫 번째 존 번호 또는 '$' 읽기 */
-        if (fscanf(all_files, "%s", vnum_buf) != 1) {
+        if (fscanf(all_files, "%255s", vnum_buf) != 1) {
             mudlog("boot_zones: Error reading zone file list (Unexpected EOF).");
             break;
         }
@@ -860,7 +860,7 @@ void boot_zones(void)
         vnum_input = atoi(vnum_buf);
 
         /* 두 번째 토큰 - 파일 경로 읽기 */
-        if (fscanf(all_files, "%s", file_name_from_list) != 1) {
+        if (fscanf(all_files, "%99s", file_name_from_list) != 1) {
             mudlog("boot_zones: Error reading filename after zone number.");
             break;
         }
@@ -2084,28 +2084,40 @@ char *fread_string(FILE *fl)
 void free_char(struct char_data *ch)
 {
     struct affected_type *af, *next_af;
-    
-	if (GET_NAME(ch)) {
-        free(GET_NAME(ch));
+	struct obj_data *obj, *next_obj; // 아이템 정리용
+    int i;
+
+	if (!ch) return;
+
+	/* 인벤토리(Carrying) 비우기 - 캐릭터만 사라지고 아이템이 메모리에 떠다니는 것 방지 */
+    for (obj = ch->carrying; obj; obj = next_obj) {
+        next_obj = obj->next_content; // 다음 거 미리 저장
+        extract_obj(obj); // 아이템 삭제
+    }
+    ch->carrying = NULL;
+
+    /* 착용 장비(Equipment) 비우기 */
+    for (i = 0; i < MAX_WEAR; i++) {
+        if (ch->equipment[i]) {
+            extract_obj(ch->equipment[i]);
+            ch->equipment[i] = NULL;
+        }
     }
 
-    if (ch->player.title) {
-        free(ch->player.title);
-    }
-    if (ch->player.short_descr){
-        free(ch->player.short_descr);
-    }
-    if (ch->player.long_descr){
-        free(ch->player.long_descr);
-    }
-    if(ch->player.description){
-        free(ch->player.description);
-    }
+    /* 마법 효과(Affects) 제거, 이름 지우기 전에 수행 */
     for (af = ch->affected; af; af = next_af) {
-        next_af = af->next; // 다음 노드 미리 저장 (안전한 루프)
+        next_af = af->next; // 다음 노드 미리 저장
         affect_remove(ch, af); 
     }
+    
+	/* 문자열 해제 */
+    if (ch->player.name)       	free(ch->player.name);
+    if (ch->player.title)      	free(ch->player.title);
+    if (ch->player.short_descr) free(ch->player.short_descr);
+    if (ch->player.long_descr)  free(ch->player.long_descr);
+    if (ch->player.description) free(ch->player.description);
 
+    /* 본체 해제 */
     free(ch);
 }
 
@@ -2311,7 +2323,7 @@ int real_room(int virtual)
 		else
 			bot = mid + 1;
 	}
-	fprintf(stderr, "Room %d does not exist in database\n", virtual);
+	DEBUG_LOG("SYSERR: Room %d does not exist in database.", virtual);
 	return -1;
 }
 
@@ -2334,7 +2346,7 @@ int real_mobile(int virtual)
 		else
 			bot = mid + 1;
 	}
-	fprintf(stderr, "Mob %d does not exist in database\n", virtual);
+	DEBUG_LOG("SYSERR: Mob %d does not exist in database.", virtual);
 	return -1;
 }
 
@@ -2357,7 +2369,7 @@ int real_object(int virtual)
 		else
 			bot = mid + 1;
 	}
-	fprintf(stderr, "Object %d does not exist in database\n", virtual);
+	DEBUG_LOG("SYSERR: Object %d does not exist in database.", virtual);
 	return -1;
 }
 
@@ -2629,6 +2641,10 @@ void unstash_char(struct char_data *ch, char *filename)
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
+			if (!str) {
+				mudlog("(db.c) unstash_char: malloc failed for object name.");
+				continue;
+			}
 			strcpy(str, tmp_str);
 			free(obj->name);
 			obj->name = str;
@@ -2637,6 +2653,10 @@ void unstash_char(struct char_data *ch, char *filename)
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
+			if (!str) {
+				mudlog("(db.c) unstash_char: malloc failed for short description.");
+				continue;
+			}
 			strcpy(str, tmp_str);
 			free(obj->short_description);
 			obj->short_description = str;
@@ -2645,6 +2665,10 @@ void unstash_char(struct char_data *ch, char *filename)
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
+			if (!str) {
+				mudlog("(db.c) unstash_char: malloc failed for description.");
+				continue;
+			}
 			strcpy(str, tmp_str);
 			free(obj->description);
 			obj->description = str;
