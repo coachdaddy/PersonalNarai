@@ -3197,6 +3197,14 @@ A
 25 50
 A
 18 -3
+#2839
+Yang orb~
+Yang orb~
+Yang orb is here.~
+~
+19 4098 16385
+1 0 0 0
+1 50000 1
 #2900
 gloves combat~
 a pair of minotaur combat gloves~
@@ -9305,6 +9313,14 @@ saint water bottle 성수병~
     듯한 마음을 가지도록 한다는 말이 있습니다.(usage:quaff)
 
 ~
+#11135
+Yin orb~
+Yin orb~
+Yin orb is here.~
+~
+19 4098 16385
+1 0 0 0
+1 50000 1
 #13784
 shield aegis~
 Huge Shield~
@@ -10053,6 +10069,14 @@ A chocho key is here~
 18 0 1
 0 0 0 0
 1 200 0
+#16112
+Yin seed~
+Yin seed~
+Yin seed is here.~
+~
+19 4098 16385
+1 0 0 0
+1 50000 1
 #17001
 sonkwun gabot~
 A Sonkwun gabot~
@@ -10189,6 +10213,14 @@ a key is here~
 18 0 1
 0 0 0 0
 1 10 0
+#17060
+Yang seed~
+Yang seed~
+Yang seed is here.~
+~
+19 4098 16385
+1 0 0 0
+1 50000 1
 #18000
 great dopo~
 Great dopo~
@@ -10209,6 +10241,18 @@ the great heal potion is here.~
 10 4161 1
 30 102 33 0
 1 3000000 1
+#18002
+Taichi orb~
+Taichi orb~
+Taichi orb is here.~
+~
+19 4098 16385
+1 0 0 0
+1 50000 1
+E
+Orb~
+Eating the orb will probably have serious consequences.
+~
 #18100
 key M7~
 a M7 key~
