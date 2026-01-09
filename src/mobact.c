@@ -138,7 +138,7 @@ void mobile_activity(void)
 				    	((door = number(0, 45)) <= 5) && CAN_GO(ch, door)) {
 					// 목적지 방 번호를 먼저 가져와 방 번호가 유효한지 확인
                     dest_room = EXIT(ch, door)->to_room;
-					if (dest_room != NOWHERE && dest_room <= top_of_world && 
+					if (dest_room != NOWHERE && dest_room >= 0 && dest_room <= top_of_world && 
                         	!IS_SET(world[dest_room].room_flags, NO_MOB)) {
 						if (ch->specials.last_direction == door) {
 							ch->specials.last_direction = -1;

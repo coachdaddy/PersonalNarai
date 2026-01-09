@@ -1226,8 +1226,13 @@ void do_set(struct char_data *ch, char *argument, int cmd)
                 victim->specials.damsizedice = k;
             else if (strcmp("quest", buf3) == 0)
                 victim->quest.solved = k;
-			else if (strcmp("questtype", buf3) == 0)
-				victim->quest.type = k;
+			else if (strcmp("questtype", buf3) == 0) {
+				if (k == -1 || k == 0 || k == 1) {
+					victim->quest.type = k;
+				} else {
+					send_to_char("Invalid quest type. 'questtype' can be: 0(no quest), 1(active), or -1(completed).\n\r", ch);
+				}
+			}
             else if (strcmp("sex", buf3) == 0) {
                 if (strncmp("m", buf4, 1) == 0 || strncmp("M", buf4, 1) == 0)
                     victim->player.sex = 1;
