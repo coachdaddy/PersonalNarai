@@ -170,7 +170,7 @@ int board(struct char_data *ch, int cmd, char *arg)
 int show_board(struct char_data *ch, struct board_data *cb, char *arg)
 {
 	int i;
-	char buf[MAX_STRING_LENGTH], tmp[256];
+	char buf[MAX_STRING_LENGTH], tmp[MAX_INPUT_LENGTH];
 
 	one_argument(arg, tmp);
 	if (!*tmp || !isname(tmp, "board bulletin"))

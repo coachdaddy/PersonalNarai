@@ -28,11 +28,8 @@ int his_start = 0, his_end = 0;
 void do_advance(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[100], level[100];
+	char name[MAX_INPUT_LENGTH], level[MAX_INPUT_LENGTH];
 	int i, newlevel;
-
-	void gain_exp(struct char_data *ch, int gain);
-	void init_char(struct char_data *ch);
 
 	if (IS_NPC(ch))
 		return;
@@ -41,6 +38,7 @@ void do_advance(struct char_data *ch, char *argument, int cmd)
 		send_to_char("You can only do that in a guild.\n\r", ch);
 		return;
 	}
+
 	argument_interpreter(argument, name, level);
 	if (*name) {
 		if (!(victim = get_char_room_vis(ch, name))) {
@@ -93,9 +91,7 @@ void do_advance(struct char_data *ch, char *argument, int cmd)
 		do_start(victim);
 	} else {
 		victim->points.exp = 1;
-		gain_exp_regardless(victim, (titles[GET_CLASS(victim) - 1][
-										  newlevel].exp)
-				    - GET_EXP(victim));
+		gain_exp_regardless(victim, (titles[GET_CLASS(victim) - 1][newlevel].exp) - GET_EXP(victim));
 	}
 }
 
@@ -204,7 +200,7 @@ void do_banish(struct char_data *ch, char *argument, int cmd)
 void do_demote(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[100], buf[BUFSIZ];
+	char name[MAX_INPUT_LENGTH], buf[BUFSIZ];
 	void init_char(struct char_data *ch);
 	void do_start(struct char_data *ch);
 
@@ -358,8 +354,8 @@ void do_flick(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
 	struct obj_data *obj;
-	char victim_name[240];
-	char obj_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
+	char obj_name[MAX_INPUT_LENGTH];
 	int eq_pos;
 
 	argument = one_argument(argument, obj_name);
@@ -858,7 +854,7 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 void do_reroll(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 
 	if (IS_NPC(ch) || GET_LEVEL(ch) > (IMO + 3))
 		return;
@@ -883,7 +879,7 @@ void do_reroll(struct char_data *ch, char *argument, int cmd)
 void do_restore(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	int i;
 
 	void update_pos(struct char_data *victim);
@@ -1319,7 +1315,7 @@ void do_shutdown(struct char_data *ch, char *argument, int cmd)
 }
 void do_snoop(struct char_data *ch, char *argument, int cmd)
 {
-	char arg[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 	int diff;
 
@@ -1672,7 +1668,7 @@ void do_stat(struct char_data *ch, char *argument, int cmd)
 
 void do_switch(struct char_data *ch, char *argument, int cmd)
 {
-	char arg[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 
 	if (IS_NPC(ch))
@@ -1746,7 +1742,7 @@ void do_trans(struct char_data *ch, char *argument, int cmd)
 {
 	struct descriptor_data *i;
 	struct char_data *victim;
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	int target;
 
 	if (IS_NPC(ch))
@@ -1798,7 +1794,7 @@ void do_transform(struct char_data *ch, char *argument, int cmd)
 	struct char_data *tmp_ch;
 	struct char_file_u tmp;
 	int i_player;
-	char buf[200];
+	char buf[MAX_INPUT_LENGTH];
 
 	return;
 	if (IS_NPC(ch))

@@ -218,7 +218,7 @@ int great_mazinga(struct char_data *ch, int cmd, char *arg)
 int string_machine(struct char_data *ch, int cmd, char *arg)
 {
 	struct obj_data *obj;
-	char buf[256];
+	char buf[MAX_INPUT_LENGTH];
 
 	/* change */
 	if (cmd != 306)

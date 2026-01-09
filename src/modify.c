@@ -120,7 +120,7 @@ void string_add(struct descriptor_data *d, char *str)
 /* interpret an argument for do_string */
 void quad_arg(char *arg, int *type, char *name, int *field, char *string)
 {
-	char buf[MAX_STRING_LENGTH];
+	char buf[MAX_INPUT_LENGTH];
 
 	/* determine type */
 	arg = one_argument(arg, buf);
@@ -151,7 +151,7 @@ void quad_arg(char *arg, int *type, char *name, int *field, char *string)
 /* modification of malloc'ed strings in chars/objects */
 void do_string(struct char_data *ch, char *arg, int cmd)
 {
-	char name[MAX_STRING_LENGTH], string[MAX_STRING_LENGTH];
+	char name[MAX_INPUT_LENGTH], string[MAX_STRING_LENGTH];
 	int field, type;
 	struct char_data *mob;
 	struct obj_data *obj;

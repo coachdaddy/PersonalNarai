@@ -1012,7 +1012,7 @@ int superguard(struct char_data *ch, int cmd, char *arg)
 
 int pet_shops(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[MAX_STRING_LENGTH], pet_name[256];
+	char buf[MAX_INPUT_LENGTH], pet_name[MAX_INPUT_LENGTH];
 	int pet_room, k;
 	struct char_data *pet;
 	struct follow_type *j;
@@ -1091,7 +1091,7 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 }
 int hospital(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[MAX_STRING_LENGTH];
+	char buf[MAX_INPUT_LENGTH];
 	struct descriptor_data *k;
 	int opt, cost[7], c = 0;
 	int i;
@@ -1939,7 +1939,7 @@ int finisher(struct char_data *ch, int cmd, char *arg)
 
 int bank(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[MAX_STRING_LENGTH];
+	char buf[MAX_INPUT_LENGTH];
 	LONGLONG amt;
 
 	if (IS_NPC(ch))
@@ -2166,7 +2166,7 @@ int portal(struct char_data *ch, int cmd, char *arg)
 int magicseed(struct char_data *ch, int cmd, char *arg)
 {
 	int skno;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	struct obj_data *obj;
 
 	if (cmd != 12)

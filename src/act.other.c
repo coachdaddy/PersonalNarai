@@ -49,7 +49,7 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 
 void do_wimpy(struct char_data *ch, char *argument, int cmd)
 {
-	char time[256];
+	char time[MAX_INPUT_LENGTH];
 	int wimpyness;
 	char buf[256];
 
@@ -160,8 +160,8 @@ void do_steal(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
 	struct obj_data *obj;
-	char victim_name[240];
-	char obj_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
+	char obj_name[MAX_INPUT_LENGTH];
 	char buf[240];
 	int percent;
 	int gold, eq_pos;
@@ -283,7 +283,7 @@ void do_practice(struct char_data *ch, char *arg, int cmd)
 	int i;
 	char buf[100 * MAX_SKILLS];
 	char tmp[MAX_STRING_LENGTH];
-	char victim_name[256];
+	char victim_name[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 
 	if (GET_LEVEL(ch) >= IMO) {
@@ -367,7 +367,7 @@ void do_compact(struct char_data *ch, char *argument, int cmd)
 
 void do_group(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[256], name[256];
+	char buf[256], name[MAX_INPUT_LENGTH];
 	struct char_data *victim, *k;
 	struct follow_type *f;
 	bool found;
@@ -461,7 +461,7 @@ void do_group(struct char_data *ch, char *argument, int cmd)
 }
 void do_quaff(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	struct obj_data *temp;
 	int i;
 	bool equipped;
@@ -501,7 +501,7 @@ void do_quaff(struct char_data *ch, char *argument, int cmd)
 
 void do_recite(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	struct obj_data *scroll, *obj;
 	struct char_data *victim;
 	int i, bits;
@@ -562,7 +562,7 @@ void do_recite(struct char_data *ch, char *argument, int cmd)
 
 void do_use(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[MAX_STRING_LENGTH];
+	char buf[MAX_INPUT_LENGTH];
 	struct char_data *tmp_char;
 	struct obj_data *tmp_object, *stick;
 
@@ -644,7 +644,7 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
 	struct obj_data *obj;
-	char victim_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
 	int percent;
 	
 	one_argument(argument, victim_name);
@@ -705,7 +705,7 @@ void do_spin_bird_kick(struct char_data *ch, char *argument, int cmd)
 {
 	unsigned int dam;
 	struct char_data *victim, *tmp_vic;
-	char victim_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
 	int percent;
 	int tmp, i;
 	int level_plus;
@@ -821,7 +821,7 @@ void do_shouryuken(struct char_data *ch, char *argument, int cmd)
 {
 	unsigned int dam;
 	struct char_data *victim;
-	char victim_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
 	int percent;
 
 	if ((GET_LEVEL(ch) == IMO) && (!IS_NPC(ch))) 
@@ -931,8 +931,8 @@ void do_throw_object(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
 	struct obj_data *obj;
-	char victim_name[240];
-	char obj_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
+	char obj_name[MAX_INPUT_LENGTH];
 	int percent;
 	char buf[100];
 	int dam;

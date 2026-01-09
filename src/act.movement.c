@@ -826,7 +826,7 @@ void do_sleep(struct char_data *ch, char *argument, int cmd)
 void do_wake(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *tmp_char;
-	char arg[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 
 	one_argument(argument, arg);
 	if (*arg) {
@@ -880,11 +880,8 @@ void do_wake(struct char_data *ch, char *argument, int cmd)
 
 void do_follow(struct char_data *ch, char *argument, int cmd)
 {
-	char name[160];
+	char name[MAX_INPUT_LENGTH];
 	struct char_data *leader;
-
-	void stop_follower(struct char_data *ch);
-	void add_follower(struct char_data *ch, struct char_data *leader);
 
 	one_argument(argument, name);
 

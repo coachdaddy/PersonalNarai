@@ -376,7 +376,7 @@ void do_get(struct char_data *ch, char *argument, int cmd)
 
 void do_drop(struct char_data *ch, char *argument, int cmd)
 {
-	char arg[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 	LONGLONG amount;
 	char buffer[MAX_STRING_LENGTH];
 	struct obj_data *tmp_object;
@@ -598,8 +598,8 @@ void do_put(struct char_data *ch, char *argument, int cmd)
 
 void do_give(struct char_data *ch, char *argument, int cmd)
 {
-	char obj_name[80], vict_name[80], buf[MAX_STRING_LENGTH];
-	char arg[80];
+	char obj_name[MAX_INPUT_LENGTH], vict_name[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 	int amount;
 	struct char_data *vict;
 	struct obj_data *obj;

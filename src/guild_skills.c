@@ -18,7 +18,7 @@
 /* skills of police */
 void do_power_bash(struct char_data *ch, char *argument, int cmd)
 {
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 	int percent;
 
@@ -73,7 +73,7 @@ void do_power_bash(struct char_data *ch, char *argument, int cmd)
 /* flag이 붙었을때 죽으면 flag이 없어진다 */
 void do_whistle(struct char_data *ch, char *argument, int cmd)
 {
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	char buf[256];
 	struct char_data *victim;
 	struct descriptor_data *d;
@@ -122,7 +122,7 @@ void do_whistle(struct char_data *ch, char *argument, int cmd)
 /* 방안에 있는 경찰들이 한대씩 전부 때림 */
 void do_simultaneous(struct char_data *ch, char *argument, int cmd)
 {
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	struct char_data *victim, *tmp_victim, *vict;
 	int dam = 0;
 
@@ -175,7 +175,7 @@ void do_simultaneous(struct char_data *ch, char *argument, int cmd)
 }
 void do_arrest(struct char_data *ch, char *argument, int cmd)
 {
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 	struct affected_type af;
 	char buf[256];
@@ -309,7 +309,7 @@ void do_charge(struct char_data *ch, char *argument, int cmd)
 /* just damage */
 void do_angry_yell(struct char_data *ch, char *argument, int cmd)
 {
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 	int dam;
 
@@ -435,7 +435,7 @@ void do_solace(struct char_data *ch, char *argument, int cmd)
 void do_evil_strike(struct char_data *ch, char *argument, int cmd)
 {
 	int dam, percent;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 
 	/* remove guild skills by atre */

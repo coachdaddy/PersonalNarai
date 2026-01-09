@@ -440,40 +440,48 @@ void die(struct char_data *ch, int level, struct char_data *who)
 
             // 퀘스트 주인(==challenger)이 이 방에 존재하는 경우에만 완료 처리
             if (challenger) {
-                
-                DEBUG_LOG("die_check: Challenger %s found in room. Quest success.", GET_NAME(challenger));
+                int return_rnum;
 
                 challenger->quest.type = -1;
 
                 // 도전자를 기준으로 그룹 리더를 찾음 (귀환용)
                 group_leader = (challenger->master ? challenger->master : challenger);
-                int return_rnum = real_room(challenger->specials.return_room_vnum);
+                return_rnum = real_room(challenger->specials.return_room_vnum);
 
-                /* 도전의 방에 있는 모든 그룹원 귀환 처리  */
-                // 도전자(challenger) 본인 먼저 이동
-                send_to_char("\n\r&cCHALLENGE&n : &yChallenge successful! Returning to the quest room.&n\n\r\n\r", challenger);
-                char_from_room(challenger);
-                char_to_room(challenger, return_rnum);
-                do_look(challenger, "", 15);
-                act("$n appears with a flash of light, looking victorious.", FALSE, challenger, 0, 0, TO_ROOM);
-
-                // 리더를 이동 (리더가 도전자가 아니고, 도전의 방에 있었다면)
-                if (group_leader != challenger && group_leader->in_room == current_room_rnum) {
-                    act("&cCHALLENGE&n : &yYour group's challenger has completed the challenge. Returning...&n", FALSE, group_leader, 0, 0, TO_CHAR);
-                    char_from_room(group_leader);
-                    char_to_room(group_leader, return_rnum);
-                    do_look(group_leader, "", 15);
+				if (return_rnum == NOWHERE) { // CodeRabbit, 250110
+                    mudlog("(die() in fight.c) CHALLENGE ERROR: Invalid return room. Trying MID.");
+                    return_rnum = real_room(VNUM_ROOM_MID);
                 }
 
-                // 나머지 그룹원들(killer 포함) 이동 (도전의 방에 있었다면)
-                for (f = group_leader->followers; f; f = f->next) {
-                    if (f->follower != challenger && f->follower != group_leader && f->follower->in_room == current_room_rnum) {
-                        act("&cCHALLENGE&n : &yYour group's challenger has completed the challenge. Returning...&n", FALSE, f->follower, 0, 0, TO_CHAR);
-                        char_from_room(f->follower);
-                        char_to_room(f->follower, return_rnum);
-                        do_look(f->follower, "", 15);
-                    }
-                }
+				if (return_rnum != NOWHERE) {
+					/* 도전의 방에 있는 모든 그룹원 귀환 처리  */
+					// 도전자(challenger) 본인 먼저 이동
+					send_to_char("\n\r&cCHALLENGE&n : &yChallenge successful! Returning to the quest room.&n\n\r\n\r", challenger);
+					char_from_room(challenger);
+					char_to_room(challenger, return_rnum);
+					do_look(challenger, "", -1);
+					act("$n appears with a flash of light, looking victorious.", FALSE, challenger, 0, 0, TO_ROOM);
+
+					// 리더를 이동 (리더가 도전자가 아니고, 도전의 방에 있었다면)
+					if (group_leader != challenger && group_leader->in_room == current_room_rnum) {
+						act("&cCHALLENGE&n : &yYour group's challenger has completed the challenge. Returning...&n", FALSE, group_leader, 0, 0, TO_CHAR);
+						char_from_room(group_leader);
+						char_to_room(group_leader, return_rnum);
+						do_look(group_leader, "", -1);
+					}
+
+					// 나머지 그룹원들(killer 포함) 이동 (도전의 방에 있었다면)
+					for (f = group_leader->followers; f; f = f->next) {
+						if (f->follower != challenger && f->follower != group_leader && f->follower->in_room == current_room_rnum) {
+							act("&cCHALLENGE&n : &yYour group's challenger has completed the challenge. Returning...&n", FALSE, f->follower, 0, 0, TO_CHAR);
+							char_from_room(f->follower);
+							char_to_room(f->follower, return_rnum);
+							do_look(f->follower, "", -1);
+						}
+					}
+               	} else {
+					mudlog("(die() in fight.c) CRITICAL: No return room AND No MID!? Players stranded in Challenge Room.");
+			   	}
 
                 // challenger의 임시 상태 변수 초기화
                 challenger->specials.challenge_room_vnum = 0;
@@ -490,9 +498,6 @@ void die(struct char_data *ch, int level, struct char_data *who)
                         extract_obj(obj);
                     }
                 }
-
-                // 디버깅 - 도전의 방 퇴장 및 초기화 완료 로그
-                DEBUG_LOG("die_end: Return process finished.");
             }
         }    /* Challenge Room Quest Completion Check -- END */
     }

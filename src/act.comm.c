@@ -175,8 +175,10 @@ void do_lastchat(struct char_data *ch, char *argument, int cmd)
 
     for (j = his_start; j != his_end; j = (j + 1) % HISTORY_SIZE) {
         // 내용이 있는 경우만 출력
-        if (history[j][0] != '\0')
+        if (history[j][0] != '\0') {
             send_to_char(history[j], ch);
+			send_to_char("\n\r", ch);
+		}
     }
     return;
 }

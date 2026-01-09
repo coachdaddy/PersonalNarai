@@ -83,7 +83,7 @@ void do_cant(struct char_data *ch, char *argument, int cmd)
 void do_query(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char victim_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
 	char buf[MAX_STRING_LENGTH];
 
 	one_argument(argument, victim_name);
