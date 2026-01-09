@@ -21,14 +21,15 @@
 
 // from interpreter.c
 #define STATE(d) ((d)->connected)
-#define COMMANDO(number, min_pos, pointer, min_lm, min_lc, min_lt, min_lw) { \
+#define COMMANDO(number, min_pos, pointer, min_lm, min_lc, min_lt, min_lw) \
+    do { \
         cmd_info[(number)].command_pointer = (pointer);                    \
         cmd_info[(number)].minimum_position = (min_pos);                   \
         cmd_info[(number)].minimum_level[0] = (min_lm);                    \
         cmd_info[(number)].minimum_level[1] = (min_lc);                    \
         cmd_info[(number)].minimum_level[2] = (min_lt);                    \
         cmd_info[(number)].minimum_level[3] = (min_lw);                    \
-}
+    } while(0)
 
 // from limit.c
 #define READ_TITLE(ch) (GET_SEX(ch) == SEX_MALE ?   \
@@ -75,7 +76,7 @@
 #define SET_BIT(var,bit)  ((var) = (var) | (bit))
 #define REMOVE_BIT(var,bit)  ((var) = (var) & ~(bit) )
 
-#define ISLETTER(c) (isgraph((unsigned char)(c)))
+// #define ISLETTER(c) (isgraph((unsigned char)(c)))
 #define IF_STR(st)  ((st) ? (st) : "\0")
 #define ISNEWL(ch)  ((ch) == '\n' || (ch) == '\r')
 
@@ -220,9 +221,10 @@
     } while(0)
 
 /* Unit Macros, 251218 */
-#define K(x) ((long)(x) * 1000)         /* Kilo, 1천 */
-#define M(x) ((long)(x) * 1000000)      /* Mega, 백만 */
-#define G(x) ((long)(x) * 1000000000)   /* Giga, 10억 */
+#define K(x) ((long)(x) * 1000L)         /* Kilo, 1천 */
+#define M(x) ((long)(x) * 1000000L)      /* Mega, 백만 */
+#define G(x) ((long)(x) * 1000000000L)   /* Giga, 10억 */
+
 
 /* s2ch - send_to_char_han 매크로 대체 함수, 251223 */
 static inline void s2ch(char *eng, char *han, struct char_data *ch)

@@ -1667,6 +1667,9 @@ int remortal(struct char_data *ch, int cmd, char *arg)
         snprintf(buf, sizeof(buf), "&c[REMORTAL]&n&Y %s has changed class to %s with Grand Master's authority!&n\n\r", 
                 GET_NAME(ch), class_names[target_class_num]);
         send_to_all(buf);
+		snprintf(buf, sizeof(buf), "[REMORTAL] %s changed class to %s (all-remo).", 
+				GET_NAME(ch), class_names[target_class_num]);
+		mudlog(buf);
         
         send_to_char("&c[REMORTAL]&n&Y You assume a new form, retaining your mighty power.\n\r&n", ch);
         save_char(ch, ch->in_room);
@@ -1689,8 +1692,8 @@ int remortal(struct char_data *ch, int cmd, char *arg)
             snprintf(buf, sizeof(buf), "&R[WARNING]&n : You have already completed the &W%s&n path.\n\r", class_names[target_class_num]);
             send_to_char(buf, ch);
             
-            send_to_char_han("&RIf you proceed, your Level/Exp will RESET, but you will gain NO STAT BONUSES.&n\n\r",
-            				"&R이미 완료한 직업입니다. 진행 시 레벨은 초기화되지만 보너스 스탯은 얻을 수 없습니다.&n\n\r", ch);
+            s2ch("&RIf you proceed, your Level/Exp will RESET, but you will gain NO STAT BONUSES.&n\n\r",
+            	 "&R이미 완료한 직업입니다. 진행 시 레벨은 초기화되지만 보너스 스탯은 얻을 수 없습니다.&n\n\r", ch);
             
             snprintf(buf, sizeof(buf), "To confirm, please type: &Ysay %c YES&n\n\r", toupper(arg1[0]));
             send_to_char(buf, ch);
@@ -1757,6 +1760,8 @@ int remortal(struct char_data *ch, int cmd, char *arg)
     /* --- 직업 변경 및 초기화 (올리모 전 공통) --- */
     snprintf(buf, sizeof(buf), "&c[REMORTAL]&n&Y %s has been reborn as a %s!&n\n\r", GET_NAME(ch), class_names[target_class_num]);
     send_to_all(buf);
+	snprintf(buf, sizeof(buf), "[REMORTAL] %s changed class to %s.", GET_NAME(ch), class_names[target_class_num]);
+	mudlog(buf);
 
     GET_CLASS(ch) = target_class_num;
     
