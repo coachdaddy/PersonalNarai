@@ -72,7 +72,7 @@ void save_chat_history(struct char_data *ch, char *argument)
     strftime(buf, sizeof(buf), "%F %H:%M", localtime(&tt));
     
     int len = strlen(buf);
-    snprintf(buf + len, sizeof(buf) - len, " %s> %s\n\r", GET_NAME(ch), argument);
+    snprintf(buf + len, sizeof(buf) - len, " %s> %s", GET_NAME(ch), argument);
 
     strncpy(history[his_end], &buf[5], MAX_HISTORY_MSG - 1); // &buf[5]는 연도(YYYY-)를 떼고 저장
     history[his_end][MAX_HISTORY_MSG - 1] = '\0'; // 안전장치
