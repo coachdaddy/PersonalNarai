@@ -338,7 +338,7 @@ void die(struct char_data *ch, int level, struct char_data *who)
     int death_room_vnum = world[ch->in_room].number;
     
 	if (!IS_NPC(ch)) {
-        strcpy(ch_name, GET_NAME(ch)); // NPC가 아닌 경우에 이름 복사 - 시체 찾기
+        snprintf(ch_name, sizeof(ch_name), "%s", GET_NAME(ch)); // NPC가 아닌 경우에 이름 복사 - 시체 찾기
     }
 
 	/* 도전의 방 확인 - 사망한 방의 번호가 도전의 방 구간(현재 3082~3089)인지 확인 */
