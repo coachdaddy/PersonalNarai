@@ -1227,6 +1227,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
 					victim->quest.type = k;
 				} else {
 					send_to_char("Invalid quest type. 'questtype' can be: 0(no quest), 1(active), or -1(completed).\n\r", ch);
+					return;
 				}
 			}
             else if (strcmp("sex", buf3) == 0) {
@@ -1254,7 +1255,7 @@ void do_set(struct char_data *ch, char *argument, int cmd)
                     send_to_char("REMORTAL_THIEF set.\n\r", ch);
                 } else {
                     victim->player.remortal = 0;
-                    send_to_char("Invalid class. remortal is resetted.\n\r", ch);
+                    send_to_char("Invalid class. remortal is reset.\n\r", ch);
                 }
             }
             else if (strcmp("class", buf3) == 0) {
