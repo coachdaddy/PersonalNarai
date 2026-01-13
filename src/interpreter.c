@@ -562,20 +562,20 @@ int command_interpreter(struct char_data *ch, char *argument)
 
 	if (cmd > 0 && GET_LEVEL(ch) < cmd_info[cmd].minimum_level[ch_class]) {
 		lev = GET_LEVEL(ch);
+
+		// 레벨에 따라 다르게 반응
 		if (lev < 13)
 			send_to_char_han("Huh?\n\r", "뭐라고?\n\r", ch);
 		else if (lev < 31)
-			send_to_char_han("What?\n\r", "예 ? 뭐요 ?\n\r", ch);
+			send_to_char_han("What?\n\r", "예? 뭐요?\n\r", ch);
 		else if (lev < IMO)
-			send_to_char_han("What did you say?\n\r",
-					 "뭐라고 하셨습니까 ?\n\r", ch);
+			s2ch("What did you say?\n\r", "뭐라고 하셨습니까 ?\n\r", ch);
 		else
-			send_to_char_han("What did you say, Sir ?\n\r",
-					 "오 신이시여 무식한 제가 잘못입니다.. 좀더 쉬운 말씀으로..\n\r",
-					 ch);
+			s2ch("What did you say, Sir?\n\r", "신이시여, 무어라 말씀하셨나이까?\n\r", ch);
 		return (1);
 	}
 
+	// 명령어 실행
 	if (cmd > 0 && (cmd_info[cmd].command_pointer != 0)) {
 		if (GET_POS(ch) < cmd_info[cmd].minimum_position) {
 			switch (GET_POS(ch)) {
@@ -631,7 +631,7 @@ int command_interpreter(struct char_data *ch, char *argument)
 }
 
 /* ISLETTER 매크로 삭제를 위한 수정, 260105 by Komo */
-static int read_word(const char *argument, int *pos, char *out)
+static int read_word(const char *argument, int *pos, char *out, size_t out_size)
 {
     int i = 0;
     unsigned char c;
@@ -647,7 +647,7 @@ static int read_word(const char *argument, int *pos, char *out)
     // 공백이 아닌 출력 가능한 문자들을 하나의 단어로 복사
     // 공백을 만나거나 출력 불가능한 문자를 만나면 중단
     while ((c = (unsigned char)argument[*pos]),
-           isprint(c) && !isspace(c))
+           isprint(c) && !isspace(c) && i < (int)(out_size - 1))
     {
         out[i++] = argument[*pos];
         (*pos)++;
@@ -667,11 +667,11 @@ void argument_interpreter(char *argument, char *first_arg, char *second_arg)
 
     // 첫 번째 인자 파싱
     // fill_word가 참을 반환하는 동안 반복
-    while (read_word(argument, &pos, first_arg))
+    while (read_word(argument, &pos, first_arg, sizeof(first_arg)))
         ;
 
     // 두 번째 인자 파싱
-    while (read_word(argument, &pos, second_arg))
+    while (read_word(argument, &pos, second_arg, sizeof(second_arg)))
         ;
 }
 
@@ -701,7 +701,7 @@ char *one_argument(char *argument, char *first_arg)
         return NULL;
 
     // fill_word가 참을 반환하는 동안 동일 인자를 계속 소비
-    while (read_word(argument, &pos, first_arg))
+    while (read_word(argument, &pos, first_arg, sizeof(first_arg)))
         ;
 
     // 다음 인자 파싱이 시작될 위치 반환
