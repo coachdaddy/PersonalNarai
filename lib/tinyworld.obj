@@ -10234,13 +10234,19 @@ A
 A
 26 10
 #18001
-great heal potion~
-Great heal potion~
-the great heal potion is here.~
+great potion~
+Great potion~
+the great potion is here.~
 ~
-10 4161 1
-30 102 33 0
-1 3000000 1
+10 35 1
+41 0 0 0
+1 1 1
+E
+the great potion~
+
+    넘치는 에너지가 느껴집니다.
+    평소와는 다른 에네지를 얻을 수도 있습니다.
+~
 #18002
 Taichi orb~
 Taichi orb~
