@@ -53,7 +53,7 @@ int great_potion(struct char_data *ch, int cmd, char *arg)
 	struct obj_data *obj;
 	int pumping  = 0;
 
-	if (cmd != 12)
+	if (cmd != 206)
 		return FALSE;
 
 	/* eat */
