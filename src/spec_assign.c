@@ -77,6 +77,9 @@ void assign_mobiles(void)
 	mob_index[real_mobile(SON_OGONG)].func = son_ogong_func;
 	mob_index[real_mobile(FOURTH_JANGRO)].func = fourth_jangro_func;
 
+	/* Moodang */
+	mob_index[real_mobile(18000)].func = jang_sambong_func;
+
 	/* GoodBadIsland */
 	mob_index[real_mobile(VNUM_MOB_MIRROR_SAINT)].func = gbisland_saint_mirror;
 	mob_index[real_mobile(VNUM_MOB_LANESSA)].func = gbisland_lanessa;
@@ -98,10 +101,14 @@ void assign_objects(void)
 
 	obj_index[real_object(7999)].func = slot_machine;
 	obj_index[real_object(8000)].func = string_machine;
+
+	/* DaeRimSa */
 	obj_index[real_object(11134)].func = saint_water;
+	
+	/* Moodang */
 	obj_index[real_object(18001)].func = great_potion;
 	obj_index[real_object(18002)].func = taichi_orb;
-	
+
 	/* GoodBadIsland */
 	obj_index[real_object(23308)].func = gbisland_magic_paper;
 	obj_index[real_object(23309)].func = gbisland_seed_evil_power;

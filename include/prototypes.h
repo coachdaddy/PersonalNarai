@@ -599,6 +599,11 @@ struct help_index_element *build_help_index(FILE *fl, int *num);
 void page_string(struct descriptor_data *d, char *str, int keep_internal);
 void show_string(struct descriptor_data *d, char *input);
 
+/* --- moodang.c --- */
+int jang_sambong_func(struct char_data *ch, int cmd, char *arg);
+int great_potion(struct char_data *ch, int cmd, char *arg);
+int taichi_orb(struct char_data *ch, int cmd, char *arg);
+
 /* --- newcom.c --- */
 void do_assist(struct char_data *ch, char *argument, int cmd);
 void stop_group(struct char_data *ch);
