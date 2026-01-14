@@ -93,9 +93,9 @@ int taichi_orb(struct char_data *ch, int cmd, char *arg)
 	if (obj_index[obj->item_number].virtual != TAICHI_ORB)
 		return FALSE;
 
-	GET_MAX_HIT(ch) += 1000;
-	GET_MAX_MANA(ch) += 1000;
-	GET_MAX_MOVE(ch) += 1000;
+	ch->points.max_hit += 1000;
+	ch->points.max_mana += 1000;
+	ch->points.max_move += 1000;
 
 	DEBUG_LOG("Player %s eat TAICHI Orb",  GET_NAME(ch));
 
