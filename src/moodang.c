@@ -51,6 +51,7 @@ int great_potion(struct char_data *ch, int cmd, char *arg)
 {
 	char buf[100];
 	struct obj_data *obj;
+	int pumping  = 0;
 
 	if (cmd != 12)
 		return FALSE;
@@ -63,9 +64,13 @@ int great_potion(struct char_data *ch, int cmd, char *arg)
 	if (obj_index[obj->item_number].virtual != GREAT_POTION)
 		return FALSE;
 
-	send_to_char("갑자기 새로운 힘이 느껴집니다.\n\r", ch);
+	pumping = GET_MAX_HIT(ch) * 2 ;
+	GET_HIT(ch) += pumping;
 
-	// GET_HIT(ch) = GET_MAX_HIT(ch) * 1.8 ;
+	DEBUG_LOG("Player %s quaf great potion to get %d ",  GET_NAME(ch), pumping);
+
+	act("신비한 기운이 흐릅니다. ...", TRUE, ch, 0, 0, TO_ROOM);
+	send_to_char("갑자기 새로운 힘이 느껴집니다.\n\r", ch);
 
 	extract_obj(obj);
 
@@ -88,12 +93,14 @@ int taichi_orb(struct char_data *ch, int cmd, char *arg)
 	if (obj_index[obj->item_number].virtual != TAICHI_ORB)
 		return FALSE;
 
+	GET_MAX_HIT(ch) += 1000;
+	GET_MAX_MANA(ch) += 1000;
+	GET_MAX_MOVE(ch) += 1000;
+
+	DEBUG_LOG("Player %s eat TAICHI Orb",  GET_NAME(ch));
+
 	act("뭔가 미묘한 맛입니다...", TRUE, ch, 0, 0, TO_ROOM);
 	send_to_char("갑자기 새로운 힘이 느껴집니다.\n\r", ch);
-
-	// GET_MAX_HIT(ch) += 1000;
-	// GET_MAX_MANA(ch) += 1000;
-	// GET_MAX_MOVE(ch) += 1000;
 
 	extract_obj(obj);
 

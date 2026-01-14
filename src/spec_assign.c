@@ -99,7 +99,9 @@ void assign_objects(void)
 	obj_index[real_object(7999)].func = slot_machine;
 	obj_index[real_object(8000)].func = string_machine;
 	obj_index[real_object(11134)].func = saint_water;
-
+	obj_index[real_object(18001)].func = great_potion;
+	obj_index[real_object(18002)].func = taichi_orb;
+	
 	/* GoodBadIsland */
 	obj_index[real_object(23308)].func = gbisland_magic_paper;
 	obj_index[real_object(23309)].func = gbisland_seed_evil_power;

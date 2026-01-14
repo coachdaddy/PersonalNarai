@@ -336,7 +336,6 @@ int teleport_daerimsa_tower(struct char_data *ch, int cmd, char *arg)
 	return 0;
 }
 
-
 int saint_water(struct char_data *ch, int cmd, char *arg)
 {
 	char buf[100];
