@@ -32,11 +32,103 @@ int jang_sambong_func(struct char_data *ch, int cmd, char *arg)
 {
 	struct obj_data *i, *obj;
 	struct char_data *victim, *mob;
-// Step
-	switch (TAICHI_STEP) {
+
+	struct obj_data *seed, *orb;
+	struct obj_data *yin, *yang;
+
+	if ((victim = jangsambong->specials.fighting)) {
+		acthan("Sambong upsets for interrupting meditation.",
+				"장삼봉이 궁리를 방해하는 것에 대해 화를 냅니다..",
+				FALSE, jangsambong, 0, 0, TO_ROOM);
+			return 1;
+	} 
+	else { /* no fighting */
+		switch (TAICHI_STEP) {
 		case 0:
+			if (cmd)
+				return 0;
+
+			if (number(1, 5) == 1) {
+				acthan("Sambong thinks deeply about taichi", 
+						"태극의 원리에 대해 궁리하고 있습니다.!",
+				      	FALSE, ch, 0, 0, TO_ROOM);
+				return 1;
+			}
 		case 1:
+			if (cmd == 72) 
+				do_give(ch, arg, cmd);
+
+			for (i = jangsambong->carrying; i; i = i->next_content) {
+				if (obj_index[i->item_number].virtual == YIN_SEED ) {
+					acthan( "Jangsambong says \"Hmm.. It's missing bright part. !!!\".",
+						 "장삼봉이 양의 성질이 빠져 있다고 말합니다. ", 
+						 FALSE, jangsambong, 0, 0, TO_ROOM);
+						TAICHI_STEP = 2;
+				}
+			}
 		case 2:
+			if (cmd == 72) 
+				do_give(ch, arg, cmd);
+
+			seed = orb = NULL;
+			for (i = jangsambong->carrying; i; i = i->next_content)
+				if (obj_index[i->item_number].virtual == YIN_SEED)
+					seed = i;
+				if (obj_index[i->item_number].virtual == YANG_ORB)
+					orb = i;
+			
+			if (seed == YIN_SEED && orb == YANG_ORB ) {
+				extract_obj(seed);
+				extract_obj(orb);
+				obj = read_object(YIN_HALF, VIRTUAL);
+				obj_to_room(obj, jangsambong->in_room);
+				TAICHI_STEP = 3;
+			}
+		case 3:
+			if (cmd == 72) 
+				do_give(ch, arg, cmd);
+
+			for (i = jangsambong->carrying; i; i = i->next_content) {
+				if (obj_index[i->item_number].virtual == YIN_SEED ) {
+					acthan( "Jangsambong says \"Hmm.. It's missing dark part. !!!\".",
+			 				"장삼봉이 음의 성질이 빠져 있다고 말합니다. ", 
+							FALSE, jangsambong, 0, 0, TO_ROOM);
+					TAICHI_STEP = 4;
+				}
+			}
+		case 4:
+			if (cmd == 72) 
+				do_give(ch, arg, cmd);
+
+			seed = orb = NULL;
+			for (i = jangsambong->carrying; i; i = i->next_content)
+				if (obj_index[i->item_number].virtual == YIN_SEED)
+					seed = i;
+				else if (obj_index[i->item_number].virtual == YANG_ORB)
+					orb = i;
+
+			if (seed == YANG_SEED && orb == YIN_ORB ) {
+				extract_obj(seed);
+				extract_obj(orb);
+				obj = read_object(YANG_HALF, VIRTUAL);
+				obj_to_room(obj, jangsambong->in_room);
+				TAICHI_STEP = 5;
+			}	
+		case 5:
+			if (cmd == 72) 
+				do_give(ch, arg, cmd);
+
+		 	yin = yang = NULL;
+			for (i = jangsambong->carrying; i; i = i->next_content)
+				if (obj_index[i->item_number].virtual == YANG_HALF)
+					yang = i;
+				if (obj_index[i->item_number].virtual == YIN_HALF)
+					yin = i;
+
+			extract_obj(yang);
+			extract_obj(yin);
+			obj = read_object(TAICHI_ORB, VIRTUAL);
+		}
 	}
 
 	// GIVE cmd == 72 
@@ -152,7 +244,7 @@ int yang_half(struct char_data *ch, int cmd, char *arg)
 	if (obj_index[obj->item_number].virtual != GREAT_POTION)
 		return FALSE;
 
-	pumping = GET_MAX_MANA(ch) - 5 ;
+	pumping = GET_MAX_MANA(ch) + 5 ;
 	GET_MANA(ch) -= pumping;
 
 	DEBUG_LOG("Player %s quaf great potion to get %d ",  GET_NAME(ch), pumping);
@@ -182,7 +274,7 @@ int yin_half(struct char_data *ch, int cmd, char *arg)
 	if (obj_index[obj->item_number].virtual != GREAT_POTION)
 		return FALSE;
 
-	pumping = GET_MAX_MOVE(ch) - 5 ;
+	pumping = GET_MAX_MOVE(ch) + 5 ;
 	GET_MOVE(ch) -= pumping;
 
 	DEBUG_LOG("Player %s quaf great potion to get %d ",  GET_NAME(ch), pumping);
