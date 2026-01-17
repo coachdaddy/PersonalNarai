@@ -31,169 +31,90 @@ struct char_data *jangsambong;
 int jang_sambong_func(struct char_data *ch, int cmd, char *arg)
 {
 	struct obj_data *i, *obj;
-	struct char_data *victim, *mob;
-
 	struct obj_data *seed, *orb;
 	struct obj_data *yin, *yang;
-
-	if ((victim = jangsambong->specials.fighting)) {
-		acthan("Sambong upsets for interrupting meditation.",
-				"장삼봉이 궁리를 방해하는 것에 대해 화를 냅니다..",
-				FALSE, jangsambong, 0, 0, TO_ROOM);
-			return 1;
-	} 
-	else { /* no fighting */
-		switch (TAICHI_STEP) {
-		case 0:
-			if (cmd)
-				return 0;
-
-			if (number(1, 5) == 1) {
-				acthan("Sambong thinks deeply about taichi", 
-						"태극의 원리에 대해 궁리하고 있습니다.!",
-				      	FALSE, ch, 0, 0, TO_ROOM);
-				return 1;
-			}
-		case 1:
-			if (cmd == 72) 
-				do_give(ch, arg, cmd);
-
-			for (i = jangsambong->carrying; i; i = i->next_content) {
-				if (obj_index[i->item_number].virtual == YIN_SEED ) {
-					acthan( "Jangsambong says \"Hmm.. It's missing bright part. !!!\".",
-						 "장삼봉이 양의 성질이 빠져 있다고 말합니다. ", 
-						 FALSE, jangsambong, 0, 0, TO_ROOM);
-						TAICHI_STEP = 2;
-				}
-			}
-		case 2:
-			if (cmd == 72) 
-				do_give(ch, arg, cmd);
-
-			seed = orb = NULL;
-			for (i = jangsambong->carrying; i; i = i->next_content)
-				if (obj_index[i->item_number].virtual == YIN_SEED)
-					seed = i;
-				if (obj_index[i->item_number].virtual == YANG_ORB)
-					orb = i;
-			
-			if (seed == YIN_SEED && orb == YANG_ORB ) {
-				extract_obj(seed);
-				extract_obj(orb);
-				obj = read_object(YIN_HALF, VIRTUAL);
-				obj_to_room(obj, jangsambong->in_room);
-				TAICHI_STEP = 3;
-			}
-		case 3:
-			if (cmd == 72) 
-				do_give(ch, arg, cmd);
-
-			for (i = jangsambong->carrying; i; i = i->next_content) {
-				if (obj_index[i->item_number].virtual == YIN_SEED ) {
-					acthan( "Jangsambong says \"Hmm.. It's missing dark part. !!!\".",
-			 				"장삼봉이 음의 성질이 빠져 있다고 말합니다. ", 
-							FALSE, jangsambong, 0, 0, TO_ROOM);
-					TAICHI_STEP = 4;
-				}
-			}
-		case 4:
-			if (cmd == 72) 
-				do_give(ch, arg, cmd);
-
-			seed = orb = NULL;
-			for (i = jangsambong->carrying; i; i = i->next_content)
-				if (obj_index[i->item_number].virtual == YIN_SEED)
-					seed = i;
-				else if (obj_index[i->item_number].virtual == YANG_ORB)
-					orb = i;
-
-			if (seed == YANG_SEED && orb == YIN_ORB ) {
-				extract_obj(seed);
-				extract_obj(orb);
-				obj = read_object(YANG_HALF, VIRTUAL);
-				obj_to_room(obj, jangsambong->in_room);
-				TAICHI_STEP = 5;
-			}	
-		case 5:
-			if (cmd == 72) 
-				do_give(ch, arg, cmd);
-
-		 	yin = yang = NULL;
-			for (i = jangsambong->carrying; i; i = i->next_content)
-				if (obj_index[i->item_number].virtual == YANG_HALF)
-					yang = i;
-				if (obj_index[i->item_number].virtual == YIN_HALF)
-					yin = i;
-
-			extract_obj(yang);
-			extract_obj(yin);
-			obj = read_object(TAICHI_ORB, VIRTUAL);
-		}
-	}
-
-	// GIVE cmd == 72 
-	// do_give(ch, arg, cmd);
-	// cmd == 166, examine
-	/*
 	
-	for (i = jangsambong->carrying; i; i = i->next_content) {
-		if (obj_index[i->item_number].virtual == YIN_SEED ) {
-			acthan( "Jangsambong says \"Hmm.. It's missing bright part. !!!\".",
-				 "장삼봉이 양의 성질이 빠져 있다고 말합니다. ", FALSE, jangsambong, 0, 0, TO_ROOM);
-				TAICHI_STEP = 1;
+	struct char_data *victim;
+
+	DEBUG_LOG("TAICHI Orb start");
+
+		switch (TAICHI_STEP) {
+			case 0:
+				if (number(1, 5) == 1) {
+					acthan("Sambong thinks deeply about taichi", 
+							"태극의 원리에 대해 궁리하고 있습니다.!",
+				 	     	FALSE, ch, 0, 0, TO_ROOM);
+					return 1;
+				}
+			case 1:
+				for (i = jangsambong->carrying; i; i = i->next_content) {
+					if (obj_index[i->item_number].virtual == YIN_SEED ) {
+						acthan( "Jangsambong says \"Hmm.. It's missing bright part. !!!\".",
+							 "장삼봉이 양의 성질이 빠져 있다고 말합니다. ", 
+							 FALSE, jangsambong, 0, 0, TO_ROOM);
+							TAICHI_STEP = 2;
+					}
+				}
+			case 2:
+				seed = orb = NULL;
+				for (i = jangsambong->carrying; i; i = i->next_content) { 
+					if (obj_index[i->item_number].virtual == YIN_SEED)
+						seed = i;
+					if (obj_index[i->item_number].virtual == YANG_ORB)
+						orb = i;
+				}
+			
+				if (obj_index[seed->item_number].virtual == YIN_SEED 
+					&& obj_index[orb->item_number].virtual == YANG_ORB ) {
+					extract_obj(seed);
+					extract_obj(orb);
+					obj = read_object(YIN_HALF, VIRTUAL);
+					obj_to_room(obj, jangsambong->in_room);
+					TAICHI_STEP = 3;
+				}
+			case 3:
+				for (i = jangsambong->carrying; i; i = i->next_content) {
+					if (obj_index[i->item_number].virtual == YIN_SEED ) {
+						acthan( "Jangsambong says \"Hmm.. It's missing dark part. !!!\".",
+			 					"장삼봉이 음의 성질이 빠져 있다고 말합니다. ", 
+								FALSE, jangsambong, 0, 0, TO_ROOM);
+						TAICHI_STEP = 4;
+					}
+				}
+			case 4:
+				seed = orb = NULL;
+				for (i = jangsambong->carrying; i; i = i->next_content) {
+					if (obj_index[i->item_number].virtual == YIN_SEED)
+						seed = i;
+					if (obj_index[i->item_number].virtual == YANG_ORB)
+						orb = i;
+				}
+
+				if (obj_index[seed->item_number].virtual == YANG_SEED 
+					&& obj_index[orb->item_number].virtual == YIN_ORB ) {
+					extract_obj(seed);
+					extract_obj(orb);
+					obj = read_object(YANG_HALF, VIRTUAL);
+					obj_to_room(obj, jangsambong->in_room);
+					TAICHI_STEP = 5;
+				}	
+			case 5:
+			 	yin = yang = NULL;
+				for (i = jangsambong->carrying; i; i = i->next_content) {
+					if (obj_index[i->item_number].virtual == YANG_HALF)
+						yang = i;
+					if (obj_index[i->item_number].virtual == YIN_HALF)
+						yin = i;
+				}
+
+				if (obj_index[yang->item_number].virtual == YANG_HALF 
+					&& obj_index[yin->item_number].virtual == YIN_HALF ) {
+					extract_obj(yang);
+					extract_obj(yin);
+					obj = read_object(TAICHI_ORB, VIRTUAL);
+				}
+				break;
 		}
-		seed = orb = NULL;
-		
-		for (i = jangsambong->carrying; i; i = i->next_content)
-		if (obj_index[i->item_number].virtual == YIN_SEED)
-			seed = i;
-		else if (obj_index[i->item_number].virtual == YANG_ORB)
-			orb = i;
-	}
-	else if (obj_index[i->item_number].virtual == YANG_SEED ) {
-		acthan( "Jangsambong says \"Hmm.. It's missing dark part. !!!\".",
-			 "장삼봉이 음의 성질이 빠져 있다고 말합니다. ", FALSE, jangsambong, 0, 0, TO_ROOM);
-		TAICHI_STEP = 3;
-	}
-		
-		if (seed == YIN_SEED && orb == YANG_ORB ) {
-			extract_obj(seed);
-			extract_obj(orb);
-			obj = read_object(YIN_HALF, VIRTUAL);
-			obj_to_room(obj, jangsambong->in_room);
-			TAICHI_STEP = 3;
-		}	
-
-		if (seed == YANG_SEED && orb == YIN_ORB ) {
-			extract_obj(seed);
-			extract_obj(orb);
-			obj = read_object(YANG_HALF, VIRTUAL);
-			obj_to_room(obj, jangsambong->in_room);
-			TAICHI_STEP = 5;
-		}	
-
-		seed = orb = NULL;
-		
-	for (i = jangsambong->carrying; i; i = i->next_content)
-		if (obj_index[i->item_number].virtual == YANG_SEED)
-			seed = i;
-		else if (obj_index[i->item_number].virtual == YIN_ORB)
-			orb = i;
-		}
-		if (seed && orb ) {
-			extract_obj(seed);
-			extract_obj(orb);
-			obj = read_object(YANG_HALF, VIRTUAL);
-			obj_to_room(obj, jangsambong->in_room);
-			TAICHI_STEP = 4;
-		}	
-	}
-
-			cmd == 166, examine
-			cmd == 60, drop
-			cmd == 65, grab , cmd == 150 grab			
-	*/
-
  	return 0;
 }
 
@@ -233,7 +154,7 @@ int yang_half(struct char_data *ch, int cmd, char *arg)
 	struct obj_data *obj;
 	int pumping  = 0;
 
-	if (cmd != 206)
+	if (cmd != 12)
 		return FALSE;
 
 	/* eat */
@@ -263,7 +184,7 @@ int yin_half(struct char_data *ch, int cmd, char *arg)
 	struct obj_data *obj;
 	int pumping  = 0;
 
-	if (cmd != 206)
+	if (cmd != 12)
 		return FALSE;
 
 	/* eat */
