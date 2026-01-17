@@ -10259,6 +10259,22 @@ E
 Orb~
 Eating the orb will probably have serious consequences.
 ~
+#18003
+YANG half-orb~
+Yang half-orb~
+YANG half-orb is here.~
+~
+19 4098 16385
+1 0 0 0
+1 50000 1
+#18004
+YIN half-orb~
+YIN half-orb~
+YIN half-orb is here.~
+~
+19 4098 16385
+1 0 0 0
+1 50000 1
 #18100
 key M7~
 a M7 key~

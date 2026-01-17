@@ -108,6 +108,8 @@ void assign_objects(void)
 	/* Moodang */
 	obj_index[real_object(18001)].func = great_potion;
 	obj_index[real_object(18002)].func = taichi_orb;
+	obj_index[real_object(18003)].func = yang_half;
+	obj_index[real_object(18004)].func = yin_half;
 
 	/* GoodBadIsland */
 	obj_index[real_object(23308)].func = gbisland_magic_paper;
