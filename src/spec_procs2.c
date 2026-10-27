@@ -1597,9 +1597,14 @@ int remortal(struct char_data *ch, int cmd, char *arg)
             else send_to_char("[    ] Warrior\n\r", ch);
             
             if (!all_done) {
+				/*
                 if (rcnt == 0) 		required_level = 40;
                 else if (rcnt == 1) required_level = 50;
                 else if (rcnt >= 2) required_level = 60;
+				*/
+				if (rcnt == 1) 		required_level = 40;
+                else if (rcnt == 2) required_level = 50;
+                else if (rcnt >= 3) required_level = 60;
                 snprintf(buf, sizeof(buf), "Next Remortal Requirement: Level %d\n\r", required_level);
                 send_to_char(buf, ch);
             } else {
@@ -1629,8 +1634,13 @@ int remortal(struct char_data *ch, int cmd, char *arg)
     }
 
 	/* --- 레벨 제한 체크 --- */
+	/*
     if (rcnt == 0)      required_level = 40;
     else if (rcnt == 1) required_level = 50;
+    else                required_level = 60;
+	*/
+	if (rcnt == 1)      required_level = 40;
+    else if (rcnt == 2) required_level = 50;
     else                required_level = 60;
 
     if (GET_LEVEL(ch) < required_level) {
