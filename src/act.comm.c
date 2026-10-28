@@ -89,6 +89,7 @@ void save_chat_history(struct char_data *ch, char *argument)
 
     if (chatlogfp) {
         fputs(buf, chatlogfp);
+		fputc('\n', chatlogfp); // 개행 추가, 261029
         fflush(chatlogfp);
     }
 }
