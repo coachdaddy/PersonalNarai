@@ -39,9 +39,7 @@ void spell_chill_touch(byte level, struct char_data *ch,
 	struct affected_type af;
 	int dam;
 
-    void affect_join(struct char_data *ch, struct affected_type *af, bool avg_dur, bool avg_mod);
-
-	static int dam_each[] = {
+    static int dam_each[] = {
         0,
         20, 20, 25, 25, 25, 30, 30, 30, 30, 30, 
         30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
@@ -168,8 +166,6 @@ void spell_energy_drain(byte level, struct char_data *ch,
 	int dam, xp, mana;
 	int alignment;
 
-	void gain_exp(struct char_data *ch, int gain);
-
 	if (!ch)	 return;
 	if (!victim) return;
 
@@ -266,8 +262,7 @@ void spell_sunburst(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
 	int dam;
-	void spell_blindness (byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-    char buf[MAX_STRING_LENGTH];
+	// char buf[MAX_STRING_LENGTH];
 
     static int dam_each[] = {
         0,
@@ -425,9 +420,7 @@ void spell_all_heal(byte level, struct char_data *ch,
 		    struct char_data *victim, struct obj_data *obj)
 {
 	struct char_data *tmp_victim, *temp;
-	void spell_heal(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-
-
+	
 	INCREASE_SKILLED2(ch, ch, SPELL_ALL_HEAL);
 
 	/* going to saint */
@@ -448,8 +441,7 @@ void spell_sanctuary_cloud(byte level, struct char_data *ch,
 			   struct char_data *victim, struct obj_data *obj)
 {
 	struct char_data *tmp_victim, *temp;
-	void spell_heal(byte level, struct char_data *ch, struct char_data *victim, struct obj_data *obj);
-
+	
 	INCREASE_SKILLED2(ch, ch, SPELL_SANCTUARY_CLOUD);
 
 	send_to_char("You feel some saintness!\n\r", ch);

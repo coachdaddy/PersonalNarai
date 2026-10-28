@@ -38,8 +38,10 @@ int dice(int number, int size)
 	int r;
 	int sum = 0;
 
-	if (size < 1)
+	if (size < 1) {
+        mudlog("(dice) Warning: dice size < 1. Returning 1.");
 		return 1;
+	}
 	for (r = 1; r <= number; r++)
 		sum += ((random() % size) + 1);
 
@@ -420,56 +422,56 @@ void do_colortest(struct char_data *ch, char *argument, int cmd)
 
     /* --- 1. 검정, 흰색, 회색조 (Black, White, Grays) --- */
     send_to_char("\n\r&W--- 1. Grays, Black, & White ---&n\n\r", ch);
-    send_to_char("(k/&KK&n): &k Sample Text :: How do you think about this?!  &n / &K Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&ww&n/&WW&n): &w Sample Text :: How do you think about this?!  &n / &W Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&aa&n/&AA&n): &a Sample Text :: How do you think about this?!  &n / &A Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&dd&n/&DD&n): &d Sample Text :: How do you think about this?!  &n / &D Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&66&n/&^^&n): &6 Sample Text :: How do you think about this?!  &n / &^ Sample Text :: How do you think about this?!  &n\n\r", ch);
+    send_to_char("(k/&KK&n): &k Sample Text :: Color Test  &n / &K Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&ww&n/&WW&n): &w Sample Text :: Color Test  &n / &W Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&aa&n/&AA&n): &a Sample Text :: Color Test  &n / &A Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&dd&n/&DD&n): &d Sample Text :: Color Test  &n / &D Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&66&n/&^^&n): &6 Sample Text :: Color Test  &n / &^ Sample Text :: Color Test  &n\n\r", ch);
 
     /* --- 2. 빨강, 분홍 계열 (Reds & Pinks) --- */
     send_to_char("\n\r&W--- 2. Reds & Pinks ---&n\n\r", ch);
-    send_to_char("(&rr&n/&RR&n): &r Sample Text :: How do you think about this?!  &n / &R Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&ee&n/&EE&n): &e Sample Text :: How do you think about this?!  &n / &E Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&ff&n/&FF&n): &f Sample Text :: How do you think about this?!  &n / &F Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&hh&n/&HH&n): &h Sample Text :: How do you think about this?!  &n / &H Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&ii&n/&II&n): &i Sample Text :: How do you think about this?!  &n / &I Sample Text :: How do you think about this?!  &n\n\r", ch);
+    send_to_char("(&rr&n/&RR&n): &r Sample Text :: Color Test  &n / &R Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&ee&n/&EE&n): &e Sample Text :: Color Test  &n / &E Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&ff&n/&FF&n): &f Sample Text :: Color Test  &n / &F Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&hh&n/&HH&n): &h Sample Text :: Color Test  &n / &H Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&ii&n/&II&n): &i Sample Text :: Color Test  &n / &I Sample Text :: Color Test  &n\n\r", ch);
 
     /* --- 3. 주황, 노랑, 갈색 계열 (Oranges, Yellows, Browns) --- */
     send_to_char("\n\r&W--- 3. Oranges, Yellows, & Browns ---&n\n\r", ch);
-    send_to_char("(&yy&n/&YY&n): &y Sample Text :: How do you think about this?!  &n / &Y Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&oo&n/&OO&n): &o Sample Text :: How do you think about this?!  &n / &O Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&pp&n/&PP&n): &p Sample Text :: How do you think about this?!  &n / &P Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&qq&n/&QQ&n): &q Sample Text :: How do you think about this?!  &n / &Q Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&ss&n/&SS&n): &s Sample Text :: How do you think about this?!  &n / &S Sample Text :: How do you think about this?!  &n\n\r", ch);
+    send_to_char("(&yy&n/&YY&n): &y Sample Text :: Color Test  &n / &Y Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&oo&n/&OO&n): &o Sample Text :: Color Test  &n / &O Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&pp&n/&PP&n): &p Sample Text :: Color Test  &n / &P Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&qq&n/&QQ&n): &q Sample Text :: Color Test  &n / &Q Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&ss&n/&SS&n): &s Sample Text :: Color Test  &n / &S Sample Text :: Color Test  &n\n\r", ch);
 
     /* --- 4. 녹색 계열 (Greens) --- */
     send_to_char("\n\r&W--- 4. Greens ---&n\n\r", ch);
-    send_to_char("(&gg&n/&GG&n): &g Sample Text :: How do you think about this?!  &n / &G Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&jj&n/&JJ&n): &j Sample Text :: How do you think about this?!  &n / &J Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&ll&n/&LL&n): &l Sample Text :: How do you think about this?!  &n / &L Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&uu&n/&UU&n): &u Sample Text :: How do you think about this?!  &n / &U Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&88&n/&**&n): &8 Sample Text :: How do you think about this?!  &n / &* Sample Text :: How do you think about this?!  &n\n\r", ch); /* &n/&N에서 이동 */
+    send_to_char("(&gg&n/&GG&n): &g Sample Text :: Color Test  &n / &G Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&jj&n/&JJ&n): &j Sample Text :: Color Test  &n / &J Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&ll&n/&LL&n): &l Sample Text :: Color Test  &n / &L Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&uu&n/&UU&n): &u Sample Text :: Color Test  &n / &U Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&88&n/&**&n): &8 Sample Text :: Color Test  &n / &* Sample Text :: Color Test  &n\n\r", ch); /* &n/&N에서 이동 */
     
     /* --- 5. 청록 계열 (Cyans & Teals) --- */
     send_to_char("\n\r&W--- 5. Cyans & Teals (Blue-Greens) ---&n\n\r", ch);
-    send_to_char("(&cc&n/&CC&n): &c Sample Text :: How do you think about this?!  &n / &C Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&tt&n/&TT&n): &t Sample Text :: How do you think about this?!  &n / &T Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&44&n/&$$&n): &4 Sample Text :: How do you think about this?!  &n / &$ Sample Text :: How do you think about this?!  &n\n\r", ch); /* Sea Green */
+    send_to_char("(&cc&n/&CC&n): &c Sample Text :: Color Test  &n / &C Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&tt&n/&TT&n): &t Sample Text :: Color Test  &n / &T Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&44&n/&$$&n): &4 Sample Text :: Color Test  &n / &$ Sample Text :: Color Test  &n\n\r", ch); /* Sea Green */
     
     /* --- 6. 파랑 계열 (Blues) --- */
     send_to_char("\n\r&W--- 6. Blues ---&n\n\r", ch);
-    send_to_char("(&bb&n/&BB&n): &b Sample Text :: How do you think about this?!  &n / &B Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&vv&n/&VV&n): &v Sample Text :: How do you think about this?!  &n / &V Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&xx&n/&XX&n): &x Sample Text :: How do you think about this?!  &n / &X Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&zz&n/&ZZ&n): &z Sample Text :: How do you think about this?!  &n / &Z Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&55&n/&%%&n): &5 Sample Text :: How do you think about this?!  &n / &% Sample Text :: How do you think about this?!  &n\n\r", ch);
+    send_to_char("(&bb&n/&BB&n): &b Sample Text :: Color Test  &n / &B Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&vv&n/&VV&n): &v Sample Text :: Color Test  &n / &V Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&xx&n/&XX&n): &x Sample Text :: Color Test  &n / &X Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&zz&n/&ZZ&n): &z Sample Text :: Color Test  &n / &Z Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&55&n/&%%&n): &5 Sample Text :: Color Test  &n / &% Sample Text :: Color Test  &n\n\r", ch);
 
     /* --- 7. 보라, 자홍 계열 (Purples & Magentas) --- */
     send_to_char("\n\r&W--- 7. Purples & Magentas ---&n\n\r", ch);
-    send_to_char("(&mm&n/&MM&n): &m Sample Text :: How do you think about this?!  &n / &M Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&11&n/&!!&n): &1 Sample Text :: How do you think about this?!  &n / &! Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&22&n/&@@&n): &2 Sample Text :: How do you think about this?!  &n / &@ Sample Text :: How do you think about this?!  &n\n\r", ch);
-    send_to_char("(&33&n/&##&n): &3 Sample Text :: How do you think about this?!  &n / &# Sample Text :: How do you think about this?!  &n\n\r", ch);
+    send_to_char("(&mm&n/&MM&n): &m Sample Text :: Color Test  &n / &M Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&11&n/&!!&n): &1 Sample Text :: Color Test  &n / &! Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&22&n/&@@&n): &2 Sample Text :: Color Test  &n / &@ Sample Text :: Color Test  &n\n\r", ch);
+    send_to_char("(&33&n/&##&n): &3 Sample Text :: Color Test  &n / &# Sample Text :: Color Test  &n\n\r", ch);
     
     send_to_char("\n\r&n--- Test End ---&n\n\r", ch);
 }

@@ -30,17 +30,34 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
 	int need_movement;
     struct obj_data *obj;
     bool has_boat, has_wing;
-    int special(struct char_data *ch, int cmd, char *arg);
     int obj_number;
+	int dest_room_rnum; // 목적지 RNUM 저장용
+    int sect_from, sect_to; // 섹터 타입 가져오기
     
     if (special(ch, cmd + 1, ""))	/* Check for special routines (North is 1) */
 		return (FALSE);
 
-	need_movement = (movement_loss[world[ch->in_room].sector_type] +
-			movement_loss[world[world[ch->in_room].dir_option[cmd]->to_room].sector_type]) / 2;
+	// 목적지 방 번호 미리 확보 및 검증
+    if (!world[ch->in_room].dir_option[cmd] || 
+        (dest_room_rnum = world[ch->in_room].dir_option[cmd]->to_room) == NOWHERE ||
+        dest_room_rnum > top_of_world) {
+        
+        send_to_char("Alas, you cannot go that way.\r\n", ch);
+        return (FALSE);
+    }
 
-	if ((world[ch->in_room].sector_type == SECT_WATER_NOSWIM) ||
-		(world[world[ch->in_room].dir_option[cmd]->to_room].sector_type == SECT_WATER_NOSWIM)) {
+    // 섹터 타입 유효성 검사 및 보정
+    sect_from = world[ch->in_room].sector_type;
+    sect_to   = world[dest_room_rnum].sector_type;
+
+    // 섹터가 이상하면 SECT_FIELD로 간주 (다운 방지)
+    if (sect_from < 0 || sect_from >= 9) sect_from = SECT_FIELD;
+    if (sect_to < 0   || sect_to >= 9)   sect_to = SECT_FIELD;
+
+	need_movement = (movement_loss[sect_from] + movement_loss[sect_to]) / 2;
+
+	/* Boat Check */
+	if ((sect_from == SECT_WATER_NOSWIM) || (sect_to == SECT_WATER_NOSWIM)) {
         has_boat = FALSE;
         /* See if char is carrying a boat */
 			for (obj = ch->carrying; obj; obj = obj->next_content)
@@ -52,59 +69,54 @@ int do_simple_move(struct char_data *ch, int cmd, int following)
         }
     }
 
-	if ((world[ch->in_room].sector_type == SECT_SKY) ||
-		(world[world[ch->in_room].dir_option[cmd]->to_room].sector_type == SECT_SKY)) {
+	/* Wing Check */
+	if ((sect_from == SECT_SKY) || (sect_to == SECT_SKY)) {
 		has_wing = FALSE;
 		/* See if char is carrying a wing */
 		for (obj = ch->carrying; obj; obj = obj->next_content) {
-			obj_number = obj_index[obj->item_number].virtual;
-			if (obj_number == VNUM_OBJ_WINGS_1 || obj_number == VNUM_OBJ_WINGS_2)
-				/* Wings of Pegasus and feather */
-				has_wing = TRUE;
+			if (obj->item_number >= 0) {
+				obj_number = obj_index[obj->item_number].virtual;
+				if (obj_number == VNUM_OBJ_WINGS_1 || obj_number == VNUM_OBJ_WINGS_2)
+					has_wing = TRUE;
+			}
 		}
-		if (!has_wing && (GET_LEVEL (ch) < IMO + 3)) {
-			send_to_char ("You need wings to fly there.\n\r", ch);
+		if (!has_wing && (GET_LEVEL(ch) < IMO + 3)) {
+			send_to_char("You need wings to fly there.\n\r", ch);
 			return (FALSE);
 		}
 	}
-
-	if (GET_MOVE (ch) < need_movement && !IS_NPC (ch) && GET_LEVEL (ch) < IMO) {
+	if (GET_MOVE(ch) < need_movement && !IS_NPC(ch) && GET_LEVEL(ch) < IMO) {
 		if (!following)
-			send_to_char ("You are too exhausted.\n\r", ch);
+			send_to_char("You are too exhausted.\n\r", ch);
 		else
-			send_to_char ("You are too exhausted to follow.\n\r", ch);
+			send_to_char("You are too exhausted to follow.\n\r", ch);
 
 		return (FALSE);
 	}
 
 	/* (temp) 플레이어가 지정된 도전의 방을 떠나는 경우, 본인 도전의 방 상태만 초기화 */
     if (!IS_NPC(ch) && ch->specials.challenge_room_vnum > 0 && world[ch->in_room].number == ch->specials.challenge_room_vnum) {
-        
-		was_in = ch->in_room;
-		
 		DEBUG_LOG("Player %s leaving Challenge Room %d.", GET_NAME(ch), world[ch->in_room].number);
-        send_to_char_han("&cCHALLENGE&n : &yYou leave the Room of Challenge.&n\n\r", "&cCHALLENGE&n : &y당신은 도전을 완료하지 않고 방을 나갑니다.&n\n\r", ch);
-    } else {
-        was_in = ch->in_room;
+        send_to_char_han("&cCHALLENGE&n : &yYou leave the Room of Challenge.&n\n\r",
+						 "&cCHALLENGE&n : &y당신은 도전을 완료하지 않고 방을 나갑니다.&n\n\r", ch);
     }
 
-	if (GET_LEVEL (ch) < IMO && !IS_NPC (ch))
-		GET_MOVE (ch) -= need_movement;
+	if (GET_LEVEL(ch) < IMO && !IS_NPC(ch))
+		GET_MOVE(ch) -= need_movement;
 
-	if (!IS_AFFECTED (ch, AFF_SNEAK)) {
-		sprintf (tmp, "$n leaves %s.", dirs[cmd]);
-		act (tmp, TRUE, ch, 0, 0, TO_ROOM);
+	if (!IS_AFFECTED(ch, AFF_SNEAK)) {
+		snprintf(tmp, sizeof(tmp), "$n leaves %s.", dirs[cmd]);
+		act(tmp, TRUE, ch, 0, 0, TO_ROOM);
 	}
 
 	was_in = ch->in_room;
+	char_from_room(ch);
+	char_to_room(ch, world[was_in].dir_option[cmd]->to_room);
 
-	char_from_room (ch);
-	char_to_room (ch, world[was_in].dir_option[cmd]->to_room);
+	if (!IS_AFFECTED(ch, AFF_SNEAK))
+		act("$n has arrived.", TRUE, ch, 0, 0, TO_ROOM);
 
-	if (!IS_AFFECTED (ch, AFF_SNEAK))
-		act ("$n has arrived.", TRUE, ch, 0, 0, TO_ROOM);
-
-	do_look (ch, "\0", 15);
+	do_look(ch, "\0", 15);
 	return (1);
 }
 
@@ -696,7 +708,7 @@ void do_sit(struct char_data *ch, char *argument, int cmd)
 		break;
 	case POSITION_SITTING:
 		{
-			send_to_char("You'r sitting already.\n\r", ch);
+			send_to_char("You're sitting already.\n\r", ch);
 		}
 		break;
 	case POSITION_RESTING:

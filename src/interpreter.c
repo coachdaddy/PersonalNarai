@@ -536,6 +536,7 @@ int improve_status(struct char_data *ch, char arg)
 	return is_possible;
 }
 
+/* ISLETTER 매크로 삭제를 위한 수정, 260105 by Komo */
 int command_interpreter(struct char_data *ch, char *argument)
 {
 	int look_at, cmd, begin, lev;
@@ -544,10 +545,13 @@ int command_interpreter(struct char_data *ch, char *argument)
 
 	REMOVE_BIT(ch->specials.affected_by, AFF_HIDE);
 
-	/* Find first non blank */
-	for (begin = 0; argument[begin] == ' '; begin++) ;
-	/* Find length of first word */
-	for (look_at = 0; ISLETTER(*(argument + begin + look_at)); look_at++) ;
+	// 첫 번째 공백이 아닌 문자 위치를 찾음
+    for (begin = 0; argument[begin] != '\0' && isspace((unsigned char)argument[begin]); begin++) ;
+
+    // 첫 번째 단어의 길이를 계산
+    for (look_at = 0; argument[begin + look_at] != '\0' &&
+         isprint((unsigned char)argument[begin + look_at]) &&
+         !isspace((unsigned char)argument[begin + look_at]); look_at++) ;
 
 	cmd = old_search_block(argument, begin, look_at, command, 0);
 
@@ -558,20 +562,20 @@ int command_interpreter(struct char_data *ch, char *argument)
 
 	if (cmd > 0 && GET_LEVEL(ch) < cmd_info[cmd].minimum_level[ch_class]) {
 		lev = GET_LEVEL(ch);
+
+		// 레벨에 따라 다르게 반응
 		if (lev < 13)
 			send_to_char_han("Huh?\n\r", "뭐라고?\n\r", ch);
 		else if (lev < 31)
-			send_to_char_han("What?\n\r", "예 ? 뭐요 ?\n\r", ch);
+			send_to_char_han("What?\n\r", "예? 뭐요?\n\r", ch);
 		else if (lev < IMO)
-			send_to_char_han("What did you say?\n\r",
-					 "뭐라고 하셨습니까 ?\n\r", ch);
+			s2ch("What did you say?\n\r", "뭐라고 하셨습니까 ?\n\r", ch);
 		else
-			send_to_char_han("What did you say, Sir ?\n\r",
-					 "오 신이시여 무식한 제가 잘못입니다.. 좀더 쉬운 말씀으로..\n\r",
-					 ch);
+			s2ch("What did you say, Sir?\n\r", "신이시여, 무어라 말씀하셨나이까?\n\r", ch);
 		return (1);
 	}
 
+	// 명령어 실행
 	if (cmd > 0 && (cmd_info[cmd].command_pointer != 0)) {
 		if (GET_POS(ch) < cmd_info[cmd].minimum_position) {
 			switch (GET_POS(ch)) {
@@ -626,50 +630,51 @@ int command_interpreter(struct char_data *ch, char *argument)
 	return (1);
 }
 
+/* ISLETTER 매크로 삭제를 위한 수정, 260105 by Komo */
+static int read_word(const char *argument, int *pos, char *out, size_t out_size)
+{
+    int i = 0;
+    unsigned char c;
+
+    // 현재 위치에서 공백 문자들을 모두 건너뜀
+    // (space, tab, newline 등 모든 공백 계열 처리)
+    while (argument[*pos] != '\0' &&
+           isspace((unsigned char)argument[*pos]))
+    {
+        (*pos)++;
+    }
+
+    // 공백이 아닌 출력 가능한 문자들을 하나의 단어로 복사
+    // 공백을 만나거나 출력 불가능한 문자를 만나면 중단
+    while ((c = (unsigned char)argument[*pos]),
+           isprint(c) && !isspace(c) && i < (int)(out_size - 1))
+    {
+        out[i++] = argument[*pos];
+        (*pos)++;
+    }
+
+    // 문자열 종료
+    out[i] = '\0';
+
+    // fill_word의 반환값에 따라 동일 인자를 다시 읽을지 여부를 결정
+    return fill_word(out);
+}
+
+/* ISLETTER 매크로 삭제를 위한 수정, 260105 by Komo */
 void argument_interpreter(char *argument, char *first_arg, char *second_arg)
 {
-	int look_at, /*found, */ begin;
+    int pos = 0;  // argument 문자열 내 현재 파싱 위치
 
-	/* found = */ begin = 0;
+    // 첫 번째 인자 파싱
+    // fill_word가 참을 반환하는 동안 반복
+    while (read_word(argument, &pos, first_arg, sizeof(first_arg)))
+        ;
 
-	do {
-		/* Find first non blank */
-		for (; *(argument + begin) == ' '; begin++) ;
-
-		/* Find length of first word */
-		for (look_at = 0; ISLETTER(*(argument + begin + look_at)); look_at++)
-
-			/* Make all letters lower case,
-			   AND copy them to first_arg */
-			*(first_arg + look_at) =
-			/*cyb   tolower(*(argument + begin + look_at));  */
-			    *(argument + begin + look_at);
-
-		*(first_arg + look_at) = '\0';
-		begin += look_at;
-
-	}
-	while (fill_word(first_arg));
-
-	do {
-		/* Find first non blank */
-		for (; *(argument + begin) == ' '; begin++) ;
-
-		/* Find length of first word */
-		for (look_at = 0; ISLETTER(*(argument + begin + look_at)); look_at++)
-
-			/* Make all letters lower case,
-			   AND copy them to second_arg */
-			*(second_arg + look_at) =
-			/*cyb   tolower(*(argument + begin + look_at)); */
-			    *(argument + begin + look_at);
-
-		*(second_arg + look_at) = '\0';
-		begin += look_at;
-
-	}
-	while (fill_word(second_arg));
+    // 두 번째 인자 파싱
+    while (read_word(argument, &pos, second_arg, sizeof(second_arg)))
+        ;
 }
+
 
 int is_number(char *str)
 {
@@ -684,33 +689,23 @@ int is_number(char *str)
 	return (1);
 }
 
+/* ISLETTER 매크로 삭제를 위한 수정, 260105 by Komo */
 /* find the first sub-argument of a string, return pointer to first char in
    primary argument, following the sub-arg                  */
 char *one_argument(char *argument, char *first_arg)
 {
-	char *p;
+    int pos = 0;
 
-    if (!argument) return NULL;
+    // 입력 문자열이 NULL인 경우 방어
+    if (!argument)
+        return NULL;
 
-    while (1) {
-        while (isspace(*argument))
-            argument++;
-        
-        p = first_arg;
+    // fill_word가 참을 반환하는 동안 동일 인자를 계속 소비
+    while (read_word(argument, &pos, first_arg, sizeof(first_arg)))
+        ;
 
-        while (*argument && ISLETTER(*argument)) {
-            *p = tolower(*argument);
-            p++;
-            argument++;
-        }
-
-        *p = '\0';
-
-        if (!fill_word(first_arg))
-            break;
-    }
-
-    return argument;
+    // 다음 인자 파싱이 시작될 위치 반환
+    return argument + pos;
 }
 
 int fill_word(char *argument)
@@ -1111,6 +1106,7 @@ void assign_command_pointers(void)
     COMMANDO(313, POSITION_DEAD, do_zreload, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* zone reload, 251120 */
     COMMANDO(314, POSITION_DEAD, do_wreload, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* world reload, 251121 */
     COMMANDO(315, POSITION_DEAD, do_zonelist, IMO + 3, IMO + 3, IMO + 3, IMO + 3); /* zonelist, 251121 */
+	COMMANDO(316, POSITION_RESTING, do_challenge_abort, 1, 1, 1, 1); /* 도전 포기, 251129 by Komo */
 }
 
 void query_status(struct descriptor_data *d)

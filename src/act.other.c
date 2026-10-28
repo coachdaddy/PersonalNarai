@@ -559,6 +559,7 @@ void do_recite(struct char_data *ch, char *argument, int cmd)
 	extract_obj(scroll);
 }
 
+
 void do_use(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_STRING_LENGTH];
@@ -569,56 +570,45 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 
 	argument = one_argument(argument, buf);
 
-	if (ch->equipment[HOLD] == 0 ||
-	    !isname(buf, ch->equipment[HOLD]->name)) {
-		act("You do not hold that item in your hand.", FALSE, ch, 0,
-		    0, TO_CHAR);
+	if (ch->equipment[HOLD] == 0 || !isname(buf, ch->equipment[HOLD]->name)) {
+		act("You do not hold that item in your hand.", FALSE, ch, 0, 0, TO_CHAR);
 		return;
 	}
 
 	/* by ares */
-	snprintf(buf, sizeof(buf), "Use log : %s uses %s", ch->player.name, argument);
+	snprintf(buf, sizeof(buf), "(do_use) %s uses %s", ch->player.name, argument);
 	mudlog(buf);
 
 	stick = ch->equipment[HOLD];
 
 	if (stick->obj_flags.type_flag == ITEM_STAFF) {
-		act("$n taps $p three times on the ground.", TRUE, ch, stick,
-		    0, TO_ROOM);
-		act("You tap $p three times on the ground.", FALSE, ch, stick,
-		    0, TO_CHAR);
+		act("$n taps $p three times on the ground.", TRUE, ch, stick, 0, TO_ROOM);
+		act("You tap $p three times on the ground.", FALSE, ch, stick, 0, TO_CHAR);
 
 		if (stick->obj_flags.value[2] > 0) {	/* Is there any charges left? */
 			stick->obj_flags.value[2]--;
 			((*spell_info[stick->obj_flags.value[3]].spell_pointer)
-			 ((byte) stick->obj_flags.value[0], ch, "",
-			  SPELL_TYPE_STAFF, 0, 0));
+			 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_STAFF, 0, 0));
 
 		} else {
 			send_to_char("The staff seems powerless.\n\r", ch);
 		}
 	} else if (stick->obj_flags.type_flag == ITEM_WAND) {
-		bits = generic_find(argument, FIND_CHAR_ROOM | FIND_OBJ_INV |
-				    FIND_OBJ_ROOM |
-				    FIND_OBJ_EQUIP, ch, &tmp_char, &tmp_object);
+		bits = generic_find(argument, FIND_CHAR_ROOM | FIND_OBJ_INV | FIND_OBJ_ROOM |
+				    		FIND_OBJ_EQUIP, ch, &tmp_char, &tmp_object);
 		if (bits) {
 			if (bits == FIND_CHAR_ROOM) {
-				act("$n point $p at $N.", TRUE, ch, stick,
-				    tmp_char, TO_ROOM);
-				act("You point $p at $N.", FALSE, ch, stick,
-				    tmp_char, TO_CHAR);
+				act("$n points $p at $N.", TRUE, ch, stick, tmp_char, TO_ROOM);
+				act("You point $p at $N.", FALSE, ch, stick, tmp_char, TO_CHAR);
 			} else {
-				act("$n point $p at $P.", TRUE, ch, stick,
-				    tmp_object, TO_ROOM);
-				act("You point $p at $P.", FALSE, ch, stick,
-				    tmp_object, TO_CHAR);
+				act("$n points $p at $P.", TRUE, ch, stick, tmp_object, TO_ROOM);
+				act("You point $p at $P.", FALSE, ch, stick, tmp_object, TO_CHAR);
 			}
 
 			if (stick->obj_flags.value[2] > 0) {	/* Is there any charges left? */
 				stick->obj_flags.value[2]--;
 				((*spell_info[stick->obj_flags.value[3]].spell_pointer)
-				 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_WAND,
-				  tmp_char, tmp_object));
+				 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_WAND, tmp_char, tmp_object));
 			} else {
 				send_to_char("The wand seems powerless.\n\r", ch);
 			}
@@ -626,86 +616,25 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 			send_to_char("What should the wand be pointed at?\n\r", ch);
 		}
 	} else {
-		send_to_char("Use is normally only for wand's and staff's.\n\r", ch);
+		send_to_char("Use is normally only for wands and staffs.\n\r", ch);
 	}
 }
+
 
 void do_post(struct char_data *ch, char *argument, int cmd)
 {
 	send_to_char("You can only post on board.\n\r", ch);
 }
 
-/*
-Assault skill: 남자나 여자를 강간한다. :)
-		입고있는 아이템을 벗긴다. 헤헤헤...야한 메시지와 함께.
-by Process
-*/
+
+/*	deleted by Komo, 260107 */
 void do_assault(struct char_data *ch, char *argument, int cmd)
 {
-	struct char_data *victim;
-	struct obj_data *obj;
-
-	char victim_name[240];
-	int percent;
-	int location;
-
-	if (GET_GUILD(ch) != OUTLAW && GET_LEVEL(ch) < IMO) {
-		send_to_char("How about join outlaws???\n\r", ch);
-		return;
-	}
-	one_argument(argument, victim_name);
-
-	if (!(victim = get_char_room_vis(ch, victim_name))) {
-		send_to_char("who do you wanna assault?\n\r", ch);
-		return;
-	}
-
-	if (!IS_NPC(victim) && !(victim->desc)) {
-		send_to_char("You cannot assault him or her.\n\r", ch);
-		return;
-	}
-
-	if (GET_SEX(victim) == GET_SEX(ch)) {
-		switch (GET_SEX(ch)) {
-		case SEX_MALE:
-			send_to_char("너 호모냐?\n\r", ch);
-			break;
-		case SEX_FEMALE:
-			send_to_char("너 레즈비언이냐?\n\r", ch);
-			break;
-		}
-		return;
-	}
-	percent = number(1, 101) + ((GET_LEVEL(victim) + GET_DEX(victim)) <<
-	    1) -
-	    (GET_LEVEL(ch) + GET_DEX(ch));
-
-	if (percent < GET_GUILD_SKILL(ch, OUTLAW_SKILL_ASSAULT)) {
-		location = number(2, MAX_WEAR - 1);
-		obj = victim->equipment[location];
-		if (obj && CAN_SEE_OBJ(ch, obj)) {
-			if (victim)
-				obj_to_char(unequip_char(victim, location), victim);
-			switch (GET_SEX(victim)) {
-			case SEX_MALE:
-			case SEX_NEUTRAL:
-				do_say(ch, "아하아~~~~너무 좋아\n\r", 0);
-				do_say(victim, "아~~~나도 좋아요~~~\n\r", 0);
-				do_say(victim, "아...기막히다....한 번 더하고 싶다~~\n\r", 0);
-				break;
-			case SEX_FEMALE:
-				do_say(ch, "아하아~~~~너무 좋아\n\r", 0);
-				do_say(victim, "아~~~나도 좋아요~~~\n\r", 0);
-				do_say(victim, "이제 진정한 여자가 된 기분이에요~~~\n\r", 0);
-				break;
-			}
-		} else {
-			send_to_char("바보....거긴 안 입었다..:)\n\r", ch);
-		}
-	} else {
-		send_to_char("먼 챙피? 하하하...\n\r", ch);
-	}
+	s2ch("Assault function is deleted permanently.\n\r", 
+         "이 명령은 영구적으로 삭제되었습니다.\n\r", ch);
 }
+
+
 /* 
 	Chase written 
 Description:
@@ -785,8 +714,7 @@ void do_spin_bird_kick(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 	if (GET_SEX(ch) != SEX_FEMALE) {
-		send_to_char
-		    ("여자 전용 스킬입니다.성전환을 하는게 어떨지~~\n\r", ch);
+		send_to_char("여성 전용 스킬입니다.\n\r", ch);
 		return;
 	}
 
@@ -815,7 +743,7 @@ void do_spin_bird_kick(struct char_data *ch, char *argument, int cmd)
 	}
 
 	if (!AWAKE(victim)) {
-		send_to_char("자는 사람을 치다니 비겁한 년!!\n\r", ch);
+		send_to_char("자는 사람을 치다니!!\n\r", ch);
 		return;
 	}
 
@@ -824,30 +752,27 @@ void do_spin_bird_kick(struct char_data *ch, char *argument, int cmd)
 		return;
 	}
 
-	dam = GET_LEVEL(ch) * (number(25, 30) + (GET_SKILLED(ch,
-							     SKILL_SPIN_BIRD_KICK)
-						 >> 3));
+	dam = GET_LEVEL(ch) * (number(25, 30) + (GET_SKILLED(ch, SKILL_SPIN_BIRD_KICK) >> 3));
 
 	if (saves_spell(victim, SAVING_HIT_SKILL))
 		dam >>= 1;
 
 	percent = number(1, 150) - (GET_LEVEL(ch) + GET_DEX(ch)) +
-	    2 * (GET_LEVEL(victim) + GET_DEX(victim))
-	    - (GET_SKILLED(ch, SKILL_SPIN_BIRD_KICK) >> 3);
-
-	do_say(ch, "스핀~~~버드~~~킥!!!", 0);
+				2 * (GET_LEVEL(victim) + GET_DEX(victim))
+				- (GET_SKILLED(ch, SKILL_SPIN_BIRD_KICK) >> 3);
 
 	if (ch == victim) {
-		send_to_char("잉~~~괜히 속옷만 보여줬다...\n\r", ch);
+		send_to_char("You can't attack yourself!\n\r", ch);
 		return;
 	}
 
 	if (GET_MOVE(ch) < 0) {
-		send_to_char
-		    ("당신은 너무 지쳐서 시도할 수 가 없군요!\n\r", ch);
+		send_to_char("You are too exhausted to try more!\n\r", ch);
 		do_say(ch, "학학학...난 너무 지쳤어!!!\n\r", 0);
 		return;
 	}
+
+	do_say(ch, "스핀~~~버드~~~킥!!!", 0);
 
 	if (percent < ch->skills[SKILL_SPIN_BIRD_KICK].learned) {
 		INCREASE_SKILLED(ch, victim, SKILL_SPIN_BIRD_KICK);
@@ -883,11 +808,11 @@ void do_spin_bird_kick(struct char_data *ch, char *argument, int cmd)
 			else
 				break;
 		}
-		send_to_char("하하...내 치맛바람 맛이 어떠냐!!!\n\r", ch);
+		send_to_char("하하... 맛이 어떠냐!!!\n\r", ch);
 	} else {
 		WAIT_STATE(ch, PULSE_VIOLENCE / 3);
 		damage(ch, victim, dam, TYPE_HIT);
-		send_to_char("잉~~~괜히 속옷만 보여줬다...\n\r", ch);
+		send_to_char("Your spin bird kick failed.\n\r", ch);
 	}
 }
 
