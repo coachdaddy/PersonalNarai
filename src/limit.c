@@ -545,7 +545,7 @@ void point_update(void)
             else if (GET_LEVEL(i) >= 40 && 
                     (titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
                     (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) { 
-					if (rcnt >= 1 && GET_LEVEL(i) < 50 && flag == 1) { 
+					if (rcnt >= 2 && GET_LEVEL(i) < 50 && flag == 1) { 
 						GET_LEVEL(i)++; 
 						advance_level(i, 1); 
 						snprintf(buf, sizeof(buf), 
@@ -560,7 +560,7 @@ void point_update(void)
 						flag = 0; 
 					}
 
-		            if (rcnt >= 2 && GET_LEVEL(i) < 60 && flag == 1) { 
+		            if (rcnt >= 3 && GET_LEVEL(i) < 60 && flag == 1) { 
 						GET_LEVEL(i)++; 
 						advance_level(i, 1); 
 						snprintf(buf, sizeof(buf), 
