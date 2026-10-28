@@ -1611,18 +1611,67 @@ int remortal(struct char_data *ch, int cmd, char *arg)
     /* 2. 대상 직업 매핑                                    */
     /* ---------------------------------------------------- */
     switch (toupper(arg1[0])) {
-        case 'M': target_class_bit = REMORTAL_MAGIC_USER; target_class_num = 1; break;
-        case 'C': target_class_bit = REMORTAL_CLERIC;     target_class_num = 2; break;
-        case 'T': target_class_bit = REMORTAL_THIEF;      target_class_num = 3; break;
-        case 'W': target_class_bit = REMORTAL_WARRIOR;    target_class_num = 4; break;
+        case '?':
+            send_to_char("=== Your Remortal Status ===\n\r", ch);
+            if (ch->player.remortal & REMORTAL_MAGIC_USER) send_to_char("[PASS] Magic User\n\r", ch);
+            else send_to_char("[    ] Magic User\n\r", ch);
+            
+            if (ch->player.remortal & REMORTAL_CLERIC)     send_to_char("[PASS] Cleric\n\r", ch);
+            else send_to_char("[    ] Cleric\n\r", ch);
+            
+            if (ch->player.remortal & REMORTAL_THIEF)      send_to_char("[PASS] Thief\n\r", ch);
+            else send_to_char("[    ] Thief\n\r", ch);
+            
+            if (ch->player.remortal & REMORTAL_WARRIOR)    send_to_char("[PASS] Warrior\n\r", ch);
+            else send_to_char("[    ] Warrior\n\r", ch);
+            
+            if (!all_done) {
+				/*
+                if (rcnt == 0) 		required_level = 40;
+                else if (rcnt == 1) required_level = 50;
+                else if (rcnt >= 2) required_level = 60;
+				*/
+				if (rcnt == 1) 		required_level = 40;
+                else if (rcnt == 2) required_level = 50;
+                else if (rcnt >= 3) required_level = 60;
+                snprintf(buf, sizeof(buf), "Next Remortal Requirement: Level %d\n\r", required_level);
+                send_to_char(buf, ch);
+            } else {
+                send_to_char("&c[REMORTAL]&n You are a Grand Master. You can change class freely with 1G EXP.\n\r", ch);
+            }
+            return TRUE;
+
+        case 'M': 
+            target_class_bit = REMORTAL_MAGIC_USER; 
+            target_class_num = 1; 
+            break;
+        case 'C': 
+            target_class_bit = REMORTAL_CLERIC; 
+            target_class_num = 2; 
+            break;
+        case 'T': 
+            target_class_bit = REMORTAL_THIEF; 
+            target_class_num = 3; 
+            break;
+        case 'W': 
+            target_class_bit = REMORTAL_WARRIOR; 
+            target_class_num = 4; 
+            break;
         default:
             send_to_char("&c[REMORTAL]&n The ancient spirits do not respond to such gibberish.\n\r", ch);
             return TRUE;
     }
 
-    /* ---------------------------------------------------- */
-    /* 3. 레벨 제한 체크 (올리모 상태와 일반 리모탈 분기)	*/
-    /* ---------------------------------------------------- */
+	/* --- 레벨 제한 체크 --- */
+	/*
+    if (rcnt == 0)      required_level = 40;
+    else if (rcnt == 1) required_level = 50;
+    else                required_level = 60;
+	*/
+	if (rcnt == 1)      required_level = 40;
+    else if (rcnt == 2) required_level = 50;
+    else                required_level = 60;
+
     if (GET_LEVEL(ch) < required_level) {
         if (all_done) {
             snprintf(buf, sizeof(buf), "&c[REMORTAL]&n Grand Masters must be at least level %d to change class.\n\r", required_level);
