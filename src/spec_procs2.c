@@ -1021,7 +1021,7 @@ int superguard(struct char_data *ch, int cmd, char *arg)
 
 int pet_shops(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[MAX_STRING_LENGTH], pet_name[256];
+	char buf[MAX_INPUT_LENGTH], pet_name[MAX_INPUT_LENGTH];
 	int pet_room, k;
 	struct char_data *pet;
 	struct follow_type *j;
@@ -1100,7 +1100,7 @@ int pet_shops(struct char_data *ch, int cmd, char *arg)
 }
 int hospital(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[MAX_STRING_LENGTH];
+	char buf[MAX_INPUT_LENGTH];
 	struct descriptor_data *k;
 	int opt, cost[7], c = 0;
 	int i;
@@ -1562,23 +1562,29 @@ int metahospital(struct char_data *ch, int cmd, char *arg)
 	return (FALSE);
 }
 
-/* re-written, by Komo */
+/* re-written, refactored(2026.10.28) by Komo */
 int remortal(struct char_data *ch, int cmd, char *arg)
 {
-    char buf[255];
+    char buf[MAX_STRING_LENGTH];
     char arg1[MAX_INPUT_LENGTH], arg2[MAX_INPUT_LENGTH];
+	char confirm[MAX_INPUT_LENGTH], rest[MAX_INPUT_LENGTH];
     const char *class_names[] = { "None", "Magic User", "Cleric", "Thief", "Warrior" };
-    
+
     int target_class_bit = 0;
     int target_class_num = 0;
     int rcnt = 0;
     int required_level = 0;
     int all_done = 0;
-	int is_repeat = 0; /* 중복 리모탈 여부 플래그 */
+    int is_repeat = 0;
 
-    if (cmd != 17) return 0; /* say 명령어가 아니면 무시 */
+    /* say 명령어가 아니면 무시 */
+    if (cmd != 17) return 0;
 
-    /* 현재 리모탈 완료 횟수 계산 */
+    /* 입력값 파싱 */
+    half_chop(arg, arg1, arg2); /* arg2에 'YES' 같은 뒤쪽 문자가 담김 */
+    if (!*arg1) return 0; /* 인자 없으면 무시 */
+
+    /* 현재까지 거친 Class 개수 계산(1~4) */
     if (ch->player.remortal & REMORTAL_MAGIC_USER) rcnt++;
     if (ch->player.remortal & REMORTAL_CLERIC)     rcnt++;
     if (ch->player.remortal & REMORTAL_THIEF)      rcnt++;
@@ -1586,10 +1592,33 @@ int remortal(struct char_data *ch, int cmd, char *arg)
 
     all_done = (ch->player.remortal == 15); /* 올리모 상태 체크, 비트 1+2+4+8 = 15 */
 
-    /* 입력값 파싱 및 타겟 확인 */
-    half_chop(arg, arg1, arg2); /* arg2에 'YES' 같은 뒤쪽 문자가 담김 */
-    if (!*arg1) return 0; /* 인자 없으면 무시 */
+    /* 차수별 요구 레벨 산출 단일화 */
+    if (rcnt == 1)      required_level = 40;
+    else if (rcnt == 2) required_level = 50;
+    else                required_level = 60; /* rcnt == 3 또는 4 */
 
+    /* ---------------------------------------------------- */
+    /* 1. 상태 조회 (say ?) 처리 && 조기 리턴				*/
+    /* ---------------------------------------------------- */
+    if (arg1[0] == '?') {
+        send_to_char("=== Your Remortal Status ===\n\r", ch);
+        send_to_char((ch->player.remortal & REMORTAL_MAGIC_USER) ? "[PASS] Magic User\n\r" : "[    ] Magic User\n\r", ch);
+        send_to_char((ch->player.remortal & REMORTAL_CLERIC)     ? "[PASS] Cleric\n\r"     : "[    ] Cleric\n\r", ch);
+        send_to_char((ch->player.remortal & REMORTAL_THIEF)      ? "[PASS] Thief\n\r"      : "[    ] Thief\n\r", ch);
+        send_to_char((ch->player.remortal & REMORTAL_WARRIOR)    ? "[PASS] Warrior\n\r"    : "[    ] Warrior\n\r", ch);
+
+        if (!all_done) {
+            snprintf(buf, sizeof(buf), "Next Remortal Requirement: Level %d\n\r", required_level);
+            send_to_char(buf, ch);
+        } else {
+            send_to_char("&c[REMORTAL]&n You are a Grand Master. You can change class freely with 1G EXP.\n\r", ch);
+        }
+        return TRUE;
+    }
+
+    /* ---------------------------------------------------- */
+    /* 2. 대상 직업 매핑                                    */
+    /* ---------------------------------------------------- */
     switch (toupper(arg1[0])) {
         case '?':
             send_to_char("=== Your Remortal Status ===\n\r", ch);
@@ -1606,9 +1635,14 @@ int remortal(struct char_data *ch, int cmd, char *arg)
             else send_to_char("[    ] Warrior\n\r", ch);
             
             if (!all_done) {
+				/*
                 if (rcnt == 0) 		required_level = 40;
                 else if (rcnt == 1) required_level = 50;
                 else if (rcnt >= 2) required_level = 60;
+				*/
+				if (rcnt == 1) 		required_level = 40;
+                else if (rcnt == 2) required_level = 50;
+                else if (rcnt >= 3) required_level = 60;
                 snprintf(buf, sizeof(buf), "Next Remortal Requirement: Level %d\n\r", required_level);
                 send_to_char(buf, ch);
             } else {
@@ -1633,78 +1667,86 @@ int remortal(struct char_data *ch, int cmd, char *arg)
             target_class_num = 4; 
             break;
         default:
-			send_to_char("&c[REMORTAL]&n The ancient spirits do not respond to such gibberish.\n\r", ch);
+            send_to_char("&c[REMORTAL]&n The ancient spirits do not respond to such gibberish.\n\r", ch);
             return TRUE;
     }
 
 	/* --- 레벨 제한 체크 --- */
+	/*
     if (rcnt == 0)      required_level = 40;
     else if (rcnt == 1) required_level = 50;
     else                required_level = 60;
+	*/
+	if (rcnt == 1)      required_level = 40;
+    else if (rcnt == 2) required_level = 50;
+    else                required_level = 60;
 
     if (GET_LEVEL(ch) < required_level) {
-        snprintf(buf, sizeof(buf), "You must be at least level %d to perform your #%d remortal.\n\r", required_level, rcnt + 1);
+        if (all_done) {
+            snprintf(buf, sizeof(buf), "&c[REMORTAL]&n Grand Masters must be at least level %d to change class.\n\r", required_level);
+        } else {
+            snprintf(buf, sizeof(buf), "&c[REMORTAL]&n You must be at least level %d to perform your #%d remortal.\n\r", required_level, rcnt + 1);
+        }
         send_to_char(buf, ch);
         return TRUE;
     }
 
-    /* --- 올리모 전용 처리 로직 --- */
+    /* ---------------------------------------------------- */
+    /* 4. 올리모 전용 처리									*/
+    /* ---------------------------------------------------- */
     if (all_done) {
-        if (GET_EXP(ch) < G(1)) { /* 10억 */
+        if (GET_EXP(ch) < G(1)) {
             send_to_char("&c[REMORTAL]&n You need 1,000,000,000 experience to change class as a Grand Master.\n\r", ch);
-            return 0;
+            return TRUE;
         }
 
         if (GET_CLASS(ch) == target_class_num) {
             send_to_char("&c[REMORTAL]&n You are already that class!\n\r", ch);
-            return 0;
+            return TRUE;
         }
 
-        /* 처리 수행 */
         GET_EXP(ch) -= G(1);
         GET_CLASS(ch) = target_class_num;
-        
-        snprintf(buf, sizeof(buf), "&c[REMORTAL]&n&Y %s has changed class to %s with Grand Master's authority!&n\n\r", 
-                GET_NAME(ch), class_names[target_class_num]);
+
+        snprintf(buf, sizeof(buf), "&c[REMORTAL]&n&Y %s has changed class to %s with Grand Master's authority!&n\n\r",
+                 GET_NAME(ch), class_names[target_class_num]);
         send_to_all(buf);
-		snprintf(buf, sizeof(buf), "[REMORTAL] %s changed class to %s (all-remo).", 
-				GET_NAME(ch), class_names[target_class_num]);
-		mudlog(buf);
-        
+
+        snprintf(buf, sizeof(buf), "[REMORTAL] %s changed class to %s (all-remo).",
+                 GET_NAME(ch), class_names[target_class_num]);
+        mudlog(buf);
+
         send_to_char("&c[REMORTAL]&n&Y You assume a new form, retaining your mighty power.\n\r&n", ch);
         save_char(ch, ch->in_room);
-        
-		GET_AC(ch) -= 20;
-    	GET_HITROLL(ch) += 10;
-    	GET_DAMROLL(ch) += 10;
 
         return TRUE;
     }
 
-    /* ======================================================== */
-    /* 아래는 일반 리모탈(not all-remo) 로직             */
-    /* ======================================================== */
-
-    /* --- 중복 직업 체크 및 재확인(Y/N) --- */
+    /* ---------------------------------------------------- */
+    /* 5. 일반 리모탈: 중복 직업 확인 및 재입력 유도        */
+    /* ---------------------------------------------------- */
     if (ch->player.remortal & target_class_bit) {
-        /* 두 번째 단어(arg2) 확인 */
-        if (!*arg2 || strcasecmp(arg2, "YES") != 0) {
-            snprintf(buf, sizeof(buf), "&R[WARNING]&n : You have already completed the &W%s&n path.\n\r", class_names[target_class_num]);
-            send_to_char(buf, ch);
-            
-            s2ch("&RIf you proceed, your Level/Exp will RESET, but you will gain NO STAT BONUSES.&n\n\r",
-            	 "&R이미 완료한 직업입니다. 진행 시 레벨은 초기화되지만 보너스 스탯은 얻을 수 없습니다.&n\n\r", ch);
-            
-            snprintf(buf, sizeof(buf), "To confirm, please type: &Ysay %c YES&n\n\r", toupper(arg1[0]));
-            send_to_char(buf, ch);
-            return TRUE; /* 경고만 하고 종료 */
-        }
-        
-        /* YES를 입력하고 왔다면 진행 (플래그 ON) */
-        is_repeat = 1;
-    }
 
-    /* --- 스탯 보너스 지급 (중복일 경우 스킵) --- */
+		/* arg2의 첫 단어만 추출하여 비교 */
+		half_chop(arg2, confirm, rest);
+
+		if (!*confirm || strcasecmp(confirm, "YES") != 0) {
+			snprintf(buf, sizeof(buf), "&R[WARNING]&n : You have already completed the &W%s&n path.\n\r", class_names[target_class_num]);
+			send_to_char(buf, ch);
+
+			s2ch("&RIf you proceed, your Level/Exp will RESET, but you will gain NO STAT BONUSES.&n\n\r",
+				 "&R이미 완료한 직업입니다. 진행 시 레벨은 초기화되지만 보너스 스탯은 얻을 수 없습니다.&n\n\r", ch);
+
+			snprintf(buf, sizeof(buf), "To confirm, please type: &Ysay %c YES&n\n\r", toupper(arg1[0]));
+			send_to_char(buf, ch);
+			return TRUE;
+		}
+		is_repeat = 1;
+	}
+
+    /* ---------------------------------------------------- */
+    /* 6. 스탯 보너스 부여 및 비트 설정 (신규 직업 진행 시)   */
+    /* ---------------------------------------------------- */
     if (!is_repeat) {
         switch (target_class_num) {
             case 1: /* Mage: Int */
@@ -1720,7 +1762,7 @@ int remortal(struct char_data *ch, int cmd, char *arg)
                 else send_to_char("Your Dexterity is already god-like.\n\r", ch);
                 break;
             case 4: /* Warrior: Str */
-                 if (ch->abilities.str == 18) {
+                if (ch->abilities.str == 18) {
                     if (ch->abilities.str_add < 100) {
                         ch->abilities.str_add = MIN(ch->abilities.str_add + 10, 100);
                     } else {
@@ -1731,47 +1773,49 @@ int remortal(struct char_data *ch, int cmd, char *arg)
                 }
                 break;
         }
-        /* 첫 리모탈인 경우에만 비트 설정 */
+
+		/* 해당 class로의 첫 리모탈인 경우 비트 설정 */
         ch->player.remortal |= target_class_bit;
-        
-        /* 축하 메시지 출력 (중복 아닐 때만) */
-        if (rcnt == 0) {
-			send_to_char("\n\r&C[SYSTEM]&n : &WA blinding white light surrounds your body...&n\n\r", ch);
-			send_to_char("&YYou shed your mortal coil and rise again, stronger than before!&n\n\r", ch);
-			send_to_char("&GCongratulations on your First Rebirth!&n\n\r", ch);
-		}
-		else if (rcnt == 1) {
-			send_to_char("\n\r&C[SYSTEM]&n : &WThe heavens rumble as your soul burns with renewed vigor!&n\n\r", ch);
-			send_to_char("&YYou have weathered the storm and emerged purer, ready to conquer new heights.&n\n\r", ch);
-			send_to_char("&GCongratulations on your Second Rebirth!&n\n\r", ch);
-		}
-		else if (rcnt >= 2) {
-			send_to_char("\n\r&R*** A LEGEND IS BORN ***&n\n\r", ch);
-			send_to_char("&YYou have reached the pinnacle of mortal evolution!&n\n\r", ch);
-			send_to_char("&YThe path to the &WGrand Master&Y is now open before you.&n\n\r", ch);
-			send_to_char("&GCongratulations on your Final Rebirth!&n\n\r", ch);
-    	}
+
+        /* 축하 메시지 출력 */
+        if (rcnt == 1) {
+            send_to_char("\n\r&C[SYSTEM]&n : &WA blinding white light surrounds your body...&n\n\r", ch);
+            send_to_char("&YYou shed your mortal coil and rise again, stronger than before!&n\n\r", ch);
+            send_to_char("&GCongratulations on your First Rebirth!&n\n\r", ch);
+        } else if (rcnt == 2) {
+            send_to_char("\n\r&C[SYSTEM]&n : &WThe heavens rumble as your soul burns with renewed vigor!&n\n\r", ch);
+            send_to_char("&YYou have weathered the storm and emerged purer, ready to conquer new heights.&n\n\r", ch);
+            send_to_char("&GCongratulations on your Second Rebirth!&n\n\r", ch);
+        } else { /* rcnt == 3: 마지막 4번째 직업 달성 */
+            send_to_char("\n\r&R*** A LEGEND IS BORN ***&n\n\r", ch);
+            send_to_char("&YYou have reached the pinnacle of mortal evolution!&n\n\r", ch);
+            send_to_char("&YThe path to the &WGrand Master&Y is now open before you.&n\n\r", ch);
+            send_to_char("&GCongratulations on your Final Rebirth!&n\n\r", ch);
+        }
     } else {
-        /* 중복 리모탈 시 안내 메시지 */
+        /* 중복 리모탈 안내 메시지 */
         send_to_char("\n\r&C[SYSTEM]&n : &WYou chose to walk the same path again...&n\n\r", ch);
         send_to_char("&YYour body is reborn, but your soul remembers its past power.&n\n\r", ch);
     }
-    
-    /* --- 직업 변경 및 초기화 (올리모 전 공통) --- */
+
+    /* ---------------------------------------------------- */
+    /* 7. 직업 변경 및 초기화								*/
+    /* ---------------------------------------------------- */
     snprintf(buf, sizeof(buf), "&c[REMORTAL]&n&Y %s has been reborn as a %s!&n\n\r", GET_NAME(ch), class_names[target_class_num]);
     send_to_all(buf);
-	snprintf(buf, sizeof(buf), "[REMORTAL] %s changed class to %s.", GET_NAME(ch), class_names[target_class_num]);
-	mudlog(buf);
+
+    snprintf(buf, sizeof(buf), "[REMORTAL] %s changed class to %s.", GET_NAME(ch), class_names[target_class_num]);
+    mudlog(buf);
 
     GET_CLASS(ch) = target_class_num;
-    
     GET_EXP(ch) = 1;
-    GET_LEVEL(ch) = 1; 
-    
-    GET_HIT(ch) = GET_PLAYER_MAX_HIT(ch) = 10;
+    GET_LEVEL(ch) = 1;
+
+    GET_HIT(ch)  = GET_PLAYER_MAX_HIT(ch)  = 10;
     GET_MANA(ch) = GET_PLAYER_MAX_MANA(ch) = 10;
     GET_MOVE(ch) = GET_PLAYER_MAX_MOVE(ch) = 10;
 
+    /* 누적 성장치 회수 (35 차감 후 잔여분 영구 보너스화) */
     GET_AC(ch) += 35;
     GET_HITROLL(ch) -= 35;
     GET_DAMROLL(ch) -= 35;
@@ -1780,20 +1824,20 @@ int remortal(struct char_data *ch, int cmd, char *arg)
     ch->quest.data = 0;
     ch->quest.solved = 0;
 
-    /* do_start 대체 로직 */
+    /* 상태치 및 스펠 초기화 */
     GET_COND(ch, THIRST) = 24;
-    GET_COND(ch, FULL) = 24;
-    GET_COND(ch, DRUNK) = 0;
+    GET_COND(ch, FULL)   = 24;
+    GET_COND(ch, DRUNK)  = 0;
     ch->specials.spells_to_learn = 8;
     set_title(ch);
 
-    /* 최종 저장 */
+    /* 저장 및 look 호출 */
     save_char(ch, ch->in_room);
-
     do_look(ch, "", 15);
 
     return TRUE;
 }
+
 
 int jale_room(struct char_data *ch, int cmd, char *arg)
 {
@@ -1949,7 +1993,7 @@ int finisher(struct char_data *ch, int cmd, char *arg)
 
 int bank(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[MAX_STRING_LENGTH];
+	char buf[MAX_INPUT_LENGTH];
 	LONGLONG amt;
 
 	if (IS_NPC(ch))
@@ -2179,7 +2223,7 @@ int portal(struct char_data *ch, int cmd, char *arg)
 int magicseed(struct char_data *ch, int cmd, char *arg)
 {
 	int skno;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	struct obj_data *obj;
 
 	if (cmd != 12)

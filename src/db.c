@@ -2641,10 +2641,19 @@ void unstash_char(struct char_data *ch, char *filename)
 			obj->obj_flags.gpd = tmp[0];
 
 		// 문자열 읽기 시작
-		fgets(tmp_str, 255, fl);	// 개행문자 처리
+		if (!fgets(tmp_str, 255, fl)) { // 개행문자 처리
+            mudlog("(db.c) unstash_char: fgets failed after numeric data.");
+            /* 읽다 만 객체는 폐기하고 루프 탈출 */
+            extract_obj(obj); 
+            break;
+        }
 
 		// 1. 아이템 이름 읽기
-		fgets(tmp_str, 255, fl);
+		if (!fgets(tmp_str, 255, fl)) {
+            mudlog("(db.c) unstash_char: fgets failed reading object name.");
+            extract_obj(obj);
+            break;
+        }
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
@@ -2661,7 +2670,11 @@ void unstash_char(struct char_data *ch, char *filename)
 		}
 
 		// 2. short description 읽기
-		fgets(tmp_str, 255, fl);
+		if (!fgets(tmp_str, 255, fl)) {
+            mudlog("(db.c) unstash_char: fgets failed reading short description.");
+            extract_obj(obj);
+            break;
+        }
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);
@@ -2677,7 +2690,11 @@ void unstash_char(struct char_data *ch, char *filename)
 		}
 
 		// 3. description 읽기
-		fgets(tmp_str, 255, fl);
+		if (!fgets(tmp_str, 255, fl)) {
+            mudlog("(db.c) unstash_char: fgets failed reading description.");
+            extract_obj(obj);
+            break;
+        }
 		tmp_str[strlen(tmp_str) - 1] = 0;
 		if (strlen(tmp_str) != 0) {
 			str = malloc(strlen(tmp_str) + 1);

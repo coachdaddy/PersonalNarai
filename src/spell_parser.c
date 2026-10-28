@@ -504,7 +504,7 @@ void do_cast(struct char_data *ch, char *argument, int cmd)
 {
 	struct obj_data *tar_obj;
 	struct char_data *tar_char;
-	char name[MAX_STRING_LENGTH];
+	char name[MAX_INPUT_LENGTH];
 	int qend, spl, i;
 	bool target_ok;
 
