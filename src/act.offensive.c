@@ -15,11 +15,9 @@
 #include "guild_list.h"
 
 
-
-
 void do_hit(struct char_data *ch, char *argument, int cmd)
 {
-	char arg[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 	
 	one_argument(argument, arg);
@@ -115,7 +113,7 @@ void do_kill(struct char_data *ch, char *argument, int cmd)
 void do_backstab(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	byte percent;
 
 	one_argument(argument, name);
@@ -306,7 +304,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 void do_bash(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	int percent;
 	int dam;
 
@@ -358,7 +356,7 @@ void do_rescue(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim, *tmp_ch;
 	int percent;
-	char victim_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
 
 	one_argument(argument, victim_name);
 
@@ -461,7 +459,7 @@ void do_multi_kick(struct char_data *ch, char *argument, int cmd)
 void do_kick(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	int percent;
 	int dam;
 
@@ -507,7 +505,7 @@ void do_kick(struct char_data *ch, char *argument, int cmd)
 void do_punch(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	int dam;
 	int percent;
 
@@ -611,7 +609,7 @@ void do_light_move(struct char_data *ch, char *argument, int cmd)
 void do_flash(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	int percent;
 	int d;
 
@@ -730,7 +728,7 @@ void shoot(struct char_data *ch, struct char_data *victim, int type)
 void do_shoot(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 
 	one_argument(argument, name);
 	

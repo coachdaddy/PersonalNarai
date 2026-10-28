@@ -64,7 +64,7 @@ void name_to_drinkcon(struct obj_data *obj, int type)
 
 void do_drink(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	struct obj_data *temp;
 	struct affected_type af;
 	int amount;
@@ -196,7 +196,7 @@ void do_drink(struct char_data *ch, char *argument, int cmd)
 
 void do_eat(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	struct obj_data *temp;
 	struct affected_type af;
 
@@ -248,7 +248,7 @@ void do_eat(struct char_data *ch, char *argument, int cmd)
 }
 void do_junk(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	struct obj_data *temp;
 
 	one_argument(argument, buf);
@@ -382,7 +382,7 @@ void do_pour(struct char_data *ch, char *argument, int cmd)
 void do_sip(struct char_data *ch, char *argument, int cmd)
 {
 	struct affected_type af;
-	char arg[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 	char buf[MAX_STRING_LENGTH];
 	struct obj_data *temp;
 
@@ -463,7 +463,7 @@ void do_sip(struct char_data *ch, char *argument, int cmd)
 void do_taste(struct char_data *ch, char *argument, int cmd)
 {
 	struct affected_type af;
-	char arg[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 	struct obj_data *temp;
 
 	one_argument(argument, arg);
@@ -1174,7 +1174,7 @@ void do_unhold(struct char_data *ch, char *argument, int cmd)
 
 void do_remove(struct char_data *ch, char *argument, int cmd)
 {
-	char arg1[MAX_STRING_LENGTH];
+	char arg1[MAX_INPUT_LENGTH];
 	struct obj_data *obj_object;
 	int i, j;
 

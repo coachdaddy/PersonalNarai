@@ -451,7 +451,7 @@ int gbisland_carpie(struct char_data *ch, int cmd, char *arg)
 
 int gbisland_magic_paper(struct char_data *ch, int cmd, char *arg)
 {
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	struct obj_data *obj;
 	struct char_data *victim;
 	int room;
@@ -520,7 +520,7 @@ int gbisland_magic_paper(struct char_data *ch, int cmd, char *arg)
 
 int gbisland_seed_evil_power(struct char_data *ch, int cmd, char *arg)
 {
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	struct obj_data *obj;
 	int skno, skilled;
 	int i;

@@ -275,7 +275,7 @@ int teleport_daerimsa_tower(struct char_data *ch, int cmd, char *arg)
 	struct char_data *victim;
 	int i, ch_in_room;
 	struct obj_data *scroll;
-	char buf[256];
+	char buf[MAX_INPUT_LENGTH];
 
 	/* recite */
 	if (cmd == 207) {
@@ -339,7 +339,7 @@ int teleport_daerimsa_tower(struct char_data *ch, int cmd, char *arg)
 
 int saint_water(struct char_data *ch, int cmd, char *arg)
 {
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	struct obj_data *obj;
 
 	if (cmd != 206)

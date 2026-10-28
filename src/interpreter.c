@@ -638,18 +638,25 @@ static int read_word(const char *argument, int *pos, char *out, size_t out_size)
 
     // 현재 위치에서 공백 문자들을 모두 건너뜀
     // (space, tab, newline 등 모든 공백 계열 처리)
-    while (argument[*pos] != '\0' &&
-           isspace((unsigned char)argument[*pos]))
-    {
+    while (argument[*pos] != '\0' && isspace((unsigned char)argument[*pos])) {
         (*pos)++;
     }
 
     // 공백이 아닌 출력 가능한 문자들을 하나의 단어로 복사
     // 공백을 만나거나 출력 불가능한 문자를 만나면 중단
-    while ((c = (unsigned char)argument[*pos]),
-           isprint(c) && !isspace(c) && i < (int)(out_size - 1))
-    {
-        out[i++] = argument[*pos];
+    while (argument[*pos] != '\0') {
+        c = (unsigned char)argument[*pos];
+
+        /* 공백이나 출력 불가능한 문자면 중단 */
+        if (!isprint(c) || isspace(c)) {
+            break;
+        }
+
+        /* 버퍼 안전장치: 마지막 NULL 문자를 위해 -1 공간 남김 */
+        if (i < out_size - 1) {
+            out[i++] = (char)c;
+        }
+        
         (*pos)++;
     }
 
@@ -667,11 +674,11 @@ void argument_interpreter(char *argument, char *first_arg, char *second_arg)
 
     // 첫 번째 인자 파싱
     // fill_word가 참을 반환하는 동안 반복
-    while (read_word(argument, &pos, first_arg, sizeof(first_arg)))
+    while (read_word(argument, &pos, first_arg, MAX_INPUT_LENGTH))
         ;
 
     // 두 번째 인자 파싱
-    while (read_word(argument, &pos, second_arg, sizeof(second_arg)))
+    while (read_word(argument, &pos, second_arg, MAX_INPUT_LENGTH))
         ;
 }
 
@@ -701,7 +708,7 @@ char *one_argument(char *argument, char *first_arg)
         return NULL;
 
     // fill_word가 참을 반환하는 동안 동일 인자를 계속 소비
-    while (read_word(argument, &pos, first_arg, sizeof(first_arg)))
+    while (read_word(argument, &pos, first_arg, MAX_INPUT_LENGTH))
         ;
 
     // 다음 인자 파싱이 시작될 위치 반환
