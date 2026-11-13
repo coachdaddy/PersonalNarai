@@ -5,6 +5,12 @@
 *  Copyright (C) 1990, 1991 - see 'license.doc' for complete information. *
 ************************************************************************* */
 
+#define FUDGE (100 + dice(6, 20))
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
 #include "structs.h"
 #include "utils.h"
 #include "interpreter.h"
@@ -13,6 +19,9 @@
 #include "spells.h"
 #include "limit.h"
 #include "mob_magic.h"		/* cyb */
+
+#define RESCUER_VICTIM 5
+
 
 
 
@@ -1929,10 +1938,7 @@ int finisher(struct char_data *ch, int cmd, char *arg)
 		if (GET_HIT(ch) < GET_PLAYER_MAX_HIT(ch) / 5) {
 			act("$n 최후의 기를 모은다.  ' 하압 ~~~~~~~~~ '",
 			    FALSE, ch, 0, vict, TO_ROOM);
-			max_dam = (GET_HITROLL(ch) + 1) * (GET_DAMROLL(ch) +
-							   1) * number
-			    (5,
-			     1) / 2;
+			max_dam = (GET_HITROLL(ch) + 1) * (GET_DAMROLL(ch) + 1) * number(5,1) / 2;
 			if (max_dam < 1000)
 				act(" 화르르르르르르르르르르르르 `````````` ",
 				    FALSE, ch, 0, vict, TO_ROOM);
@@ -2046,6 +2052,7 @@ int bank(struct char_data *ch, int cmd, char *arg)
 	}
 	return (FALSE);
 }
+
 int totem(struct char_data *ch, int cmd, char *arg)
 {
 	int rm;
@@ -2069,6 +2076,7 @@ int totem(struct char_data *ch, int cmd, char *arg)
 	list_char_to_char(world[rm].people, ch, 0);
 	return (TRUE);
 }
+
 int kickbasher(struct char_data *ch, int cmd, char *arg)
 {
 	struct char_data *vict;
@@ -2211,6 +2219,7 @@ int portal(struct char_data *ch, int cmd, char *arg)
 	}
 	return (TRUE);
 }
+
 int magicseed(struct char_data *ch, int cmd, char *arg)
 {
 	int skno;
