@@ -184,9 +184,15 @@ int show_board(struct char_data *ch, struct board_data *cb, char *arg)
 	else {
 		snprintf(tmp, sizeof(tmp), "There are %d messages on the board.\n\r", cb->m_num);
 		strcat(buf, tmp);
+		/* 목록이 버퍼(4096바이트)를 넘지 않게 붙인다. 예전에는 긴 제목 글 몇 개로 넘쳐 서버가 죽고,
+		 * 글이 파일에 남아 재시작해도 반복됐다, 2026-11-13 */
 		for (i = 0; i < cb->m_num; i++) {
 			snprintf(tmp, sizeof(tmp), "%-2d : %s ( %s )\n\r",
 				i + 1, cb->head[i], cb->writer[i]);
+			if (strlen(buf) + strlen(tmp) + 16 >= sizeof(buf)) {
+				strcat(buf, "... (more)\n\r");
+				break;
+			}
 			strcat(buf, tmp);
 		}
 	}
@@ -316,6 +322,11 @@ int post_board(struct char_data *ch, struct board_data *cb, char *arg)
 	half_chop(arg, papername, header);
 	if (*papername == 0 || *header == 0)
 		return FALSE;
+	if (strlen(header) > MAX_POST_HEADER) {
+		snprintf(buf, sizeof(buf), "The header is too long (max %d bytes).\n\r", MAX_POST_HEADER);
+		send_to_char(buf, ch);
+		return TRUE;
+	}
 	paper = get_obj_in_list_vis(ch, papername, ch->carrying);
 
 	if (!paper) {

@@ -225,6 +225,18 @@ void do_reply(struct char_data *ch, char *argument, int cmd)
 	do_tell(ch, buf, 0);
 }
 
+/* 그림 이름: 영문자·숫자·'_-.'만, '.'으로 시작하지 않음. 예전에는 검사가 없어 'send <자기> ../<파일>'로
+ * paints 밖의 서버 파일(플레이어 파일 등)을 읽을 수 있었다, 2026-11-13 */
+static int paint_name_ok(const char *s)
+{
+	if (!*s || *s == '.')
+		return 0;
+	for (; *s; s++)
+		if (!isalnum((unsigned char)*s) && *s != '_' && *s != '-' && *s != '.')
+			return 0;
+	return 1;
+}
+
 /* 보내기 */
 void do_send(struct char_data *ch, char *argument, int cmd)
 {
@@ -239,6 +251,8 @@ void do_send(struct char_data *ch, char *argument, int cmd)
 	snprintf(paint_name, sizeof(paint_name), "paints/%s", message);
 	if (!*name || !*message)
 		send_to_char("Who do you wish to tell what??\n\r", ch);
+	else if (!paint_name_ok(message))
+		send_to_char("No such paint prepared.\n\r", ch);
 	else if (!(vict = get_char_vis(ch, name)))
 		send_to_char("No-one by that name here..\n\r", ch);
 	else if (file_to_string(paint_name, paint) == -1)

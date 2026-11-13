@@ -12,6 +12,10 @@
 #include "handler.h"
 #include "guild_list.h"
 
+/* 지팡이(SPELL_TYPE_STAFF)로 방 안 사람에게 차례로 걸 때 다음 사람을 미리 받아 둔다. 맞은 몹이 죽으면
+ * 바로 해제되므로(extract_char) 예전처럼 victim->next_in_room을 나중에 읽으면 해제된 메모리였다, 2026-11-13 */
+static struct char_data *staff_next;
+
 
 
 void cast_burning_hands(byte level, struct char_data *ch, char *arg, int type,
@@ -54,8 +58,7 @@ void cast_call_lightning(byte level, struct char_data *ch, char *arg, int type,
 		break;
 	case SPELL_TYPE_STAFF:
 		if (OUTSIDE(ch) && (weather_info.sky >= SKY_RAINING)) {
-			for (victim = world[ch->in_room].people;
-			     victim; victim = victim->next_in_room)
+			for (victim = world[ch->in_room].people; victim && ((staff_next = victim->next_in_room), 1); victim = staff_next)
 				if (victim != ch)
 					spell_call_lightning(level, ch,
 							     victim, 0);
@@ -213,8 +216,7 @@ void cast_energy_drain(byte level, struct char_data *ch, char *arg, int type,
 			spell_energy_drain(level, ch, victim, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (victim = world[ch->in_room].people;
-		     victim; victim = victim->next_in_room)
+		for (victim = world[ch->in_room].people; victim && ((staff_next = victim->next_in_room), 1); victim = staff_next)
 			if (victim != ch)
 				spell_energy_drain(level, ch, victim, 0);
 		break;
@@ -371,8 +373,7 @@ void cast_harm(byte level, struct char_data *ch, char *arg, int type,
 		spell_harm(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (victim = world[ch->in_room].people;
-		     victim; victim = victim->next_in_room)
+		for (victim = world[ch->in_room].people; victim && ((staff_next = victim->next_in_room), 1); victim = staff_next)
 			if (victim != ch)
 				spell_harm(level, ch, victim, 0);
 		break;
