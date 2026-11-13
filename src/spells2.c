@@ -13,6 +13,10 @@
 #include "handler.h"
 #include "guild_list.h"
 
+/* 지팡이(SPELL_TYPE_STAFF)로 방 안 사람에게 차례로 걸 때 다음 사람을 미리 받아 둔다. 맞은 몹이 죽으면
+ * 바로 해제되므로(extract_char) 예전처럼 victim->next_in_room을 나중에 읽으면 해제된 메모리였다, 2026-11-13 */
+static struct char_data *staff_next;
+
 
 		  
 void cast_armor(byte level, struct char_data *ch, char *arg, int type,
@@ -75,8 +79,7 @@ void cast_teleport(byte level, struct char_data *ch, char *arg, int type,
 		spell_teleport(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_teleport(level, ch, tar_ch, 0);
 		break;
@@ -228,8 +231,7 @@ void cast_blindness(byte level, struct char_data *ch, char *arg, int type,
 		spell_blindness(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				if (!(IS_AFFECTED(tar_ch, AFF_BLIND)))
 					spell_blindness(level, ch, tar_ch, 0);
@@ -337,8 +339,7 @@ void cast_cure_blind(byte level, struct char_data *ch, char *arg, int type,
 		spell_cure_blind(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_cure_blind(level, ch, tar_ch, 0);
 		break;
@@ -356,8 +357,7 @@ void cast_mana_boost(byte level, struct char_data *ch, char *arg, int type,
 		spell_mana_boost(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_mana_boost(level, ch, tar_ch, 0);
 		break;
@@ -413,8 +413,7 @@ void cast_cause_critic(byte level, struct char_data *ch, char *arg, int type,
 		spell_cause_critic(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_cause_critic(level, ch, tar_ch, 0);
 		break;
@@ -439,8 +438,7 @@ void cast_cure_critic(byte level, struct char_data *ch, char *arg, int type,
 		spell_cure_critic(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_cure_critic(level, ch, tar_ch, 0);
 		break;
@@ -462,8 +460,7 @@ void cast_cause_light(byte level, struct char_data *ch, char *arg, int type,
 		spell_cause_light(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_cause_light(level, ch, tar_ch, 0);
 		break;
@@ -484,8 +481,7 @@ void cast_cure_light(byte level, struct char_data *ch, char *arg, int type,
 		spell_cure_light(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_cure_light(level, ch, tar_ch, 0);
 		break;
@@ -519,8 +515,7 @@ void cast_curse(byte level, struct char_data *ch, char *arg, int type,
 		}
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_curse(level, ch, tar_ch, 0);
 		break;
@@ -547,8 +542,7 @@ void cast_detect_evil(byte level, struct char_data *ch, char *arg, int type,
 		spell_detect_evil(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				if (!(IS_AFFECTED(tar_ch, SPELL_DETECT_EVIL)))
 					spell_detect_evil(level, ch, tar_ch, 0);
@@ -576,8 +570,7 @@ void cast_detect_invisibility(byte level, struct char_data *ch, char *arg, int t
 		spell_detect_invisibility(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				if (!(IS_AFFECTED(tar_ch, SPELL_DETECT_INVISIBLE)))
 					spell_detect_invisibility(level, ch,
@@ -628,8 +621,7 @@ void cast_dispel_evil(byte level, struct char_data *ch, char *arg, int type,
 		spell_dispel_evil(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_dispel_evil(level, ch, tar_ch, 0);
 		break;
@@ -746,8 +738,7 @@ void cast_self_heal(byte level, struct char_data *ch, char *arg, int type,
 		spell_self_heal(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_self_heal(level, ch, tar_ch, 0);
 		break;
@@ -770,8 +761,7 @@ void cast_restore_move(byte level, struct char_data *ch, char *arg, int type,
 		spell_restore_move(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_restore_move(level, ch, tar_ch, 0);
 		break;
@@ -794,8 +784,7 @@ void cast_heal(byte level, struct char_data *ch, char *arg, int type,
 		spell_heal(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_heal(level, ch, tar_ch, 0);
 		break;
@@ -817,8 +806,7 @@ void cast_full_heal(byte level, struct char_data *ch, char *arg, int type,
 		spell_full_heal(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_full_heal(level, ch, tar_ch, 0);
 		break;
@@ -842,8 +830,7 @@ void cast_entire_heal(byte level, struct char_data *ch, char *arg, int type,
 		spell_entire_heal(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_entire_heal(level, ch, tar_ch, 0);
 		break;
@@ -896,8 +883,7 @@ void cast_invisibility(byte level, struct char_data *ch, char *arg, int type,
 		}
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				if (!(IS_AFFECTED(tar_ch, AFF_INVISIBLE)))
 					spell_invisibility(level, ch, tar_ch, 0);
@@ -933,8 +919,7 @@ void cast_poison(byte level, struct char_data *ch, char *arg, int type,
 		spell_poison(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_poison(level, ch, tar_ch, 0);
 		break;
@@ -962,8 +947,7 @@ void cast_protection_from_evil(byte level, struct char_data *ch, char *arg, int 
 		spell_protection_from_evil(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_protection_from_evil(level, ch, tar_ch, 0);
 		break;
@@ -991,8 +975,7 @@ void cast_haste(byte level, struct char_data *ch, char *arg, int type,
 		spell_haste(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_haste(level, ch, tar_ch, 0);
 		break;
@@ -1020,8 +1003,7 @@ void cast_improved_haste(byte level, struct char_data *ch, char *arg, int type,
 		spell_improved_haste(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_improved_haste(level, ch, tar_ch, 0);
 		break;
@@ -1051,8 +1033,7 @@ void cast_remove_curse(byte level, struct char_data *ch, char *arg, int type,
 		spell_remove_curse(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_remove_curse(level, ch, tar_ch, 0);
 		break;
@@ -1073,8 +1054,7 @@ void cast_remove_poison(byte level, struct char_data *ch, char *arg, int type,
 		spell_remove_poison(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_remove_poison(level, ch, tar_ch, 0);
 		break;
@@ -1102,8 +1082,7 @@ void cast_infravision(byte level, struct char_data *ch, char *arg, int type,
 		spell_infravision(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_infravision(level, ch, tar_ch, 0);
 		break;
@@ -1131,8 +1110,7 @@ void cast_mirror_image(byte level, struct char_data *ch, char *arg, int type,
 		spell_mirror_image(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_mirror_image(level, ch, tar_ch, 0);
 		break;
@@ -1172,8 +1150,7 @@ void cast_sanctuary(byte level, struct char_data *ch, char *arg, int type,
 		spell_sanctuary(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_sanctuary(level, ch, tar_ch, 0);
 		break;
@@ -1201,8 +1178,7 @@ void cast_love(byte level, struct char_data *ch, char *arg, int type,
 		spell_love(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_love(level, ch, tar_ch, 0);
 		break;
@@ -1242,8 +1218,7 @@ void cast_reraise(byte level, struct char_data *ch, char *arg, int type,
 		spell_reraise(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people; tar_ch;
-		     tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_reraise(level, ch, tar_ch, 0);
 		break;
@@ -1279,8 +1254,7 @@ void cast_sleep(byte level, struct char_data *ch, char *arg, int type,
 		break;
 	case SPELL_TYPE_STAFF:
 		flag = 0;
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch) {
 				spell_sleep(level, ch, tar_ch, 0);
 				if ((!IS_NPC(tar_ch)) && (GET_LEVEL(tar_ch) < IMO)) {
@@ -1315,8 +1289,7 @@ void cast_strength(byte level, struct char_data *ch, char *arg, int type,
 		spell_strength(level, ch, tar_ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_strength(level, ch, tar_ch, 0);
 		break;
@@ -1422,8 +1395,7 @@ void cast_ventriloquate(byte level, struct char_data *ch, char *arg, int type,
 
 	sprintf(buf3, "Someone says, '%s'\n\r", arg);
 
-	for (tmp_ch = world[ch->in_room].people; tmp_ch;
-	     tmp_ch = tmp_ch->next_in_room) {
+	for (tmp_ch = world[ch->in_room].people; tmp_ch && ((staff_next = tmp_ch->next_in_room), 1); tmp_ch = staff_next) {
 
 		if ((tmp_ch != ch) && (tmp_ch != tar_ch)) {
 			if (saves_spell(tmp_ch, SAVING_SPELL))
@@ -1543,8 +1515,7 @@ void cast_sense_life(byte level, struct char_data *ch, char *arg, int type,
 		spell_sense_life(level, ch, ch, 0);
 		break;
 	case SPELL_TYPE_STAFF:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if (tar_ch != ch)
 				spell_sense_life(level, ch, tar_ch, 0);
 		break;
@@ -1599,8 +1570,7 @@ void cast_gas_breath(byte level, struct char_data *ch, char *arg, int type,
 {
 	switch (type) {
 	case SPELL_TYPE_SPELL:
-		for (tar_ch = world[ch->in_room].people;
-		     tar_ch; tar_ch = tar_ch->next_in_room)
+		for (tar_ch = world[ch->in_room].people; tar_ch && ((staff_next = tar_ch->next_in_room), 1); tar_ch = staff_next)
 			if ((tar_ch != ch) && (GET_LEVEL(tar_ch) < IMO))
 				spell_gas_breath(level, ch, tar_ch, 0);
 		break;

@@ -79,6 +79,7 @@
 
 // from board.c & modify.c
 #define MAX_MSGS        100
+#define MAX_POST_HEADER 80      /* 게시판·우편 제목 최대 바이트(목록 버퍼 넘침 방지), 2026-11-13 */
 #define WRITER_NAME_LEN 20
 #define BOARD_DIR       "boards"
 

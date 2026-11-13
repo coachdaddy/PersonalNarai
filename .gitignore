@@ -12,3 +12,4 @@ run-mud.sh
 .vscode/
 lib/mud-5101.pid
 lib/motd
+sync_data.sh

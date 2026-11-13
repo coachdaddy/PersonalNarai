@@ -449,7 +449,8 @@ void gain_condition(struct char_data *ch, int condition, int value)
 
 }
 
-void check_idling(struct char_data *ch)
+/* 잠수 처리. 캐릭터를 내보내 해제했으면 1(호출한 쪽은 그 캐릭터를 더 쓰면 안 된다), 2026-11-13 */
+int check_idling(struct char_data *ch)
 {
 	if (++(ch->specials.timer) > 7) {
 		if (ch->specials.was_in_room == NOWHERE && ch->in_room != NOWHERE) {
@@ -467,8 +468,10 @@ void check_idling(struct char_data *ch)
 			do_rent(ch, "", 0);
 			if (ch->desc)
 				close_socket(ch->desc);
+			return 1;
 		}
 	}
+	return 0;
 }
 
 /* Update both PC's & NPC's and objects*/
@@ -499,8 +502,10 @@ void point_update(void)
 
         if (!IS_NPC(i)) {
             update_char_objects(i);
-            if (GET_LEVEL(i) < IMO)
-                check_idling(i);
+            /* 잠수로 내보내 해제됐으면 이 캐릭터는 더 쓰지 않는다. 예전에는 해제된 캐릭터로
+             * 배고픔·자동 레벨업을 계속 처리했다, 2026-11-13 */
+            if (GET_LEVEL(i) < IMO && check_idling(i))
+                continue;
         }
         gain_condition(i, FULL, -1);
         gain_condition(i, DRUNK, -1);
@@ -545,7 +550,7 @@ void point_update(void)
             else if (GET_LEVEL(i) >= 40 && 
                     (titles[GET_CLASS(i) - 1][(int)GET_LEVEL(i) + 1].exp + 1000) < GET_EXP(i) &&
                     (GET_QUEST_SOLVED(i) >= level_quest[(int)GET_LEVEL(i)])) { 
-					if (rcnt >= 1 && GET_LEVEL(i) < 50 && flag == 1) { 
+					if (rcnt >= 2 && GET_LEVEL(i) < 50 && flag == 1) { 
 						GET_LEVEL(i)++; 
 						advance_level(i, 1); 
 						snprintf(buf, sizeof(buf), 
@@ -560,7 +565,7 @@ void point_update(void)
 						flag = 0; 
 					}
 
-		            if (rcnt >= 2 && GET_LEVEL(i) < 60 && flag == 1) { 
+		            if (rcnt >= 3 && GET_LEVEL(i) < 60 && flag == 1) { 
 						GET_LEVEL(i)++; 
 						advance_level(i, 1); 
 						snprintf(buf, sizeof(buf), 

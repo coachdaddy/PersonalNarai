@@ -17,17 +17,39 @@
 struct char_data *son_ogong;
 struct char_data *fourth_jangro;
 
+/* 특수 처리를 받는 그 몹(2026-11-13): 몹 AI 호출(cmd 0)이면 ch 자신, 플레이어 명령이면 같은 방의
+ * 그 번호 몹. 예전에는 위의 전역 포인터(read_mobile이 마지막으로 만든 몹)를 썼는데, 그 몹이 죽거나
+ * 사라지면 남은 몹의 특수 처리가 해제된 메모리를 읽었다. 아래 두 함수는 같은 이름의 지역 변수로 가린다 */
+static struct char_data *daerimsa_self(struct char_data *ch, int cmd, int vnum)
+{
+	struct char_data *k;
+
+	if (!ch)
+		return NULL;
+	if (!cmd)
+		return ch;
+	if (ch->in_room == NOWHERE)
+		return NULL;
+	for (k = world[ch->in_room].people; k; k = k->next_in_room)
+		if (IS_NPC(k) && k->nr >= 0 && mob_index[k->nr].virtual == vnum)
+			return k;
+	return NULL;
+}
+
 
 
 int son_ogong_func(struct char_data *ch, int cmd, char *arg)
 {
 	struct obj_data *i, *obj;
 	struct char_data *victim, *mob;
+	struct char_data *son_ogong;	/* 전역 포인터 대신(위 daerimsa_self), 2026-11-13 */
 
 	if (cmd) {
 		if (cmd != 207 && cmd != 235 && cmd != 268 && cmd != 72 && cmd != 13)
 			return 0;
 	}
+	if (!(son_ogong = daerimsa_self(ch, cmd, SON_OGONG)))
+		return 0;
 
 	/* fighting */
 	if ((victim = son_ogong->specials.fighting)) {
@@ -136,6 +158,10 @@ int fourth_jangro_func(struct char_data *ch, int cmd, char *arg)
 {
 	long gold;
 	struct obj_data *i, *obj, *pen, *paper;
+	struct char_data *fourth_jangro;	/* 전역 포인터 대신(위 daerimsa_self), 2026-11-13 */
+
+	if (!(fourth_jangro = daerimsa_self(ch, cmd, FOURTH_JANGRO)))
+		return 0;
 
 	switch (FOURTH_JANGRO_STEP) {
 	case 0:
