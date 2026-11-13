@@ -1843,7 +1843,9 @@ void do_wiznet(struct char_data *ch, char *argument, int cmd)
 	send_to_char(buf, ch);
 
 	for (d = descriptor_list; d; d = d->next) {
-		if (!d->connected || d->original) continue;
+		/* 게임 중(CON_PLAYING, 0)인 접속만. 예전에는 조건이 반대라 로그인 중인 접속의
+		 * 빈 캐릭터(NULL)를 읽어 서버가 죽었다, 2026-11-13 */
+		if (d->connected != CON_PLAYING || d->original || !d->character) continue;
 		victim = d->character;
 		if(victim == ch) continue;
 

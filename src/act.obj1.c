@@ -399,6 +399,12 @@ void do_drop(struct char_data *ch, char *argument, int cmd)
 			send_to_char("You haven't got that many coins!\n\r", ch);
 			return;
 		}
+		/* 돈 아이템은 int라 그보다 많이 버리면 금액이 잘려 0이 되고 create_money가 exit(1)로
+		 * 서버를 끝냈다(drop 4294967296 coins), 2026-11-13 */
+		if (amount > 2147483647LL) {
+			send_to_char("You can't drop that much at once.\n\r", ch);
+			return;
+		}
 		send_to_char("OK.\n\r", ch);
 		if (amount == 0)
 			return;

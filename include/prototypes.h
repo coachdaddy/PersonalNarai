@@ -430,7 +430,14 @@ int is_number(char *str);
 char *one_argument(char *argument, char *first_arg);
 int fill_word(char *argument);
 int is_abbrev(char *arg1, char *arg2);
-void half_chop(char *string, char *arg1, char *arg2);
+void half_chop_n(const char *string, char *arg1, size_t size1, char *arg2, size_t size2);
+/* half_chop: 받는 곳(arg1, arg2)은 배열이어야 한다(크기를 sizeof로 넘김). 포인터를 넘기면 컴파일 오류.
+ * 예전 half_chop은 길이 검사 없이 복사해서 'tell <긴 이름> hi'로 스택이 넘쳐 서버가 죽었다, 2026-11-13 */
+#define HALF_CHOP_IS_ARRAY(a) (!__builtin_types_compatible_p(__typeof__(a), __typeof__(&(a)[0])))
+#define half_chop(s, a1, a2) do { \
+        _Static_assert(HALF_CHOP_IS_ARRAY(a1) && HALF_CHOP_IS_ARRAY(a2), "half_chop: arguments must be arrays"); \
+        half_chop_n((s), (a1), sizeof(a1), (a2), sizeof(a2)); \
+    } while (0)
 int special(struct char_data *ch, int cmd, char *arg);
 void assign_command_pointers(void);
 void query_status(struct descriptor_data *d);
@@ -451,7 +458,7 @@ void set_title(struct char_data *ch);
 void gain_exp(struct char_data *ch, int gain);
 void gain_exp_regardless(struct char_data *ch, int gain);
 void gain_condition(struct char_data *ch, int condition, int value);
-void check_idling(struct char_data *ch);
+int check_idling(struct char_data *ch);
 void point_update(void);
 
 /* --- magic.c --- */

@@ -1685,7 +1685,8 @@ int remortal(struct char_data *ch, int cmd, char *arg)
         if (all_done) {
             snprintf(buf, sizeof(buf), "&c[REMORTAL]&n Grand Masters must be at least level %d to change class.\n\r", required_level);
         } else {
-            snprintf(buf, sizeof(buf), "&c[REMORTAL]&n You must be at least level %d to perform your #%d remortal.\n\r", required_level, rcnt + 1);
+            /* rcnt는 시작 직업까지 센 직업 수라, 이번 리모탈의 번호는 rcnt다(예전 rcnt + 1은 첫 리모탈을 #2로 알림), 2026-11-13 */
+            snprintf(buf, sizeof(buf), "&c[REMORTAL]&n You must be at least level %d to perform your #%d remortal.\n\r", required_level, rcnt);
         }
         send_to_char(buf, ch);
         return TRUE;

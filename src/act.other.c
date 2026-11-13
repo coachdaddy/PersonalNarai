@@ -459,6 +459,13 @@ void do_group(struct char_data *ch, char *argument, int cmd)
 		}
 	}
 }
+/* 아이템에 적힌 주문 번호가 등록된 주문인가(spell_pointer가 있는가). 등록이 빠진 번호(예: 102
+ * entire heal)를 물약·두루마리·완드로 부르면 NULL 함수를 불러 서버가 죽었다, 2026-11-13 */
+static int item_spell_ok(int spl)
+{
+	return spl >= 1 && spl < MAX_SPL_LIST && spell_info[spl].spell_pointer != NULL;
+}
+
 void do_quaff(struct char_data *ch, char *argument, int cmd)
 {
 	char buf[MAX_INPUT_LENGTH];
@@ -488,7 +495,7 @@ void do_quaff(struct char_data *ch, char *argument, int cmd)
 	act("You quaff $p which dissolves.", FALSE, ch, temp, 0, TO_CHAR);
 
 	for (i = 1; i < 4; i++)
-		if (temp->obj_flags.value[i] >= 1)
+		if (item_spell_ok(temp->obj_flags.value[i]))
 			((*spell_info[temp->obj_flags.value[i]].spell_pointer)
 			 ((byte) temp->obj_flags.value[0], ch, "",
 			  SPELL_TYPE_POTION, ch, 0));
@@ -548,7 +555,7 @@ void do_recite(struct char_data *ch, char *argument, int cmd)
 	act("You recite $p which dissolves.", FALSE, ch, scroll, 0, TO_CHAR);
 
 	for (i = 1; i < 4; i++)
-		if (scroll->obj_flags.value[i] >= 1)
+		if (item_spell_ok(scroll->obj_flags.value[i]))
 			((*spell_info[scroll->obj_flags.value[i]].spell_pointer)
 			 ((byte) scroll->obj_flags.value[0], ch, "", SPELL_TYPE_SCROLL,
 			  victim, obj));
@@ -587,8 +594,9 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 
 		if (stick->obj_flags.value[2] > 0) {	/* Is there any charges left? */
 			stick->obj_flags.value[2]--;
-			((*spell_info[stick->obj_flags.value[3]].spell_pointer)
-			 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_STAFF, 0, 0));
+			if (item_spell_ok(stick->obj_flags.value[3]))
+				((*spell_info[stick->obj_flags.value[3]].spell_pointer)
+				 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_STAFF, 0, 0));
 
 		} else {
 			send_to_char("The staff seems powerless.\n\r", ch);
@@ -607,8 +615,9 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 
 			if (stick->obj_flags.value[2] > 0) {	/* Is there any charges left? */
 				stick->obj_flags.value[2]--;
-				((*spell_info[stick->obj_flags.value[3]].spell_pointer)
-				 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_WAND, tmp_char, tmp_object));
+				if (item_spell_ok(stick->obj_flags.value[3]))
+					((*spell_info[stick->obj_flags.value[3]].spell_pointer)
+					 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_WAND, tmp_char, tmp_object));
 			} else {
 				send_to_char("The wand seems powerless.\n\r", ch);
 			}

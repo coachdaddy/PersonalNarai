@@ -736,17 +736,36 @@ int is_abbrev(char *arg1, char *arg2)
 /* return first 'word' plus trailing substring of input string */
 #define isnhspace(ch) (!(((ch) & 0xE0) > 0x90) && isspace(ch))
 
-void half_chop(char *string, char *arg1, char *arg2)
+/* 앞 n바이트 안에서 UTF-8 글자 중간이 아닌 곳까지의 길이(넘칠 때 자르는 자리) */
+static size_t cut_len(const char *s, size_t n)
 {
+	while (n > 0 && ((unsigned char)s[n] & 0xC0) == 0x80)
+		n--;
+	return n;
+}
+
+/* 첫 단어는 arg1(크기 size1)에, 나머지는 arg2(크기 size2)에. 넘치면 자른다, 2026-11-13 */
+void half_chop_n(const char *string, char *arg1, size_t size1, char *arg2, size_t size2)
+{
+	const char *start;
+	size_t n;
+
 	for (; isnhspace(*string); string++) ;
 
-	for (; !isnhspace(*arg1 = *string) && *string; string++, arg1++) ;
-
-	*arg1 = '\0';
+	for (start = string; *string && !isnhspace(*string); string++) ;
+	n = string - start;
+	if (n >= size1)
+		n = cut_len(start, size1 - 1);
+	memcpy(arg1, start, n);
+	arg1[n] = '\0';
 
 	for (; isnhspace(*string); string++) ;
 
-	for (; (*arg2 = *string); string++, arg2++) ;
+	n = strlen(string);
+	if (n >= size2)
+		n = cut_len(string, size2 - 1);
+	memcpy(arg2, string, n);
+	arg2[n] = '\0';
 }
 
 int special(struct char_data *ch, int cmd, char *arg)

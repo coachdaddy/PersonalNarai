@@ -892,6 +892,9 @@ void boot_zones(void)
         zone_table[zon].name = check;
         zone_table[zon].number = vnum_input; // 존 번호 저장
         
+        /* realloc으로 늘린 칸은 0이 아니다. wld_filename을 비워 두지 않으면 boot_world가 쓰레기 주소를
+         * free했다(평소에는 우연히 0이라 넘어감), 2026-11-13 */
+        zone_table[zon].wld_filename = NULL;
         CREATE(zone_table[zon].filename, char, strlen(file_name_from_list) + 1);
         strcpy(zone_table[zon].filename, file_name_from_list);
 
@@ -2167,7 +2170,9 @@ int file_to_string(char *name, char *buf)
 	}
 
 	do {
-		fgets(tmp, 199, fl);
+		/* 읽기 오류(디렉터리 등)면 끝낸다. 예전에는 feof가 오지 않아 같은 줄을 계속 붙였다, 2026-11-13 */
+		if (!fgets(tmp, 199, fl))
+			break;
 
 		if (!feof(fl)) {
 			if (strlen(buf) + strlen(tmp) + 2 > MAX_STRING_LENGTH) {
@@ -2175,6 +2180,7 @@ int file_to_string(char *name, char *buf)
 				buf[25] = '\0';
 				mudlog(buf);
 				*buf = '\0';
+				fclose(fl);	/* 예전에는 닫지 않아 파일 핸들이 샜다, 2026-11-13 */
 				return (-1);
 			}
 
