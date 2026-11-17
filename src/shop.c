@@ -97,7 +97,7 @@ int shop_producing(struct obj_data *item, int shop_nr)
 void shopping_buy(char *arg, struct char_data *ch,
 		  struct char_data *keeper, int shop_nr)
 {
-	char argm[100], buf[MAX_STRING_LENGTH];
+	char argm[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	struct obj_data *temp1;
 
 	if (!(is_ok(keeper, ch, shop_nr)))
@@ -194,7 +194,7 @@ void shopping_buy(char *arg, struct char_data *ch,
 void shopping_sell(char *arg, struct char_data *ch,
 		   struct char_data *keeper, int shop_nr)
 {
-	char argm[100], buf[MAX_STRING_LENGTH];
+	char argm[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	struct obj_data *temp1;
 
 	if (!(is_ok(keeper, ch, shop_nr)))
@@ -262,7 +262,7 @@ void shopping_sell(char *arg, struct char_data *ch,
 void shopping_value(char *arg, struct char_data *ch,
 		    struct char_data *keeper, int shop_nr)
 {
-	char argm[100], buf[MAX_STRING_LENGTH];
+	char argm[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	struct obj_data *temp1;
 
 	if (!(is_ok(keeper, ch, shop_nr)))
@@ -335,6 +335,11 @@ void shopping_list(char *arg, struct char_data *ch,
 						      shop_index[shop_nr].profit_buy));
 				}
 				CAP(buf2);
+				/* 목록이 버퍼(4096바이트)를 넘지 않게. 예전에는 판 물건이 쌓이면 list마다 죽었다, 2026-11-13 */
+				if (strlen(buf) + strlen(buf2) + 16 >= sizeof(buf)) {
+					strcat(buf, "... (more)\n\r");
+					break;
+				}
 				strcat(buf, buf2);
 			};
 

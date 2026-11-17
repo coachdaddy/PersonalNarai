@@ -1368,13 +1368,15 @@ int generic_find(char *arg, int bitvector, struct char_data *ch,
 	bool found;
 
 	found = FALSE;
+	name[0] = 0;	/* 인자가 비면 초기화되지 않은 name을 읽었다, 2026-11-13 */
 
 	/* Eliminate spaces and "ignore" words */
 	while (*arg && !found) {
 
 		for (; *arg == ' '; arg++) ;
 
-		for (i = 0; (name[i] = *(arg + i)) && (name[i] != ' '); i++) ;
+		/* name[256]을 넘지 않게. 예전에는 'open <300자>' 등으로 스택이 넘쳐 서버가 죽었다, 2026-11-13 */
+		for (i = 0; i < (int)sizeof(name) - 1 && (name[i] = *(arg + i)) && (name[i] != ' '); i++) ;
 		name[i] = 0;
 		arg += i;
 		if (search_block(name, ignore, TRUE) > -1)

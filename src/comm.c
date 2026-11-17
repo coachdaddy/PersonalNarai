@@ -170,6 +170,17 @@ void signal_setup(void)
 }
 
 
+/* d가 아직 접속 목록에 있는가(명령 처리 중 close_socket으로 해제되지 않았는가), 2026-11-13 */
+static int descriptor_alive(struct descriptor_data *d)
+{
+	struct descriptor_data *p;
+
+	for (p = descriptor_list; p; p = p->next)
+		if (p == d)
+			return 1;
+	return 0;
+}
+
 void game_loop(int s)
 {
 	fd_set input_set, output_set, exc_set;
@@ -216,6 +227,10 @@ void game_loop(int s)
 		}
 
 		if (select(maxdesc + 1, &input_set, &output_set, &exc_set, &null_time) < 0) {
+			/* 신호(15분마다 오는 checkpoint SIGALRM 등)로 끊긴 것은 오류가 아니다. 예전에는 여기서
+			 * return해서 게임 루프가 끝나 서버가 그냥 꺼졌다, 2026-11-13 */
+			if (errno == EINTR)
+				continue;
 			perror("Select poll");
 			return;
 		}
@@ -278,12 +293,18 @@ void game_loop(int s)
 					if (point->showstr_point)
 						show_string(point, comm);
 					else {
-						point->wait += command_interpreter(point->character, comm);
-						++point->ncmds;
+						int wait = command_interpreter(point->character, comm);
+
+						/* quit 등은 그 사이에 close_socket으로 접속을 해제한다. 예전에는 해제된
+						 * 접속에 wait를 써서 나중에 엉뚱한 곳에서 서버가 죽었다, 2026-11-13 */
+						if (descriptor_alive(point)) {
+							point->wait += wait;
+							++point->ncmds;
+						}
 					}
 				} else {
 					nanny(point, comm);
-					if (no_echo) {
+					if (no_echo && descriptor_alive(point)) {
 						no_echo_telnet(point);
 					}
 				}

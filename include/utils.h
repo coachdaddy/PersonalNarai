@@ -16,6 +16,9 @@
 #define SON_OGONG_STEP		(son_ogong->quest.solved)
 #define FOURTH_JANGRO_STEP	(fourth_jangro->quest.solved)
 
+// from moodang.c
+#define TAICHI_STEP		(jangsambong->quest.solved)
+
 // from db.c
 #define ZCMD zone_table[zone].cmd[cmd_no]
 

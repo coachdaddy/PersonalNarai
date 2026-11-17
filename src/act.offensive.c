@@ -15,11 +15,9 @@
 #include "guild_list.h"
 
 
-
-
 void do_hit(struct char_data *ch, char *argument, int cmd)
 {
-	char arg[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 	
 	one_argument(argument, arg);
@@ -115,7 +113,7 @@ void do_kill(struct char_data *ch, char *argument, int cmd)
 void do_backstab(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	byte percent;
 
 	one_argument(argument, name);
@@ -201,14 +199,25 @@ void do_order(struct char_data *ch, char *argument, int cmd)
 
 			org_room = ch->in_room;
 
-			for (k = ch->followers; k; k = k->next) {
-				if (org_room == k->follower->in_room)
-					if (k->follower && IS_AFFECTED(k->follower, AFF_CHARM)) {
-						found = TRUE;
-						if (!IS_NPC(k->follower))
-							WAIT_STATE(k->follower, PULSE_VIOLENCE);
-						command_interpreter(k->follower, message);
-					}
+			/* 명령을 수행하던 몹이 죽거나 따르기를 멈추면 목록 노드가 해제되어 k->next를 읽을 수
+			 * 없었다. 대상을 먼저 모아 두고, 시키기 직전에 아직 따르는지 다시 확인한다, 2026-11-13 */
+			{
+				struct char_data *ordered[64];
+				int n_ordered = 0, j;
+
+				for (k = ch->followers; k && n_ordered < 64; k = k->next)
+					if (k->follower && org_room == k->follower->in_room &&
+					    IS_AFFECTED(k->follower, AFF_CHARM))
+						ordered[n_ordered++] = k->follower;
+				for (j = 0; j < n_ordered; j++) {
+					for (k = ch->followers; k && k->follower != ordered[j]; k = k->next) ;
+					if (!k || ordered[j]->in_room != org_room)
+						continue;
+					found = TRUE;
+					if (!IS_NPC(ordered[j]))
+						WAIT_STATE(ordered[j], PULSE_VIOLENCE);
+					command_interpreter(ordered[j], message);
+				}
 			}
 			if (found)
 				send_to_char("Ok.\n\r", ch);
@@ -306,7 +315,7 @@ void do_flee(struct char_data *ch, char *argument, int cmd)
 void do_bash(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	int percent;
 	int dam;
 
@@ -358,7 +367,7 @@ void do_rescue(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim, *tmp_ch;
 	int percent;
-	char victim_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
 
 	one_argument(argument, victim_name);
 
@@ -461,7 +470,7 @@ void do_multi_kick(struct char_data *ch, char *argument, int cmd)
 void do_kick(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	int percent;
 	int dam;
 
@@ -507,7 +516,7 @@ void do_kick(struct char_data *ch, char *argument, int cmd)
 void do_punch(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	int dam;
 	int percent;
 
@@ -611,7 +620,7 @@ void do_light_move(struct char_data *ch, char *argument, int cmd)
 void do_flash(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	int percent;
 	int d;
 
@@ -730,7 +739,7 @@ void shoot(struct char_data *ch, struct char_data *victim, int type)
 void do_shoot(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 
 	one_argument(argument, name);
 	

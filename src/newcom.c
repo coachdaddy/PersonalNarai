@@ -16,7 +16,7 @@
 
 void do_assist(struct char_data *ch, char *argument, int cmd)
 {
-	char arg[MAX_STRING_LENGTH];
+	char arg[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 	char cyb[80];
 

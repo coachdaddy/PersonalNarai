@@ -642,6 +642,17 @@ void spell_recharger(byte level, struct char_data *ch,
 		if (!number(0, level / 10 + 1)) {
 			act("BANG!!!! $p explodes. It hurts!", FALSE, ch, obj,
 			    0, TO_CHAR);
+			/* 손에 든 완드·지팡이면 장착을 먼저 푼다. 예전에는 장착 칸이 해제된 아이템을 가리킨 채
+			 * 남아 다음 eq·저장에서 서버가 죽었다, 2026-11-13 */
+			{
+				int pos;
+
+				for (pos = 0; pos < MAX_WEAR; pos++)
+					if (ch->equipment[pos] == obj) {
+						unequip_char(ch, pos);
+						break;
+					}
+			}
 			extract_obj(obj);
 			GET_HIT(ch) -= GET_HIT(ch) / 10;
 			return;

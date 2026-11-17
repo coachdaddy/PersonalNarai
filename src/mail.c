@@ -187,15 +187,23 @@ int show_mail(struct char_data *ch, struct mbox_data *cb, char *arg)
 		if (isname(GET_NAME(ch), cb->receiver[i]) || GET_LEVEL(ch) >
 		    IMO +
 		    2) {
-			sprintf(buf + strlen(buf), "   %s from %s\n\r",
-				cb->head[i], cb->sender[i]);
-			sprintf(buf + strlen(buf), " to %s\n\r", cb->receiver[i]);
+			/* 버퍼(4096바이트)를 넘지 않게 붙인다(게시판과 같은 문제), 2026-11-13 */
+			snprintf(tmp, sizeof(tmp), "   %s from %s\n\r to %.20s\n\r",
+				 cb->head[i], cb->sender[i], cb->receiver[i]);
+			if (strlen(buf) + strlen(tmp) + 16 >= sizeof(buf)) {
+				strcat(buf, "... (more)\n\r");
+				pm_num++;
+				break;
+			}
+			strcat(buf, tmp);
 			pm_num++;
 		}
 	}
 	if (!pm_num)
 		strcat(buf, "The mbox is empty.\n\r");
-	page_string(ch->desc, buf, 0);
+	/* 1: 내용을 복사해 둔다. 0이면 이 함수의 지역 버퍼를 가리킨 채 남아, 목록이 길어 페이지를 넘길 때
+	 * 이미 사라진 스택을 읽었다, 2026-11-13 */
+	page_string(ch->desc, buf, 1);
 
 	return (TRUE);
 }
@@ -263,6 +271,21 @@ int post_mail(struct char_data *ch, struct mbox_data *cb, char *arg)
 	half_chop(buf, papername, header);
 	if (*papername == 0 || *header == 0 || *receiver == 0)
 		return (FALSE);
+	/* 받는 사람은 20바이트 칸, 우편함은 MAX_MAILS통, 제목은 목록 버퍼를 생각해 제한한다.
+	 * 예전에는 검사 없이 복사해 넘쳤다, 2026-11-13 */
+	if (strlen(receiver) >= sizeof(cb->receiver[0])) {
+		send_to_char("No one has such a long name.\n\r", ch);
+		return (TRUE);
+	}
+	if (strlen(header) > MAX_POST_HEADER) {
+		snprintf(buf, sizeof(buf), "The header is too long (max %d bytes).\n\r", MAX_POST_HEADER);
+		send_to_char(buf, ch);
+		return (TRUE);
+	}
+	if (cb->m_num >= MAX_MAILS) {
+		send_to_char("Sorry... the mbox is full.\n\r", ch);
+		return (TRUE);
+	}
 	paper = get_obj_in_list_vis(ch, papername, ch->carrying);
 
 	if (!paper) {

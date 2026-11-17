@@ -719,7 +719,7 @@ void do_read(struct char_data *ch, char *argument, int cmd)
 
 void do_examine(struct char_data *ch, char *argument, int cmd)
 {
-	char name[100], buf[100];
+	char name[MAX_INPUT_LENGTH], buf[100];
 	struct char_data *tmp_char;
 	struct obj_data *tmp_object;
 
@@ -1276,7 +1276,7 @@ void do_time(struct char_data *ch, char *argument, int cmd)
 
 void do_weather(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[100], buf2[100];
+	char buf[100], buf2[MAX_INPUT_LENGTH];
 	char static *sky_look[4] =
 	{
 		"cloudless",
@@ -1982,7 +1982,7 @@ void do_levels(struct char_data *ch, char *argument, int cmd)
 void do_consider(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
-	char name[256];
+	char name[MAX_INPUT_LENGTH];
 	int diff;
 
 	one_argument(argument, name);
@@ -2030,13 +2030,10 @@ void do_consider(struct char_data *ch, char *argument, int cmd)
 
 void do_police(struct char_data *ch, char *argument, int cmd)
 {
-	char name[200];
+	char name[MAX_INPUT_LENGTH];
 	struct descriptor_data *d;
 	int i, target;
-	void stash_char(struct char_data *ch);
-	void wipe_obj(struct obj_data *obj);
-	struct obj_data *unequip_char(struct char_data *ch, int pos);
-
+	
 	one_argument(argument, name);
 	if (!*argument)
 		return;
@@ -2156,7 +2153,7 @@ void do_data(struct char_data *ch, char *argument, int cmd)
 {
 	struct descriptor_data *d;
 	struct char_data *victim;
-	char buf[256], name[256], fmt[16];
+	char buf[256], name[MAX_INPUT_LENGTH], fmt[16];
 	int i = 0, k, t = 0, nc;
 	LONGLONG n = 0;
 

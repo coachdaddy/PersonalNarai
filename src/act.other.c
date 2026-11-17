@@ -49,7 +49,7 @@ void do_quit(struct char_data *ch, char *argument, int cmd)
 
 void do_wimpy(struct char_data *ch, char *argument, int cmd)
 {
-	char time[256];
+	char time[MAX_INPUT_LENGTH];
 	int wimpyness;
 	char buf[256];
 
@@ -160,8 +160,8 @@ void do_steal(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
 	struct obj_data *obj;
-	char victim_name[240];
-	char obj_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
+	char obj_name[MAX_INPUT_LENGTH];
 	char buf[240];
 	int percent;
 	int gold, eq_pos;
@@ -283,7 +283,7 @@ void do_practice(struct char_data *ch, char *arg, int cmd)
 	int i;
 	char buf[100 * MAX_SKILLS];
 	char tmp[MAX_STRING_LENGTH];
-	char victim_name[256];
+	char victim_name[MAX_INPUT_LENGTH];
 	struct char_data *victim;
 
 	if (GET_LEVEL(ch) >= IMO) {
@@ -367,7 +367,7 @@ void do_compact(struct char_data *ch, char *argument, int cmd)
 
 void do_group(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[256], name[256];
+	char buf[256], name[MAX_INPUT_LENGTH];
 	struct char_data *victim, *k;
 	struct follow_type *f;
 	bool found;
@@ -459,9 +459,16 @@ void do_group(struct char_data *ch, char *argument, int cmd)
 		}
 	}
 }
+/* 아이템에 적힌 주문 번호가 등록된 주문인가(spell_pointer가 있는가). 등록이 빠진 번호(예: 102
+ * entire heal)를 물약·두루마리·완드로 부르면 NULL 함수를 불러 서버가 죽었다, 2026-11-13 */
+static int item_spell_ok(int spl)
+{
+	return spl >= 1 && spl < MAX_SPL_LIST && spell_info[spl].spell_pointer != NULL;
+}
+
 void do_quaff(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	struct obj_data *temp;
 	int i;
 	bool equipped;
@@ -488,7 +495,7 @@ void do_quaff(struct char_data *ch, char *argument, int cmd)
 	act("You quaff $p which dissolves.", FALSE, ch, temp, 0, TO_CHAR);
 
 	for (i = 1; i < 4; i++)
-		if (temp->obj_flags.value[i] >= 1)
+		if (item_spell_ok(temp->obj_flags.value[i]))
 			((*spell_info[temp->obj_flags.value[i]].spell_pointer)
 			 ((byte) temp->obj_flags.value[0], ch, "",
 			  SPELL_TYPE_POTION, ch, 0));
@@ -501,7 +508,7 @@ void do_quaff(struct char_data *ch, char *argument, int cmd)
 
 void do_recite(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[100];
+	char buf[MAX_INPUT_LENGTH];
 	struct obj_data *scroll, *obj;
 	struct char_data *victim;
 	int i, bits;
@@ -548,7 +555,7 @@ void do_recite(struct char_data *ch, char *argument, int cmd)
 	act("You recite $p which dissolves.", FALSE, ch, scroll, 0, TO_CHAR);
 
 	for (i = 1; i < 4; i++)
-		if (scroll->obj_flags.value[i] >= 1)
+		if (item_spell_ok(scroll->obj_flags.value[i]))
 			((*spell_info[scroll->obj_flags.value[i]].spell_pointer)
 			 ((byte) scroll->obj_flags.value[0], ch, "", SPELL_TYPE_SCROLL,
 			  victim, obj));
@@ -562,7 +569,7 @@ void do_recite(struct char_data *ch, char *argument, int cmd)
 
 void do_use(struct char_data *ch, char *argument, int cmd)
 {
-	char buf[MAX_STRING_LENGTH];
+	char buf[MAX_INPUT_LENGTH];
 	struct char_data *tmp_char;
 	struct obj_data *tmp_object, *stick;
 
@@ -587,8 +594,9 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 
 		if (stick->obj_flags.value[2] > 0) {	/* Is there any charges left? */
 			stick->obj_flags.value[2]--;
-			((*spell_info[stick->obj_flags.value[3]].spell_pointer)
-			 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_STAFF, 0, 0));
+			if (item_spell_ok(stick->obj_flags.value[3]))
+				((*spell_info[stick->obj_flags.value[3]].spell_pointer)
+				 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_STAFF, 0, 0));
 
 		} else {
 			send_to_char("The staff seems powerless.\n\r", ch);
@@ -607,8 +615,9 @@ void do_use(struct char_data *ch, char *argument, int cmd)
 
 			if (stick->obj_flags.value[2] > 0) {	/* Is there any charges left? */
 				stick->obj_flags.value[2]--;
-				((*spell_info[stick->obj_flags.value[3]].spell_pointer)
-				 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_WAND, tmp_char, tmp_object));
+				if (item_spell_ok(stick->obj_flags.value[3]))
+					((*spell_info[stick->obj_flags.value[3]].spell_pointer)
+					 ((byte) stick->obj_flags.value[0], ch, "", SPELL_TYPE_WAND, tmp_char, tmp_object));
 			} else {
 				send_to_char("The wand seems powerless.\n\r", ch);
 			}
@@ -644,7 +653,7 @@ void do_disarm(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
 	struct obj_data *obj;
-	char victim_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
 	int percent;
 	
 	one_argument(argument, victim_name);
@@ -705,7 +714,7 @@ void do_spin_bird_kick(struct char_data *ch, char *argument, int cmd)
 {
 	unsigned int dam;
 	struct char_data *victim, *tmp_vic;
-	char victim_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
 	int percent;
 	int tmp, i;
 	int level_plus;
@@ -821,7 +830,7 @@ void do_shouryuken(struct char_data *ch, char *argument, int cmd)
 {
 	unsigned int dam;
 	struct char_data *victim;
-	char victim_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
 	int percent;
 
 	if ((GET_LEVEL(ch) == IMO) && (!IS_NPC(ch))) 
@@ -931,8 +940,8 @@ void do_throw_object(struct char_data *ch, char *argument, int cmd)
 {
 	struct char_data *victim;
 	struct obj_data *obj;
-	char victim_name[240];
-	char obj_name[240];
+	char victim_name[MAX_INPUT_LENGTH];
+	char obj_name[MAX_INPUT_LENGTH];
 	int percent;
 	char buf[100];
 	int dam;
