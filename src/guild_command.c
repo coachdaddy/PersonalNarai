@@ -214,120 +214,124 @@ int guild_entry(struct char_data *ch, int cmd, char *arg)
 	return (FALSE);
 }
 
-int locker_room(struct char_data *ch, int cmd, char *arg)
-{
-	char buf[MAX_STRING_LENGTH];
-	int i, room_number;
-	char guild_number;
-	static int count = 0;
-	static char load_names[LIMIT_LOAD + 1][30];
-	int equiped_something = 0;
-
-	void extract_carrying_obj(struct obj_data *p);
-
-	if (IS_NPC(ch)) {
-		return (FALSE);
-	}
-	room_number = world[ch->in_room].number;
-	switch (room_number) {
-	case 3000:
-		guild_number = 0;
-		break;
-	case ROOM_GUILD_POLICE_LOCKER:
-		guild_number = 1;
-		break;
-	case ROOM_GUILD_OUTLAW_LOCKER:
-		guild_number = 2;
-		break;
-	case ROOM_GUILD_ASSASSIN_LOCKER:
-		guild_number = 3;
-		break;
-	default:
-		return FALSE;
-	}
-
-	if (guild_number < 0 || guild_number > MAX_GUILD_LIST) {
-		return FALSE;
-	}
-	if (guild_number != ch->player.guild && GET_LEVEL(ch) < IMO) {
-		send_to_char("But you are not the member of this guild!", ch);
-		return FALSE;
-	}
-	if (cmd == 277) {	/* SAVE */
-		return FALSE;
-
-		if (GET_GOLD(ch) < GET_LEVEL(ch) * GET_LEVEL(ch) * LOCKER_COST) {
-			snprintf(buf, sizeof(buf), "You need %d coins to SAVE your items.",
-				GET_LEVEL(ch) * GET_LEVEL(ch) * LOCKER_COST);
-			send_to_char(buf, ch);
-			return TRUE;
-		}
-
-		/* only allow to save equiped item */
-		if (ch->carrying) {
-			send_to_char("You can SAVE only equiped item.\n\r", ch);
-			send_to_char("Drop all carrying item!\n\r", ch);
-			return TRUE;
-		}
-		/* only allow to save container which DOSEN'T contain something */
-		for (i = 0; i < MAX_WEAR; i++) {
-			if (ch->equipment[i]) {
-				equiped_something = 1;
-				if (ch->equipment[i]->contains) {
-					send_to_char("You can't SAVE container which ", ch);
-					send_to_char("contains something.\n\r", ch);
-					return TRUE;
-				}
-			}
-		}
-		/* But, need not to save! what a waste of coins! */
-		if (!equiped_something) {
-			send_to_char("But, you don't have anything to save!\n\r", ch);
-			return TRUE;
-		}
-
-		GET_GOLD(ch) = GET_GOLD(ch) - (GET_LEVEL(ch) * GET_LEVEL(ch) * LOCKER_COST);
-		stash_char(ch);
-		send_to_char("Ok. When you want to LOAD items, type LOAD.\n\r", ch);
-		return TRUE;
-	} else if (cmd == 278) {	/* LOAD */
-		/* only allow 1 load per reboot */
-		for (i = 0; i < count; i++) {
-			if (strcmp(load_names[i], GET_NAME(ch)) == 0) {
-				send_to_char("You already used ONE chance of LOAD!!\n\r", ch);
-				return TRUE;
-			}
-		}
-		/* limit number of LOAD in guild */
-		if (count >= LIMIT_LOAD) {
-			send_to_char("All Lockers already used by other persons!\n\r", ch);
-			send_to_char("The following persons used locker!!\n\r", ch);
-			for (i = 0; i < LIMIT_LOAD; i++) {
-				snprintf(buf, sizeof(buf), "%s\n\r", load_names[i]);
-				send_to_char(buf, ch);
-			}
-			return TRUE;
-		}
-
-		strcpy(load_names[i], GET_NAME(ch));
-
-		if (ch->carrying) {
-			send_to_char("You must carry nothing to LOAD!!\n\r", ch);
-			return TRUE;
-		}
-		for (i = 0; i < MAX_WEAR; i++) {
-			if (ch->equipment[i]) {
-				send_to_char("You must equip nothing to LOAD!!\n\r", ch);
-				return TRUE;
-			}
-		}
-		count++;
-		unstash_char(ch, GET_NAME(ch));
-		send_to_char("Ok. Your items restored...\n\r", ch);
-		return TRUE;
-	}
-	return FALSE;
-}
+/* 길드 사물함(SAVE/LOAD) 비활성화, 2026-11-19
+ * 길드 시스템이 쓰이지 않고, SAVE는 처음부터 막혀 있었다. 그 상태의 LOAD는
+ * 사물함이 아니라 rent 파일(마지막 저장 시점 아이템)을 복사해 줘서 아이템 복제가 됐다.
+ * 명령 277·278은 interpreter.c에서 do_disabled로 막고, 방 연결은 spec_assign.c에서 뺐다. */
+// int locker_room(struct char_data *ch, int cmd, char *arg)
+// {
+// 	char buf[MAX_STRING_LENGTH];
+// 	int i, room_number;
+// 	char guild_number;
+// 	static int count = 0;
+// 	static char load_names[LIMIT_LOAD + 1][30];
+// 	int equiped_something = 0;
+// 
+// 	void extract_carrying_obj(struct obj_data *p);
+// 
+// 	if (IS_NPC(ch)) {
+// 		return (FALSE);
+// 	}
+// 	room_number = world[ch->in_room].number;
+// 	switch (room_number) {
+// 	case 3000:
+// 		guild_number = 0;
+// 		break;
+// 	case ROOM_GUILD_POLICE_LOCKER:
+// 		guild_number = 1;
+// 		break;
+// 	case ROOM_GUILD_OUTLAW_LOCKER:
+// 		guild_number = 2;
+// 		break;
+// 	case ROOM_GUILD_ASSASSIN_LOCKER:
+// 		guild_number = 3;
+// 		break;
+// 	default:
+// 		return FALSE;
+// 	}
+// 
+// 	if (guild_number < 0 || guild_number > MAX_GUILD_LIST) {
+// 		return FALSE;
+// 	}
+// 	if (guild_number != ch->player.guild && GET_LEVEL(ch) < IMO) {
+// 		send_to_char("But you are not the member of this guild!", ch);
+// 		return FALSE;
+// 	}
+// 	if (cmd == 277) {	/* SAVE */
+// 		return FALSE;
+// 
+// 		if (GET_GOLD(ch) < GET_LEVEL(ch) * GET_LEVEL(ch) * LOCKER_COST) {
+// 			snprintf(buf, sizeof(buf), "You need %d coins to SAVE your items.",
+// 				GET_LEVEL(ch) * GET_LEVEL(ch) * LOCKER_COST);
+// 			send_to_char(buf, ch);
+// 			return TRUE;
+// 		}
+// 
+// 		/* only allow to save equiped item */
+// 		if (ch->carrying) {
+// 			send_to_char("You can SAVE only equiped item.\n\r", ch);
+// 			send_to_char("Drop all carrying item!\n\r", ch);
+// 			return TRUE;
+// 		}
+// 		/* only allow to save container which DOSEN'T contain something */
+// 		for (i = 0; i < MAX_WEAR; i++) {
+// 			if (ch->equipment[i]) {
+// 				equiped_something = 1;
+// 				if (ch->equipment[i]->contains) {
+// 					send_to_char("You can't SAVE container which ", ch);
+// 					send_to_char("contains something.\n\r", ch);
+// 					return TRUE;
+// 				}
+// 			}
+// 		}
+// 		/* But, need not to save! what a waste of coins! */
+// 		if (!equiped_something) {
+// 			send_to_char("But, you don't have anything to save!\n\r", ch);
+// 			return TRUE;
+// 		}
+// 
+// 		GET_GOLD(ch) = GET_GOLD(ch) - (GET_LEVEL(ch) * GET_LEVEL(ch) * LOCKER_COST);
+// 		stash_char(ch);
+// 		send_to_char("Ok. When you want to LOAD items, type LOAD.\n\r", ch);
+// 		return TRUE;
+// 	} else if (cmd == 278) {	/* LOAD */
+// 		/* only allow 1 load per reboot */
+// 		for (i = 0; i < count; i++) {
+// 			if (strcmp(load_names[i], GET_NAME(ch)) == 0) {
+// 				send_to_char("You already used ONE chance of LOAD!!\n\r", ch);
+// 				return TRUE;
+// 			}
+// 		}
+// 		/* limit number of LOAD in guild */
+// 		if (count >= LIMIT_LOAD) {
+// 			send_to_char("All Lockers already used by other persons!\n\r", ch);
+// 			send_to_char("The following persons used locker!!\n\r", ch);
+// 			for (i = 0; i < LIMIT_LOAD; i++) {
+// 				snprintf(buf, sizeof(buf), "%s\n\r", load_names[i]);
+// 				send_to_char(buf, ch);
+// 			}
+// 			return TRUE;
+// 		}
+// 
+// 		strcpy(load_names[i], GET_NAME(ch));
+// 
+// 		if (ch->carrying) {
+// 			send_to_char("You must carry nothing to LOAD!!\n\r", ch);
+// 			return TRUE;
+// 		}
+// 		for (i = 0; i < MAX_WEAR; i++) {
+// 			if (ch->equipment[i]) {
+// 				send_to_char("You must equip nothing to LOAD!!\n\r", ch);
+// 				return TRUE;
+// 			}
+// 		}
+// 		count++;
+// 		unstash_char(ch, GET_NAME(ch));
+// 		send_to_char("Ok. Your items restored...\n\r", ch);
+// 		return TRUE;
+// 	}
+// 	return FALSE;
+// }
 
 int guild_practice_yard(struct char_data *ch, int cmd, char *arg)
 {

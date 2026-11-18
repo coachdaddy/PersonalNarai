@@ -130,11 +130,11 @@ void assign_rooms(void)
 	/* taxi */
 	world[real_room(3014)].funct = taxi;
 	world[real_room(3502)].funct = taxi;
-	/* locker room */
-	world[real_room(ROOM_GUILD_POLICE_LOCKER)].funct = locker_room;
-	world[real_room(ROOM_GUILD_OUTLAW_LOCKER)].funct = locker_room;
-	world[real_room(ROOM_GUILD_ASSASSIN_LOCKER)].funct = locker_room;
-	world[real_room(3000)].funct = locker_room;
+// 	/* locker room */
+// 	world[real_room(ROOM_GUILD_POLICE_LOCKER)].funct = locker_room;
+// 	world[real_room(ROOM_GUILD_OUTLAW_LOCKER)].funct = locker_room;
+// 	world[real_room(ROOM_GUILD_ASSASSIN_LOCKER)].funct = locker_room;
+// 	world[real_room(3000)].funct = locker_room;
 
 	/* guild practice yard */
 	world[real_room(ROOM_GUILD_POLICE_PRACTICE)].funct = guild_practice_yard;

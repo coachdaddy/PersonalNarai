@@ -2044,8 +2044,8 @@ void do_police(struct char_data *ch, char *argument, int cmd)
 			mudlog(name);
 			if ((d->connected == CON_PLAYING) && (d->character)) {
 				if (d->character->player.level < ch->player.level) {
-					stash_char(d->character);
-					move_stashfile_safe(d->character->player.name);
+					if (stash_char(d->character) == 0)
+						move_stashfile_safe(d->character->player.name);
 					for (i = 0; i < MAX_WEAR; i++)
 						if (d->character->equipment[i]) {
 							extract_obj(unequip_char(d->character, i));
