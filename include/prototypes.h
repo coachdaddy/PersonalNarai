@@ -136,6 +136,7 @@ void do_quit(struct char_data *ch, char *argument, int cmd);
 void do_wimpy(struct char_data *ch, char *argument, int cmd);
 void do_save(struct char_data *ch, char *argument, int cmd);
 void do_not_here(struct char_data *ch, char *argument, int cmd);
+void do_disabled(struct char_data *ch, char *argument, int cmd);
 void do_sneak(struct char_data *ch, char *argument, int cmd);
 void do_hide(struct char_data *ch, char *argument, int cmd);
 void do_steal(struct char_data *ch, char *argument, int cmd);
@@ -297,13 +298,13 @@ int real_mobile(int virtual);
 int real_object(int virtual);
 int real_zone_by_number(int virtual);
 int move_stashfile_safe(const char *victim);
-void stash_char(struct char_data *ch);
+int stash_char(struct char_data *ch);
 void stash_contents(FILE *fl, struct obj_data *p, int wear_flag);
 void unstash_char(struct char_data *ch, char *filename);
 void wipe_stash(char *filename);
 void do_checkrent(struct char_data *ch, char *argument, int cmd);
 void do_extractrent(struct char_data *ch, char *argument, int cmd);
-void do_replacerent(struct char_data *ch, char *argument, int cmd);
+// void do_replacerent(struct char_data *ch, char *argument, int cmd);	/* 비활성, 2026-11-19 */
 void do_rent(struct char_data *ch, char *arg, int cmd);
 void wipe_obj(struct obj_data *obj);
 
@@ -349,7 +350,7 @@ int get_mob_exp(int level, int tier);
 /* --- guild_command.c --- */
 int taxi(struct char_data *ch, int cmd, char *arg);
 int guild_entry(struct char_data *ch, int cmd, char *arg);
-int locker_room(struct char_data *ch, int cmd, char *arg);
+// int locker_room(struct char_data *ch, int cmd, char *arg);	/* 비활성, 2026-11-19 */
 int guild_practice_yard(struct char_data *ch, int cmd, char *arg);
 
 /* --- guild_informative.c --- */

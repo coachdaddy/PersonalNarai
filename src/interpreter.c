@@ -899,7 +899,7 @@ void assign_command_pointers(void)
     COMMANDO(78, POSITION_DEAD, do_purge, IMO + 1, IMO + 1, IMO + 1, IMO + 1);
     COMMANDO(79, POSITION_DEAD, do_shutdown, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
     COMMANDO(80, POSITION_RESTING, do_action, 0, 0, 0, 0);
-    COMMANDO(82, POSITION_RESTING, do_replacerent, IMO + 3, IMO + 3, IMO + 3, IMO + 3);
+    COMMANDO(82, POSITION_DEAD, do_disabled, IMO + 3, IMO + 3, IMO + 3, IMO + 3);	/* replacerent 비활성, 2026-11-19 */
     COMMANDO(83, POSITION_RESTING, do_whisper, 0, 0, 0, 0);
     COMMANDO(84, POSITION_SITTING, do_cast, 1, 1, 1, 1);
     COMMANDO(85, POSITION_DEAD, do_at, IMO, IMO, IMO, IMO);
@@ -1093,8 +1093,8 @@ void assign_command_pointers(void)
     COMMANDO(274, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
     COMMANDO(275, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
     COMMANDO(276, POSITION_SLEEPING, do_cant, 10, 10, 10, 10);
-    COMMANDO(277, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
-    COMMANDO(278, POSITION_STANDING, do_not_here, 10, 10, 10, 10);
+    COMMANDO(277, POSITION_DEAD, do_disabled, 10, 10, 10, 10);	/* 길드 사물함 SAVE 비활성, 2026-11-19 */
+    COMMANDO(278, POSITION_DEAD, do_disabled, 10, 10, 10, 10);	/* 길드 사물함 LOAD 비활성, 2026-11-19 */
     COMMANDO(279, POSITION_STANDING, do_query, 10, 10, 10, 10);
     COMMANDO(280, POSITION_STANDING, do_whistle, 15, 15, 15, 15);
     COMMANDO(281, POSITION_FIGHTING, do_simultaneous, 15, 15, 15, 15);

@@ -105,19 +105,25 @@ void do_save(struct char_data *ch, char *argument, int cmd)
 	send_to_char(buf, ch);
 
 	save_char(ch, world[ch->in_room].number);
-	stash_char(ch);
-	
-    save_result = move_stashfile_safe(GET_NAME(ch));
+	save_result = stash_char(ch);
+	if (save_result == 0)
+		save_result = move_stashfile_safe(GET_NAME(ch));
 
     if (save_result != 0) {
         send_to_char("Error saving your equipment/inventory!\n\r", ch);
-        DEBUG_LOG("do_save: move_stashfile_safe failed for %s", GET_NAME(ch));
+        DEBUG_LOG("do_save: stash save failed for %s", GET_NAME(ch));
     }
 }
 
 void do_not_here(struct char_data *ch, char *argument, int cmd)
 {
 	send_to_char("Sorry, but you cannot do that here!\n\r", ch);
+}
+
+/* 쓰지 않게 막아 둔 명령(replacerent, 길드 사물함 SAVE/LOAD), 2026-11-19 */
+void do_disabled(struct char_data *ch, char *argument, int cmd)
+{
+	send_to_char("지금은 사용할 수 없는 명령입니다.\n\r", ch);
 }
 
 void do_sneak(struct char_data *ch, char *argument, int cmd)

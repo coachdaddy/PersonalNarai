@@ -2447,12 +2447,15 @@ int move_stashfile_safe(const char *victim)
     return 0; // 성공 반환
 }
 
-void stash_char(struct char_data *ch)
+/* 아이템을 stash/x/name.x 에 쓴다. 성공 0, 실패 -1.
+ * 링크가 끊긴 캐릭터(desc 없음)도 저장한다. 잠수 자동 rent 때 저장을 건너뛰어
+ * move_stashfile_safe가 없는 .x를 옮기려다 실패하던 문제, 2026-11-19 */
+int stash_char(struct char_data *ch)
 {
 	struct obj_data *p;
 	char stashfile[256], name[100];
 	FILE *fl;
-	int i;
+	int i, failed;
 	sigset_t mask, orig_mask; /* 251121 by Komo */
 	void stash_contents(FILE * fl, struct obj_data *p, int wear_flag);
 	char buf[MAX_OUTPUT_LENGTH];
@@ -2471,13 +2474,13 @@ void stash_char(struct char_data *ch)
     sigaddset(&mask, SIGHUP);
 
 	if (!ch)
-		return;
-	if (IS_NPC(ch) || !ch->desc)
-		return;
+		return -1;
+	if (IS_NPC(ch))
+		return -1;
 	if (GET_NAME(ch))
 		strcpy(name, GET_NAME(ch));
 	else
-		return;
+		return -1;
 
 	for (i = 0; name[i]; ++i)
 		if (isupper(name[i]))
@@ -2491,8 +2494,10 @@ void stash_char(struct char_data *ch)
 	sigprocmask(SIG_BLOCK, &mask, &orig_mask); /* by Komo */
 	if (!(fl = fopen(stashfile, "w"))) {		/* remove all data if exist */
 		perror("saving PC's stash");
+		snprintf(buf, sizeof(buf), "stash_char error: cannot open '%s'", stashfile);
+		mudlog(buf);
 		sigprocmask(SIG_SETMASK, &orig_mask, NULL);
-		return;
+		return -1;
 	}
 
 	fprintf(fl, "%d\n", KJHRENT);
@@ -2504,9 +2509,18 @@ void stash_char(struct char_data *ch)
 	if (ch->carrying)
 		stash_contents(fl, ch->carrying, -1);
 
-	fflush(fl);
-	fclose(fl);
+	failed = (fflush(fl) != 0) | ferror(fl);
+	if (fclose(fl) != 0)
+		failed = 1;
 	sigprocmask(SIG_SETMASK, &orig_mask, NULL);
+
+	if (failed) {
+		/* 쓰다 만 .x를 .x.y로 옮기면 기존 rent를 망가뜨리므로 실패로 돌려준다 */
+		snprintf(buf, sizeof(buf), "stash_char error: failed writing '%s'", stashfile);
+		mudlog(buf);
+		return -1;
+	}
+	return 0;
 }
 
 /* Read stash file and load objects to player. and remove stash files */
@@ -2808,19 +2822,24 @@ void do_extractrent(struct char_data *ch, char *argument, int cmd)
 	snprintf(buf, sizeof(buf), "%s grabbed rent for %s", GET_NAME(ch), name);
 	mudlog(buf);
 }
-void do_replacerent(struct char_data *ch, char *argument, int cmd)
-{
-	char name[MAX_INPUT_LENGTH], buf[MAX_OUTPUT_LENGTH];
 
-	one_argument(argument, name);
-	if (!*name)
-		return;
-	stash_char(ch);
-	move_stashfile_safe(name);
-	send_to_char("OK.\n\r", ch);
-	snprintf(buf, sizeof(buf), "%s replaced rent for %s", GET_NAME(ch), name);
-	mudlog(buf);
-}
+/* replacerent 비활성화, 2026-11-19
+ * 의도: extractrent <이름>으로 가져온 아이템을 손본 뒤, 운영자 몸의 아이템을
+ * 그 플레이어의 rent로 덮어쓰는 명령. 하지만 stash_char가 운영자 자신의 이름으로
+ * 써서 처음부터 대상 rent가 바뀐 적이 없다. 쓰이지 않아 명령째 막는다(interpreter.c). */
+// void do_replacerent(struct char_data *ch, char *argument, int cmd)
+// {
+// 	char name[MAX_INPUT_LENGTH], buf[MAX_OUTPUT_LENGTH];
+// 
+// 	one_argument(argument, name);
+// 	if (!*name)
+// 		return;
+// 	if (stash_char(ch) == 0)
+// 		move_stashfile_safe(name);
+// 	send_to_char("OK.\n\r", ch);
+// 	snprintf(buf, sizeof(buf), "%s replaced rent for %s", GET_NAME(ch), name);
+// 	mudlog(buf);
+// }
 
 void do_rent(struct char_data *ch, char *arg, int cmd)
 {
@@ -2838,8 +2857,8 @@ void do_rent(struct char_data *ch, char *arg, int cmd)
 		send_to_char("You retire for the night.\n\r", ch);
 		act("$n retires for the night.", FALSE, ch, 0, 0, TO_NOTVICT);
 	}
-	stash_char(ch);		/* clear file.x and save into file.x */
-	move_stashfile_safe(ch->player.name);	/* move file.x to file.x.y */
+	if (stash_char(ch) == 0)	/* clear file.x and save into file.x */
+		move_stashfile_safe(ch->player.name);	/* move file.x to file.x.y */
 	wipe_obj(ch->carrying);
 	for (i = 0; i < MAX_WEAR; i++)
 		if (ch->equipment[i]) {

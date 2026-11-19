@@ -476,8 +476,8 @@ void saveallplayers()
 		if (pt->connected == CON_PLAYING)
 			if (pt->character) {
 				save_char(pt->character, pt->character->in_room);
-				stash_char(pt->character);
-				move_stashfile_safe(pt->character->player.name);
+				if (stash_char(pt->character) == 0)
+					move_stashfile_safe(pt->character->player.name);
 			}
 	}
 }
@@ -981,8 +981,8 @@ void close_socket(struct descriptor_data *d)
 	if (d->character) {
 		if (d->connected == CON_PLAYING) {
 			save_char(d->character, world[d->character->in_room].number);
-			stash_char(d->character);
-			move_stashfile_safe(d->character->player.name);
+			if (stash_char(d->character) == 0)
+				move_stashfile_safe(d->character->player.name);
 			act("$n has lost $s link.", TRUE, d->character, 0, 0, TO_ROOM);
 			snprintf(buf, sizeof(buf), "Closing link to: %s.", GET_NAME(d->character));
 			mudlog(buf);

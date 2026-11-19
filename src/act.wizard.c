@@ -815,8 +815,8 @@ void do_purge(struct char_data *ch, char *argument, int cmd)
 			snprintf(buf, sizeof(buf), "PURGE: %s permanently deleted player %s.", ch->player.name, vict->player.name);
 			mudlog(buf); // 로그 기록
 
-			stash_char(vict);
-			move_stashfile_safe(vict->player.name); 
+			if (stash_char(vict) == 0)
+				move_stashfile_safe(vict->player.name);
 			for (i = 0; i < MAX_WEAR; i++)
 				if (vict->equipment[i]) {
 					extract_obj(unequip_char(vict, i));
